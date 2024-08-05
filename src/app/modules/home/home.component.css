@@ -1,0 +1,336 @@
+/* Red color adjustments for specific elements */
+.red-button {
+  color: white; /* Text color */
+  background-color: #b71c1c; /* Deep red background */
+}
+
+.logo {
+  margin-right: -28px;
+}
+
+/* .logo > img {
+  margin-top: 10px;
+} */
+
+.inner-search{
+  padding: 12px 0px 12px 12px;
+}
+
+#shopping_cart {
+  padding: 12px 10px;
+  /* margin: 10px; */
+  border: none;
+  border-radius: 4px;
+}
+
+/* New style for increasing the shopping cart icon */
+.large-icon {
+  font-size: 25px; /* Adjust the size as needed */
+}
+
+#login_buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  margin-top: 0px; /* Add margin at the top */
+}
+
+#login_buttons button {
+  font-size: 12px;
+  margin: -4px 0; /* Adjust vertical spacing */
+  border: none;
+  padding: 2px 9px; /* Reduce padding to decrease space around text */
+}
+
+#login_buttons button:first-of-type {
+  padding-left: 13px;
+  padding-right: 13px;
+}
+
+.form-control {
+  background-color: #b71c1c; /* Deep red background for form field */
+  color: white; /* Text color */
+  border: none;
+}
+
+.form-control::placeholder {
+  color: white; /* Placeholder text color */
+  font-size: 20px;
+}
+
+.form-control:focus {
+  background-color: #b71c1c; /* Keep the background color on focus */
+  color: white; /* Keep the text color on focus */
+  outline: none;
+  box-shadow: none;
+}
+
+.input-group-text {
+  background-color: #b71c1c; /* Match input group text background color */
+  border: none; /* Remove border */
+}
+
+.btn-outline-light {
+  color: white;
+  border-color: white;
+}
+
+.btn-outline-light:hover {
+  background-color: #d32f2f; /* Slightly lighter red for hover */
+  color: white;
+}
+
+.navbar-toggler {
+  border-color: white;
+}
+
+/* Styles for the divider */
+.divider {
+  height: 8px;
+  background-color: #b71c1c; /* Ensure this matches the second row background color */
+  margin: 0; /* Adjust margin as needed */
+  width: 100%; /* Full width */
+}
+
+/* Styles for the second row */
+.second-row {
+  background-color: #b71c1c;
+  height: 50px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 20px;
+  margin-top: 10px;
+}
+
+.second-row .btn {
+  color: white;
+  font-weight: bold;
+  font-size: 16px; /* Increase font size */
+  padding: 5px 10px; /* Reduce padding to decrease space around text */
+  margin: 0; /* Ensure no additional space between buttons */
+  border-left: 1px solid white; /* Add left border to each button */
+  border-right: 1px solid white; /* Add right border to each button */
+  border-radius: 0%;
+  flex-grow: 1; /* Make buttons take up equal space */
+  text-align: center; /* Center align the text */
+  text-decoration: underline;
+}
+
+.second-row .btn:first-child {
+  border-left: none; /* Remove left border from the first button */
+}
+
+.second-row .btn:last-child {
+  border-right: none; /* Remove right border from the last button */
+}
+
+/* Styles for the search bar */
+.search-bar {
+  flex-grow: 1;
+  max-width: 100%; /* Adjust the width as needed */
+}
+/* ----------slider section styling------------- */
+
+/* Styles for the new section */
+.new-section {
+  background-image: url('../../../assets/background.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 80vh; /* Adjust height as needed */
+  position: relative;
+  color: white; /* Text color */
+}
+
+.overlay {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Ensure space between heading and buttons */
+  align-items: center;
+  padding: 20px;
+}
+
+.welcome-message {
+  background-color: #b71c1c; /* Deep red background */
+  padding: 10px;
+  display: inline-block;
+  text-align: center;
+  text-decoration: underline;
+  width: 100%;
+  max-width: 700px;
+  margin-top: auto; /* Center the heading in the vertical space */
+  margin-bottom: 0;
+}
+
+.welcome-message-outer-div{
+  position: relative;
+  top: 40%;
+}
+
+.mt-auto {
+  margin-top: auto;
+  width: 100%;
+}
+
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}
+
+.btn-danger {
+  background-color: #b71c1c; /* Deep red background */
+  box-shadow: none; /* Remove any default shadow to ensure border visibility */
+  border-radius: 0%;
+  text-decoration: underline;
+  font-size: x-large;
+}
+
+.welcome-message-outer-div, 
+.btn-div {
+  border: 6px solid rgba(128, 128, 128, 0.5);
+  padding: 0;
+  margin: 5px;
+}
+
+.btn-row{
+  flex-wrap: nowrap;
+}
+
+/* second search bar styling */
+#search-input{
+  background-color: #b34444;
+}
+
+
+/* Styles for the product categories section */
+.product-categories {
+  width: 100%; /* Full width */
+  padding-left: 20px; /* Add spacing on the left */
+  padding-right: 20px; /* Add spacing on the right */
+}
+
+.product-categories .category-item {
+  background-color: #f8f9fa; /* Light gray background */
+  transition: transform 0.3s; /* Smooth transition for hover effect */
+  display: flex;
+  align-items: center;
+}
+
+.product-categories .category-item:hover {
+  transform: translateY(-5px); /* Slight lift effect on hover */
+}
+
+.product-categories .category-item img {
+  max-height: 80px; /* Adjust height of images */
+  margin-right: 15px; /* Add margin to the right of the image */
+}
+
+.product-categories .category-item h5 {
+  font-size: 1.25rem; /* Adjust font size of headings */
+  margin-top: 0; /* Remove default top margin */
+  margin-bottom: 5px; /* Adjust bottom margin */
+}
+
+.product-categories .category-item p {
+  font-size: 0.875rem; /* Adjust font size of product count */
+  color: #6c757d; /* Gray text color for product count */
+  margin: 0; /* Remove default margins */
+}
+
+/* -----------styling for product section------------ */
+
+.product-section {
+  padding-left: 15px; /* Adjust padding for better spacing */
+  padding-right: 15px; /* Adjust padding for better spacing */
+}
+
+.product-item {
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 10px;
+  text-align: center;
+  margin-left: 10px; /* Adjust margin for better spacing */
+  margin-right: 10px; /* Adjust margin for better spacing */
+}
+
+.product-item img {
+  max-height: 150px;
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+
+.product-item .btn {
+  font-size: 14px;
+  padding: 5px;
+  text-decoration: none;
+}
+
+.product-item .btn-danger {
+  background-color: #b71c1c;
+  border-color: #b71c1c;
+}
+
+.product-item .btn-outline-danger {
+  color: #b71c1c;
+  border-color: #b71c1c;
+}
+
+.product-item .btn-outline-danger:hover {
+  background-color: #b71c1c;
+  color: #fff;
+}
+
+.product-section .col-md-3 {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.product-section .border-right {
+  border-right: 2px solid #b71c1c;
+}
+
+#shopping_cart-view-buttons{
+  border-top: 2px solid #b71c1c;
+}
+
+.hr-divider {
+  border: 0;
+  border-top: 5px solid #ff0000;
+  margin: 20px 0; /* Adjust margin for better spacing */
+}
+
+.quantity-control .form-control {
+  padding: 5px;
+  height: auto;
+}
+
+.quantity-control .btn-sm {
+  font-size: 16px;
+  padding: 5px 10px;
+}
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #b71c1c;
+  color: white;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.red-div {
+  background-color: #b71c1c;
+  color: white;
+  padding: 0px;
+  border-radius: 4px;
+}
+
+.red-div span {
+  margin-left: 5px;
+  margin-right: 5px;
+}
