@@ -1,0 +1,33 @@
+<div class="container">
+    <header>
+        <img src="assets/logo.png" alt="US Auto Parts Logo" class="logo">
+        <h1>Login Portal</h1>
+    </header>
+    <main>
+        <div class="login-options">
+            <div class="login-card" id="customer-login">
+                <h2>Customer Login</h2>
+                <p>Access your personal account</p>
+                <button class="login-btn" [routerLink]="['user-1']">Login</button>
+            </div>
+            <div class="login-card" id="business-login">
+                <h2>Business Login</h2>
+                <p>For registered business users</p>
+                <button class="login-btn" [routerLink]="['user-2']">Login</button>
+            </div>
+            <div class="login-card" id="merchant-login">
+                <h2>Merchant Login</h2>
+                <p>Access your merchant dashboard</p>
+                <button class="login-btn" [routerLink]="['user-3']">Login</button>
+            </div>
+            <div class="login-card" id="admin-login"> 
+                <h2>Admin Login</h2>
+                <p>Restricted access for administrators</p>
+                <button class="login-btn" [routerLink]="['user-4']">Login</button>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 US Auto Parts. All rights reserved.</p>
+    </footer>
+</div>

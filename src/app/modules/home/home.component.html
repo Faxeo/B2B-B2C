@@ -18,8 +18,8 @@
         <i class="fa-solid fa-cart-shopping fa-2xl large-icon"></i>
       </button>
       <div id="login_buttons" class="d-flex flex-column align-items-end ms-2">
-        <button class="btn btn-outline-light mb-2 red-button" routerLink="/login">Login</button>
-        <button class="btn btn-outline-light red-button" routerLink="/signup">Signup</button>
+        <button class="btn btn-outline-light mb-2 red-button" [routerLink]="['users']" >Login</button>
+        <button class="btn btn-outline-light red-button" routerLink="/signup">Signup</button> 
       </div>
     </div>
   </div>
@@ -68,121 +68,7 @@
   </div>
 </div>
 
-
-
-<!-- Product Categories Section -->
-<!-- <div class="product-categories container-fluid my-5 px-5">
-  <div class="row">
-    <div class="col-md-3 col-sm-6 mb-4">
-      <div class="category-item d-flex justify-content-between align-items-center p-3 border">
-        <div>
-          <h5>Belt Drive System</h5>
-          <p>102 products</p>
-        </div>
-        <img src="assets/belt-drive-system.png" alt="Belt Drive System" class="img-fluid">
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-4">
-      <div class="category-item d-flex justify-content-between align-items-center p-3 border">
-        <div>
-          <h5>Body Parts</h5>
-          <p>92 products</p>
-        </div>
-        <img src="assets/body-parts.png" alt="Body Parts" class="img-fluid">
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-4">
-      <div class="category-item d-flex justify-content-between align-items-center p-3 border">
-        <div>
-          <h5>Brake System</h5>
-          <p>96 products</p>
-        </div>
-        <img src="assets/brake-system.png" alt="Brake System" class="img-fluid">
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-4">
-      <div class="category-item d-flex justify-content-between align-items-center p-3 border">
-        <div>
-          <h5>Cooling Systems</h5>
-          <p>103 products</p>
-        </div>
-        <img src="assets/cooling-systems.png" alt="Cooling Systems" class="img-fluid">
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-4">
-      <div class="category-item d-flex justify-content-between align-items-center p-3 border">
-        <div>
-          <h5>Electricals</h5>
-          <p>105 products</p>
-        </div>
-        <img src="assets/electricals.png" alt="Electricals" class="img-fluid">
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-4">
-      <div class="category-item d-flex justify-content-between align-items-center p-3 border">
-        <div>
-          <h5>Filters</h5>
-          <p>536 products</p>
-        </div>
-        <img src="assets/filters.png" alt="Filters" class="img-fluid">
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-4">
-      <div class="category-item d-flex justify-content-between align-items-center p-3 border">
-        <div>
-          <h5>Engine</h5>
-          <p>141 products</p>
-        </div>
-        <img src="assets/engine.png" alt="Engine" class="img-fluid">
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-4">
-      <div class="category-item d-flex justify-content-between align-items-center p-3 border">
-        <div>
-          <h5>Suspension</h5>
-          <p>214 products</p>
-        </div>
-        <img src="assets/suspension.png" alt="Suspension" class="img-fluid">
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-4">
-      <div class="category-item d-flex justify-content-between align-items-center p-3 border">
-        <div>
-          <h5>Oils and Coolants</h5>
-          <p>28 products</p>
-        </div>
-        <img src="assets/oils-and-coolants.png" alt="Oils and Coolants" class="img-fluid">
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-4">
-      <div class="category-item d-flex justify-content-between align-items-center p-3 border">
-        <div>
-          <h5>Lightings</h5>
-          <p>15 products</p>
-        </div>
-        <img src="assets/lightings.png" alt="Lightings" class="img-fluid">
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-4">
-      <div class="category-item d-flex justify-content-between align-items-center p-3 border">
-        <div>
-          <h5>Fuel System</h5>
-          <p>27 products</p>
-        </div>
-        <img src="assets/fuel-system.png" alt="Fuel System" class="img-fluid">
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-4">
-      <div class="category-item d-flex justify-content-between align-items-center p-3 border">
-        <div>
-          <h5>Gear System</h5>
-          <p>10 products</p>
-        </div>
-        <img src="assets/gear-system.png" alt="Gear System" class="img-fluid">
-      </div>
-    </div>
-  </div>
-</div> -->
+        <!------------ Product categories -------------------->
 
 <div class="product-categories container-fluid my-5 px-5">
   <div class="row">
@@ -234,3 +120,5 @@
     </ng-container>
   </div>
 </div>
+
+

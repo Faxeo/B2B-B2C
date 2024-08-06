@@ -4,18 +4,21 @@ import { ApiService } from '../../core/services/api.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpClientModule } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
     CommonModule,
-    HttpClientModule
+    HttpClientModule,
+    RouterModule
   ],
-  providers: [ApiService], // Add this line
+  providers: [ApiService], 
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
+
 export class HomeComponent implements OnInit {
   categories$: Observable<any[]> | undefined;
   products$: Observable<any[]> | undefined;
