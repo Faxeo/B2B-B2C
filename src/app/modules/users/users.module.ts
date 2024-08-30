@@ -3,23 +3,30 @@ import { CommonModule } from '@angular/common';
 
 import { UsersRoutingModule } from './users-routing.module';
 import { UsersComponent } from './users/users.component';
-import { User1Component } from './user-1/user-1.component';
-import { User2Component } from './user-2/user-2.component';
-import { User3Component } from './user-3/user-3.component';
-import { User4Component } from './user-4/user-4.component';
+import { CustomerLoginComponent } from './customer-login/customer-login.component';
+import { BusinessLoginComponent } from './business-login/business-login.component';
+import { MerchantLoginComponent } from './merchant-login/merchant-login.component';
+import { AdminSidebarComponent } from './admin-sidebar/admin-sidebar.component';
+import { FormsModule } from '@angular/forms';
+import { AdminDashboardComponent } from '../../dashboard/admin-dashboard/admin-dashboard.component';
+import { SidebarComponent } from '../../layout/sidebar/sidebar/sidebar.component';
 
 
 @NgModule({
   declarations: [
     UsersComponent,
-    User1Component,
-    User2Component,
-    User3Component,
-    User4Component
+    CustomerLoginComponent,
+    BusinessLoginComponent,
+    MerchantLoginComponent,
+    AdminSidebarComponent,
+    
   ],
   imports: [
     CommonModule,
-    UsersRoutingModule
+    UsersRoutingModule,
+    FormsModule,
+    SidebarComponent,
+    AdminDashboardComponent
   ],
   exports: [UsersRoutingModule]
 })

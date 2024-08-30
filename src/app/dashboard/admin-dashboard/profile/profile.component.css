@@ -1,0 +1,105 @@
+.admin-dashboard {
+  /* background-color: #f7f9fc; */
+  max-width: 400px;
+  margin-top: 30px;
+  /* margin-left: 40px; */
+  /* position: relative; */
+  
+  .loading{
+    margin-left: 250px;
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+}
+
+.profile-container {
+  background-color: #f7f9fc;
+  border-radius: 8px;
+  padding: 20px;
+  margin-left: 200px;
+  width: 100%;
+
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.348); */
+  box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px,
+    rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 56px;
+}
+
+.profile-container h2 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: #333;
+}
+  
+.profile-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.profile-table tr {
+  border-bottom: 1px solid #f7f9fc;
+}
+
+.profile-table td {
+  padding: 10px;
+  font-size: 1rem;
+  color: #555;
+}
+
+.profile-table .field {
+  font-weight: bold;
+  color: #333;
+  width: 40%;
+}
+
+.profile-table .value {
+  width: 60%;
+  text-align: right;
+}
+
+.profile-table input {
+  width: 100%;
+  padding: 5px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.profile-table input[disabled] {
+  background-color: #e9ecef;
+}
+
+.save-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #2c3e50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  margin-left: 110px;
+}
+
+.save-button:hover {
+  background-color: #425b73;
+}
+
+.error {
+  margin-top: 20px;
+  color: red;
+  font-size: 1rem;
+  margin-left: 300px;
+}
+
+.no-profile{
+  margin-top: 20px;
+  margin-left: 100px;
+  position: relative;
+  left: 500px;
+}
+

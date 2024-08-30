@@ -1,0 +1,56 @@
+.task-list {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 1.5em;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 1100px;
+}
+
+.task-list h2 {
+  caption-side: top;
+  text-align: center;
+  padding-bottom: 10px;
+  font-weight: bold;
+  font-size: 25px;
+  margin-bottom: 1em;
+  color: #2c3e50;
+}
+ 
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-right: 10px;
+}
+
+thead {
+  background-color: #ecf0f1;
+  font-weight: bold;
+}
+
+th,
+td {
+  padding: 1em;
+  text-align: left;
+  border: 1px solid #dcdde1;
+}
+
+thead tr th {
+  background-color: #2c3e50;
+  color: #ffffff;
+}
+
+.status {
+  font-weight: bold;
+  border-radius: 12px;
+  padding: 0.2em 0.5em;
+}
+
+.status.in-progress {
+  background-color: #3498db;
+  color: #fff;
+}
+
+.status.done {
+  background-color: #2ecc71;
+  color: #fff;
+}

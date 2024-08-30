@@ -1,0 +1,28 @@
+<div class="container">
+    <nav class="sidebar">
+      <div class="logo">
+        <img src="/assets/logo.png" alt="Logo">
+        <span>Sanwa Systems</span>
+      </div> 
+  
+      <ul>
+        <li [class.active]="selectedComponent === 'profile'">
+          <a (click)="selectComponent('profile')"><i class="icon"></i>Profile</a>
+        </li>
+        <li [class.active]="selectedComponent === 'orders-to-ship'">
+          <a (click)="selectComponent('orders-to-ship')"><i class="icon"></i>Orders to Ship</a>
+        </li>
+        <li [class.active]="selectedComponent === 'orders-to-receive'">
+          <a (click)="selectComponent('orders-to-receive')"><i class="icon"></i>Orders to Receive</a>
+        </li>
+      </ul>  
+      <div class="profile">
+        <img src="/assets/profile.png" alt="Profile">
+        <div>
+          <span>Business User</span>
+          <p>user&#64;mail.com</p>
+        </div>
+      </div>
+    </nav>
+  </div>
+  

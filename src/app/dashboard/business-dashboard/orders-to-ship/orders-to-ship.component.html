@@ -1,0 +1,39 @@
+<div class="table-container">
+  <h2>Orders to Ship</h2>
+  <div *ngIf="isLoading" class="loading-indicator">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+  <div *ngIf="errorMessage">{{ errorMessage }}</div>
+  <table *ngIf="!isLoading && !errorMessage">
+    <thead>
+      <tr>
+        <th>Order Date</th>
+        <th>Total Amount</th>
+        <th>Total Quantity</th>
+        <th>Transaction ID</th>
+        <th>Customer</th>
+        <th>Order Status</th>
+        <th>Order Tracking</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngIf="orders && orders.length > 0; else noOrdersTemplate">
+        <tr *ngFor="let order of orders">
+          <td>{{ order.orderDate }}</td>
+          <td>{{ order.totalAmount }}</td>
+          <td>{{ order.totalQuantity }}</td>
+          <td>{{ order.transactionId }}</td>
+          <td>{{ order.customer }}</td>
+          <td>{{ order.orderStatus }}</td>
+          <td>{{ order.orderTracking }}</td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+  <ng-template #noOrdersTemplate>
+    <tr>
+      <td colspan="7" class="no-orders">No orders found</td>
+    </tr>
+  </ng-template>
+</div>

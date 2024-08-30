@@ -1,32 +1,47 @@
-import { Component, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import path from 'path';
 import { UsersComponent } from './users/users.component';
-import { User1Component } from './user-1/user-1.component';
-import { User2Component } from './user-2/user-2.component';
-import { User3Component } from './user-3/user-3.component';
-import { User4Component } from './user-4/user-4.component';
+import { CustomerLoginComponent } from './customer-login/customer-login.component';
+import { BusinessLoginComponent } from './business-login/business-login.component';
+import { MerchantLoginComponent } from './merchant-login/merchant-login.component';
+import { AdminSidebarComponent } from './admin-sidebar/admin-sidebar.component';
+import { AdminDashboardComponent } from '../../dashboard/admin-dashboard/admin-dashboard.component';
+import { DashboardComponent } from '../../dashboard/dashboard.component';
 
 const routes: Routes = [
-  {
+  {  
     path: '',
     component: UsersComponent
   },
   {
-    path: 'user-1',
-    component: User1Component
+    path: 'customerlogin',
+    component: CustomerLoginComponent
   },
   {
-    path: 'user-2',
-    component: User2Component
+    path: 'businesslogin',
+    component: BusinessLoginComponent
   },
   {
-    path: 'user-3',
-    component: User3Component
+    path: 'merchantlogin',
+    component: MerchantLoginComponent
   },
   {
-    path: 'user-4',
-    component: User4Component
+    path: 'adminlogin',
+    component: AdminSidebarComponent
+  },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    // children: [
+    //   {
+    //     path: 'admin',
+    //     component: AdminDashboardComponent
+    //   }
+    // ]
+  },
+  {
+    path: 'admin',
+    component: AdminDashboardComponent
   }
 ];
 

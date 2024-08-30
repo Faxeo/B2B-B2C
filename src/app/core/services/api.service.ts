@@ -16,6 +16,7 @@ export class ApiService {
   }
 
   post<T>(url: string, data: any): Observable<T> {
+    // console.log('Posting to:', `${this.baseUrl}/${url}`, data); 
     return this.http.post<T>(`${this.baseUrl}/${url}`, data);
   }
 
@@ -27,6 +28,14 @@ export class ApiService {
   // Fetch products
   getProducts(): Observable<any[]> {
     return this.post<any[]>('Product/getProducts', {});
+  }
+
+  getSubCategories(parentID: number): Observable<any[]> {
+    const requestData = {
+      level: 1, 
+      parentID: parentID
+    };
+    return this.post<any[]>('Product/getSubCategories', requestData);
   }
 
   // Add other methods (put, delete) as needed

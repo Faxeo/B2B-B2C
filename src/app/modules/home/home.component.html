@@ -6,33 +6,52 @@
     <a class="navbar-brand logo" routerLink="/">
       <img src="assets/logo.png" alt="US Auto Parts" height="50" width="80%">
     </a>
-    <div class="d-flex flex-grow-1 align-items-center">
-      <div class="input-group search-bar">
-        <!-- <input class="form-control inner-search" type="search" placeholder="Search here" aria-label="Search"> -->
+    <div class="d-flex flex-grow-1 align-items-center justify-content-between">
+      <div class="input-group search-bar me-3">
         <div class="form-control inner-search" style="padding: 8px 0px 8px 12px;">
           <input id="search-input" class="form-control" type="search" placeholder="Search here" aria-label="Search">
         </div>
-        <span class="input-group-text border-0 red-button inner-search"><button class="bg-transparent border-0"><i class="fa fa-search fa-xl text-white"></i></button></span>
+        <span class="input-group-text border-0 red-button inner-search">
+          <button class="bg-transparent border-0"><i class="fa fa-search fa-xl text-white"></i></button>
+        </span>
       </div>
-      <button class="btn btn-outline-light ms-2 red-button" id="shopping_cart" routerLink="/cart">
-        <i class="fa-solid fa-cart-shopping fa-2xl large-icon"></i>
-      </button>
-      <div id="login_buttons" class="d-flex flex-column align-items-end ms-2">
-        <button class="btn btn-outline-light mb-2 red-button" [routerLink]="['users']" >Login</button>
-        <button class="btn btn-outline-light red-button" routerLink="/signup">Signup</button> 
+      <div class="d-flex align-items-center">
+        <!-- Cart Icon, only shown if not admin -->
+        <button *ngIf="loginType !== 'admin'" class="btn btn-outline-light ms-2 red-button" id="shopping_cart" routerLink="/cart">
+          <i class="fa-solid fa-cart-shopping fa-2xl large-icon"></i>
+        </button>
+
+        <!-- Login Sign-up button, shown if no loginType or not admin -->
+        <button *ngIf="!loginType || loginType !== 'admin'" class="btn btn-outline-light me-2 red-button login-btn" (click)="openSidebar()">Login Sign-up</button>
+
+        <!-- Admin Sidebar Trigger, shown if loginType is admin -->
+        <button *ngIf="loginType === 'admin'" class="btn btn-outline-light me-2 red-button" (click)="toggleAdminSidebar()">Admin</button>
+        
+        <!-- Optionally display the login type text -->
+        <span *ngIf="loginType" class="text-white me-2">{{ loginType }}</span>
       </div>
     </div>
   </div>
 </nav>
-<div class="divider"></div>
-<div class="second-row d-flex justify-content-around align-items-center mt-1">
-  <a class="btn text-white" routerLink="/">Home</a>
-  <a class="btn text-white" routerLink="/all-products">All Products</a>
-  <a class="btn text-white" routerLink="/new-products">New Products</a>
-  <a class="btn text-white" routerLink="/contact">Contact</a>
-  <a class="btn text-white" routerLink="/faq">FAQ's</a>
-  <a class="btn text-white" routerLink="/ads">Ad's</a>
+
+<!-- Admin Sidebar Options -->
+<div *ngIf="isAdminSidebarVisible && loginType === 'admin'" class="admin-sidebar-options">
+  <ul>
+    <li><a routerLink="/admin-dashboard">Profile</a></li>
+    <li><a routerLink="/" (click)="logout()" >Logout</a></li>
+    <li><a routerLink="/admin-reports">Wishlist</a></li>
+    <li><a routerLink="/admin-settings">Your Orders</a></li>
+  </ul>
 </div>
+
+
+
+
+<!-- Sidebar -->
+<app-sidebar></app-sidebar>
+ 
+<!-- Rest of the home component content -->
+
 
 
 <!-- New Section with Background Image -->
@@ -64,11 +83,12 @@
     <div class="form-control inner-search">
       <input id="search-input" class="form-control" type="search" placeholder="Search here" aria-label="Search">
     </div>
-    <span class="input-group-text border-0 red-button inner-search"><button class="bg-transparent border-0"><i class="fa fa-search fa-xl text-white"></i></button></span>
+    <span class="input-group-text border-0 red-button inner-search"><button class="bg-transparent border-0"><i
+          class="fa fa-search fa-xl text-white"></i></button></span>
   </div>
 </div>
 
-        <!------------ Product categories -------------------->
+<!------------ Product categories -------------------->
 
 <div class="product-categories container-fluid my-5 px-5">
   <div class="row">
@@ -82,25 +102,27 @@
       </div>
     </div>
   </div>
-</div>
+</div>  
 
 
 <!-- ---------- product section--------------- -->
 
-
 <!-- New Product Section -->
-<div class="product-section container-fluid my-5 px-4">
+<!-- <div class="product-section container-fluid my-5 px-4">
   <div class="row">
     <ng-container *ngFor="let product of products$ | async; let i = index">
-      <div class="col-md-3 col-sm-6 mb-4 product-container" [ngClass]="{'border-right': (i+1) % 4 !== 0}">
+      <div class="col-md-3 col-sm-6 mb-4 product-container" 
+           [ngClass]="{'border-right': (i+1) % 4 !== 0, 'border-bottom': (i+1) % 4 === 0}">
         <div class="product-item border p-3">
-          <img [src]="'https://usautoparts-beta.azurewebsites.net/Images/Products/' + product.product_image" [alt]="product.product_name" class="img-fluid mb-2">
+          <img [src]="'https://usautoparts-beta.azurewebsites.net/Images/Products/' + product.product_image"
+            [alt]="product.product_name" class="img-fluid mb-2">
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <div class="red-div px-2 align-items-center justify-content-end" style="padding-top: .3rem !important; padding-bottom: .5rem !important; width: 50%;">
+            <div class="red-div px-2 align-items-center justify-content-end"
+              style="padding-top: .3rem !important; padding-bottom: .5rem !important; width: 50%;">
               <span class="me-2">{{ product.product_name }}</span>
               <span>${{ product.product_price }}</span>
             </div>
-            <div class="d-flex align-items-center ">
+            <div class="d-flex align-items-center">
               <div class="quantity-control d-flex align-items-center red-div px-2 me-2">
                 <span>Qty.</span>
                 <button class="btn btn-danger btn-sm me-1">-</button>
@@ -114,11 +136,81 @@
             <button class="btn btn-outline-danger w-100 ms-1">VIEW</button>
           </div>
         </div>
-      </div>
+      </div> -->
       <!-- Divider after every 4 items -->
-      <div *ngIf="(i+1) % 4 === 0" class="w-100 hr-divider"></div>
+      <!-- <div *ngIf="(i+1) % 4 === 0" class="w-100 hr-divider"></div>
     </ng-container>
+  </div>
+</div> -->
+
+
+<!-- Sliding Product Row Section -->
+<!-- <div class="sliding-product-row container-fluid my-5">
+  <h2>Explore Our Top Sellers</h2>
+  <div class="row flex-nowrap slider" id="productSlider">
+    <ng-container *ngFor="let product of products$ | async">
+      <div class="col-auto product-container">
+        <div class="product-item border p-3">
+          <img [src]="'https://usautoparts-beta.azurewebsites.net/Images/Products/' + product.product_image"
+            [alt]="product.product_name" class="img-fluid mb-2">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="red-div px-2 align-items-center justify-content-end"
+              style="padding-top: .3rem !important; padding-bottom: .5rem !important; width: 50%;">
+              <span class="me-2">{{ product.product_name }}</span>
+              <span>${{ product.product_price }}</span>
+            </div>
+            <div class="d-flex align-items-center">
+              <div class="quantity-control d-flex align-items-center red-div px-2 me-2">
+                <span>Qty.</span>
+                <button class="btn btn-danger btn-sm me-1">-</button>
+                <input type="text" class="form-control text-center" value="0" style="width: 35px;">
+                <button class="btn btn-danger btn-sm ms-1">+</button>
+              </div>
+            </div>
+          </div>
+          <div id="shopping_cart-view-buttons" class="d-flex justify-content-between pt-2">
+            <button class="btn btn-danger w-100 me-1">ADD TO CART</button>
+            <button class="btn btn-outline-danger w-100 ms-1">VIEW</button>
+          </div>
+
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div> -->
+
+<!-- Horizontal Scrollable Product Row Section -->
+ 
+<h2>Explore Our Top Sellers</h2>
+<div class="scrolling-product-row container-fluid my-5">
+  <div class="scroll-container">
+    <div class="product-container" *ngFor="let product of products$ | async">
+      <div class="product-item border p-3">
+        <img [src]="'https://usautoparts-beta.azurewebsites.net/Images/Products/' + product.product_image"
+          [alt]="product.product_name" class="img-fluid mb-2">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div class="red-div px-2 align-items-center justify-content-end"
+            style="padding-top: .3rem !important; padding-bottom: .5rem !important; width: 50%;">
+            <span class="me-2">{{ product.product_name }}</span>
+            <span>${{ product.product_price }}</span>
+          </div>
+          <div class="d-flex align-items-center">
+            <div class="quantity-control d-flex align-items-center red-div px-2 me-2">
+              <span>Qty.</span>
+              <button class="btn btn-danger btn-sm me-1">-</button>
+              <input type="text" class="form-control text-center" value="0" style="width: 35px;">
+              <button class="btn btn-danger btn-sm ms-1">+</button>
+            </div>
+          </div>
+        </div>
+        <div id="shopping_cart-view-buttons" class="d-flex justify-content-between pt-2">
+          <button class="btn btn-danger w-100 me-1">ADD TO CART</button>
+          <button class="btn btn-outline-danger w-100 ms-1">VIEW</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 
+<app-footer></app-footer>
