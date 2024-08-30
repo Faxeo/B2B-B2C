@@ -1,0 +1,32 @@
+<div class="sub-home-container">
+  <div class="categories-list">
+    <h2>PRODUCT CATEGORIES</h2>
+    <div class="category-wrapper" *ngFor="let category of categories$ | async">
+      <div class="category-item">
+        <img [src]="category.image" [alt]="category.name" class="category-image">
+        <span>{{ category.name }}</span>
+      </div>
+      <div class="subcategories-container">
+        <button class="scroll-btn left-btn" 
+                [class.disabled]="!scrollStates[category.id].canScrollLeft"
+                (click)="scrollLeft(category.id)"
+                [style.visibility]="scrollStates[category.id].canScrollLeft ? 'visible' : 'hidden'">
+          &#8249;
+        </button>
+        <div class="subcategories-list" #subcatList id="subcat-{{category.id}}">
+          <div class="subcategory" *ngFor="let subCategory of category.subCategories">
+            <span>{{ subCategory.name }}</span>
+          </div>
+        </div>
+        <button class="scroll-btn right-btn" 
+                [class.disabled]="!scrollStates[category.id].canScrollRight"
+                (click)="scrollRight(category.id)"
+                [style.visibility]="scrollStates[category.id].canScrollRight ? 'visible' : 'hidden'">
+          &#8250;
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

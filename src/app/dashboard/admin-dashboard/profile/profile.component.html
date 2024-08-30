@@ -1,0 +1,37 @@
+<div class="admin-dashboard">
+  <div class="loading" *ngIf="isLoading">Loading...</div> <!-- Display loading message -->
+  <div *ngIf="!isLoading && adminProfile"> <!-- Show content only if not loading -->
+    <div class="profile-container">
+      <h2>Profile</h2>
+
+      <table class="profile-table">
+        <tbody>
+          <tr>
+            <td class="field">Email</td>
+            <td class="value">
+              <input type="email" [(ngModel)]="adminProfile.customer_email" placeholder="Enter Email" disabled />
+            </td>
+          </tr>
+          <tr>
+            <td class="field">Contact</td>
+            <td class="value">
+              <input type="text" [(ngModel)]="adminProfile.ac_code" placeholder="Enter Contact Number " />
+            </td>
+          </tr>
+          <tr>
+            <td class="field">Password</td>
+            <td class="value">
+              <input type="text" [(ngModel)]="adminProfile.balance" placeholder="Enter Password" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <button (click)="saveProfile()" class="save-button">Save Changes</button>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && errorMessage"> <!-- Show error only if not loading -->
+    <p class="error">{{ errorMessage }}</p>
+  </div>
+</div>

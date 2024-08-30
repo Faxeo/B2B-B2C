@@ -1,0 +1,116 @@
+.sub-home-container {
+  padding: 20px;
+  overflow: hidden; /* Prevent the whole page from scrolling horizontally */
+}
+
+.categories-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.category-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  /* margin-right: -30px; */
+}
+
+.category-item {
+  width: 400px;
+  height: 200px;
+  font-size: 24px;
+  font-weight: 500;
+  background-color: #F5F5F5;
+  border-radius: 10px;
+  padding: 10px;
+  padding-right: 10px;
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+  /* border-right: 2px solid #b71c1c; */
+  box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px,
+    rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 56px;
+  img{
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+  }
+}
+
+.category-item:hover {
+  cursor: pointer;
+}
+
+.category-image {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+.subcategories-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: calc(100% - 100px); /* Ensure it fits within the screen */
+  overflow: hidden;
+  height: 100%;
+}
+
+.subcategories-list {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto; /* Make only the subcategory list scrollable */
+  scroll-behavior: smooth;
+  white-space: nowrap;
+  width: 100%;
+  margin: 10px;
+  margin-right: 30px;
+}
+
+
+
+.subcategory {
+  background-color: #f0f0f0;
+  padding: 10px;
+  height: 200px;
+  min-width: 300px;
+  border-radius: 5px;
+  /* box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px,
+    rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 56px; */
+}
+
+/* Hide scrollbar */
+.subcategories-list::-webkit-scrollbar {
+  display: none;
+}
+
+.subcategories-list {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  margin-left: 20px;
+}
+
+.scroll-btn {
+  background-color: transparent;
+  color: #b71c1c;
+  border: none;
+  font-size: 64px;
+  cursor: pointer;
+  user-select: none;
+  position: absolute;
+  z-index: 10;
+  transition: color 0.3s ease;
+}
+
+.left-btn {
+  left: -10px;
+}
+
+.right-btn {
+  right: 0;
+}
+
+.scroll-btn.disabled {
+  color: #d3d3d3;
+  cursor: not-allowed;
+}

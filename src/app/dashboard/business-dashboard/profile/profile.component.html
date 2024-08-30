@@ -1,0 +1,36 @@
+<div class="business-dashboard">
+  <div *ngIf="isLoading" class="loading-indicator">
+    <!-- Replace with your desired loading spinner -->
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+
+  <div *ngIf="!isLoading && businessProfile">
+    <div class="profile-container">
+      <h2>Profile</h2>
+      <table class="profile-table">
+        <tbody>
+          <tr>
+            <td class="field">Email</td>
+            <td class="value">
+              <input type="email" [(ngModel)]="businessProfile.customer_email" disabled />
+            </td>
+          </tr>
+          <tr>
+            <td class="field">Contact</td>
+            <td class="value">
+              <input type="text" [(ngModel)]="businessProfile.ac_code" placeholder="Enter Contact Number" />
+            </td>
+          </tr>
+          <tr>
+            <td class="field">Password</td>
+            <td class="value">
+              <input type="password" [(ngModel)]="businessProfile.password" placeholder="Enter Password" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <button (click)="saveProfile()" class="save-button">Save Changes</button>
+    </div>
+  </div>
+</div>
