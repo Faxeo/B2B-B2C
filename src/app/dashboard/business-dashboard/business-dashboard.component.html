@@ -1,0 +1,20 @@
+<div class="dashboard-container">
+    <app-business-sidebar (componentSelected)="selectComponent($event)"></app-business-sidebar>
+    <div class="main-content">
+      <div *ngIf="showDefaultView()" class="content-area">
+        <app-profile></app-profile>
+        <app-orders-to-receive></app-orders-to-receive>
+        <app-orders-to-ship></app-orders-to-ship>
+      </div>
+      <div *ngIf="selectedComponent === 'orders-to-receive'" class="below-content">
+        <app-orders-to-receive></app-orders-to-receive>
+      </div>
+      <div *ngIf="selectedComponent === 'orders-to-ship'" class="below-content">
+        <app-orders-to-ship></app-orders-to-ship>
+      </div>
+      <div *ngIf="selectedComponent === 'profile'" class="below-content">
+        <app-profile></app-profile>
+      </div>
+    </div>
+  </div>
+   

@@ -1,0 +1,39 @@
+<div class="task-list">
+  <h2>Shipped Orders</h2>
+  <div *ngIf="isLoading">Loading...</div>
+  <div *ngIf="error">{{ error }}</div>
+  <table *ngIf="!isLoading && !error && shippedOrders.length > 0">
+    <thead>
+      <tr>
+        <th>Order Date</th>
+        <th>Total Amount</th>
+        <th>Total Quantity</th>
+        <th>Transaction ID</th>
+        <th>Customer</th>
+        <th>Order Status</th>
+        <th>Order Tracking</th>
+      </tr>
+    </thead>  
+    <tbody>
+      <tr *ngFor="let order of shippedOrders">
+        <td>{{ order.orderDate }}</td>
+        <td>{{ order.totalAmount }}</td>
+        <td>{{ order.totalQuantity }}</td>
+        <td>{{ order.transactionId }}</td>
+        <td>{{ order.customer }}</td>
+        <td>{{ order.orderStatus }}</td>
+        <td>{{ order.orderTracking }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="!isLoading && !error && shippedOrders.length === 0">No shipped orders found.</div>
+</div>
+
+
+
+<!-- <div class="task-list">
+  <h2>Shipped Orders</h2>
+  <table>
+    
+  </table>
+</div> -->
