@@ -1,0 +1,135 @@
+
+.checkout-container {
+  max-width: 800px;
+  overflow-y: hidden;
+  margin: 0 auto;
+  margin-top: 40px; 
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px,
+              rgba(17, 17, 26, 0.1) 0px 8px 24px,
+              rgba(17, 17, 26, 0.1) 0px 16px 56px;
+}
+
+h2,
+h3 {
+  text-align: center;
+  color: #333;
+}
+
+.payment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.form-group input {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.submit-btn {
+  background-color: #28a745;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 18px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.submit-btn:hover {
+  background-color: #218838;
+}
+
+.alternative-payments {
+  text-align: center;
+  margin-top: 24px;
+}
+
+.payment-methods {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.payment-methods img {
+  width: 50px;
+  height: auto;
+  cursor: pointer;
+}
+
+.payment-methods img:hover {
+  opacity: 0.8;
+}
+
+.payment-methods-card {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  margin-left: 20px;
+  gap: 36px;
+  margin-top: 16px;
+}
+
+.payment-methods-card img {
+  width: 50px;
+  height: auto;
+  cursor: pointer;
+}
+
+.payment-methods-card img:hover {
+  opacity: 0.8;
+}
+
+.loading-spinner {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #333;
+  margin-top: 20px;
+}
+
+.payment-message {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #333;
+  margin-top: 20px;
+}
+
+.loading-spinner {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #333;
+  margin-top: 20px;
+}
+
+.submit-btn[disabled] {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* .pay img{
+    width: 680px;
+  } */

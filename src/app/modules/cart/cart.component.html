@@ -1,0 +1,74 @@
+<div class="cart-container">
+  <h2>YOUR BAG ({{ cartItems.length }} ITEMS)</h2>
+  <div *ngIf="cartItems.length > 0; else emptyCart">
+    <div class="cart-item" *ngFor="let item of cartItems">
+      <div class="item-image">
+        <img *ngIf="!item.imageError" [src]="'https://usautoparts-beta.azurewebsites.net/Images/Products/' + item.image" [alt]="item.name" (error)="handleImageError(item)">
+        <div *ngIf="item.imageError" class="image-placeholder">{{ item.name }}</div>
+      </div>
+      <div class="item-details">
+        <h3>{{ item.name }}</h3>
+        <p>Price: ${{ item.price.toFixed(2) }}</p>
+        <div class="quantity-control">
+          <button (click)="updateQuantity(item.productId, item.quantity - 1)">-</button>
+          <input type="number" [(ngModel)]="item.quantity" (input)="onQuantityInput(item.productId, $event)" />
+          <button (click)="updateQuantity(item.productId, item.quantity + 1)">+</button>
+        </div>
+      </div>
+      <div class="item-total">
+        ${{ (item.price * item.quantity).toFixed(2) }}
+      </div>
+      <button class="remove-btn" (click)="removeFromCart(item.productId)">×</button>
+    </div>
+
+    <!-- Billing Information Section -->
+    <div class="billing-information">
+      <h3>Billing Information</h3>
+      <form (submit)="goToCheckout()">
+        <div class="form-group">
+          <label for="fullName">Full Name:</label>
+          <input type="text" id="fullName" [(ngModel)]="billing.fullName" name="fullName" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" [(ngModel)]="billing.email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="contact">Contact:</label>
+          <input type="text" id="contact" [(ngModel)]="billing.contact" name="contact" required>
+        </div>
+        <div class="form-group">
+          <label for="billingAddress">Billing Address:</label>
+          <textarea id="billingAddress" [(ngModel)]="billing.billingAddress" name="billingAddress" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="country">Country:</label>
+          <input type="text" id="country" [(ngModel)]="billing.country" name="country" readonly>
+        </div>
+        <div class="form-group">
+          <label for="state">State:</label>
+          <input type="text" id="state" [(ngModel)]="billing.state" name="state" required>
+        </div>
+        <div class="form-group">
+          <label for="city">City:</label>
+          <input type="text" id="city" [(ngModel)]="billing.city" name="city" required>
+        </div>
+        <div class="form-group">
+          <label for="zipcode">Zipcode:</label>
+          <input type="text" id="zipcode" [(ngModel)]="billing.zipcode" name="zipcode" required>
+        </div>
+        <div class="cart-summary">
+          <div class="subtotal-container">
+            <span class="subtotal-label">Subtotal:</span>
+            <span class="subtotal-amount">${{ calculateSubtotal().toFixed(2) }}</span>
+          </div>
+        </div>
+              
+        <button type="submit" class="checkout">CHECKOUT</button>
+      </form>
+    </div>
+  </div>
+  <ng-template #emptyCart>
+    <p>Your cart is empty.</p>
+  </ng-template>
+</div>

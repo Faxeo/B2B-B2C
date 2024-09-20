@@ -1,1 +1,234 @@
-<p>my-garage works!</p>
+<div class="my-garage-container" [class.blurred]="showVehicleForm">
+    <h1 class="garage-title">Welcome to My Garage</h1>
+    <div class="garage-content">
+        <!-- Left Section: Vehicle List and Forms -->
+        <div class="vehicles-section">
+            <!-- Demo Vehicles -->
+            <div *ngFor="let vehicle of demoVehicleData; let i = index" class="vehicle-card">
+                <div class="vehicle-header">
+                    <h3 class="vehicle-title">{{ i + 1 }}.</h3>
+                    <div class="vehicle-info">
+                        <div class="info-container">
+                            <label>YEAR</label>
+                            <div class="info-box">
+                                <span>{{ vehicle.year }}</span>
+                            </div>
+                        </div>
+                        <div class="info-container">
+                            <label>MAKE</label>
+                            <div class="info-box">
+                                <span>{{ vehicle.make }}</span>
+                            </div>
+                        </div>
+                        <div class="info-container">
+                            <label>MODEL</label>
+                            <div class="info-box">
+                                <span>{{ vehicle.model }}</span>
+                            </div>
+                        </div>
+                        <div class="info-container">
+                            <label>TRIM</label>
+                            <div class="info-box">
+                                <span>{{ vehicle.trim }}</span>
+                            </div>
+                        </div>
+                        <div class="info-container">
+                            <label>ENGINE</label>
+                            <div class="info-box">
+                                <span>{{ vehicle.engine }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Purchased Products Table -->
+                <h4 class="purchased-products-title">PURCHASED PRODUCTS</h4>
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Part Number</th>
+                            <th>Unit Price</th>
+                            <th>Your Price</th>
+                            <th>Total Price</th>
+                            <th>Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let product of vehicle.products">
+                            <td>{{ product.name }}</td>
+                            <td class="part-number">{{ product.partNumber }}</td>
+                            <td>{{ product.unitPrice }} $</td>
+                            <td>{{ product.totalPrice }} $</td>
+                            <td>{{ product.totalPrice }} $</td>
+                            <td>{{ product.qty }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="explore-products-button">EXPLORE MORE PRODUCTS</button>
+                    <button class="reorder-button">RE-ORDER</button>
+                </div>
+            </div>
+        </div>
+        <!-- Right Section: Advanced Search and Vehicle Image -->
+        <div class="right-section">
+            <div class="advanced-search">
+                <h4>ADVANCED SEARCH</h4>
+                <input type="text" placeholder="DATE/PART NUM/NAME" />
+                <button class="search-icon">🔍</button>
+            </div>
+            <div class="vehicle-image-section">
+                <h4>VEHICLE IMAGE</h4>
+                <img src="\assets\car.png" alt="Vehicle Image" class="vehicle-image">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fixed Position Vehicle Form -->
+<div class="vehicle-form-overlay" *ngIf="showVehicleForm">
+    <!-- Vehicle Search Form -->
+    <div class="vehicle-search-form">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="year">Year:</label>
+                <select id="year" [(ngModel)]="selectedYear" (change)="onYearChange()">
+                    <option value="" disabled selected>Select Year</option>
+                    <option *ngFor="let year of years" [value]="year.year">{{ year.year }}</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="make">Make:</label>
+                <select id="make" [(ngModel)]="selectedMake" (change)="onMakeChange()" [disabled]="!selectedYear">
+                    <option value="" disabled selected>Select Make</option>
+                    <option *ngFor="let make of makes" [value]="make.name">{{ make.name }}</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="model">Model:</label>
+                <select id="model" [(ngModel)]="selectedModel" (change)="onModelChange()" [disabled]="!selectedMake">
+                    <option value="" disabled selected>Select Model</option>
+                    <option *ngFor="let model of models" [value]="model.name">{{ model.name }}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="trim">Trim:</label>
+                <select id="trim" [(ngModel)]="selectedTrim" (change)="onTrimChange()" [disabled]="!selectedModel">
+                    <option value="" disabled selected>Select Trim</option>
+                    <option *ngFor="let trim of trims" [value]="trim.name">{{ trim.name }}</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="engine">Engine:</label>
+                <select id="engine" [(ngModel)]="selectedEngine" [disabled]="!selectedTrim">
+                    <option value="" disabled selected>Select Engine</option>
+                    <option *ngFor="let engine of engines" [value]="engine.name">{{ engine.name }}</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="search-button" (click)="getCompatibleProducts()"
+            [disabled]="!selectedYear || !selectedMake || !selectedModel || !selectedTrim || !selectedEngine">
+            Search
+        </button>
+    </div>
+
+    <!-- <div *ngIf="compatibleProducts.length > 0" class="compatible-products-section">
+        <h4>Compatible Products</h4>
+        <table class="products-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Part Number</th>
+                    <th>Price</th>
+                    <th>Origin</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let product of compatibleProducts">
+                    <td>{{ product.product_name }}</td>
+                    <td>{{ product.product_identifier2 }}</td>
+                    <td>{{ product.product_price }} $</td>
+                    <td>{{ product.product_origin }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div> -->
+
+    <div *ngIf="isLoading" class="loading-spinner">
+        <p>Loading products...</p>
+    </div>
+
+    <div *ngIf="!isLoading && compatibleProducts.length > 0" class="compatible-products-section">
+        <h4>Compatible Products</h4>
+        <table class="products-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Part Number</th>
+                    <th>Price</th>
+                    <th>Origin</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let product of compatibleProducts">
+                    <td>{{ product.product_name }}</td>
+                    <td>{{ product.product_identifier2 }}</td>
+                    <td>{{ product.product_price }} $</td>
+                    <td>{{ product.product_origin }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Pagination Controls -->
+        <!-- Pagination Controls -->
+        <div class="pagination-controls">
+            <button (click)="prevPage()" [disabled]="currentPage === 1" class="pagination-button">
+                &larr; Previous
+            </button>
+            <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</span>
+            <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="pagination-button">
+                Next &rarr;
+            </button>
+        </div>
+
+        <!-- Close Button -->
+        <button class="close-button" (click)="closeVehicleForm()">Close</button>
+    </div>
+
+
+    <!-- No Products Found Message -->
+    <div *ngIf="!isLoading && compatibleProducts.length === 0" class="compatible-products-section">
+        <h4>Compatible Products</h4>
+        <table class="products-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Part Number</th>
+                    <th>Price</th>
+                    <th>Origin</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="4" class="no-products">No Products</td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- Close Button -->
+        <button class="close-button" (click)="closeVehicleForm()">Close</button>
+    </div>
+</div>
+
+
+<!-- Add Vehicle Button -->
+<div class="vehicle-form-container" [class.blurred]="showVehicleForm">
+    <button class="add-vehicle-button" (click)="addVehicle()">Add Vehicle</button>
+</div>

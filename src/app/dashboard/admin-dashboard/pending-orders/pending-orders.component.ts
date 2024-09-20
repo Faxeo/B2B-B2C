@@ -95,5 +95,5 @@ export class PendingOrdersComponent implements OnInit {
     }).catch(err => {
       console.error('Failed to copy: ', err);
     });
-  }
+  } 
 }

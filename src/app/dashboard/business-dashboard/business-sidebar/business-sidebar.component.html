@@ -9,13 +9,22 @@
         <li [class.active]="selectedComponent === 'profile'">
           <a (click)="selectComponent('profile')"><i class="icon"></i>Profile</a>
         </li>
-        <li [class.active]="selectedComponent === 'orders-to-ship'">
+        <!-- <li [class.active]="selectedComponent === 'orders-to-ship'">
           <a (click)="selectComponent('orders-to-ship')"><i class="icon"></i>Orders to Ship</a>
-        </li>
+        </li> -->
         <li [class.active]="selectedComponent === 'orders-to-receive'">
           <a (click)="selectComponent('orders-to-receive')"><i class="icon"></i>Orders to Receive</a>
         </li>
-      </ul>  
+        <li [class.active]="selectedComponent === 'track-order'">
+          <a (click)="selectComponent('track-order')"><i class="icon"></i>Track Your Order</a>
+        </li>
+        <li [class.active]="selectedComponent === 'my-garage'">
+          <a (click)="selectComponent('my-garage')"><i class="icon"></i>My Garage</a>
+        </li>
+        <li [class.active]="selectedComponent === 'purchase-history'">
+          <a (click)="selectComponent('purchase-history')"><i class="icon"></i>Purchase History</a>
+        </li>
+      </ul>   
       <div class="profile">
         <img src="/assets/profile.png" alt="Profile">
         <div>
