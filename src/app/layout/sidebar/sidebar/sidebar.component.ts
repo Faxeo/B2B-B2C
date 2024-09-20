@@ -40,7 +40,7 @@ export class SidebarComponent implements OnInit {
     });
   }
 
-  closeSidebar() {
+  closeSidebar() { 
     this.sidebarToggleService.toggleSidebar();
   }
 
@@ -48,8 +48,7 @@ export class SidebarComponent implements OnInit {
     if (this.selectedLoginType && this.email && this.password) {
       let apiUrl = '';
       let redirectUrl = '';
-  
-      // Determine the API endpoint and redirect URL based on the selected login type
+
       switch (this.selectedLoginType) {
         case 'admin':
           apiUrl = 'Profile/customerLogin';
@@ -57,7 +56,7 @@ export class SidebarComponent implements OnInit {
           break;
         case 'business':
           apiUrl = 'Profile/businessLogin';
-          redirectUrl = '/business-dashboard';
+          redirectUrl = '/';
           break;
         case 'merchant':
           apiUrl = 'Profile/merchantLogin';
@@ -67,47 +66,37 @@ export class SidebarComponent implements OnInit {
           console.error('Unknown login type');
           return;
       }
-  
+
       const loginData = {
         email: this.email,
         password: this.password,
       };
-  
+
       this.apiService.post<any>(apiUrl, loginData).subscribe({
         next: (response) => {
           console.log('Full login response:', response);
-  
+
           if (response.token) {
             localStorage.setItem('token', response.token);
-  
-            // Set the loginType after successful login
             this.loginService.setLoginType(this.selectedLoginType);
-  
-            if (
-              response.response &&
-              response.response.data &&
-              response.response.data.customer_id
-            ) {
-              localStorage.setItem('userID', response.response.data.customer_id);
-            } else if (
-              response.response &&
-              response.response.data &&
-              response.response.data.business_id
-            ) {
-              localStorage.setItem('businessID', response.response.data.business_id);
-            } else if (
-              response.response &&
-              response.response.data &&
-              response.response.data.merchant_id
-            ) {
-              localStorage.setItem('merchantID', response.response.data.merchant_id);
+
+            if (response.response && response.response.data) {
+              if (response.response.data.customer_id) {
+                localStorage.setItem('userID', response.response.data.customer_id);
+                this.loginService.setUserID(response.response.data.customer_id); // Set userID in LoginService
+              } else if (response.response.data.customer_id) {
+                localStorage.setItem('businessID', response.response.data.customer_id);
+                localStorage.setItem('username', response.response.data.business_name);
+                this.loginService.setUserID(response.response.data.customer_id); // Set businessID in LoginService
+              } else if (response.response.data.customer_id) {
+                localStorage.setItem('merchantID', response.response.data.customer_id);
+                this.loginService.setUserID(response.response.data.customer_id); // Set merchantID in LoginService
+              } else {
+                console.error('ID is not defined in the expected location in the response data');
+              }
             } else {
-              console.error(
-                'ID is not defined in the expected location in the response data'
-              );
+              console.error('Token is not present in the response');
             }
-          } else {
-            console.error('Token is not present in the response');
           }
         },
         error: (error) => {
@@ -120,7 +109,6 @@ export class SidebarComponent implements OnInit {
       });
     }
   }
-  
 
   setLoginType(type: string) {
     this.loginService.setLoginType(type);

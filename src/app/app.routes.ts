@@ -30,6 +30,10 @@ export const routes: Routes = [
     {
         path: 'sub-home',
         loadChildren: () => import('./modules/home/sub-home/sub-home.module').then(m => m.SubHomeModule)
+    },
+    {
+        path: 'cart',
+        loadChildren: () => import('./modules/cart/cart.module').then(m => m.CartModule)
     }   
     
 ];

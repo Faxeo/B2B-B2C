@@ -16,19 +16,29 @@
         </span>
       </div>
       <div class="d-flex align-items-center">
-        <!-- Cart Icon, only shown if not admin -->
-        <button *ngIf="loginType !== 'admin'" class="btn btn-outline-light ms-2 red-button" id="shopping_cart" routerLink="/cart">
-          <i class="fa-solid fa-cart-shopping fa-2xl large-icon"></i>
-        </button>
 
-        <!-- Login Sign-up button, shown if no loginType or not admin -->
-        <button *ngIf="!loginType || loginType !== 'admin'" class="btn btn-outline-light me-2 red-button login-btn" (click)="openSidebar()">Login Sign-up</button>
+        <!-- Display the login type button if it's set and not "admin" -->
+        <button *ngIf="loginType === 'business'" class="btn btn-outline-light me-2 red-button business-btn"
+          (click)="toggleAdminSidebar()">Business</button>
 
-        <!-- Admin Sidebar Trigger, shown if loginType is admin -->
-        <button *ngIf="loginType === 'admin'" class="btn btn-outline-light me-2 red-button" (click)="toggleAdminSidebar()">Admin</button>
-        
+        <!-- Display the Login/Sign-up button only if loginType is not set and not "admin" -->
+        <button *ngIf="!loginType" class="btn btn-outline-light me-2 red-button login-btn" (click)="openSidebar()">Login
+          Sign-up</button>
+
+        <!-- Admin Sidebar Trigger, shown only if loginType is "admin" -->
+        <button *ngIf="loginType === 'admin'" class="btn btn-outline-light me-2 red-button"
+          (click)="toggleAdminSidebar()">Admin</button>
+
         <!-- Optionally display the login type text -->
         <span *ngIf="loginType" class="text-white me-2">{{ loginType }}</span>
+
+        <!-- Cart Icon, only shown if not admin -->
+        <button *ngIf="loginType !== 'admin'" class="btn btn-outline-light ms-2 red-button" id="shopping_cart"
+          routerLink="/cart">
+          <i class="fa-solid fa-cart-shopping fa-2xl large-icon"></i>
+          <!-- Display the cart item count as a badge -->
+          <span *ngIf="cartItemCount > 0" class="cart-count-badge">{{ cartItemCount }}</span>
+        </button>
       </div>
     </div>
   </div>
@@ -38,18 +48,33 @@
 <div *ngIf="isAdminSidebarVisible && loginType === 'admin'" class="admin-sidebar-options">
   <ul>
     <li><a routerLink="/admin-dashboard">Profile</a></li>
-    <li><a routerLink="/" (click)="logout()" >Logout</a></li>
+    <li><a routerLink="/" (click)="logout()">Logout</a></li>
     <li><a routerLink="/admin-reports">Wishlist</a></li>
     <li><a routerLink="/admin-settings">Your Orders</a></li>
   </ul>
 </div>
 
+<div *ngIf="isAdminSidebarVisible && loginType === 'business'" class="admin-sidebar-options">
+  <ul>
+    <li><a routerLink="/business-dashboard">Profile</a></li>
+    <li><a routerLink="/" (click)="logout()">Logout</a></li>
+    <li><a routerLink="/admin-reports">Wishlist</a></li>
+    <li><a routerLink="/admin-settings">Your Orders</a></li>
+  </ul>
+</div>
 
-
+<!-- <div *ngIf="isAdminSidebarVisible && loginType === 'business'" class="business-sidebar-options">
+  <ul>
+    <li><a routerLink="/business-dashboard">Profile</a></li>
+    <li><a routerLink="/" (click)="logout()">Logout</a></li>
+    <li><a routerLink="/business-reports">Wishlist</a></li>
+    <li><a routerLink="/business-settings">Your Orders</a></li>
+  </ul>
+</div> -->
 
 <!-- Sidebar -->
 <app-sidebar></app-sidebar>
- 
+
 <!-- Rest of the home component content -->
 
 
@@ -102,7 +127,7 @@
       </div>
     </div>
   </div>
-</div>  
+</div>
 
 
 <!-- ---------- product section--------------- -->
@@ -137,8 +162,8 @@
           </div>
         </div>
       </div> -->
-      <!-- Divider after every 4 items -->
-      <!-- <div *ngIf="(i+1) % 4 === 0" class="w-100 hr-divider"></div>
+<!-- Divider after every 4 items -->
+<!-- <div *ngIf="(i+1) % 4 === 0" class="w-100 hr-divider"></div>
     </ng-container>
   </div>
 </div> -->
@@ -180,37 +205,50 @@
 </div> -->
 
 <!-- Horizontal Scrollable Product Row Section -->
- 
+
 <h2>Explore Our Top Sellers</h2>
 <div class="scrolling-product-row container-fluid my-5">
   <div class="scroll-container">
     <div class="product-container" *ngFor="let product of products$ | async">
       <div class="product-item border p-3">
+        <!-- Product Image -->
         <img [src]="'https://usautoparts-beta.azurewebsites.net/Images/Products/' + product.product_image"
           [alt]="product.product_name" class="img-fluid mb-2">
+
         <div class="d-flex justify-content-between align-items-center mb-2">
+          <!-- Product Name and Price -->
           <div class="red-div px-2 align-items-center justify-content-end"
             style="padding-top: .3rem !important; padding-bottom: .5rem !important; width: 50%;">
             <span class="me-2">{{ product.product_name }}</span>
             <span>${{ product.product_price }}</span>
           </div>
-          <div class="d-flex align-items-center">
-            <div class="quantity-control d-flex align-items-center red-div px-2 me-2">
-              <span>Qty.</span>
-              <button class="btn btn-danger btn-sm me-1">-</button>
-              <input type="text" class="form-control text-center" value="0" style="width: 35px;">
-              <button class="btn btn-danger btn-sm ms-1">+</button>
-            </div>
+
+          <!-- Quantity Control in Home Component -->
+          <div class="quantity-control d-flex align-items-center red-div px-2 me-2">
+            <span>Qty.</span>
+            <button class="btn btn-danger btn-sm me-1" (click)="decreaseQuantity(product)">-</button>
+            <input type="number" class="form-control text-center" [(ngModel)]="product.product_quantity" style="width: 45px;">
+            <button class="btn btn-danger btn-sm ms-1" (click)="increaseQuantity(product)">+</button>
           </div>
+          
+
         </div>
+
+        <!-- Add to Cart and View Buttons -->
         <div id="shopping_cart-view-buttons" class="d-flex justify-content-between pt-2">
-          <button class="btn btn-danger w-100 me-1">ADD TO CART</button>
+          <button class="btn btn-danger w-100 me-1" (click)="addToCart(product)">Add to Cart</button>
           <button class="btn btn-outline-danger w-100 ms-1">VIEW</button>
+        </div>
+
+        <!-- Cart Confirmation Message -->
+        <div *ngIf="showMessage" class="cart-message">
+          {{ message }}
         </div>
       </div>
     </div>
   </div>
 </div>
+
 
 
 <app-footer></app-footer>

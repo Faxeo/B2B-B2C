@@ -14,6 +14,7 @@ import { SignupComponent } from './layout/sidebar/sign-up/sign-up.component';
 import { FormsModule } from '@angular/forms';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AdminDashboardComponent } from './dashboard/admin-dashboard/admin-dashboard.component';
+import { CartComponent } from './modules/cart/cart.component';
 
 
 
@@ -32,7 +33,8 @@ import { AdminDashboardComponent } from './dashboard/admin-dashboard/admin-dashb
     SidebarComponent,
     FormsModule,
     DashboardComponent,
-    AdminDashboardComponent
+    AdminDashboardComponent,
+    CartComponent,
   ],
   providers: [
     ApiService,
