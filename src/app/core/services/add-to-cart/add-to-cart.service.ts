@@ -10,11 +10,13 @@ import { CartService } from '../cart/cart.service';
 export class AddToCartService {
   constructor(private apiService: ApiService, private cartService: CartService) {}
 
-  // Method to send the add to cart request to the API
-  addToCart(productId: string, userID: string): Observable<any> {
+  // Method to send the add to cart request to the API with updated structure
+  addToCart(productId: number, userID: string, businessId: number, quantity: number): Observable<any> {
     const payload = {
       productID: productId,
-      customerID: String(userID)
+      customerID: +userID,
+      businessId: businessId,
+      quantity: quantity
     };
 
     console.log('Sending payload to API:', payload);
@@ -29,7 +31,7 @@ export class AddToCartService {
 
   updateCart(productId: string, name: string, price: number, image: string, quantity: number, upc: string): void {
     console.log('Updating cart with quantity and UPC:', quantity, upc);
-  
+
     this.cartService.addToCart({
       productId,
       name,
@@ -39,7 +41,6 @@ export class AddToCartService {
       upc 
     });
   }
-  
 
   // Method to handle API error messages
   private getErrorMessage(error: any): string {

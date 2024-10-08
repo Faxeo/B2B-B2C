@@ -34,6 +34,14 @@ export const routes: Routes = [
     {
         path: 'cart',
         loadChildren: () => import('./modules/cart/cart.module').then(m => m.CartModule)
-    }   
+    },
+    {
+        path: 'search',
+        loadChildren: () => import('./modules/search/search.module').then(m => m.SearchModule)
+    },
+    {
+        path: 'garage',
+        loadChildren: () => import('./modules/garage/garage.module').then(m => m.GarageModule)
+    }
     
 ];

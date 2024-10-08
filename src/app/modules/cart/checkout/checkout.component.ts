@@ -1,10 +1,10 @@
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';  // Import for platform detection
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CheckoutService } from '../../../core/services/checkout/checkout.service';
-import { CartService } from '../../../core/services/cart/cart.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { NgZone } from '@angular/core';
+import { CartService } from '../../../core/services/cart/cart.service';
 
 @Component({
   standalone: true,
@@ -13,35 +13,51 @@ import { NgZone } from '@angular/core';
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.css'],
 })
-
 export class CheckoutComponent implements OnInit {
   checkoutForm: FormGroup = this.fb.group({});
   checkoutPayload: any;
   sandboxAppID = 'sandbox-sq0idb-d65sQ2oY6m31SyMvrxc6eg'; // Sandbox App ID
   sandBoxLocationID = 'L0HH4QHVKNCHR'; // Sandbox Location ID
   selectedWallet: string | null = null;
-  isBrowser: boolean;  // To track whether code is running in the browser
-  isLoading: boolean = false;  // Loading state
+  isBrowser: boolean; // To track whether code is running in the browser
+  isLoading: boolean = false; // Loading state
 
   constructor(
     private fb: FormBuilder,
     private checkoutService: CheckoutService,
-    private cartService: CartService,
-    @Inject(PLATFORM_ID) private platformId: any,  // Inject PLATFORM_ID to detect environment
+    @Inject(PLATFORM_ID) private platformId: any,
     private cdr: ChangeDetectorRef,
-    private ngZone: NgZone  // Inject NgZone
+    private cartService: CartService,
+    private ngZone: NgZone
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
   ngOnInit(): void {
-    // Only execute this code if running in a browser
     if (this.isBrowser) {
-      // Retrieve checkout payload from localStorage
-      this.checkoutPayload = JSON.parse(localStorage.getItem('checkoutPayload') || '{}');
 
-      // Form validation setup
+      const userID = this.cartService.getUserID();
+      // Retrieve cart items and billing details from localStorage
+      const savedCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      const savedBillingDetails = JSON.parse(localStorage.getItem('billingDetails') || '{}');
+
+      // Log to check the saved data (optional)
+      console.log('Retrieved Cart Items from Storage:', savedCartItems);
+      console.log('Retrieved Billing Details from Storage:', savedBillingDetails);
+
+      // Use the saved cart items and billing details in the component
+      this.checkoutPayload = savedCartItems;
+
+      // Initialize form with billing details
       this.checkoutForm = this.fb.group({
+        fullName: [savedBillingDetails.fullName || '', [Validators.required]],
+        email: [savedBillingDetails.email || '', [Validators.required, Validators.email]],
+        contact: [savedBillingDetails.contact || '', [Validators.required]],
+        billingAddress: [savedBillingDetails.billingAddress || '', [Validators.required]],
+        country: [savedBillingDetails.country || 'United States', [Validators.required]],
+        state: [savedBillingDetails.state || '', [Validators.required]],
+        city: [savedBillingDetails.city || '', [Validators.required]],
+        zipcode: [savedBillingDetails.zipcode || '', [Validators.required]],
         cardName: ['', [Validators.required]],
         cardNumber: ['', [Validators.required, Validators.pattern('^[0-9]{16}$')]],
         expiryDate: ['', [Validators.required, Validators.pattern('(0[1-9]|1[0-2])/[0-9]{2}')]],
@@ -122,23 +138,41 @@ export class CheckoutComponent implements OnInit {
       }
     } catch (e) {
       console.error(e);
-      this.isLoading = false; // Reset loading state on failure
+      this.isLoading = false;
     }
   }
 
-  // Create and send the payment order to the backend
   createPaymentOrder(token: string) {
-    const billingDetails = this.cartService.getBillingDetails();
+    // Retrieve billing details from the form
+    const billingDetails = this.checkoutForm.value;
   
     if (!billingDetails) {
       console.error('Billing details not found');
+      this.isLoading = false; // Reset loading state if there's an error
       return;
     }
   
-    const cartItems = this.cartService.getCartItems();
-    const totalAmount = cartItems.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0);
+    // Retrieve cart items directly from localStorage
+    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+    
+    console.log('Cart Items used for Checkout:', cartItems);
+  
+    // Calculate totalAmount and totalQuantity based on cart items
+    const totalAmount = cartItems.reduce((sum: number, item: any) => sum + (item.discountedPrice || item.price) * item.quantity, 0);
     const totalQuantity = cartItems.reduce((sum: number, item: any) => sum + item.quantity, 0);
   
+    // Retrieve userID and loginType directly from localStorage
+    const userID = localStorage.getItem('userID');
+    const loginType = localStorage.getItem('loginType') || 'customer'; // Default to 'customer' if loginType is not available
+  
+    console.log('User ID:', userID);
+    console.log('Login Type:', loginType);
+  
+    // Determine customerID or businessID based on loginType
+    const customerID = loginType === 'customer' ? (userID ? parseInt(userID, 10) : 0) : 0;
+    const businessID = loginType === 'business' ? (userID ? parseInt(userID, 10) : 0) : 0;
+  
+    // Create checkout DTO with the retrieved details
     const checkoutDTO = {
       orderItems: cartItems.map((item: any) => ({
         productId: item.productId,
@@ -150,7 +184,7 @@ export class CheckoutComponent implements OnInit {
       })),
       totalAmount: totalAmount,
       totalQuantity: totalQuantity,
-      nonce: token,
+      nonce: token, // Payment token
       billingAddress: {
         shippingName: billingDetails.fullName,
         shippingEmail: billingDetails.email,
@@ -161,45 +195,43 @@ export class CheckoutComponent implements OnInit {
         zipCode: billingDetails.zipcode,
         contact: billingDetails.contact,
       },
-      // customerID: loginType === 'customer' ? userID : 0,  
-      // businessID: loginType === 'business' ? userID : 0 
-      customerID: 0,
-      businessID: 0,
+      customerID: customerID,
+      businessID: businessID,
     };
-    console.log('Checkout DTO:', checkoutDTO);
   
+    console.log('Updated Checkout DTO:', checkoutDTO);
+  
+    // Process the checkout using CheckoutService
     this.checkoutService.processCheckout(checkoutDTO).subscribe({
       next: (response: any) => {
-        console.log('Checkout successful:', response);
+        console.log('Checkout successful, response received:', response);
   
-        if (response && response.StatusCode === 200) {
-          console.log('Response StatusCode is 200. Clearing cart.');
-          this.clearCart();
-        } else if (response && response.StatusCode === 400) {
-          console.log('Response StatusCode is 400:', response.StatusReason);
+        if (response && response.success && response.statusCode === 200) {
+          alert('Thanks for buying from us.');
+          this.clearCart(); // Clear cart items on successful checkout
+        } else if (response && response.statusCode === 400) {
+          alert('There was an issue processing your payment: ' + (response.statusReason || 'Unknown error'));
         } else {
-          console.log('Unexpected response structure:', response);
+          alert('Unexpected response received. Please try again.');
         }
       },
       error: (error) => {
-        console.error('Checkout error', error);
+        console.error('Checkout error:', error);
+        if (error.error) {
+          console.error('API Error Response:', error.error);
+        }
+        alert('An error occurred during checkout. Please try again.');
       },
       complete: () => {
-        this.isLoading = false;
-        // Show alert when loading is complete
-        alert('Thanks for buying from us!');
-      }
+        console.log('Checkout process complete.');
+        this.isLoading = false; // Reset the loading state
+      },
     });
   }
-
-  // Clear cart after successful checkout
+  
   clearCart() {
-    localStorage.removeItem('cart');
-    this.updateCartQuantity();
-  }
-
-  updateCartQuantity() {
-    console.log('Cart quantity updated');
+    localStorage.removeItem('cartItems'); // Clear cart items from localStorage
+    console.log('Cart cleared from localStorage');
   }
 
   onSubmit() {

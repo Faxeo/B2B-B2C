@@ -1,0 +1,419 @@
+.page-container {
+  display: flex;
+  overflow-x: hidden;
+}
+
+.sidebar {
+  position: relative;
+  width: 1150px; /* Default expanded width */
+  height: 100%;
+  transition: width 0.3s ease; /* Smooth transition for width */
+  overflow: hidden;
+  background-color: #f8f9fa; /* Light background for sidebar */
+  border-right: 1px solid #dee2e6; /* Border for separation */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Align children (button) to the right */
+}
+
+.sidebar.collapsed {
+  width: 60px; /* Collapsed width */
+}
+
+.toggle-btn {
+  position: relative; /* Change position to relative */
+  right: 10px; /* Adjust the button position inside the sidebar */
+  top: 300px; /* Adjust the vertical position */
+  background-color: #b71c1c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+    height: 50px;
+    width: 50px;
+  padding: 10px 12px;
+  z-index: 10; /* Keep it above other elements */
+  transition: transform 0.3s ease; /* Smooth transition for movement */
+}
+
+.sidebar.collapsed .toggle-btn {
+  transform: translateX(-55px); /* Move button to the left when sidebar is collapsed */
+}
+
+.sidebar.expanded .toggle-btn {
+  transform: translateX(-20px); /* Move button to the right when sidebar is expanded */
+}
+
+.main-content {
+  flex-grow: 3;
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar.collapsed ~ .main-content {
+  margin-left: 20px; /* Align main content to the new width */
+}
+
+.sidebar.expanded ~ .main-content {
+  margin-left: 1150px; /* Align main content to expanded width */
+}
+
+.app-filter {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 60px);
+  overflow-y: auto;
+}
+
+.product-item {
+  background-color: #ffffff; /* White background */
+  border: 1px solid #ddd; /* Light border */
+  border-radius: 8px; /* Rounded corners */
+  padding: 16px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions for hover */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  height: 350px; /* Fixed height for uniformity */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  font-family: "Arial", sans-serif; /* Use a clean, modern font */
+}
+
+/* Hover effect for product cards */
+.product-item:hover {
+  transform: translateY(-5px); /* Lift up on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
+}
+
+/* Blur effect when loading */
+.loading .product-item {
+  filter: blur(5px); /* Add blur to the product list */
+  pointer-events: none; /* Disable user interaction while loading */
+  opacity: 0.5;
+}
+
+/* Loading spinner overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Ensure that three products appear in a row */
+.row {
+  display: flex;
+  flex-wrap: wrap; /* Ensure that items wrap on smaller screens */
+  justify-content: space-between; /* Space out products evenly */
+}
+
+.col-md-3 {
+  flex: 0 0 calc(32% - 10px); /* Increased width for products and reduced gap */
+  margin-bottom: 20px; /* Spacing between rows */
+}
+
+/* Styling for product images */
+.product-item img {
+  max-width: 100%;
+  height: 150px; /* Fixed height for images to maintain uniformity */
+  object-fit: contain; /* Ensure images don't stretch */
+  border-radius: 4px; /* Slightly rounded corners for the images */
+  margin-bottom: 10px; /* Space between image and product details */
+}
+
+/* Styling for product name and price */
+.red-div {
+  background-color: #b71c1c; /* Deep red background */
+  color: white; /* White text */
+  padding: 5px 10px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px; /* Slightly larger font size */
+  font-weight: bold; /* Bold for emphasis */
+  margin-bottom: 3px;
+}
+
+.red-div span {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+/* Quantity control styling */
+.quantity-control {
+  background-color: #b71c1c; /* Deep red */
+  border-radius: 4px;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.quantity-control input {
+  background-color: #b71c1c;
+  width: 70px; /* Fixed width for quantity input */
+  border: none;
+  text-align: center;
+  color: white; /* Dark text color */
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+/* Button styling */
+.btn {
+  border-radius: 0; /* Square corners */
+  padding: 10px 0;
+  font-size: 16px;
+  font-weight: bold;
+  width: 100%; /* Full width for buttons */
+}
+
+.btn-danger {
+  background-color: #b71c1c;
+  color: white;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #a01717; /* Darker red on hover */
+  color: white;
+}
+
+.btn-outline-danger {
+  /* border: 2px solid #b71c1c;  */
+  color: #b71c1c;
+  background-color: transparent;
+}
+
+.btn-outline-danger:hover {
+  background-color: #b71c1c; /* Red background on hover */
+  color: white;
+}
+
+/* Text alignment for quantity control */
+.text-center {
+  width: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+}
+
+.row-margin {
+  margin-top: 50px;
+}
+
+/* Reduce space between rows */
+#shopping_cart-view-buttons {
+  margin-bottom: 100px;
+}
+
+.btn-size {
+  height: 50px;
+  width: 240px;
+  margin: 5px;
+  padding: 10px;
+  text-align: center;
+}
+
+/* Pagination Controls Styling */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  font-size: 18px; /* Font size for pagination */
+}
+
+.pagination-arrow {
+  background-color: transparent;
+  border: none;
+  font-size: 50px; /* Arrow size */
+  cursor: pointer;
+  color: #b03c3c; /* Red color for arrow */
+  margin: 0 5px 10px 0;
+}
+
+.pagination-arrow:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination-page {
+  background-color: transparent;
+  border: none;
+  color: #b03c3c; /* Red color for page numbers */
+  font-size: 20px; /* Font size for page numbers */
+  cursor: pointer;
+  padding: 8px 16px;
+  margin: 0 5px;
+  transition: background-color 0.3s ease;
+  border-radius: 4px;
+}
+
+.pagination-page:hover {
+  background-color: #f2f2f2; /* Hover effect */
+}
+
+.active-page {
+  background-color: #b03c3c; /* Red background for active page */
+  color: white; /* White text for active page */
+  /* font-weight: bold; */
+  border-radius: 8px; /* Rounded corners for the active page */
+  padding: 8px 16px; /* Padding to make the button larger */
+}
+
+.pagination-page:disabled {
+  background-color: #b03c3c;
+  color: white;
+  font-weight: bold;
+  cursor: default;
+  border: none;
+}
+
+.pagination-ellipsis {
+  margin: 0 10px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #b03c3c;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px; /* Height for the spinner area */
+}
+
+.loading-overlay {
+  position: fixed; /* Ensure it's on top */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's above all other elements */
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Login Overlay Styling */
+.login-overlay {
+  position: absolute;
+  top: 180px;
+  left: -20px;
+  width: 400px;
+  height: 30px;
+  background-color: transparent; /* Semi-transparent black overlay for contrast */
+  color: black; /* White text for visibility */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 14px; /* Smaller font size for elegance */
+  font-weight: 700; /* Make the font bolder */
+  border-radius: 8px; /* Match border radius of product item */
+  z-index: 1; /* Ensure it overlays other content */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+  padding: 10px;
+}
+
+.login-overlay span {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.1); /* Slight background for text */
+  padding: 8px 16px; /* Padding around text */
+  border-radius: 4px; /* Slightly rounded corners for text block */
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);  */
+  text-transform: uppercase; /* Convert text to uppercase for emphasis */
+  letter-spacing: 1px; /* Add some spacing between letters */
+  /* text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);  */
+}
+
+.cart-message {
+  position: fixed;
+  bottom: 90%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4caf50; /* Green background */
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  font-size: 16px;
+  animation: fadeInOut 1s ease-in-out;
+}
+
+.cart-count-badge {
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 14px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  margin-right: 20px;
+}
+/* CSS for the notification message */
+.notification {
+  position: fixed;
+  top: 20px; /* Position at the top */
+  right: 20px; /* Align it to the right */
+  padding: 15px 30px;
+  background-color: #4caf50; /* Green background color */
+  color: white;
+  border-radius: 5px;
+  font-size: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1000; /* Ensure it appears on top */
+  transition: opacity 0.3s ease; /* Smooth opacity transition */
+}
+
+/* Additional styles to control visibility */
+.notification.ng-hide {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+
+/* .login-overlay:hover {
+  background-color: transparent;
+  color: #000000; 
+} */
+
+/* Adjust product size for smaller screens */
+@media (max-width: 768px) {
+  .col-md-3 {
+    flex: 0 0 calc(48% - 10px); /* Two products per row on smaller screens */
+  }
+}
+
+@media (max-width: 576px) {
+  .col-md-3 {
+    flex: 0 0 calc(100% - 20px); /* One product per row on mobile devices */
+  }
+}

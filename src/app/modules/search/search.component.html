@@ -1,0 +1,239 @@
+<div *ngIf="showMessage" class="cart-message">
+  {{ message }}
+</div>
+
+<div *ngIf="showNotification" class="notification">
+  {{ notificationMessage }}
+</div>
+
+<div class="page-container">
+  <div class="sidebar" [class.collapsed]="isCollapsed">
+    
+    <app-filter *ngIf="!isCollapsed"></app-filter>
+  </div>
+  <button class="toggle-btn" (click)="toggleSidebar()">
+    {{ isCollapsed ? '>>' : '<<' }}
+  </button>
+
+  <div class="main-content">
+  <div class="search-results container-fluid my-5" *ngIf="searchType === 'generalSearch'">
+    <h2>General Search Results</h2>
+  
+    <!-- General Search Product Grid -->
+    <div class="row">
+      <div class="col-md-3 col-sm-6 mb-4" *ngFor="let product of searchResults">
+        <div class="product-item border p-3 position-relative"> 
+          <!-- Product Image -->
+          <img [src]="'https://usautoparts-beta.azurewebsites.net/Images/Products/' + product.product_image"
+               [alt]="product.product_name" class="img-fluid mb-2">
+    
+          <!-- Product Details -->
+          <div class="d-flex justify-content-between align-items-center mb-2 row-margin">
+            <div class="red-div px-2 align-items-center btn-size">
+              <span>{{ product.product_name }}</span>
+              <!-- Display Product Price (use product.product_price instead of product.price) -->
+              <span *ngIf="loginType !== null; else loginPrompt">
+                ${{ product.product_price !== undefined ? product.product_price : 'Price not available' }}
+              </span>
+              <ng-template #loginPrompt>
+              </ng-template>
+            </div>
+    
+            <!-- Quantity Control -->
+            <div class="quantity-control d-flex align-items-center red-div px-2 me-2 btn-size">
+              <span>Qty.</span>
+              <button class="btn btn-danger btn-sm me-1" (click)="decreaseQuantity(product)">-</button>
+              <input type="number" class="form-control text-center" [(ngModel)]="product.product_quantity"
+                     (input)="onQuantityInput($event, product)" min="1" max="99">
+              <button class="btn btn-danger btn-sm ms-1" (click)="increaseQuantity(product)">+</button>
+            </div>
+          </div>
+    
+          <!-- Action Buttons -->
+          <div id="shopping_cart-view-buttons" class="d-flex">
+            <button class="btn btn-danger w-100 me-1" (click)="addToCart(product)" (click)="addVehicle(product)">Add to Cart</button>
+            <button class="btn btn-outline-danger w-100 ms-1">VIEW</button>
+          </div>
+    
+          <!-- Overlay message for login prompt -->
+          <div *ngIf="loginType === null" class="login-overlay">
+            <span>Kindly log-in to see the price</span>
+          </div>
+        </div>
+      </div>
+    </div>
+      <!-- Spinner for both initial loading and pagination -->
+  <div *ngIf="isLocallyLoading" class="loading-overlay">
+    <div class="spinner-border text-danger" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  
+  
+    <!-- General Search Pagination Controls -->
+    <div *ngIf="totalPages > 1" class="pagination-container">
+      <button (click)="pageChange.emit(currentPage - 1)" [disabled]="currentPage === 1" class="pagination-arrow">
+        &laquo;
+      </button>
+      <button (click)="pageChange.emit(1)" [disabled]="currentPage === 1" class="pagination-page">1</button>
+      <span *ngIf="shouldShowLeftEllipsis()" class="pagination-ellipsis">...</span>
+      <span *ngFor="let page of getPagesToShow()">
+        <button (click)="pageChange.emit(page)"   
+                [disabled]="page === currentPage"
+                [ngClass]="{'active-page': page === currentPage, 'pagination-page': true}">
+          {{ page }}
+        </button>
+      </span>
+      <span *ngIf="shouldShowRightEllipsis()" class="pagination-ellipsis">...</span>
+      <button (click)="pageChange.emit(totalPages)" [disabled]="currentPage === totalPages" class="pagination-page">{{ totalPages }}</button>
+      <button (click)="pageChange.emit(currentPage + 1)" [disabled]="currentPage === totalPages" class="pagination-arrow">
+        &raquo;
+      </button>
+    </div>
+  </div>
+  
+  <!-- Vehicle Search Section -->
+  <div class="search-results container-fluid my-5" *ngIf="searchType === 'vehicleSearch'">
+    <h2>Vehicle Search Results</h2>
+  
+    <!-- Vehicle Search Product Grid -->
+    <div class="row">
+      <div class="col-md-3 col-sm-6 mb-4" *ngFor="let product of searchResults">
+        <div class="product-item border p-3 position-relative">
+          <img [src]="'https://usautoparts-beta.azurewebsites.net/Images/Products/' + product.product_image"
+               [alt]="product.product_name" class="img-fluid mb-2">
+          <div class="d-flex justify-content-between align-items-center mb-2 row-margin">
+            <div class="red-div px-2 align-items-center btn-size">
+              <span>{{ product.product_name }}</span>
+              <span *ngIf="loginType !== null; else loginPrompt">
+                ${{ product.product_price !== undefined ? product.product_price : 'Price not available' }}
+              </span>
+              <ng-template #loginPrompt>
+                <!-- Don't show price and place text overlay on product card -->
+              </ng-template>
+            </div>
+            <div class="quantity-control d-flex align-items-center red-div px-2 me-2 btn-size">
+              <span>Qty.</span>
+              <button class="btn btn-danger btn-sm me-1" (click)="decreaseQuantity(product)">-</button>
+              <input type="number" class="form-control text-center" [(ngModel)]="product.product_quantity"
+                     (input)="onQuantityInput($event, product)" min="1" max="99">
+              <button class="btn btn-danger btn-sm ms-1" (click)="increaseQuantity(product)">+</button>
+            </div>
+          </div>
+          <div id="shopping_cart-view-buttons" class="d-flex">
+            <button class="btn btn-danger w-100 me-1" (click)="addToCart(product)" (click)="addVehicle(product)">Add to Cart</button>
+            <button class="btn btn-outline-danger w-100 ms-1">VIEW</button>
+          </div>
+  
+          <!-- Overlay message for login prompt -->
+          <div *ngIf="loginType === null" class="login-overlay">
+            <span>Kindly log-in to see the price</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Spinner for both initial loading and pagination -->
+  <div *ngIf="isLocallyLoading" class="loading-overlay">
+    <div class="spinner-border text-danger" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  
+    <!-- Vehicle Search Pagination Controls -->
+    <div *ngIf="totalPages > 1" class="pagination-container">
+      <button (click)="searchByVehicle(currentPage - 1)" [disabled]="currentPage === 1" class="pagination-arrow">
+        &laquo;
+      </button>
+      <button (click)="searchByVehicle(1)" [disabled]="currentPage === 1" class="pagination-page">1</button>
+      <span *ngIf="shouldShowLeftEllipsis()" class="pagination-ellipsis">...</span>
+      <span *ngFor="let page of getPagesToShow()">
+        <button (click)="searchByVehicle(page)" 
+                [disabled]="page === currentPage"
+                [ngClass]="{'active-page': page === currentPage, 'pagination-page': true}">
+          {{ page }}
+        </button>
+      </span>
+      <span *ngIf="shouldShowRightEllipsis()" class="pagination-ellipsis">...</span>
+      <button (click)="searchByVehicle(totalPages)" [disabled]="currentPage === totalPages" class="pagination-page">{{ totalPages }}</button>
+      <button (click)="searchByVehicle(currentPage + 1)" [disabled]="currentPage === totalPages" class="pagination-arrow">
+        &raquo;
+      </button>
+    </div>
+  </div>
+  
+  
+  <!-- Category Search Section -->
+  <div class="search-results container-fluid my-5" *ngIf="searchType === 'categorySearch'">
+    <h2>Category Search Results</h2>
+  
+    <!-- Category Search Product Grid -->
+    <div class="row">
+      <div class="col-md-3 col-sm-6 mb-4" *ngFor="let product of searchResults">
+        <div class="product-item border p-3 position-relative">
+          <img [src]="'https://usautoparts-beta.azurewebsites.net/Images/Products/' + product.product_image"
+               [alt]="product.product_name" class="img-fluid mb-2">
+          <div class="d-flex justify-content-between align-items-center mb-2 row-margin">
+            <div class="red-div px-2 align-items-center btn-size">
+              <span>{{ product.product_name }}</span>
+              <span *ngIf="loginType !== null; else loginPrompt">
+                ${{ product.product_price !== undefined ? product.product_price : 'Price not available' }}
+              </span>
+              <ng-template #loginPrompt>
+                <!-- Don't show price and place text overlay on product card -->
+              </ng-template>
+            </div>
+            <div class="quantity-control d-flex align-items-center red-div px-2 me-2 btn-size">
+              <span>Qty.</span>
+              <button class="btn btn-danger btn-sm me-1" (click)="decreaseQuantity(product)">-</button>
+              <input type="number" class="form-control text-center" [(ngModel)]="product.product_quantity"
+                     (input)="onQuantityInput($event, product)" min="1" max="99">
+              <button class="btn btn-danger btn-sm ms-1" (click)="increaseQuantity(product)">+</button>
+            </div>
+          </div>
+          <div id="shopping_cart-view-buttons" class="d-flex">
+            <button class="btn btn-danger w-100 me-1" (click)="addToCart(product)" (click)="addVehicle(product)">Add to Cart</button>
+            <button class="btn btn-outline-danger w-100 ms-1">VIEW</button>
+          </div>
+  
+          <!-- Overlay message for login prompt -->
+          <div *ngIf="loginType === null" class="login-overlay">
+            <span>Kindly log-in to see the price</span>
+          </div>
+        </div>
+      </div>
+    </div> 
+  
+    <!-- Spinner for both initial loading and pagination -->
+    <div *ngIf="isLocallyLoading" class="loading-overlay">
+      <div class="spinner-border text-danger" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  
+    <!-- Category Search Pagination Controls -->
+    <div *ngIf="totalPages > 1" class="pagination-container">
+      <button (click)="searchByCategory(currentPage - 1)" [disabled]="currentPage === 1" class="pagination-arrow">
+        &laquo;
+      </button>
+      <button (click)="searchByCategory(1)" [disabled]="currentPage === 1" class="pagination-page">1</button>
+      <span *ngIf="shouldShowLeftEllipsis()" class="pagination-ellipsis">...</span>
+      <span *ngFor="let page of getPagesToShow()">
+        <button (click)="searchByCategory(page)" 
+                [disabled]="page === currentPage"
+                [ngClass]="{'active-page': page === currentPage, 'pagination-page': true}">
+          {{ page }}
+        </button>
+      </span>
+      <span *ngIf="shouldShowRightEllipsis()" class="pagination-ellipsis">...</span>
+      <button (click)="searchByCategory(totalPages)" [disabled]="currentPage === totalPages" class="pagination-page">{{ totalPages }}</button>
+      <button (click)="searchByCategory(currentPage + 1)" [disabled]="currentPage === totalPages" class="pagination-arrow">
+        &raquo;
+      </button>
+    </div>
+  </div>
+  
+</div>  
+
+</div>
+

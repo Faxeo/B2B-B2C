@@ -3,7 +3,8 @@
   <div *ngIf="cartItems.length > 0; else emptyCart">
     <div class="cart-item" *ngFor="let item of cartItems">
       <div class="item-image">
-        <img *ngIf="!item.imageError" [src]="'https://usautoparts-beta.azurewebsites.net/Images/Products/' + item.image" [alt]="item.name" (error)="handleImageError(item)">
+        <img *ngIf="!item.imageError" [src]="'https://usautoparts-beta.azurewebsites.net/Images/Products/' + item.image"
+          [alt]="item.name" (error)="handleImageError(item)">
         <div *ngIf="item.imageError" class="image-placeholder">{{ item.name }}</div>
       </div>
       <div class="item-details">
@@ -11,14 +12,20 @@
         <p>Price: ${{ item.price.toFixed(2) }}</p>
         <div class="quantity-control">
           <button (click)="updateQuantity(item.productId, item.quantity - 1)">-</button>
-          <input type="number" [(ngModel)]="item.quantity" (input)="onQuantityInput(item.productId, $event)" />
+          <input type="number" [value]="item.quantity" (change)="onQuantityInput(item.productId, $event)" />
           <button (click)="updateQuantity(item.productId, item.quantity + 1)">+</button>
         </div>
       </div>
+      <span *ngIf="item.discountedPrice && item.discountedPrice < item.price * item.quantity">
+        Discounted Total: ${{ item.discountedPrice.toFixed(2) }}
+      </span>
       <div class="item-total">
         ${{ (item.price * item.quantity).toFixed(2) }}
       </div>
+      <!-- Button to remove item from cart -->
       <button class="remove-btn" (click)="removeFromCart(item.productId)">×</button>
+
+
     </div>
 
     <!-- Billing Information Section -->
@@ -62,8 +69,9 @@
             <span class="subtotal-label">Subtotal:</span>
             <span class="subtotal-amount">${{ calculateSubtotal().toFixed(2) }}</span>
           </div>
+                 
         </div>
-              
+
         <button type="submit" class="checkout">CHECKOUT</button>
       </form>
     </div>
