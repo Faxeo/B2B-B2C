@@ -1,25 +1,26 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, Output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { FetchYearService } from '../../../core/services/fetch-year/fetch-year.service';
-import { FetchMakeService } from '../../../core/services/fetch-make/fetch-make.service';
-import { FetchChildService } from '../../../core/services/fetch-child/fetch-child.service';
-import { CompatibleProductsService } from '../../../core/services/compatible-products/compatible-products.service';
+import { ChangeDetectorRef, Component, Output } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { EventEmitter } from '@angular/core';
-import { VehicleSearchService } from '../../../core/services/search-vehicle/search-vehicle.service';
-import { AddVehicleService } from '../../../core/services/add-vehicle/add-vehicle.service';
-import { LoginService } from '../../../core/services/login-service/login-service.service';
-import { GetVehicleService } from '../../../core/services/get-vehicle/get-vehicle.service';
-import { DeleteVehicleService } from '../../../core/services/delete-vehicle/delete-vehicle.service';
+import { FetchYearService } from '../../core/services/fetch-year/fetch-year.service';
+import { FetchMakeService } from '../../core/services/fetch-make/fetch-make.service';
+import { FetchChildService } from '../../core/services/fetch-child/fetch-child.service';
+import { CompatibleProductsService } from '../../core/services/compatible-products/compatible-products.service';
+import { VehicleSearchService } from '../../core/services/search-vehicle/search-vehicle.service';
+import { AddVehicleService } from '../../core/services/add-vehicle/add-vehicle.service';
+import { LoginService } from '../../core/services/login-service/login-service.service';
+import { GetVehicleService } from '../../core/services/get-vehicle/get-vehicle.service';
+import { DeleteVehicleService } from '../../core/services/delete-vehicle/delete-vehicle.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
+  selector: 'app-garage',
   standalone: true,
-  imports: [CommonModule, FormsModule],
-  selector: 'app-my-garage',
-  templateUrl: './my-garage.component.html',
-  styleUrls: ['./my-garage.component.css'],
+  imports: [RouterModule,CommonModule,FormsModule],
+  templateUrl: './garage.component.html',
+  styleUrl: './garage.component.css'
 })
-export class MyGarageComponent implements OnInit {
+export class GarageComponent {
   years: { year: string }[] = [];
   makes: { name: string; cvalue_id: number }[] = [];
   models: { name: string; cvalue_id: number }[] = [];

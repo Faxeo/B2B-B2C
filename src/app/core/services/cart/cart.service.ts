@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
+
 export class CartService {
   private cartItemsSubject = new BehaviorSubject<Array<{
     productId: string;
@@ -103,8 +104,18 @@ export class CartService {
   }
 
   calculateSubtotal(): number {
-    return this.cartItemsSubject.value.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    // Calculate subtotal and log each item's total
+    let subtotal = 0;
+  
+    this.cartItemsSubject.value.forEach(item => {
+      const itemTotal = item.price * item.quantity;
+      console.log(`Item Total for ${item.name}: $${itemTotal.toFixed(2)}`); // Log each item total
+      subtotal += itemTotal;
+    });
+  
+    return subtotal;
   }
+  
 
   private updateCartItemCount(): void {
     const totalCount = this.cartItemsSubject.value.reduce((sum, item) => sum + item.quantity, 0);

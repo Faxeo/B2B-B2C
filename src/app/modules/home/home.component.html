@@ -1,5 +1,3 @@
-<!-- Home Component Template -->
-
 <!-- Toolbar -->
 <nav class="navbar navbar-expand-lg">
   <div class="container-fluid">
@@ -9,14 +7,25 @@
     <div class="d-flex flex-grow-1 align-items-center justify-content-between">
       <div class="input-group search-bar me-3">
         <div class="form-control inner-search" style="padding: 8px 0px 8px 12px;">
-          <input id="search-input" class="form-control" type="search" placeholder="Search here" aria-label="Search">
+          <!-- Trigger search on 'Enter' key press by adding the (keydown.enter) -->
+          <input id="search-input" class="form-control" type="search" placeholder="Search here" aria-label="Search"
+            (keydown.enter)="onSearch()">
         </div>
+        <!-- Trigger search on button click -->
         <span class="input-group-text border-0 red-button inner-search">
-          <button class="bg-transparent border-0"><i class="fa fa-search fa-xl text-white"></i></button>
+          <button class="bg-transparent border-0" (click)="onSearch()">
+            <i class="fa fa-search fa-xl text-white"></i>
+          </button>
         </span>
       </div>
-      <div class="d-flex align-items-center">
 
+      <button *ngIf="loginType == 'business'" class="btn btn-outline-light ms-2 red-button garage"
+        style="font-size: 30px;" id="shopping_cart" routerLink="/garage">
+        <i class="fa fa-car" aria-hidden="true"></i>
+        <!-- Display the cart item count as a badge -->
+        <span *ngIf="cartItemCount > 0" class="cart-count-badge">{{ cartItemCount }}</span>
+      </button>
+      <div class="d-flex align-items-center">
         <!-- Display the login type button if it's set and not "admin" -->
         <button *ngIf="loginType === 'business'" class="btn btn-outline-light me-2 red-button business-btn"
           (click)="toggleAdminSidebar()">Business</button>
@@ -30,7 +39,7 @@
           (click)="toggleAdminSidebar()">Admin</button>
 
         <!-- Optionally display the login type text -->
-        <span *ngIf="loginType" class="text-white me-2">{{ loginType }}</span>
+        <!-- <span *ngIf="loginType" class="text-white me-2">{{ loginType }}</span> -->
 
         <!-- Cart Icon, only shown if not admin -->
         <button *ngIf="loginType !== 'admin'" class="btn btn-outline-light ms-2 red-button" id="shopping_cart"
@@ -43,6 +52,22 @@
     </div>
   </div>
 </nav>
+
+<!-- Loading spinner -->
+<div *ngIf="isLoading" class="spinner-container">
+  <div class="spinner-border text-danger" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<app-search *ngIf="showSearchComponent && (searchProducts$ | async)?.length"
+  [searchResults]="(searchProducts$ | async) || []" [currentPage]="currentPage" [totalPages]="totalPages"
+  [isPaginationLoading]="isPaginationLoading" (pageChange)="onSearch($event)" [searchType]="currentSearchType"
+  (vehicleSearchPageChange)="currentSearchType === 'vehicleSearch' ? searchByVehicle($event) : null"
+  (categorySearchPageChange)="currentSearchType === 'categorySearch' ? searchByCategory($event) : null"
+  [loginType]="loginType">
+</app-search>
+
 
 <!-- Admin Sidebar Options -->
 <div *ngIf="isAdminSidebarVisible && loginType === 'admin'" class="admin-sidebar-options">
@@ -63,39 +88,27 @@
   </ul>
 </div>
 
-<!-- <div *ngIf="isAdminSidebarVisible && loginType === 'business'" class="business-sidebar-options">
-  <ul>
-    <li><a routerLink="/business-dashboard">Profile</a></li>
-    <li><a routerLink="/" (click)="logout()">Logout</a></li>
-    <li><a routerLink="/business-reports">Wishlist</a></li>
-    <li><a routerLink="/business-settings">Your Orders</a></li>
-  </ul>
-</div> -->
-
 <!-- Sidebar -->
 <app-sidebar></app-sidebar>
 
-<!-- Rest of the home component content -->
-
-
-
 <!-- New Section with Background Image -->
-<div class="new-section">
+<div *ngIf="!showSearchComponent" class="new-section">
   <div class="overlay">
     <div class="container-fluid h-100 d-flex flex-column justify-content-center align-items-center">
       <div class="welcome-message-outer-div">
-        <h2 class="welcome-message"><span>&#8226;</span> Welcome to USAP B2B & B2C Platform <span>&#8226;</span></h2>
+        <h2 class="welcome-message"><span>&#8226;</span> Welcome to USAP B2B Platform <span>&#8226;</span></h2>
       </div>
       <div class="mt-auto w-100">
         <div class="row btn-row justify-content-center">
           <div class="col-md-4 text-center mb-2 btn-div">
-            <button class="btn btn-danger w-100">Search By Vehicle</button>
+            <button class="btn btn-danger w-100" (click)="onSearchOptionClick('Vehicle')">Search By Vehicle</button>
           </div>
           <div class="col-md-4 text-center mb-2 btn-div">
-            <button class="btn btn-danger w-100">Search By Category</button>
+            <button class="btn btn-danger w-100" (click)="onSearchOptionClick('Category')">Search By Category</button>
           </div>
           <div class="col-md-4 text-center mb-2 btn-div">
-            <button class="btn btn-danger w-100">Search By Parts</button>
+            <button class="btn btn-danger w-100" (click)="onSearchOptionClick('Attributes')">Search By
+              Attributes</button>
           </div>
         </div>
       </div>
@@ -103,19 +116,139 @@
   </div>
 </div>
 
-<div class="d-flex flex-grow-1 align-items-center p-lg-3">
+<div *ngIf="!showSearchComponent" class="d-flex flex-grow-1 align-items-center p-lg-3">
   <div class="input-group search-bar">
-    <div class="form-control inner-search">
-      <input id="search-input" class="form-control" type="search" placeholder="Search here" aria-label="Search">
+    <div class="form-control inner-search" [ngClass]="{'disabled-search': !searchEnabled}">
+      <!-- This is the main content search bar -->
+      <input id="main-search-input" class="form-control" type="search" placeholder="{{searchPlaceholder}}"
+        [disabled]="!searchEnabled" (click)="onSearchClick()" aria-label="Search">
     </div>
-    <span class="input-group-text border-0 red-button inner-search"><button class="bg-transparent border-0"><i
-          class="fa fa-search fa-xl text-white"></i></button></span>
+    <span class="input-group-text border-0 red-button inner-search" [ngClass]="{'disabled-span': !searchEnabled}">
+      <button class="bg-transparent border-0" [disabled]="!searchEnabled">
+        <i class="fa fa-search fa-xl text-white"></i>
+      </button>
+    </span>
+
+  </div>
+</div>
+
+
+<div *ngIf="!showSearchComponent">
+  <div *ngIf="showVehicleForm" class="vehicle-search-modal">
+    <!-- Background blur overlay -->
+    <div class="modal-overlay">
+      <span class="overlay-close-icon" (click)="closeForm()">&#x2715;</span>
+    </div>
+
+
+    <!-- Centered form container -->
+    <div class="vehicle-search-form-wrapper">
+      <div class="vehicle-search-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="year">Year:</label>
+            <select id="year" [(ngModel)]="selectedYear" (change)="onYearChange()">
+              <option value="" disabled selected>Select Year</option>
+              <option *ngFor="let year of years" [value]="year.year">{{ year.year }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="make">Make:</label>
+            <select id="make" [(ngModel)]="selectedMake" (change)="onMakeChange()" [disabled]="!selectedYear">
+              <option value="" disabled selected>Select Make</option>
+              <option *ngFor="let make of makes" [value]="make.name">{{ make.name }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="model">Model:</label>
+            <select id="model" [(ngModel)]="selectedModel" (change)="onModelChange()" [disabled]="!selectedMake">
+              <option value="" disabled selected>Select Model</option>
+              <option *ngFor="let model of models" [value]="model.name">{{ model.name }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="trim">Trim:</label>
+            <select id="trim" [(ngModel)]="selectedTrim" (change)="onTrimChange()" [disabled]="!selectedModel">
+              <option value="" disabled selected>Select Trim</option>
+              <option *ngFor="let trim of trims" [value]="trim.name">{{ trim.name }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="engine">Engine:</label>
+            <select [(ngModel)]="selectedEngine" (change)="onEngineChange()">
+              <option *ngFor="let engine of engines" [value]="engine.name">{{ engine.name }}</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="search-button" (click)="searchByVehicle()"
+          [disabled]="!selectedYear || !selectedMake || !selectedModel || !selectedTrim || !selectedEngine">
+          Search
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<div *ngIf="showCategoryForm" class="category-search-modal">
+  <div class="modal-overlay">
+    <span class="overlay-close-icon" (click)="closeForm()">&#x2715;</span>
+  </div>
+  <div class="category-search-form-wrapper">
+    <div class="category-search-form">
+      <h4 *ngIf="mainCategories.length === 0">No categories available. Please try again later.</h4>
+      <div class="form-row" *ngIf="mainCategories.length > 0">
+        <!-- Main Category Dropdown -->
+        <div class="form-group">
+          <label for="mainCategory">Main Category:</label>
+          <select id="mainCategory" [(ngModel)]="selectedMainCategory" (change)="onMainCategoryChange()">
+            <option value="" disabled selected>Select Main Category</option>
+            <option *ngFor="let mainCategory of mainCategories" [value]="mainCategory.id">{{ mainCategory.name }}
+            </option>
+          </select>
+        </div>
+
+        <!-- First Sub-Category Dropdown -->
+        <div class="form-group">
+          <label for="firstSubCategory">First Sub-Category:</label>
+          <select id="firstSubCategory" [(ngModel)]="selectedFirstSubCategory" (change)="onFirstSubCategoryChange()"
+            [disabled]="!selectedMainCategory">
+            <option value="" disabled selected>Select First Sub-Category</option>
+            <option *ngFor="let firstSubCategory of firstSubCategories" [value]="firstSubCategory.id">{{
+              firstSubCategory.name }}</option>
+          </select>
+        </div>
+
+        <!-- Second Sub-Category Dropdown -->
+        <div class="form-group">
+          <label for="secondSubCategory">Second Sub-Category:</label>
+          <select id="secondSubCategory" [(ngModel)]="selectedSecondSubCategory" [disabled]="!selectedFirstSubCategory">
+            <option value="" disabled selected>Select Second Sub-Category</option>
+            <option *ngFor="let secondSubCategory of secondSubCategories" [value]="secondSubCategory.id">{{
+              secondSubCategory.name }}</option>
+          </select>
+        </div>
+      </div>
+      <button class="search-button" (click)="searchByCategory()"
+        [disabled]="!selectedMainCategory || !selectedFirstSubCategory || !selectedSecondSubCategory">
+        Search
+      </button>
+    </div>
   </div>
 </div>
 
 <!------------ Product categories -------------------->
 
-<div class="product-categories container-fluid my-5 px-5">
+<div *ngIf="!showSearchComponent" class="product-categories container-fluid my-5 px-5">
   <div class="row">
     <div class="col-md-3 col-sm-6 mb-4" *ngFor="let category of categories$ | async">
       <div class="category-item d-flex justify-content-between align-items-center p-3 border">
@@ -129,126 +262,51 @@
   </div>
 </div>
 
-
-<!-- ---------- product section--------------- -->
-
-<!-- New Product Section -->
-<!-- <div class="product-section container-fluid my-5 px-4">
-  <div class="row">
-    <ng-container *ngFor="let product of products$ | async; let i = index">
-      <div class="col-md-3 col-sm-6 mb-4 product-container" 
-           [ngClass]="{'border-right': (i+1) % 4 !== 0, 'border-bottom': (i+1) % 4 === 0}">
-        <div class="product-item border p-3">
-          <img [src]="'https://usautoparts-beta.azurewebsites.net/Images/Products/' + product.product_image"
-            [alt]="product.product_name" class="img-fluid mb-2">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <div class="red-div px-2 align-items-center justify-content-end"
-              style="padding-top: .3rem !important; padding-bottom: .5rem !important; width: 50%;">
-              <span class="me-2">{{ product.product_name }}</span>
-              <span>${{ product.product_price }}</span>
-            </div>
-            <div class="d-flex align-items-center">
-              <div class="quantity-control d-flex align-items-center red-div px-2 me-2">
-                <span>Qty.</span>
-                <button class="btn btn-danger btn-sm me-1">-</button>
-                <input type="text" class="form-control text-center" value="0" style="width: 35px;">
-                <button class="btn btn-danger btn-sm ms-1">+</button>
-              </div>
-            </div>
-          </div>
-          <div id="shopping_cart-view-buttons" class="d-flex justify-content-between pt-2">
-            <button class="btn btn-danger w-100 me-1">ADD TO CART</button>
-            <button class="btn btn-outline-danger w-100 ms-1">VIEW</button>
-          </div>
-        </div>
-      </div> -->
-<!-- Divider after every 4 items -->
-<!-- <div *ngIf="(i+1) % 4 === 0" class="w-100 hr-divider"></div>
-    </ng-container>
-  </div>
-</div> -->
-
-
-<!-- Sliding Product Row Section -->
-<!-- <div class="sliding-product-row container-fluid my-5">
-  <h2>Explore Our Top Sellers</h2>
-  <div class="row flex-nowrap slider" id="productSlider">
-    <ng-container *ngFor="let product of products$ | async">
-      <div class="col-auto product-container">
-        <div class="product-item border p-3">
-          <img [src]="'https://usautoparts-beta.azurewebsites.net/Images/Products/' + product.product_image"
-            [alt]="product.product_name" class="img-fluid mb-2">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <div class="red-div px-2 align-items-center justify-content-end"
-              style="padding-top: .3rem !important; padding-bottom: .5rem !important; width: 50%;">
-              <span class="me-2">{{ product.product_name }}</span>
-              <span>${{ product.product_price }}</span>
-            </div>
-            <div class="d-flex align-items-center">
-              <div class="quantity-control d-flex align-items-center red-div px-2 me-2">
-                <span>Qty.</span>
-                <button class="btn btn-danger btn-sm me-1">-</button>
-                <input type="text" class="form-control text-center" value="0" style="width: 35px;">
-                <button class="btn btn-danger btn-sm ms-1">+</button>
-              </div>
-            </div>
-          </div>
-          <div id="shopping_cart-view-buttons" class="d-flex justify-content-between pt-2">
-            <button class="btn btn-danger w-100 me-1">ADD TO CART</button>
-            <button class="btn btn-outline-danger w-100 ms-1">VIEW</button>
-          </div>
-
-        </div>
-      </div>
-    </ng-container>
-  </div>
-</div> -->
-
 <!-- Horizontal Scrollable Product Row Section -->
+<div *ngIf="!showSearchComponent">
+  <h2>Explore Our Top Sellers</h2>
+  <div class="scrolling-product-row container-fluid my-5">
+    <div class="scroll-container">
+      <div class="product-container" *ngFor="let product of products$ | async">
+        <div class="product-item border p-3">
+          <!-- Product Image -->
+          <img [src]="'https://usautoparts-beta.azurewebsites.net/Images/Products/' + product.product_image"
+            [alt]="product.product_name" class="img-fluid mb-2">
 
-<h2>Explore Our Top Sellers</h2>
-<div class="scrolling-product-row container-fluid my-5">
-  <div class="scroll-container">
-    <div class="product-container" *ngFor="let product of products$ | async">
-      <div class="product-item border p-3">
-        <!-- Product Image -->
-        <img [src]="'https://usautoparts-beta.azurewebsites.net/Images/Products/' + product.product_image"
-          [alt]="product.product_name" class="img-fluid mb-2">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <!-- Product Name and Price -->
+            <div class="red-div px-2 align-items-center justify-content-end"
+              style="padding-top: .3rem !important; padding-bottom: .5rem !important; width: 50%;">
+              <span class="me-2">{{ product.product_name }}</span>
+              <span>${{ product.product_price }}</span>
+            </div>
 
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <!-- Product Name and Price -->
-          <div class="red-div px-2 align-items-center justify-content-end"
-            style="padding-top: .3rem !important; padding-bottom: .5rem !important; width: 50%;">
-            <span class="me-2">{{ product.product_name }}</span>
-            <span>${{ product.product_price }}</span>
+            <!-- Quantity Control in Home Component -->
+            <div class="quantity-control d-flex align-items-center red-div px-2 me-2">
+              <span>Qty.</span>
+              <button class="btn btn-danger btn-sm me-1" (click)="decreaseQuantity(product)">-</button>
+              <input type="number" class="form-control text-center" [(ngModel)]="product.product_quantity"
+                style="width: 45px;">
+              <button class="btn btn-danger btn-sm ms-1" (click)="increaseQuantity(product)">+</button>
+            </div>
+
           </div>
 
-          <!-- Quantity Control in Home Component -->
-          <div class="quantity-control d-flex align-items-center red-div px-2 me-2">
-            <span>Qty.</span>
-            <button class="btn btn-danger btn-sm me-1" (click)="decreaseQuantity(product)">-</button>
-            <input type="number" class="form-control text-center" [(ngModel)]="product.product_quantity" style="width: 45px;">
-            <button class="btn btn-danger btn-sm ms-1" (click)="increaseQuantity(product)">+</button>
+          <!-- Add to Cart and View Buttons -->
+          <div id="shopping_cart-view-buttons" class="d-flex justify-content-between pt-2">
+            <button class="btn btn-danger w-100 me-1" (click)="addToCart(product)">Add to Cart</button>
+            <button class="btn btn-outline-danger w-100 ms-1">VIEW</button>
           </div>
-          
 
-        </div>
-
-        <!-- Add to Cart and View Buttons -->
-        <div id="shopping_cart-view-buttons" class="d-flex justify-content-between pt-2">
-          <button class="btn btn-danger w-100 me-1" (click)="addToCart(product)">Add to Cart</button>
-          <button class="btn btn-outline-danger w-100 ms-1">VIEW</button>
-        </div>
-
-        <!-- Cart Confirmation Message -->
-        <div *ngIf="showMessage" class="cart-message">
-          {{ message }}
+          <!-- Cart Confirmation Message -->
+          <div *ngIf="showMessage" class="cart-message">
+            {{ message }}
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
 
 
 <app-footer></app-footer>
