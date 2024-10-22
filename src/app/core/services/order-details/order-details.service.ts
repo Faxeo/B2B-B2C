@@ -41,7 +41,7 @@ export class OrderDetailsService {
   constructor(private apiService: ApiService) {}
 
   getOrderDetail(orderId: number): Observable<OrderDetail> {
-    return this.apiService.post<OrderDetailResponse>('/Order/getOrderDetail', { id: orderId }).pipe(
+    return this.apiService.post<OrderDetailResponse>('Order/getOrderDetail', { id: orderId }).pipe(
       map((response) => {
         const orderDetail = response.data[0];
         // Add default values for the new properties if they're not present in the API response

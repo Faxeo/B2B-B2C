@@ -250,6 +250,7 @@
   width: 100%; /* Full width */
   padding-left: 20px; /* Add spacing on the left */
   padding-right: 20px; /* Add spacing on the right */
+  cursor: pointer;
 }
 
 .product-categories .category-item {
@@ -519,7 +520,6 @@
 .spinner-border {
   width: 3rem;
   height: 3rem;
-  
 }
 
 /* Style for the search input container when disabled */
@@ -651,12 +651,21 @@ span.input-group-text button i {
   flex: 1;
 }
 
-.form-group label {
+/* .form-group label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
   color: #444;
+} */
+
+
+.category-form{
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: white;
 }
+
 
 .form-group select {
   width: 100%;

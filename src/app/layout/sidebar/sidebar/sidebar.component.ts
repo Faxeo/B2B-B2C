@@ -21,6 +21,7 @@ export class SidebarComponent implements OnInit {
   password: string = '';
   showPassword: boolean = false;
   selectedLoginType: string = '';
+  errorMessage: string = '';
 
   constructor(
     private sidebarToggleService: SidebarToggleService,
@@ -45,70 +46,69 @@ export class SidebarComponent implements OnInit {
   }
 
   onLogin() {
+    // Clear any previous error messages before attempting to log in again
+    this.errorMessage = '';
+  
     if (this.selectedLoginType && this.email && this.password) {
       let apiUrl = '';
-      let redirectUrl = '';
-
+      let redirectUrl = '/'; // Default redirect URL after login
+  
       switch (this.selectedLoginType) {
         case 'admin':
-          apiUrl = 'Profile/customerLogin';
-          redirectUrl = '/';
-          break;
-        case 'business':
-          apiUrl = 'Profile/businessLogin';
-          redirectUrl = '/';
-          break;
+        case 'customer':
         case 'merchant':
-          apiUrl = 'Profile/merchantLogin';
-          redirectUrl = '/sidebar/merchant-dashboard';
+        case 'business':
+          apiUrl = `Profile/${this.selectedLoginType}Login`;
           break;
         default:
-          console.error('Unknown login type');
+          this.errorMessage = 'Wrong Login Type'; // Set error for wrong login type
           return;
       }
-
+  
       const loginData = {
         email: this.email,
         password: this.password,
       };
-
+  
       this.apiService.post<any>(apiUrl, loginData).subscribe({
         next: (response) => {
-          console.log('Full login response:', response);
-
           if (response.token) {
             localStorage.setItem('token', response.token);
             this.loginService.setLoginType(this.selectedLoginType);
-
+  
             if (response.response && response.response.data) {
-              if (response.response.data.customer_id) {
-                localStorage.setItem('userID', response.response.data.customer_id);
-                this.loginService.setUserID(response.response.data.customer_id); // Set userID in LoginService
-              } else if (response.response.data.customer_id) {
-                localStorage.setItem('businessID', response.response.data.customer_id);
-                localStorage.setItem('username', response.response.data.business_name);
-                this.loginService.setUserID(response.response.data.customer_id); // Set businessID in LoginService
-              } else if (response.response.data.customer_id) {
-                localStorage.setItem('merchantID', response.response.data.customer_id);
-                this.loginService.setUserID(response.response.data.customer_id); // Set merchantID in LoginService
+              const userID = response.response.data.customer_id;
+  
+              if (userID) {
+                localStorage.setItem('userID', userID);
+                this.loginService.setUserID(userID);
               } else {
-                console.error('ID is not defined in the expected location in the response data');
+                this.errorMessage = 'User ID not found in the response data.';
               }
-            } else {
-              console.error('Token is not present in the response');
             }
+          } else {
+            this.errorMessage = 'Wrong password or email.'; // Set error for wrong email or password
           }
         },
         error: (error) => {
+          this.errorMessage = 'Login failed. Please check your credentials.'; // Set error on API failure
           console.error('Login failed', error);
         },
         complete: () => {
-          this.router.navigate([redirectUrl]);
-          this.closeSidebar();
+          if (!this.errorMessage) {  // Only proceed if there are no errors
+            this.router.navigate([redirectUrl]).then(() => {
+              // Close sidebar after successful navigation
+              this.closeSidebar();
+            });
+          }
         },
       });
+    } else {
+      this.errorMessage = 'Please fill in all the fields.'; // Handle empty fields
     }
   }
+  
+  
 
   setLoginType(type: string) {
     this.loginService.setLoginType(type);
@@ -122,4 +122,4 @@ export class SidebarComponent implements OnInit {
   onSignUpClick() {
     this.signUpService.openSignUpPage();
   }
-}
+} 

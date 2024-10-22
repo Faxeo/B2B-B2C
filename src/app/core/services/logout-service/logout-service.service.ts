@@ -24,7 +24,7 @@ export class LogoutService {
         category: category || ''
       };
 
-      this.apiService.post<any>('/Profile/customerLogout', logoutData).subscribe({
+      this.apiService.post<any>('Profile/customerLogout', logoutData).subscribe({
         next: () => {
           localStorage.clear();
           this.loginService.clearData();

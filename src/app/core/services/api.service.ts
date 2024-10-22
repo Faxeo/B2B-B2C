@@ -8,16 +8,21 @@ import { AppConfig } from '../config';
 })
 export class ApiService {
   private baseUrl = AppConfig.baseUrl;
+  // private baseUrl1 = AppConfig.baseUrl1;
 
   constructor(private http: HttpClient) {}
 
   get<T>(url: string): Observable<T> {
     return this.http.get<T>(`${this.baseUrl}/${url}`);
   }
-
+  
   post<T>(url: string, data: any): Observable<T> {
     // console.log('Posting to:', `${this.baseUrl}/${url}`, data); 
     return this.http.post<T>(`${this.baseUrl}/${url}`, data);
+  }
+
+  delete<T>(url: string): Observable<T> {
+    return this.http.delete<T>(`${this.baseUrl}/${url}`);
   }
 
   // Fetch main categories

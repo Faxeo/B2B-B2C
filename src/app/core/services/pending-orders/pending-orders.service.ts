@@ -25,7 +25,7 @@ export class PendingOrdersService {
   constructor(private apiService: ApiService) {}
 
   getPendingOrders(): Observable<PendingOrder[]> { 
-    return this.apiService.post<PendingOrdersResponse>('/Order/getPendingOrders', {}).pipe(
+    return this.apiService.post<PendingOrdersResponse>('Order/getPendingOrders', {}).pipe(
       map((response) => response.data)
     );
   }

@@ -1,85 +1,103 @@
 <div class="signup-page">
-    <div class="container">
-        <div class="sign-up-container">
-            <header>
-              <img src="assets/logo.png" alt="US Auto Parts Logo" class="logo">
-              <h3>Signup</h3>
-            </header>
-          
-            <form class="sign-up-form" (ngSubmit)="onSubmit()" #signupForm="ngForm">
-              <div class="form-group">
-                <label for="email"> Email:</label>
-                <input type="email" id="email" name="email" [(ngModel)]="email" required #emailInput="ngModel" class="form-control" placeholder="Please set the email as the login name.">
-                <div *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)" class="error-message">
-                  <div *ngIf="emailInput.errors?.['required']">Email is required.</div>
-                  <div *ngIf="emailInput.errors?.['email']">Please enter a valid email address.</div>
-                </div>
-              </div>
-          
-              <div class="form-group">
-                <label for="password"> Login Password:</label>
-                <div class="password-input">
-                  <input [type]="showPassword ? 'text' : 'password'" id="password" name="password" [(ngModel)]="password" required #passwordInput="ngModel" class="form-control" placeholder="Set the login password">
-                  <button type="button" (click)="togglePasswordVisibility()" class="toggle-password">
-                    <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
-                  </button>
-                </div>
-                <div *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)" class="error-message">
-                  <div *ngIf="passwordInput.errors?.['required']">Password is required.</div>
-                </div>
-              </div>
-          
-              <div class="form-group">
-                <label for="confirmPassword"> Confirm Password:</label>
-                <div class="password-input">
-                  <input [type]="showPassword ? 'text' : 'password'" id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword" required #confirmPasswordInput="ngModel" class="form-control" placeholder="Enter the login password again">
-                  <button type="button" (click)="togglePasswordVisibility()" class="toggle-password">
-                    <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
-                  </button>
-                </div>
-                <div *ngIf="confirmPasswordInput.invalid && (confirmPasswordInput.dirty || confirmPasswordInput.touched)" class="error-message">
-                  <div *ngIf="confirmPasswordInput.errors?.['required']">Confirm Password is required.</div>
-                </div>
-                <div *ngIf="password !== confirmPassword && (confirmPasswordInput.dirty || confirmPasswordInput.touched)" class="error-message">
-                  <div>Passwords must match.</div>
-                </div>
-              </div>
-          
-              <div class="form-group">
-                <label for="first-name"> Full Name:</label>
-                <div class="row">
-                  <div class="col">
-                    <input type="text" id="first-name" name="firstName" [(ngModel)]="firstName" class="form-control" placeholder="Please enter your first name">
-                  </div>
-                  <div class="col">
-                    <input type="text" id="last-name" name="lastName" [(ngModel)]="lastName" class="form-control" placeholder="Please enter your last name">
-                  </div>
-                </div>
-              </div>
-          
-              <div class="form-group">
-                <label for="contact-number"> Contact Number:</label>
-                <div class="row">
-                  <div class="col-2">
-                    <input type="tel" id="phone" name="countryCode" [(ngModel)]="countryCode" class="form-control" placeholder="+1">
-                  </div>
-                  <div class="col">
-                    <input type="text" id="phone-number" name="phoneNumber" [(ngModel)]="phoneNumber" class="form-control" placeholder="123-456-7890">
-                  </div>
-                </div>
-              </div>
-          
-              <div class="checkbox">
-                <input type="checkbox" class="checkbox-form" id="terms" required>
-                <label for="terms">
-                  I agree to <a href="#">Free Membership Agreement</a>, <a href="#">Terms of Use</a>, and <a href="#">Privacy Policy</a>. I agree to receive more information from SanwaSystems.com about its products and services.
-                </label>
-              </div>
-          
-              <button type="submit" class="btn btn-primary" [disabled]="!signupForm.form.valid || password !== confirmPassword">Agree and Register</button>
-            </form>
+  <div class="container">
+    <div class="sign-up-container">
+      <button class="close-button" (click)="closeSignUp()">X</button>
+      <header>
+        <img src="assets/logo.png" alt="US Auto Parts Logo" class="logo">
+        <h3>Signup</h3>
+      </header>
+
+      <!-- Notification message -->
+      <div *ngIf="notificationMessage" class="notification-message">
+        {{ notificationMessage }}
+      </div>
+
+      <form class="sign-up-form" (ngSubmit)="onSubmit()" #signupForm="ngForm">
+        <div class="form-group">
+          <label for="email"> Email:</label>
+          <input type="email" id="email" name="email" [(ngModel)]="email" required #emailInput="ngModel"
+            class="form-control" placeholder="Please set the email as the login name.">
+          <div *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)" class="error-message">
+            <div *ngIf="emailInput.errors?.['required']">Email is required.</div>
+            <div *ngIf="emailInput.errors?.['email']">Please enter a valid email address.</div>
           </div>
-          
+        </div>
+
+        <div class="form-group">
+          <label for="password"> Login Password:</label>
+          <div class="password-input">
+            <input [type]="showPassword ? 'text' : 'password'" id="password" name="password" [(ngModel)]="password"
+              required #passwordInput="ngModel" class="form-control" placeholder="Set the login password">
+            <button type="button" (click)="togglePasswordVisibility()" class="toggle-password">
+              <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+          </div>
+          <div *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)" class="error-message">
+            <div *ngIf="passwordInput.errors?.['required']">Password is required.</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword"> Confirm Password:</label>
+          <div class="password-input">
+            <input [type]="showPassword ? 'text' : 'password'" id="confirmPassword" name="confirmPassword"
+              [(ngModel)]="confirmPassword" required #confirmPasswordInput="ngModel" class="form-control"
+              placeholder="Enter the login password again">
+            <button type="button" (click)="togglePasswordVisibility()" class="toggle-password">
+              <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+          </div>
+          <div *ngIf="confirmPasswordInput.invalid && (confirmPasswordInput.dirty || confirmPasswordInput.touched)"
+            class="error-message">
+            <div *ngIf="confirmPasswordInput.errors?.['required']">Confirm Password is required.</div>
+          </div>
+          <div *ngIf="password !== confirmPassword && (confirmPasswordInput.dirty || confirmPasswordInput.touched)"
+            class="error-message">
+            <div>Passwords must match.</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="first-name"> Full Name:</label>
+          <div class="row">
+            <div class="col">
+              <input type="text" id="first-name" name="firstName" [(ngModel)]="firstName" class="form-control"
+                placeholder="Please enter your first name">
+            </div>
+            <div class="col">
+              <input type="text" id="last-name" name="lastName" [(ngModel)]="lastName" class="form-control"
+                placeholder="Please enter your last name">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="contact-number"> Contact Number:</label>
+          <div class="row">
+            <div class="col-2">
+              <input type="tel" id="phone" name="countryCode" [(ngModel)]="countryCode" class="form-control"
+                placeholder="+1">
+            </div>
+            <div class="col">
+              <input type="text" id="phone-number" name="phoneNumber" [(ngModel)]="phoneNumber" class="form-control"
+                placeholder="123-456-7890">
+            </div>
+          </div>
+        </div>
+
+        <div class="checkbox">
+          <input type="checkbox" class="checkbox-form" id="terms" required>
+          <label for="terms">
+            I agree to <a href="#">Free Membership Agreement</a>, <a href="#">Terms of Use</a>, and <a href="#">Privacy
+              Policy</a>. I agree to receive more information from SanwaSystems.com about its products and services.
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary"
+          [disabled]="!signupForm.form.valid || password !== confirmPassword">Agree and Register</button>
+      </form>
     </div>
-    
+
+  </div>
+
 </div>

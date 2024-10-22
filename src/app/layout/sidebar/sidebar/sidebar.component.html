@@ -16,7 +16,7 @@
                 <option value="merchant">Merchant Login</option>  
                 <option value="customer">Customer Login</option>
                 <option value="business">Business Login</option>
-              </select>
+              </select> 
             </div> 
             <div class="login__field">
               <i class="login__icon fas fa-user"></i>
@@ -30,6 +30,9 @@
                   <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
                 </button>
               </div>
+            </div>
+            <div *ngIf="errorMessage" class="error-message">
+              {{ errorMessage }}
             </div>
             <div class="buttons">
               <button class="button login__submit" (click)="onLogin()">

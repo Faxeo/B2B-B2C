@@ -16,7 +16,7 @@ import {
   catchError,
 } from 'rxjs/operators';
 import { HttpClientModule } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { SidebarComponent } from '../../layout/sidebar/sidebar/sidebar.component';
 import { SidebarToggleService } from '../../core/services/sidebar-toggle/sidebar-toggle.service';
 import { FooterComponent } from '../../layout/footer/footer.component';
@@ -33,6 +33,7 @@ import { FetchYearService } from '../../core/services/fetch-year/fetch-year.serv
 import { VehicleSearchService } from '../../core/services/search-vehicle/search-vehicle.service';
 import { MainCategoryService } from '../../core/services/main-category/main-category.service';
 import { SubCategoryService } from '../../core/services/sub-category/sub-category.service';
+import { CategoryIdService } from '../../core/services/category-id/category-id.service';
 
 @Component({
   selector: 'app-home',
@@ -111,6 +112,8 @@ export class HomeComponent implements OnInit {
     private vehicleSearchService: VehicleSearchService,
     private mainCategoryService: MainCategoryService,
     private subCategoryService: SubCategoryService,
+    private router: Router,
+    private categoryIdService: CategoryIdService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
@@ -123,6 +126,7 @@ export class HomeComponent implements OnInit {
       this.loginService.getUserID().subscribe((userID) => {
         this.userID = userID;
         this.cartService.setUserDetails(this.userID, this.loginType);
+        // console.log("userId", this.userID);
       });
 
       this.loginService.getLoginType().subscribe((loginType) => {
@@ -164,6 +168,16 @@ export class HomeComponent implements OnInit {
     this.cartService.cartItemCount$.subscribe((count) => {
       this.cartItemCount = count;
     });
+  }
+
+  onCategoryClick(categoryId: number): void {
+    console.log('Setting categoryId in service:', categoryId);
+  
+    // Set the categoryId in the service
+    this.categoryIdService.setCategoryId(categoryId);
+  
+    // Navigate to the category route
+    this.router.navigate(['/category']);
   }
 
   getMainCategories(): void {

@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CheckoutComponent } from './checkout/checkout.component';
+import { DeleteCartService } from '../../core/services/delete-cart/delete-cart.service';
 
 @Component({
   standalone: true,
@@ -14,8 +15,9 @@ import { CheckoutComponent } from './checkout/checkout.component';
   styleUrls: ['./cart.component.css'],
 })
 export class CartComponent implements OnInit {
-  // Define the type for cartItems, adding discountedPrice as an optional field
+  // Define the type for cartItems, adding cartId and discountedPrice as optional fields
   cartItems: Array<{
+    cartId: string; // Add cartId for deletion
     productId: string;
     name: string;
     quantity: number;
@@ -50,7 +52,8 @@ export class CartComponent implements OnInit {
     private cartService: CartService,
     private businessCartService: BusinessCartService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private deleteCartService: DeleteCartService,
   ) {}
 
   ngOnInit(): void {
@@ -74,24 +77,28 @@ export class CartComponent implements OnInit {
     return discountedPrice;
   }
 
+  // Fetch the cart data from the server
   loadCartData(): void {
     if (!this.businessId) {
-      console.error('Business ID is not available.');
+      // console.error('Business ID is not available.');
       return;
     }
     this.businessCartService.getCartDetailsByBusinessId(this.businessId).subscribe(
       (data) => {
-        console.log('Fetched cart details:', data);
+        // console.log('Fetched cart details:', data);
         this.cartItems = data.map((item: any) => ({
+          cartId: item.cart_id, // Include cartId for each item
           productId: item.product.product_id.toString(),
           name: item.product.product_name,
           quantity: item.prod_qty,
           price: item.product.product_price,
           image: item.product.product_image,
           imageError: false,
-          discounts_Seller: item.product.discounts_Seller || [], // Include discounts_Seller if available
+          discounts_Seller: item.product.discounts_Seller || [], // Include discounts if available
         }));
-        // Update each item with its discounted price after loading data
+        // Log all cart items after loading
+        // console.log('Loaded cart items:', this.cartItems);
+        // Update each item with its discounted price
         this.cartItems.forEach(item => this.getItemTotal(item));
       },
       (error) => {
@@ -100,69 +107,63 @@ export class CartComponent implements OnInit {
     );
   }
 
+  // Remove a product from the cart using the cartId
+  removeFromCart(cartId: string): void {
+    console.log('Attempting to remove item with Cart ID:', cartId); // Log the cartId
+    // Confirm before removing
+    if (confirm('Are you sure you want to remove this item from your cart?')) {
+      this.deleteCartService.deleteCart(+cartId).subscribe(
+        (response) => {
+          console.log('Delete response:', response); // Log the delete response
+          if (response.success) {
+            // Remove the item from the cart locally
+            this.cartItems = this.cartItems.filter((item) => item.cartId !== cartId);
+            console.log('Item removed successfully.');
+          } else {
+            console.error('Failed to remove the item:', response.statusReason);
+          }
+        },
+        (error) => {
+          console.error('Error occurred while deleting the cart item:', error);
+        }
+      );
+    }
+  }
+
   applyDiscount(product: any, prod_qty: number, customerType: string): number {
-    // Log the initial request data
-    console.log('applyDiscount called with:');
-    console.log('Product:', product);
-    console.log('Quantity:', prod_qty);
-    console.log('Customer Type:', customerType);
-  
-    // Check if discounts_Seller array is present and not empty
+    // console.log('applyDiscount called with: Product:', product, 'Quantity:', prod_qty, 'Customer Type:', customerType);
     if (!product.discounts_Seller || product.discounts_Seller.length === 0) {
-      console.log('No discounts available for this product.');
       return product.price * prod_qty; // Return original price if no discounts available
     }
-  
-    // Filter discounts based on the customer type
+
     const discounts = product.discounts_Seller.filter((d: any) => d.customer_type === customerType);
-    console.log('Filtered Discounts for Customer Type:', discounts);
-  
     if (discounts.length === 0) {
-      console.log(`No discounts applicable for customer type: ${customerType}`);
       return product.price * prod_qty; // No discount applicable for this customer type
     }
-  
-    // Sort the discounts by quantity in ascending order to apply the "up to" logic
+
     discounts.sort((a: any, b: any) => a.quantity - b.quantity);
-    console.log('Sorted Discounts by Quantity:', discounts);
-  
+
     let applicableDiscountAmount = 0;
-  
-    // Loop through each discount tier and apply the correct discount "up to" the quantity
+
     for (let i = 0; i < discounts.length; i++) {
       const discount = discounts[i];
       const nextDiscountTier = i + 1 < discounts.length ? discounts[i + 1].quantity : Infinity;
-  
-      console.log(`Checking Discount Tier: ${discount.quantity} - Amount: ${discount.amount}`);
-      console.log(`Next Discount Tier Quantity: ${nextDiscountTier}`);
-  
-      // Apply discount if the quantity is within the current range
+
       if (prod_qty <= discount.quantity) {
         applicableDiscountAmount = discount.amount;
-        console.log(`Applicable Discount Found for Quantity: ${prod_qty} - Discount Amount: ${discount.amount}`);
-        break; // Break as we found the applicable discount tier
+        break;
       }
-  
-      // If quantity is in the next tier range, apply the discount of the current tier
+
       if (prod_qty > discount.quantity && prod_qty < nextDiscountTier) {
         applicableDiscountAmount = discount.amount;
-        console.log(`Applicable Discount for Quantity in Range: ${discount.quantity} to ${nextDiscountTier} - Discount Amount: ${discount.amount}`);
       }
     }
-  
-    // Calculate the total price considering the applicable discount amount
+
     const originalTotal = product.price * prod_qty;
     const discountedTotal = originalTotal - applicableDiscountAmount * prod_qty;
-  
-    // Log final calculation details
-    console.log('Original Total Price:', originalTotal);
-    console.log('Discount Amount per Unit:', applicableDiscountAmount);
-    console.log('Discounted Total Price:', discountedTotal);
-  
+
     return discountedTotal;
   }
-  
-  
 
   handleImageError(item: any): void {
     console.log('Image failed to load:', item.image);
@@ -170,32 +171,25 @@ export class CartComponent implements OnInit {
     item.image = '/assets/images/placeholder.png';
   }
 
-  removeFromCart(productId: string): void {
-    this.cartService.removeItem(productId);
-    this.cartItems = this.cartItems.filter((item) => item.productId !== productId);
-    this.loadCartData();
-  }
-
   onQuantityInput(productId: string, event: any): void {
-    const updatedQuantity = +event.target.value;
-    if (updatedQuantity > 0) {
-      this.updateQuantity(productId, updatedQuantity);
+  const updatedQuantity = Math.max(+event.target.value, 1); // Ensure quantity is at least 1
+  this.updateQuantity(productId, updatedQuantity);
+}
+
+updateQuantity(productId: string, newQuantity: number): void {
+  newQuantity = Math.max(newQuantity, 1); // Prevent negative or zero quantities
+  if (newQuantity > 0) {
+    this.cartService.updateQuantity(productId, newQuantity);
+
+    const itemToUpdate = this.cartItems.find((item) => item.productId === productId);
+    if (itemToUpdate) {
+      itemToUpdate.quantity = newQuantity;
+      itemToUpdate.discountedPrice = this.applyDiscount(itemToUpdate, newQuantity, 'Bronze'); // Update discounted price
     }
+
+    this.cdr.detectChanges(); // Trigger change detection manually if needed
   }
-
-  updateQuantity(productId: string, newQuantity: number): void {
-    if (newQuantity > 0) {
-      this.cartService.updateQuantity(productId, newQuantity);
-
-      const itemToUpdate = this.cartItems.find((item) => item.productId === productId);
-      if (itemToUpdate) {
-        itemToUpdate.quantity = newQuantity;
-        itemToUpdate.discountedPrice = this.applyDiscount(itemToUpdate, newQuantity, 'Bronze'); // Update discounted price
-      }
-
-      this.cdr.detectChanges(); // Trigger change detection manually if needed
-    }
-  }
+}
 
   saveBillingDetails(): void {
     console.log('Billing details saved:', this.billing);
@@ -206,8 +200,6 @@ export class CartComponent implements OnInit {
     // Save billing details before navigating to checkout
     this.saveBillingDetails(); 
   
-    // Log the billing details to verify the structure
-
     // Save cart items to localStorage
     const cartItemsToSave = this.cartItems.map(item => ({
       productId: item.productId,
@@ -219,7 +211,7 @@ export class CartComponent implements OnInit {
     }));
   
     // Log cart items to be saved
-    console.log('Cart Items before saving to storage:', cartItemsToSave);
+    // console.log('Cart Items before saving to storage:', cartItemsToSave);
   
     localStorage.setItem('cartItems', JSON.stringify(cartItemsToSave));
   

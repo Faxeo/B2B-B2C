@@ -1,74 +1,80 @@
-.cart-container {
+/* Cart container and shopping cart table */
+.container {
   max-width: 1200px;
-  margin-top: 20px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-h2 {
-  font-size: 1.8rem;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.cart-item {
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid #e0e0e0;
-  padding: 20px 0;
-}
-
-.item-image img {
-  width: 80px;
-  height: auto;
-  border-radius: 10px;
-  margin-right: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.item-details {
-  flex-grow: 1;
-}
-
-h3 {
-  font-size: 1.2rem;
-  color: #555;
-}
-
-.quantity-control {
-  display: flex;
-  align-items: center;
-}
-
-.quantity-control button {
-  background: #ff6f61;
+.card {
+  box-shadow: 0 1px 15px 1px rgba(52, 40, 104, 0.08);
   border: none;
-  padding: 5px 10px;
-  color: #fff;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s;
+  border-radius: 10px;
 }
 
-.quantity-control button:hover {
-  background: #e55b4f;
+.card-header h2 {
+  font-size: 2rem;
+  color: #333;
+  font-weight: bold;
+}
+
+.table-responsive {
+  margin-top: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+}
+
+th, td {
+  padding: 16px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+/* Center-align and style the table headers */
+.table-header th {
+  text-align: center;
+  background-color: black;
+  color: white;
+}
+
+.media {
+  display: flex;
+  align-items: center;
+}
+
+.media img {
+  width: 60px;
+  height: auto;
+  border-radius: 8px;
+  margin-right: 15px;
+}
+
+.media-body a {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  text-decoration: none;
+}
+
+.media-body a:hover {
+  color: #ff6f61;
+}
+
+.text-right, .text-center {
+  text-align: center;
+}
+
+.font-weight-semibold {
+  font-weight: 600;
 }
 
 .quantity-control input {
-  width: 50px;
+  width: 60px;
+  height: 35px;
   text-align: center;
-  border: 1px solid #ccc;
-  margin: 0 10px;
   border-radius: 5px;
-}
-
-.item-total {
-  font-weight: bold;
-  color: #333;
+  border: 1px solid #ddd;
 }
 
 .remove-btn {
@@ -77,20 +83,38 @@ h3 {
   font-size: 20px;
   color: #ff6f61;
   cursor: pointer;
-  transition: color 0.3s;
 }
 
 .remove-btn:hover {
   color: #e55b4f;
 }
 
-/* Billing Information Section */
+.text-danger {
+  color: #ff6f61;
+}
+
+.text-danger:hover {
+  color: #e55b4f;
+}
+
+.d-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.text-large {
+  font-size: 1.6rem;
+  color: #333;
+}
+
+/* Billing Information Section (unchanged) */
 .billing-information {
   margin-top: 40px;
   background-color: #fff;
-  padding: 20px;
+  padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
 }
 
 .billing-information h3 {
@@ -112,12 +136,17 @@ h3 {
 
 .form-group input, .form-group textarea {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   font-size: 1rem;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   border-radius: 5px;
+  transition: border-color 0.3s ease;
 }
 
+.form-group input:focus, .form-group textarea:focus {
+  border-color: #ff6f61;
+  outline: none;
+}
 
 .checkout {
   width: 100%;
@@ -127,8 +156,9 @@ h3 {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 1.2rem;
-  transition: background 0.3s;
+  font-size: 1.4rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
 }
 
 .checkout:hover {
@@ -139,16 +169,8 @@ h3 {
   margin-bottom: 10px;
   display: flex;
   justify-content: space-between;
-  align-items:space-between;
-  font-size: 1.2rem;
+  align-items: center;
+  font-size: 1.4rem;
   color: #333;
-}
-
-.subtotal-label {
   font-weight: bold;
 }
-    
-.subtotal-amount {
-  font-weight: bold;
-}
-

@@ -29,7 +29,7 @@ export class OrderShippingService {
   constructor(private apiService: ApiService) {}
 
   getOrderShipping(orderId: number): Observable<OrderShipping> {
-    return this.apiService.post<OrderShippingResponse>('/Order/getOrderShipping', { id: orderId }).pipe(
+    return this.apiService.post<OrderShippingResponse>('Order/getOrderShipping', { id: orderId }).pipe(
       map((response) => response.data)
     );
   }

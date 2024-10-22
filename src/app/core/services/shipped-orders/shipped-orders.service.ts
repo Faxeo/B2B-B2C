@@ -14,7 +14,7 @@ export class ShippedOrdersService {
   constructor(private apiService: ApiService) {}
 
   getShippedOrders(): Observable<any[]> {
-    return this.apiService.post<ShippedOrdersResponse>('/Order/getShippedOrders', {}).pipe(
+    return this.apiService.post<ShippedOrdersResponse>('Order/getShippedOrders', {}).pipe(
       map((response) => {
         return response.data;
       })

@@ -14,7 +14,7 @@ export class AddToCartService {
   addToCart(productId: number, userID: string, businessId: number, quantity: number): Observable<any> {
     const payload = {
       productID: productId,
-      customerID: +userID,
+      customerID: 0, //+userID
       businessId: businessId,
       quantity: quantity
     };

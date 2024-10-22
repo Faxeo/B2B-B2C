@@ -1,0 +1,115 @@
+<app-navbar></app-navbar>
+
+<!-- back-button.component.html -->
+<button class="back-button" (click)="onBackClick()"><i class="fa fa-arrow-left back-button"
+    aria-hidden="true"></i></button>
+<div class="page-container d-flex">
+
+  <!-- Filter Sidebar -->
+  <div class="sidebar" [class.collapsed]="isCollapsed">
+    <app-filter *ngIf="!isCollapsed"></app-filter>
+  </div>
+  <button class="toggle-btn" (click)="toggleSidebar()">
+    {{ isCollapsed ? '>>' : '<<' }} </button>
+
+      <div class="content-container">
+        <!-- Display a spinner when loading -->
+        <div *ngIf="isLoading" class="loading-overlay">
+          <div class="spinner-border text-danger" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div> 
+        </div>
+
+        <div *ngIf="showMessage" class="cart-message">
+          {{ message }}
+        </div>
+
+        <!-- Display products when they are loaded -->
+        <div class="product-list container-fluid my-5" *ngIf="!isLoading && products.length > 0">
+          <div class="row">
+            <div class="col-12 mb-4" *ngFor="let product of products">
+              <div class="product-item border p-3 d-flex justify-content-between align-items-start">
+                <!-- Product Image -->
+                <div class="product-image">
+                  <img [src]="'https://usautoparts-beta.azurewebsites.net/Images/Products/' + product.product_image"
+                    [alt]="product.product_name" class="img-fluid mb-2">
+                </div>
+        
+                <!-- Product Details -->
+                <div class="product-info">
+                  <h5 class="product-name">{{ product.product_name }}</h5>
+                  <p class="product-part-number">
+                    <span class="label">Brand:</span> {{ product.brand?.brand_name }}
+                  </p>
+                  <p class="product-part-number">
+                    <span class="label">Part number:</span> {{ product.product_identifier2 }}
+                  </p>
+                  <p class="product-part-number">
+                    <span class="label">Origin:</span> {{ product.product_origin }}
+                  </p>
+                  <p class="product-warning">⚠ Add a vehicle to guarantee fit</p>
+                  <p class="product-part-number">
+                    <span class="label">Interchange number:</span> {{ product.interchangeable_identifier }}
+                  </p>
+                </div>
+        
+                <!-- Price and Delivery Info -->
+                <div class="product-divider">
+                  <div class="product-price-info">
+                    <h3 class="product-price">
+                      ${{ product.product_price !== undefined ? product.product_price : 'Price not available' }} / each
+                    </h3>
+        
+                    <!-- Delivery and Shipping Information with Icons -->
+                    <p class="delivery-info">
+                      <img src="assets/location.png" alt="Next-Day Delivery" class="info-icon">
+                      Next-Day Delivery: <strong>Order now</strong>
+                    </p>
+                    <p class="shipping-info">
+                      <img src="assets/Delivery.png" alt="Free Shipping" class="info-icon">
+                      Free Shipping: on orders over $35
+                    </p>
+                  </div>
+        
+                  <!-- Add to Cart -->
+                  <div class="cart-action">
+                    <label for="quantity">Qty:</label>
+                    <input type="number" id="quantity" [(ngModel)]="product.product_quantity" class="form-control"
+                      min="1" max="99">
+                    <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product)">Add to Cart</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        
+
+          <!-- Pagination Controls -->
+          <div *ngIf="totalPages > 1" class="pagination-container">
+            <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1"
+              class="pagination-arrow">&laquo;</button>
+            <button (click)="changePage(1)" [disabled]="currentPage === 1" class="pagination-page">1</button>
+            <span *ngIf="shouldShowLeftEllipsis()" class="pagination-ellipsis">...</span>
+            <span *ngFor="let page of getPagesToShow()">
+              <button (click)="changePage(page)"
+                [ngClass]="{'active-page': page === currentPage, 'pagination-page': true}">
+                {{ page }}
+              </button>
+            </span>
+            <span *ngIf="shouldShowRightEllipsis()" class="pagination-ellipsis">...</span>
+            <button (click)="changePage(totalPages)" [disabled]="currentPage === totalPages" class="pagination-page">
+              {{ totalPages }}
+            </button>
+            <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages"
+              class="pagination-arrow">&raquo;</button>
+          </div>
+        </div>
+
+        <!-- Message when no products are found -->
+        <div *ngIf="!isLoading && products.length === 0">
+          <p>No products found for this category.</p>
+        </div>
+      </div>
+</div>
+
+<app-footer></app-footer>

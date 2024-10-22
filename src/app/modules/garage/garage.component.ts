@@ -12,6 +12,7 @@ import { GetVehicleService } from '../../core/services/get-vehicle/get-vehicle.s
 import { DeleteVehicleService } from '../../core/services/delete-vehicle/delete-vehicle.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { NavigationService } from '../../core/services/navigation-service/navigation-service.service';
 
 @Component({
   selector: 'app-garage',
@@ -59,7 +60,8 @@ export class GarageComponent {
     private addVehicleService: AddVehicleService,
     private loginService: LoginService,
     private getVehicleService: GetVehicleService,
-    private deleteVehicleService: DeleteVehicleService
+    private deleteVehicleService: DeleteVehicleService,
+    private navigationService: NavigationService
   ) {}
 
   ngOnInit(): void {
@@ -79,6 +81,10 @@ export class GarageComponent {
       }
       console.log('Login type updated:', this.loginType);
     });
+  }
+
+  onBackClick(): void {
+    this.navigationService.goBack();
   }
 
   getVehicle(): void {

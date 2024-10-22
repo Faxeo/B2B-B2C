@@ -9,6 +9,6 @@ export class BusinessRequestsService {
   constructor(private apiService: ApiService) {}
 
   getBusinessRequests(requestData: any = {}): Observable<any[]> {
-    return this.apiService.post<any[]>('/Customers/getBusinessRequests', requestData);
+    return this.apiService.post<any[]>('Customers/getBusinessRequests', requestData);
   }
 }

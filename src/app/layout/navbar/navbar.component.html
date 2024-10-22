@@ -1,0 +1,47 @@
+<!-- Toolbar -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand logo" href="/">
+        <img src="assets/logo.png" alt="US Auto Parts" height="50" width="80%">
+      </a>
+      <div class="d-flex flex-grow-1 align-items-center justify-content-between">
+        <div class="input-group search-bar me-3">
+          <div class="form-control inner-search" style="padding: 8px 0px 8px 12px;">
+            <!-- Trigger search on 'Enter' key press by adding the (keydown.enter) -->
+            <input id="search-input" class="form-control" type="search" placeholder="Search here" aria-label="Search"
+              (keydown.enter)="onSearch()">
+          </div>
+          <!-- Trigger search on button click -->
+          <span class="input-group-text border-0 red-button inner-search">
+            <button class="bg-transparent border-0" (click)="onSearch()">
+              <i class="fa fa-search fa-xl text-white"></i>
+            </button>
+          </span>
+        </div>
+  
+        <button *ngIf="loginType == 'business'" class="btn btn-outline-light ms-2 red-button garage"
+          style="font-size: 30px;" id="shopping_cart" routerLink="/garage">
+          <i class="fa fa-car" aria-hidden="true"></i>
+          <!-- Display the cart item count as a badge -->
+          <span *ngIf="cartItemCount > 0" class="cart-count-badge">{{ cartItemCount }}</span>
+        </button>
+        <div class="d-flex align-items-center">
+          <button *ngIf="loginType === 'business'" class="btn btn-outline-light me-2 red-button business-btn"
+            (click)="toggleAdminSidebar()">Business</button>
+  
+          <button *ngIf="!loginType" class="btn btn-outline-light me-2 red-button login-btn" (click)="openSidebar()">Login
+            Sign-up</button>
+  
+          <button *ngIf="loginType === 'admin'" class="btn btn-outline-light me-2 red-button"
+            (click)="toggleAdminSidebar()">Admin</button>
+  
+          <button *ngIf="loginType !== 'admin'" class="btn btn-outline-light ms-2 red-button" id="shopping_cart"
+            routerLink="/cart">
+            <i class="fa-solid fa-cart-shopping fa-2xl large-icon"></i>
+            <span *ngIf="cartItemCount > 0" class="cart-count-badge">{{ cartItemCount }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+  

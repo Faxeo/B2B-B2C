@@ -208,7 +208,7 @@ export class CheckoutComponent implements OnInit {
   
         if (response && response.success && response.statusCode === 200) {
           alert('Thanks for buying from us.');
-          this.clearCart(); // Clear cart items on successful checkout
+          this.clearCart(); 
         } else if (response && response.statusCode === 400) {
           alert('There was an issue processing your payment: ' + (response.statusReason || 'Unknown error'));
         } else {

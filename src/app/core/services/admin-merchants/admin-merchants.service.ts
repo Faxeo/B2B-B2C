@@ -24,7 +24,7 @@ export class AdminMerchantsService {
   constructor(private apiService: ApiService) {}
 
   getMerchants(): Observable<Merchant[]> {
-    return this.apiService.post<MerchantsResponse>('/merchants/getAll', {}).pipe(
+    return this.apiService.post<MerchantsResponse>('merchants/getAll', {}).pipe(
       map(response => response.data)
     );
   }

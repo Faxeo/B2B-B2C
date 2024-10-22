@@ -1,7 +1,7 @@
 <!-- Toolbar -->
 <nav class="navbar navbar-expand-lg">
   <div class="container-fluid">
-    <a class="navbar-brand logo" routerLink="/">
+    <a class="navbar-brand logo" href="/">
       <img src="assets/logo.png" alt="US Auto Parts" height="50" width="80%">
     </a>
     <div class="d-flex flex-grow-1 align-items-center justify-content-between">
@@ -22,7 +22,6 @@
       <button *ngIf="loginType == 'business'" class="btn btn-outline-light ms-2 red-button garage"
         style="font-size: 30px;" id="shopping_cart" routerLink="/garage">
         <i class="fa fa-car" aria-hidden="true"></i>
-        <!-- Display the cart item count as a badge -->
         <span *ngIf="cartItemCount > 0" class="cart-count-badge">{{ cartItemCount }}</span>
       </button>
       <div class="d-flex align-items-center">
@@ -209,17 +208,17 @@
       <div class="form-row" *ngIf="mainCategories.length > 0">
         <!-- Main Category Dropdown -->
         <div class="form-group">
-          <label for="mainCategory">Main Category:</label>
+          <label class="category-form" for="mainCategory">Main Category:</label>
           <select id="mainCategory" [(ngModel)]="selectedMainCategory" (change)="onMainCategoryChange()">
             <option value="" disabled selected>Select Main Category</option>
             <option *ngFor="let mainCategory of mainCategories" [value]="mainCategory.id">{{ mainCategory.name }}
             </option>
           </select>
         </div>
-
+ 
         <!-- First Sub-Category Dropdown -->
         <div class="form-group">
-          <label for="firstSubCategory">First Sub-Category:</label>
+          <label class="category-form" for="firstSubCategory">First Sub-Category:</label>
           <select id="firstSubCategory" [(ngModel)]="selectedFirstSubCategory" (change)="onFirstSubCategoryChange()"
             [disabled]="!selectedMainCategory">
             <option value="" disabled selected>Select First Sub-Category</option>
@@ -230,7 +229,7 @@
 
         <!-- Second Sub-Category Dropdown -->
         <div class="form-group">
-          <label for="secondSubCategory">Second Sub-Category:</label>
+          <label class="category-form" for="secondSubCategory">Second Sub-Category:</label>
           <select id="secondSubCategory" [(ngModel)]="selectedSecondSubCategory" [disabled]="!selectedFirstSubCategory">
             <option value="" disabled selected>Select Second Sub-Category</option>
             <option *ngFor="let secondSubCategory of secondSubCategories" [value]="secondSubCategory.id">{{
@@ -251,10 +250,11 @@
 <div *ngIf="!showSearchComponent" class="product-categories container-fluid my-5 px-5">
   <div class="row">
     <div class="col-md-3 col-sm-6 mb-4" *ngFor="let category of categories$ | async">
-      <div class="category-item d-flex justify-content-between align-items-center p-3 border">
+      <div class="category-item d-flex justify-content-between align-items-center p-3 border" 
+           (click)="onCategoryClick(category.id)"> <!-- Add click event -->
         <div>
           <h5>{{ category.name }}</h5>
-          <p>{{ category.productCount || '0 products' }}</p>
+          <p>{{ category.productCount }} products</p>
         </div>
         <img [src]="category.image" [alt]="category.name" class="img-fluid">
       </div>

@@ -24,6 +24,6 @@ export class AddVehicleService {
     console.log('Vehicle Data to be added:', vehicleData);
 
     // Make an API call to add the vehicle using the stored vehicle data
-    return this.apiService.post<any>('/Customers/addCustomerVehicles', vehicleData);
+    return this.apiService.post<any>('Customers/addCustomerVehicles', vehicleData);
   }
 }

@@ -9,6 +9,6 @@ export class OrdersToShipService {
   constructor(private apiService: ApiService) {}
 
   getOrdersToShip(requestData: any = {}): Observable<any[]> {
-    return this.apiService.post<any[]>('/Order/getBusinessPendingOrders', requestData);
+    return this.apiService.post<any[]>('Order/getBusinessPendingOrders', requestData);
   }
 }
