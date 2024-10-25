@@ -59,4 +59,8 @@
   .footer-bottom p:not(:last-child) {
     margin-bottom: 5px;
   }
+
+  .link:hover{
+    cursor: pointer;
+  }
   
