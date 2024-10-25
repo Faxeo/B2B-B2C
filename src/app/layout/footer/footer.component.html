@@ -58,9 +58,18 @@
     </div>
     <div class="footer-bottom text-center">
       <p>© 1999-2024 usautopartsexperts.com. All rights reserved.</p>
-      <p>Product Listing Policy - Intellectual Property Protection - Privacy Policy - Terms of Use</p>
-      <p>Browse Alphabetically: Onetouch | Country Search | Affiliate</p>
-      <p>Product Listing Policy - Intellectual Property Protection - Privacy Policy - Terms of Use - User Information Legal Enquiry Guide - Integrity Compliance</p>
+      <p>
+        Product Listing Policy - Intellectual Property Protection - 
+        <span 
+          class="link" 
+          (click)="navigateToPrivacyPolicy()" 
+          (mouseover)="underline = true" 
+          (mouseleave)="underline = false" 
+          [style.textDecoration]="underline ? 'underline' : 'none'">
+          Privacy Policy
+        </span> - Terms of Use
+      </p>
     </div>
+    
   </footer>
   
