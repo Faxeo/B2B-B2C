@@ -1,12 +1,36 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiService } from '../api.service'; // Adjust the path as necessary
+import { ApiService } from '../api.service';
+
+interface Product {
+  product: {
+    product_id: number;
+    product_name: string;
+    product_price: number;
+    product_identifier2: string;
+    product_origin: string;
+  };
+  status: string;  // "purchased" or "searched"
+}
+
+interface Vehicle {
+  customerId: number;
+  year: string;
+  make: string;
+  model: string;
+  trim: string;
+  engine: string;
+  products: Product[];
+  purchasedProducts?: Product[];  // Optional properties to handle filtered products
+  searchedProducts?: Product[];
+}
+
 
 interface VehicleResponse {
   success: boolean;
   statusCode: number;
   statusReason: string;
-  data: any[]; // Or define a more specific type for vehicles
+  data: Vehicle[];
 }
 
 @Injectable({
@@ -15,14 +39,8 @@ interface VehicleResponse {
 export class GetVehicleService {
   constructor(private apiService: ApiService) {}
 
-  /**
-   * Retrieves the list of customer vehicles from the server.
-   * @param customerId - The ID of the customer to get vehicles for.
-   * @returns Observable containing the list of customer vehicles.
-   */
   getCustomerVehicles(customerId: number): Observable<VehicleResponse> {
     const requestBody = { customerID: customerId };
-    // Remove leading slash from endpoint
     return this.apiService.post<VehicleResponse>('Customers/getCustomerVehicles', requestBody);
   }
 }

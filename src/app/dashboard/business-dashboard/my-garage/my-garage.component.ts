@@ -81,61 +81,21 @@ export class MyGarageComponent implements OnInit {
   }
 
   getVehicle(): void {
-    // Ensure that customerID is available before making the API call
-    const customerId = this.userID ? parseInt(this.userID, 10) : 0;
-
+    const customerId = parseInt(localStorage.getItem('userID') || '0', 10);
     if (!customerId) {
-      console.error('Customer ID is not available');
       alert('Customer ID is missing. Please make sure you are logged in.');
       return;
     }
 
-    // Log the request data being sent
-    const requestBody = { customerID: customerId };
-    console.log('Request Data:', requestBody);
-
-    // Call the getCustomerVehicles method from GetVehicleService to fetch vehicle data
     this.getVehicleService.getCustomerVehicles(customerId).subscribe(
       (response) => {
-        // Ensure the response data is an array
         if (response && response.data && Array.isArray(response.data)) {
-          // Replace the dummy data with the fetched vehicle data array
-          this.demoVehicleData = response.data.map((vehicle, index, array) => {
-            // Add demo products to each vehicle except the last one
-            if (index !== array.length - 1) {
-              vehicle.products = [
-                {
-                  name: 'Oil Filter',
-                  partNumber: `OF-${index + 1}`,
-                  unitPrice: 15.99,
-                  totalPrice: 15.99,
-                  qty: 1,
-                },
-                {
-                  name: 'Air Filter',
-                  partNumber: `AF-${index + 1}`,
-                  unitPrice: 25.99,
-                  totalPrice: 25.99,
-                  qty: 1,
-                },
-                {
-                  name: 'Brake Pads',
-                  partNumber: `BP-${index + 1}`,
-                  unitPrice: 75.99,
-                  totalPrice: 75.99,
-                  qty: 1,
-                },
-              ];
-            } else {
-              // No products for the last vehicle
-              vehicle.products = [];
-            }
+          // Filter products based on status directly from the API response
+          this.demoVehicleData = response.data.map((vehicle) => {
+            vehicle.purchasedProducts = vehicle.products.filter(p => p.status === 'purchased');
+            vehicle.searchedProducts = vehicle.products.filter(p => p.status === 'searched');
             return vehicle;
           });
-          console.log(
-            'Fetched vehicles with demo products:',
-            this.demoVehicleData
-          );
         } else {
           console.error('Invalid response format:', response);
         }
@@ -146,7 +106,6 @@ export class MyGarageComponent implements OnInit {
       }
     );
   }
-
   getYears(): void {
     this.fetchYearService.fetchYears().subscribe(
       (data: any[]) => {
