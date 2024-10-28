@@ -152,7 +152,7 @@ export class CategoryComponent implements OnInit {
 
   getProductImageUrl(imagePath: string): string {
     const baseUrl =
-      'http://182.180.50.148:5001/Images/Products/';
+      'https://usaperp.com:5001/Images/Products/';
     return `${baseUrl}${imagePath}`;
   }
 

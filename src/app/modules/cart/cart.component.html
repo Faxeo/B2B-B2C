@@ -21,7 +21,7 @@
             <tr *ngFor="let item of cartItems">
               <td class="p-4" style="height: 100px;">
                 <div class="media align-items-center">
-                  <img *ngIf="!item.imageError" [src]="'http://182.180.50.148:5001/Images/Products/' + item.image"
+                  <img *ngIf="!item.imageError" [src]="'https://usaperp.com:5001/Images/Products/' + item.image"
                     class="d-block ui-w-40 ui-bordered mr-4" alt="Product Image" (error)="handleImageError(item)">
                   <div class="media-body">
                     <a href="#" class="d-block text-dark">{{ item.name }}</a>

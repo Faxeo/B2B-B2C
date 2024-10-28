@@ -15,6 +15,7 @@ import { SignUpService } from '../../../core/services/signup-service/signup-serv
   styleUrls: ['./sidebar.component.scss'],
   imports: [RouterModule, CommonModule, FormsModule],
 })
+
 export class SidebarComponent implements OnInit {
   isExpanded = false;
   email: string = '';
@@ -56,6 +57,8 @@ export class SidebarComponent implements OnInit {
       switch (this.selectedLoginType) {
         case 'admin':
         case 'customer':
+          apiUrl = `Profile/customerLogin`;
+          break;
         case 'merchant':
         case 'business':
           apiUrl = `Profile/${this.selectedLoginType}Login`;
@@ -77,7 +80,7 @@ export class SidebarComponent implements OnInit {
             this.loginService.setLoginType(this.selectedLoginType);
   
             if (response.response && response.response.data) {
-              const userID = response.response.data.customer_id;
+              const userID = response.response.data.customer_id; 
   
               if (userID) {
                 localStorage.setItem('userID', userID);
@@ -107,7 +110,6 @@ export class SidebarComponent implements OnInit {
       this.errorMessage = 'Please fill in all the fields.'; // Handle empty fields
     }
   }
-  
   
 
   setLoginType(type: string) {
