@@ -95,6 +95,13 @@
     flex-grow: 2;
     margin-left: 20px;
   }
+
+  .login-overlay{
+    color: #b71c1c;
+    font-weight: 700;
+    margin-right: 40px;
+  }
+  
   
   .product-name {
     font-size: 22px;
@@ -110,7 +117,7 @@
   .product-part-number, .product-warning, .product-interchange {
     font-size: 16px;
     color: #666;
-    font-weight: 500;
+    font-weight: 500; 
     margin-bottom: 5px;
   }
   

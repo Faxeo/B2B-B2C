@@ -17,6 +17,9 @@ import { LoginService } from '../../core/services/login-service/login-service.se
 import { AddVehicleService } from '../../core/services/add-vehicle/add-vehicle.service';
 import { VehicleSearchService } from '../../core/services/search-vehicle/search-vehicle.service';
 import { FilterComponent } from './filter/filter.component';
+import { NavigationService } from '../../core/services/navigation-service/navigation-service.service';
+import { ActivatedRoute } from '@angular/router';
+import { DynamicSearchService } from '../../core/services/dynamic-search/dynamic-search.service';
 
 @Component({
   standalone: true,
@@ -29,31 +32,31 @@ export class SearchComponent implements OnChanges {
   @Input() searchResults: any[] = [];
   @Input() currentPage: number = 1;
   @Input() totalPages: number = 1;
-  @Input() isLoading: boolean = false; // Initial loading spinner flag
-  @Input() isPaginationLoading: boolean = false; // Pagination loading spinner flag
+  @Input() isLoading: boolean = false;
+  @Input() isPaginationLoading: boolean = false;
   @Input() searchType:
     | 'generalSearch'
     | 'vehicleSearch'
     | 'categorySearch'
     | null = null;
   @Input() loginType: string | null = null;
+
   @Output() pageChange = new EventEmitter<number>();
   @Output() vehicleSearchPageChange = new EventEmitter<number>();
   @Output() categorySearchPageChange = new EventEmitter<number>();
+
   userID: string | null = null;
   message: string = '';
   showMessage: boolean = false;
   cartItemCount: number = 0;
   isLocallyLoading: boolean = false;
-  notificationMessage: string = ''; // Holds the notification message
-  showNotification: boolean = false; // Controls notification visibility
-
+  notificationMessage: string = '';
+  showNotification: boolean = false;
   isCollapsed: boolean = false;
-
-  toggleSidebar() {
-    this.isCollapsed = !this.isCollapsed;
-  }
-  
+  searchQuery: string = '';
+  vehicleData: any = {}; // Define structure based on the actual vehicle data requirements
+  categoryData: any = {}; // Define structure based on the actual category data requirements
+  currentRequestData: any = {};
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -63,12 +66,14 @@ export class SearchComponent implements OnChanges {
     private loginService: LoginService,
     private addVehicleService: AddVehicleService,
     private vehicleSearchService: VehicleSearchService,
+    private navigationService: NavigationService,
+    private activatedRoute: ActivatedRoute,
+    private dynamicSearchService: DynamicSearchService,
   ) {}
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.userID = localStorage.getItem('userID');
-      // console.log('User ID from localStorage:', this.userID);
       this.loginService.getUserID().subscribe((userID) => {
         this.userID = userID;
         this.cartService.setUserDetails(this.userID, this.loginType);
@@ -78,71 +83,314 @@ export class SearchComponent implements OnChanges {
         this.loginType = loginType;
         if (this.loginType === 'business') {
           const username = localStorage.getItem('username');
-          // console.log('Username:', username);
           this.loginType = username || this.loginType;
         }
-        console.log('Login type updated:', this.loginType);
         this.cartService.setUserDetails(this.userID, this.loginType);
       });
-    } else {
-      console.log('Running in a non-browser environment');
     }
-    // Set up the cart item count observable
+
     this.cartService.cartItemCount$.subscribe((count) => {
       this.cartItemCount = count;
     });
-    
+
+    this.activatedRoute.queryParams.subscribe((params) => {
+      if (params['query']) {
+        this.searchType = 'generalSearch';
+        const query = params['query'];
+        this.performGeneralSearch(query);
+      } else if (
+        params['year'] ||
+        params['make'] ||
+        params['model'] ||
+        params['trim'] ||
+        params['engine']
+      ) {
+        this.searchType = 'vehicleSearch';
+        const vehicleData = {
+          year: params['year'],
+          make: params['make'],
+          model: params['model'],
+          trim: params['trim'],
+          engine: params['engine'],
+        };
+        this.performVehicleSearch(vehicleData);
+      } else if (
+        params['mainCategory'] ||
+        params['firstSubCategory'] ||
+        params['secondSubCategory']
+      ) {
+        this.searchType = 'categorySearch';
+        const categoryData = {
+          mainCategory: params['mainCategory'],
+          firstSubCategory: params['firstSubCategory'],
+          secondSubCategory: params['secondSubCategory'],
+        };
+        this.performCategorySearch(categoryData);
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (isPlatformBrowser(this.platformId)) {
-
       if (changes['isLoading'] && changes['isLoading'].currentValue === true) {
         this.isLocallyLoading = true;
-      } else if (changes['isLoading'] && changes['isLoading'].currentValue === false) {
+      } else if (
+        changes['isLoading'] &&
+        changes['isLoading'].currentValue === false
+      ) {
         this.isLocallyLoading = false;
       }
 
-      // Handle pagination loading separately
-      if (changes['isPaginationLoading'] && changes['isPaginationLoading'].currentValue === true) {
-        this.isLocallyLoading = true; // Show loading spinner during pagination
-      } else if (changes['isPaginationLoading'] && changes['isPaginationLoading'].currentValue === false) {
-        this.isLocallyLoading = false; // Hide loading spinner after pagination
+      if (
+        changes['isPaginationLoading'] &&
+        changes['isPaginationLoading'].currentValue === true
+      ) {
+        this.isLocallyLoading = true;
+      } else if (
+        changes['isPaginationLoading'] &&
+        changes['isPaginationLoading'].currentValue === false
+      ) {
+        this.isLocallyLoading = false;
       }
 
-      // Hide the spinner when new search results arrive
       if (changes['searchResults'] && changes['searchResults'].currentValue) {
-        this.isLocallyLoading = false; // Hide spinner when new results are displayed
-        console.log('New search results:', changes['searchResults'].currentValue); // Debug log
+        this.isLocallyLoading = false;
       }
 
-      // Manually trigger change detection when `isLocallyLoading` state changes
       this.cdr.detectChanges();
-      // Check if new search results are available
-      if (changes['searchResults'] && changes['searchResults'].currentValue) {
-        console.log('New search results:', changes['searchResults'].currentValue);
-  
-        // Map the 'price' field to 'product_price' for each product
-        changes['searchResults'].currentValue.forEach((product: any) => {
-          console.log('Product Data Check Before Mapping:', product);
-          this.searchResults.forEach((product) => {
-            if (product.product_quantity === undefined || product.product_quantity === null) {
-              product.product_quantity = 1;
-            }
-          });
-  
-          // Assign 'product_price' based on 'price' from API response
-          product.product_price = product.price || 0; // Map 'price' to 'product_price'
-          
-          // Log after mapping
-          console.log('Product Data Check After Mapping:', product);
-        });
-      }
     }
-    
   }
 
-  getPagesToShow(): number[] { 
+
+  emitPageChange(page: number): void {
+    console.log(`emitPageChange called with page: ${page} and searchType: ${this.searchType}`);
+    this.currentPage = page;
+    this.isLocallyLoading = true;
+
+    // Update skip and page for pagination
+    this.currentRequestData.skip = (this.currentPage - 1) * 10;
+    this.currentRequestData.page = this.currentPage;
+
+    this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
+      (response: any) => {
+        this.searchResults = response.products || [];
+        this.totalPages = response.totalPages || 1;
+        this.isLocallyLoading = false;
+        this.cdr.detectChanges();
+      },
+      (error: any) => {
+        console.error(`Error fetching products for ${this.searchType} pagination:`, error);
+        this.isLocallyLoading = false;
+      }
+    );
+  }
+
+  // Ensure that `performGeneralSearch` respects the current page setting
+  performGeneralSearch(query: string): void {
+    console.log('Performing general search with query:', query);
+
+    this.currentRequestData = {
+      // Store request data
+      productName: '',
+      manufacturer: '',
+      compatibility: '',
+      brand: '',
+      description: '',
+      upc: '',
+      partNumber: '',
+      attribute: '',
+      includeCompatibility: false,
+      includeManufacturer: false,
+      includeAttribute: false,
+      includeQuantity: false,
+      includeImages: false,
+      skip: (this.currentPage - 1) * 10,
+      take: 10,
+      m_id: null,
+      f_id: null,
+      s_id: null,
+      keyFeature: '',
+      vendor: null,
+      search_description: query,
+      compatiblityValues: {
+        compatibilityID: 0,
+        productID: 0,
+        sno: null,
+        year: '',
+        make: '',
+        model: '',
+        trim: '',
+        engine: '',
+        notes: '',
+        isDeleted: null,
+      },
+      product_Attributes:
+        "SELECT product_id FROM product_attributes_view WHERE concatenated_attributes LIKE '%%' order by product_id",
+      attributeSearch: false,
+      page: this.currentPage,
+    };
+
+    this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
+      (response: any) => {
+        if (response && response.products) {
+          this.searchResults = response.products;
+          this.totalPages = response.totalPages || 1;
+          this.isLocallyLoading = false;
+          this.cdr.detectChanges();
+        } else {
+          console.error('Unexpected response format:', response);
+          this.displayMessage('Unexpected response format from the server.');
+        }
+      },
+      (error: any) => {
+        console.error('Error performing general search:', error);
+        this.isLocallyLoading = false;
+        this.displayMessage('An error occurred while fetching search results.');
+      }
+    );
+  }
+
+  performCategorySearch(categoryData: any): void {
+    // Initialize `currentRequestData` with full request structure
+    this.currentRequestData = {
+      productName: '',
+      manufacturer: '',
+      compatibility: '',
+      brand: '',
+      description: '',
+      upc: '',
+      partNumber: '',
+      attribute: '',
+      includeCompatibility: false,
+      includeManufacturer: false,
+      includeAttribute: false,
+      includeQuantity: false,
+      includeImages: false,
+      skip: (this.currentPage - 1) * 10,
+      take: 10,
+      m_id: categoryData.mainCategory || null,
+      f_id: categoryData.firstSubCategory || null,
+      s_id: categoryData.secondSubCategory || null,
+      keyFeature: '',
+      vendor: null,
+      search_description: '',
+      compatiblityValues: {
+        compatibilityID: 0,
+        productID: 0,
+        sno: null,
+        year: '',
+        make: '',
+        model: '',
+        trim: '',
+        engine: '',
+        notes: '',
+        isDeleted: null,
+      },
+      product_Attributes: "SELECT product_id FROM product_attributes_view WHERE concatenated_attributes LIKE '%%' order by product_id",
+      attributeSearch: false,
+      page: this.currentPage,
+    };
+
+    console.log('Category search requestData:', this.currentRequestData);
+
+    // Perform initial search request
+    this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
+      (response: any) => {
+        console.log('Category search response:', response);
+        this.searchResults = response.products || [];
+        this.totalPages = response.totalPages || 1;
+        this.isLocallyLoading = false;
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        console.error('Error performing category search:', error);
+        this.isLocallyLoading = false;
+        this.displayMessage('An error occurred while fetching search results. Please try again later.');
+      }
+    );
+  }
+
+  searchByCategory(page: number): void {
+    console.log('searchByCategory called with page:', page);
+    this.currentPage = page;
+    this.emitPageChange(page); // Call `emitPageChange` to handle pagination
+  }
+
+  performVehicleSearch(vehicleData: any): void {
+    // Set up initial request data structure for vehicle search
+    this.currentRequestData = {
+      productName: '',
+      manufacturer: '',
+      compatibility: '',
+      brand: '',
+      description: '',
+      upc: '',
+      partNumber: '',
+      attribute: '',
+      includeCompatibility: false,
+      includeManufacturer: false,
+      includeAttribute: false,
+      includeQuantity: false,
+      includeImages: false,
+      skip: (this.currentPage - 1) * 10,
+      take: 10,
+      m_id: null,
+      f_id: null,
+      s_id: null,
+      keyFeature: '',
+      vendor: null,
+      search_description: '',
+      compatiblityValues: {
+        compatibilityID: 0,
+        productID: 0,
+        sno: null,
+        year: vehicleData.year,
+        make: vehicleData.make,
+        model: vehicleData.model,
+        trim: vehicleData.trim,
+        engine: vehicleData.engine,
+        notes: '',
+        isDeleted: null,
+      },
+      product_Attributes:
+        "SELECT product_id FROM product_attributes_view WHERE concatenated_attributes LIKE '%%' order by product_id",
+      attributeSearch: false,
+      page: this.currentPage,
+    };
+
+    // Initial vehicle search request
+    this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
+      (response: any) => {
+        console.log('Vehicle search response:', response);
+        this.searchResults = response.products || [];
+        this.totalPages = response.totalPages || 1;
+        this.isLocallyLoading = false;
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        console.error('Error performing vehicle search:', error);
+        this.isLocallyLoading = false;
+      }
+    );
+  }
+
+  // Call emitPageChange for pagination controls
+  searchByVehicle(page: number): void {
+    console.log('searchByVehicle called with page:', page);
+    this.currentPage = page;
+    this.emitPageChange(page); // Triggers pagination with currentRequestData
+  }
+
+
+  toggleSidebar() {
+    this.isCollapsed = !this.isCollapsed;
+  }
+
+  onBackClick(): void {
+    this.navigationService.goBack();
+  }
+
+  getPagesToShow(): number[] {
     const pages: number[] = [];
     const startPage = Math.max(2, this.currentPage - 1);
     const endPage = Math.min(this.totalPages - 1, this.currentPage + 1);
@@ -187,33 +435,27 @@ export class SearchComponent implements OnChanges {
     product_image: string;
     product_identifier2: string;
   }): void {
-    if (!this.userID) {
-      alert('Please log in to add items to your cart.');
-      return;
-    }
-  
+    const userID = this.userID || '';
+    const businessId = this.userID ? +this.userID : 0;
     const upc = product.product_identifier2;
-  
-    console.log('Adding product to cart:', product);
-  
-    // Pass `this.userID` as `businessId` and product quantity in the function call
+
     this.addToCartService
       .addToCart(
-        product.product_id,          // productId
-        this.userID,                 // userID (used as customerID)
-        +this.userID,                // businessId (using userID as businessId)
-        product.product_quantity     // product quantity
+        product.product_id,
+        userID,
+        businessId,
+        product.product_quantity
       )
       .subscribe({
         next: () => {
-          this.addToCartService.updateCart(
-            product.product_id.toString(),
-            product.product_name,
-            product.product_price,
-            product.product_image,
-            product.product_quantity,
-            upc
-          );
+          this.cartService.addToCart({
+            productId: product.product_id.toString(),
+            name: product.product_name,
+            price: product.product_price,
+            image: product.product_image,
+            quantity: product.product_quantity,
+            upc: upc,
+          });
           this.displayMessage('Item added to cart successfully!');
         },
         error: (error) => {
@@ -222,8 +464,6 @@ export class SearchComponent implements OnChanges {
         },
       });
   }
-  
-  
 
   displayMessage(msg: string): void {
     this.message = msg;
@@ -238,17 +478,24 @@ export class SearchComponent implements OnChanges {
     this.notificationMessage = message;
     this.showNotification = true;
 
-    // Hide the notification after 3 seconds
     setTimeout(() => {
       this.showNotification = false;
     }, 3000);
   }
 
   addVehicle(product: any): void {
-    const vehicleData = this.vehicleSearchService.getVehicleData(); 
+    const vehicleData = this.vehicleSearchService.getVehicleData();
 
-    if (!vehicleData.year || !vehicleData.make || !vehicleData.model || !vehicleData.trim || !vehicleData.engine) {
-      this.displayNotification('Please ensure all vehicle details are selected before adding the vehicle.');
+    if (
+      !vehicleData.year ||
+      !vehicleData.make ||
+      !vehicleData.model ||
+      !vehicleData.trim ||
+      !vehicleData.engine
+    ) {
+      this.displayNotification(
+        'Please ensure all vehicle details are selected before adding the vehicle.'
+      );
       return;
     }
 
@@ -259,39 +506,15 @@ export class SearchComponent implements OnChanges {
 
     this.addVehicleService.addCustomerVehicle().subscribe({
       next: (response) => {
-        console.log('Vehicle added successfully:', response);
-        this.displayNotification('Vehicle has been added to your garage successfully.');
+        this.displayNotification(
+          'Vehicle has been added to your garage successfully.'
+        );
       },
       error: (error) => {
-        console.error('Error adding vehicle:', error);
-        this.displayNotification('Failed to add the vehicle. Please try again later.');
+        this.displayNotification(
+          'Failed to add the vehicle. Please try again later.'
+        );
       },
     });
-  }
-  
-  // Method to handle vehicle search pagination
-  searchByVehicle(page: number): void {
-    console.log('Vehicle Search Pagination to page:', page);
-    this.isLocallyLoading = true; // Show loading spinner during vehicle search pagination
-    this.vehicleSearchPageChange.emit(page);
-    this.cdr.detectChanges(); // Trigger change detection for view update
-  }
-
-  // Method to handle category search pagination
-  searchByCategory(page: number): void {
-    console.log('Category Search Pagination to page:', page);
-    this.isLocallyLoading = true; // Show loading spinner during category search pagination
-    this.categorySearchPageChange.emit(page);
-    this.cdr.detectChanges(); // Trigger change detection for view update
-  }
-
-  emitPageChange(page: number): void {
-    if (this.searchType === 'generalSearch') {
-      this.pageChange.emit(page); // Emit general search page change
-    } else if (this.searchType === 'vehicleSearch') {
-      this.searchByVehicle(page); // Emit vehicle search page change
-    } else if (this.searchType === 'categorySearch') {
-      this.searchByCategory(page); // Emit category search page change
-    }
   }
 }

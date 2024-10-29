@@ -15,12 +15,18 @@ export class DeleteVehicleService {
   constructor(private apiService: ApiService) {}
 
   /**
-   * Deletes a vehicle based on the provided vehicle ID.
-   * @param vehicleId - The ID of the vehicle to be deleted.
+   * Deletes a vehicle based on the provided vehicle details.
+   * @param vehicleData - Object containing the vehicle details to be deleted.
    * @returns Observable containing the response from the server.
    */
-  deleteVehicle(vehicleId: number): Observable<DeleteResponse> {
-    const requestBody = { vehicleID: vehicleId };
-    return this.apiService.post<DeleteResponse>('Customers/deleteVehicle', requestBody);
+  deleteVehicle(vehicleData: {
+    year: string;
+    make: string;
+    model: string;
+    trim: string;
+    engine: string;
+    customerID: number;
+  }): Observable<DeleteResponse> {
+    return this.apiService.post<DeleteResponse>('Customers/deleteVehicle', vehicleData);
   }
 }

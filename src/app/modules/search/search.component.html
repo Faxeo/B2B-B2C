@@ -6,207 +6,221 @@
   {{ notificationMessage }}
 </div>
 
+
+
 <div class="page-container">
-  <div class="sidebar" [class.collapsed]="isCollapsed">
-    
-    <app-filter *ngIf="!isCollapsed"></app-filter>
-  </div> 
-  <button class="toggle-btn" (click)="toggleSidebar()">
-    {{ isCollapsed ? '>>' : '<<' }}
-  </button>
+  <div class="sidebar-arrangement">
+    <!-- Back Button -->
+    <button class="back-button" (click)="onBackClick()">
+      <i class="fa fa-arrow-left back-button" aria-hidden="true"></i>
+    </button>
+    <div class="sidebar" [class.collapsed]="isCollapsed">
+      <app-filter *ngIf="!isCollapsed"></app-filter>
+    </div>
+    <button class="toggle-btn" (click)="toggleSidebar()">
+      {{ isCollapsed ? '>>' : '<<' }} </button>
+  </div>
 
   <div class="main-content">
-  <div class="search-results container-fluid my-5" *ngIf="searchType === 'generalSearch'">
-    <h2>General Search Results</h2>
-    <!-- General Search Product Grid -->
-    <div class="product-list container-fluid my-5" *ngIf="!isLoading && searchResults.length > 0">
-      <div class="row">
-        <div class="col-12 mb-4" *ngFor="let product of searchResults">
-          <div class="product-item border p-3 d-flex justify-content-between align-items-start">
-            <!-- Product Image -->
-            <div class="product-image">
-              <img [src]="'http://182.180.50.148:5001/Images/Products/' + product.product_image"
-                [alt]="product.product_name" class="img-fluid mb-2">
-            </div>
-    
-            <!-- Product Details -->
-            <div class="product-info">
-              <h5 class="product-name">{{ product.product_name }}</h5>
-              <p class="product-part-number"><span class="label">Brand:</span> {{ product.brand_name }}</p>
-              <p class="product-part-number"><span class="label">Part number:</span> {{ product.part_number }}</p>
-              <p class="product-part-number"><span class="label">Origin:</span> {{ product.origin }}</p>
-              <p class="product-warning">⚠ Add a vehicle to guarantee fit</p>
-              <p class="product-part-number"><span class="label">Interchange number:</span> {{ product.interchange_number }}</p>
-            </div>
-    
-            <div class="product-divider">
-              <!-- Price and Delivery Info -->
-              <div class="product-price-info">
-                <!-- Display Product Price only if the user is logged in -->
-                <h3 class="product-price" *ngIf="loginType !== null; else loginPrompt">
-                  ${{ product.product_price !== undefined ? product.product_price : 'Price not available' }} / each
-                </h3>
-    
-                <!-- Delivery and Shipping Information with Icons -->
-                <p class="delivery-info">
-                  <img src="assets/location.png" alt="Next-Day Delivery" class="info-icon">
-                  Next-Day Delivery: <strong>Order now</strong>
-                </p>
-                <p class="shipping-info">
-                  <img src="assets/Delivery.png" alt="Free Shipping" class="info-icon">
-                  Free Shipping: on orders over $35
-                </p>
-    
-                <!-- Prompt to log in if user is not logged in -->
-                <ng-template #loginPrompt>
-                  <div class="login-overlay">
-                    Log-in to see the price
-                  </div>
-                </ng-template>
+
+    <!-- General Search Section -->
+    <div class="search-results container-fluid my-5" *ngIf="searchType === 'generalSearch'">
+      <h2>General Search Results</h2>
+
+      <!-- General Search Product Grid -->
+      <div class="product-list container-fluid my-5" *ngIf="!isLoading && searchResults.length > 0">
+        <div class="row">
+          <div class="col-12 mb-4" *ngFor="let product of searchResults">
+            <div class="product-item border p-3 d-flex justify-content-between align-items-start">
+              <!-- Product Image -->
+              <div class="product-image">
+                <img [src]="'https://usaperp.com:5001/Images/Products/' + product.product_image"
+                  [alt]="product.product_name" class="img-fluid mb-2">
+              </div> 
+
+              <!-- Product Details -->
+              <div class="product-info">
+                <h5 class="product-name">{{ product.product_name }}</h5>
+                <p class="product-part-number"><span class="label">Brand:</span> {{ product.brand_name }}</p>
+                <p class="product-part-number"><span class="label">Part number:</span> {{ product.part_number }}</p>
+                <p class="product-part-number"><span class="label">Origin:</span> {{ product.origin }}</p>
+                <p class="product-warning">⚠ Add a vehicle to guarantee fit</p>
+                <p class="product-part-number"><span class="label">Interchange number:</span> {{
+                  product.interchange_number }}</p>
               </div>
-    
-              <!-- Add to Cart -->
-              <div class="cart-action">
-                <label for="quantity">Qty:</label>
-                <input type="number" id="quantity" [(ngModel)]="product.product_quantity" class="form-control"
-                  min="1" max="99">
-                <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product)">Add to Cart</button>
+
+              <div class="product-divider">
+                <!-- Price and Delivery Info -->
+                <div class="product-price-info">
+                  <!-- Display Product Price only if the user is logged in -->
+                  <h3 class="product-price" *ngIf="loginType !== null; else loginPrompt">
+                    ${{ product.product_price !== undefined ? product.product_price : 'Price not available' }} /
+                    each
+                  </h3>
+
+                  <!-- Delivery and Shipping Information with Icons -->
+                  <p class="delivery-info">
+                    <img src="assets/location.png" alt="Next-Day Delivery" class="info-icon">
+                    Next-Day Delivery: <strong>Order now</strong>
+                  </p>
+                  <p class="shipping-info">
+                    <img src="assets/Delivery.png" alt="Free Shipping" class="info-icon">
+                    Free Shipping: on orders over $35
+                  </p>
+
+                  <!-- Prompt to log in if user is not logged in -->
+                  <ng-template #loginPrompt>
+                    <div class="login-overlay">
+                      Log-in to see the price
+                    </div>
+                  </ng-template>
+                </div>
+
+                <!-- Add to Cart -->
+                <div class="cart-action">
+                  <label for="quantity">Qty:</label>
+                  <input type="number" id="quantity" [(ngModel)]="product.product_quantity" class="form-control" min="1"
+                    max="99">
+                  <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product)">Add to Cart</button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    
-    
+
       <!-- Spinner for both initial loading and pagination -->
-  <div *ngIf="isLocallyLoading" class="loading-overlay">
-    <div class="spinner-border text-danger" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-  </div>
-  
-  
-    <!-- General Search Pagination Controls -->
-    <div *ngIf="totalPages > 1" class="pagination-container">
-      <button (click)="pageChange.emit(currentPage - 1)" [disabled]="currentPage === 1" class="pagination-arrow">
-        &laquo;
-      </button>
-      <button (click)="pageChange.emit(1)" [disabled]="currentPage === 1" class="pagination-page">1</button>
-      <span *ngIf="shouldShowLeftEllipsis()" class="pagination-ellipsis">...</span>
-      <span *ngFor="let page of getPagesToShow()">
-        <button (click)="pageChange.emit(page)"   
-                [disabled]="page === currentPage"
-                [ngClass]="{'active-page': page === currentPage, 'pagination-page': true}">
-          {{ page }}
+      <div *ngIf="isLocallyLoading" class="loading-overlay">
+        <div class="spinner-border text-danger" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <!-- General Pagination Control -->
+      <div *ngIf="totalPages > 1" class="pagination-container">
+        <button (click)="emitPageChange(currentPage - 1)" [disabled]="currentPage === 1" class="pagination-arrow">
+          &laquo;
         </button>
-      </span>
-      <span *ngIf="shouldShowRightEllipsis()" class="pagination-ellipsis">...</span>
-      <button (click)="pageChange.emit(totalPages)" [disabled]="currentPage === totalPages" class="pagination-page">{{ totalPages }}</button>
-      <button (click)="pageChange.emit(currentPage + 1)" [disabled]="currentPage === totalPages" class="pagination-arrow">
-        &raquo;
-      </button>
+        <button (click)="emitPageChange(1)" [disabled]="currentPage === 1" class="pagination-page">1</button>
+        <span *ngIf="shouldShowLeftEllipsis()" class="pagination-ellipsis">...</span>
+        <span *ngFor="let page of getPagesToShow()">
+          <button (click)="emitPageChange(page)" [disabled]="page === currentPage"
+            [ngClass]="{'active-page': page === currentPage, 'pagination-page': true}">
+            {{ page }}
+          </button>
+        </span>
+        <span *ngIf="shouldShowRightEllipsis()" class="pagination-ellipsis">...</span>
+        <button (click)="emitPageChange(totalPages)" [disabled]="currentPage === totalPages" class="pagination-page">{{
+          totalPages }}</button>
+        <button (click)="emitPageChange(currentPage + 1)" [disabled]="currentPage === totalPages"
+          class="pagination-arrow">
+          &raquo;
+        </button>
+      </div>
+
     </div>
-  </div>
-  
-  <!-- Vehicle Search Section -->
-  <div class="search-results container-fluid my-5" *ngIf="searchType === 'vehicleSearch'">
-    <h2>Vehicle Search Results</h2>
-  
-    <!-- Vehicle Search Product Grid -->
-    <div class="product-list container-fluid my-5" *ngIf="!isLoading && searchResults.length > 0">
-      <div class="row">
-        <div class="col-12 mb-4" *ngFor="let product of searchResults">
-          <div class="product-item border p-3 d-flex justify-content-between align-items-start">
-            <!-- Product Image -->
-            <div class="product-image">
-              <img [src]="'http://182.180.50.148:5001/Images/Products/' + product.product_image"
-                [alt]="product.product_name" class="img-fluid mb-2">
-            </div>
-    
-            <!-- Product Details -->
-            <div class="product-info">
-              <h5 class="product-name">{{ product.product_name }}</h5>
-              <p class="product-part-number"><span class="label">Brand:</span> {{ product.brand_name }}</p>
-              <p class="product-part-number"><span class="label">Part number:</span> {{ product.part_number }}</p>
-              <p class="product-part-number"><span class="label">Origin:</span> {{ product.origin }}</p>
-              <p class="product-warning">⚠ Add a vehicle to guarantee fit</p>
-              <p class="product-part-number"><span class="label">Interchange number:</span> {{ product.interchange_number }}</p>
-            </div>
-    
-            <div class="product-divider">
-              <!-- Price and Delivery Info -->
-              <div class="product-price-info">
-                <!-- Display Product Price only if the user is logged in -->
-                <h3 class="product-price" *ngIf="loginType !== null; else loginPrompt">
-                  ${{ product.product_price !== undefined ? product.product_price : 'Price not available' }} / each
-                </h3>
-    
-                <!-- Delivery and Shipping Information with Icons -->
-                <p class="delivery-info">
-                  <img src="assets/location.png" alt="Next-Day Delivery" class="info-icon">
-                  Next-Day Delivery: <strong>Order now</strong>
-                </p>
-                <p class="shipping-info">
-                  <img src="assets/Delivery.png" alt="Free Shipping" class="info-icon">
-                  Free Shipping: on orders over $35
-                </p>
-    
-                <!-- Prompt to log in if user is not logged in -->
-                <ng-template #loginPrompt>
-                  <div class="login-overlay">
-                    Log-in to see the price
-                  </div>
-                </ng-template>
+
+    <!-- Vehicle Search Section -->
+    <div class="search-results container-fluid my-5" *ngIf="searchType === 'vehicleSearch'">
+      <h2>Vehicle Search Results</h2>
+
+      <!-- Vehicle Search Product Grid -->
+      <div class="product-list container-fluid my-5" *ngIf="!isLoading && searchResults.length > 0">
+        <div class="row">
+          <div class="col-12 mb-4" *ngFor="let product of searchResults">
+            <div class="product-item border p-3 d-flex justify-content-between align-items-start">
+              <!-- Product Image -->
+              <div class="product-image">
+                <img [src]="'https://usaperp.com:5001/Images/Products/' + product.product_image"
+                  [alt]="product.product_name" class="img-fluid mb-2">
               </div>
-    
-              <!-- Add to Cart -->
-              <div class="cart-action">
-                <label for="quantity">Qty:</label>
-                <input type="number" id="quantity" [(ngModel)]="product.product_quantity" class="form-control"
-                  min="1" max="99">
-                <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product)">Add to Cart</button>
+
+              <!-- Product Details -->
+              <div class="product-info">
+                <h5 class="product-name">{{ product.product_name }}</h5>
+                <p class="product-part-number"><span class="label">Brand:</span> {{ product.brand_name }}</p>
+                <p class="product-part-number"><span class="label">Part number:</span> {{ product.part_number }}</p>
+                <p class="product-part-number"><span class="label">Origin:</span> {{ product.origin }}</p>
+                <p class="product-warning">⚠ Add a vehicle to guarantee fit</p>
+                <p class="product-part-number"><span class="label">Interchange number:</span> {{
+                  product.interchange_number }}</p>
+              </div>
+
+              <div class="product-divider">
+                <!-- Price and Delivery Info -->
+                <div class="product-price-info">
+                  <!-- Display Product Price only if the user is logged in -->
+                  <h3 class="product-price" *ngIf="loginType !== null; else loginPrompt">
+                    ${{ product.product_price !== undefined ? product.product_price : 'Price not available' }} /
+                    each
+                  </h3>
+
+                  <!-- Delivery and Shipping Information with Icons -->
+                  <p class="delivery-info">
+                    <img src="assets/location.png" alt="Next-Day Delivery" class="info-icon">
+                    Next-Day Delivery: <strong>Order now</strong>
+                  </p>
+                  <p class="shipping-info">
+                    <img src="assets/Delivery.png" alt="Free Shipping" class="info-icon">
+                    Free Shipping: on orders over $35
+                  </p>
+
+                  <!-- Prompt to log in if user is not logged in -->
+                  <ng-template #loginPrompt>
+                    <div class="login-overlay">
+                      Log-in to see the price
+                    </div>
+                  </ng-template>
+                </div>
+
+                <!-- Add to Cart -->
+                <div class="cart-action">
+                  <label for="quantity">Qty:</label>
+                  <input type="number" id="quantity" [(ngModel)]="product.product_quantity" class="form-control" min="1"
+                    max="99">
+                  <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product)">Add to Cart</button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  
-    <!-- Spinner for both initial loading and pagination -->
-  <div *ngIf="isLocallyLoading" class="loading-overlay">
-    <div class="spinner-border text-danger" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-  </div>
-  
-    <!-- Vehicle Search Pagination Controls -->
-    <div *ngIf="totalPages > 1" class="pagination-container">
-      <button (click)="searchByVehicle(currentPage - 1)" [disabled]="currentPage === 1" class="pagination-arrow">
-        &laquo;
-      </button>
-      <button (click)="searchByVehicle(1)" [disabled]="currentPage === 1" class="pagination-page">1</button>
-      <span *ngIf="shouldShowLeftEllipsis()" class="pagination-ellipsis">...</span>
-      <span *ngFor="let page of getPagesToShow()">
-        <button (click)="searchByVehicle(page)" 
-                [disabled]="page === currentPage"
-                [ngClass]="{'active-page': page === currentPage, 'pagination-page': true}">
-          {{ page }}
+      <!-- Spinner for both initial loading and pagination -->
+      <div *ngIf="isLocallyLoading" class="loading-overlay">
+        <div class="spinner-border text-danger" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <!-- Vehicle Search Pagination Controls -->
+      <div *ngIf="totalPages > 1" class="pagination-container">
+        <button (click)="searchByVehicle(currentPage - 1)" [disabled]="currentPage === 1" class="pagination-arrow">
+          &laquo;
         </button>
-      </span>
-      <span *ngIf="shouldShowRightEllipsis()" class="pagination-ellipsis">...</span>
-      <button (click)="searchByVehicle(totalPages)" [disabled]="currentPage === totalPages" class="pagination-page">{{ totalPages }}</button>
-      <button (click)="searchByVehicle(currentPage + 1)" [disabled]="currentPage === totalPages" class="pagination-arrow">
-        &raquo;
-      </button>
+        <button (click)="searchByVehicle(1)" [disabled]="currentPage === 1" class="pagination-page">1</button>
+        <span *ngIf="shouldShowLeftEllipsis()" class="pagination-ellipsis">...</span>
+        <span *ngFor="let page of getPagesToShow()">
+          <button (click)="searchByVehicle(page)" [disabled]="page === currentPage"
+            [ngClass]="{'active-page': page === currentPage, 'pagination-page': true}">
+            {{ page }}
+          </button>
+        </span>
+        <span *ngIf="shouldShowRightEllipsis()" class="pagination-ellipsis">...</span>
+        <button (click)="searchByVehicle(totalPages)" [disabled]="currentPage === totalPages" class="pagination-page">{{
+          totalPages }}</button>
+        <button (click)="searchByVehicle(currentPage + 1)" [disabled]="currentPage === totalPages"
+          class="pagination-arrow">
+          &raquo;
+        </button>
+      </div>
     </div>
   </div>
-  
-  
+
+
   <!-- Category Search Section -->
   <div class="search-results container-fluid my-5" *ngIf="searchType === 'categorySearch'">
     <h2>Category Search Results</h2>
-  
+
     <!-- Category Search Product Grid -->
     <div class="product-list container-fluid my-5" *ngIf="!isLoading && searchResults.length > 0">
       <div class="row">
@@ -214,10 +228,10 @@
           <div class="product-item border p-3 d-flex justify-content-between align-items-start">
             <!-- Product Image -->
             <div class="product-image">
-              <img [src]="'http://182.180.50.148:5001/Images/Products/' + product.product_image"
+              <img [src]="'https://usaperp.com:5001/Images/Products/' + product.product_image"
                 [alt]="product.product_name" class="img-fluid mb-2">
             </div>
-    
+
             <!-- Product Details -->
             <div class="product-info">
               <h5 class="product-name">{{ product.product_name }}</h5>
@@ -225,18 +239,19 @@
               <p class="product-part-number"><span class="label">Part number:</span> {{ product.part_number }}</p>
               <p class="product-part-number"><span class="label">Origin:</span> {{ product.origin }}</p>
               <p class="product-warning">⚠ Add a vehicle to guarantee fit</p>
-              <p class="product-part-number"><span class="label">Interchange number:</span> {{ product.interchange_number }}</p>
+              <p class="product-part-number"><span class="label">Interchange number:</span> {{
+                product.interchange_number }}</p>
             </div>
-            
-    
+
             <div class="product-divider">
               <!-- Price and Delivery Info -->
               <div class="product-price-info">
                 <!-- Display Product Price only if the user is logged in -->
                 <h3 class="product-price" *ngIf="loginType !== null; else loginPrompt">
-                  ${{ product.product_price !== undefined ? product.product_price : 'Price not available' }} / each
+                  ${{ product.product_price !== undefined ? product.product_price : 'Price not available' }} /
+                  each
                 </h3>
-    
+
                 <!-- Delivery and Shipping Information with Icons -->
                 <p class="delivery-info">
                   <img src="assets/location.png" alt="Next-Day Delivery" class="info-icon">
@@ -246,7 +261,7 @@
                   <img src="assets/Delivery.png" alt="Free Shipping" class="info-icon">
                   Free Shipping: on orders over $35
                 </p>
-    
+
                 <!-- Prompt to log in if user is not logged in -->
                 <ng-template #loginPrompt>
                   <div class="login-overlay">
@@ -254,12 +269,12 @@
                   </div>
                 </ng-template>
               </div>
-    
+
               <!-- Add to Cart -->
               <div class="cart-action">
                 <label for="quantity">Qty:</label>
-                <input type="number" id="quantity" [(ngModel)]="product.product_quantity" class="form-control"
-                  min="1" max="99">
+                <input type="number" id="quantity" [(ngModel)]="product.product_quantity" class="form-control" min="1"
+                  max="99">
                 <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product)">Add to Cart</button>
               </div>
             </div>
@@ -267,14 +282,14 @@
         </div>
       </div>
     </div>
-  
+
     <!-- Spinner for both initial loading and pagination -->
     <div *ngIf="isLocallyLoading" class="loading-overlay">
       <div class="spinner-border text-danger" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
     </div>
-  
+
     <!-- Category Search Pagination Controls -->
     <div *ngIf="totalPages > 1" class="pagination-container">
       <button (click)="searchByCategory(currentPage - 1)" [disabled]="currentPage === 1" class="pagination-arrow">
@@ -283,21 +298,17 @@
       <button (click)="searchByCategory(1)" [disabled]="currentPage === 1" class="pagination-page">1</button>
       <span *ngIf="shouldShowLeftEllipsis()" class="pagination-ellipsis">...</span>
       <span *ngFor="let page of getPagesToShow()">
-        <button (click)="searchByCategory(page)" 
-                [disabled]="page === currentPage"
-                [ngClass]="{'active-page': page === currentPage, 'pagination-page': true}">
+        <button (click)="searchByCategory(page)" [disabled]="page === currentPage"
+          [ngClass]="{'active-page': page === currentPage, 'pagination-page': true}">
           {{ page }}
         </button>
       </span>
       <span *ngIf="shouldShowRightEllipsis()" class="pagination-ellipsis">...</span>
-      <button (click)="searchByCategory(totalPages)" [disabled]="currentPage === totalPages" class="pagination-page">{{ totalPages }}</button>
-      <button (click)="searchByCategory(currentPage + 1)" [disabled]="currentPage === totalPages" class="pagination-arrow">
+      <button (click)="searchByCategory(totalPages)" [disabled]="currentPage === totalPages" class="pagination-page">{{
+        totalPages }}</button>
+      <button (click)="searchByCategory(currentPage + 1)" [disabled]="currentPage === totalPages"
+        class="pagination-arrow">
         &raquo;
       </button>
     </div>
   </div>
-  
-</div>  
-
-</div>
-

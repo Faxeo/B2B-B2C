@@ -17,7 +17,7 @@
         <div *ngIf="isLoading" class="loading-overlay">
           <div class="spinner-border text-danger" role="status">
             <span class="visually-hidden">Loading...</span>
-          </div> 
+          </div>
         </div>
 
         <div *ngIf="showMessage" class="cart-message">
@@ -34,7 +34,7 @@
                   <img [src]="'https://usaperp.com:5001/Images/Products/' + product.product_image"
                     [alt]="product.product_name" class="img-fluid mb-2">
                 </div>
-        
+
                 <!-- Product Details -->
                 <div class="product-info">
                   <h5 class="product-name">{{ product.product_name }}</h5>
@@ -52,14 +52,30 @@
                     <span class="label">Interchange number:</span> {{ product.interchangeable_identifier }}
                   </p>
                 </div>
-        
+
                 <!-- Price and Delivery Info -->
-                <div class="product-divider">
-                  <div class="product-price-info">
+            <div class="product-divider">
+              <div class="product-price-info">
+                <!-- Display "Log in to see the prices" if user is not logged in -->
+                <ng-container *ngIf="loginType === null; else loggedInPrice">
+                  <div class="login-overlay">
+                    Log in to see the prices
+                  </div>
+                </ng-container>
+
+                <!-- Display 'Out of Stock' or Price based on conditions if logged in -->
+                <ng-template #loggedInPrice>
+                  <h3 class="product-price"
+                    *ngIf="product.product_price === 0 || product.product_quantity === 0; else showPrice">
+                    Out of Stock
+                  </h3>
+                  <ng-template #showPrice>
                     <h3 class="product-price">
-                      ${{ product.product_price !== undefined ? product.product_price : 'Price not available' }} / each
+                      ${{ product.product_price }} / each
                     </h3>
-        
+                  </ng-template>
+                </ng-template>
+
                     <!-- Delivery and Shipping Information with Icons -->
                     <p class="delivery-info">
                       <img src="assets/location.png" alt="Next-Day Delivery" class="info-icon">
@@ -69,8 +85,15 @@
                       <img src="assets/Delivery.png" alt="Free Shipping" class="info-icon">
                       Free Shipping: on orders over $35
                     </p>
+
+                    <!-- Prompt to log in if user is not logged in -->
+                    <ng-template #loginPrompt>
+                      <div class="login-overlay">
+                        Log-in to see the price
+                      </div>
+                    </ng-template>
                   </div>
-        
+
                   <!-- Add to Cart -->
                   <div class="cart-action">
                     <label for="quantity">Qty:</label>
@@ -82,7 +105,7 @@
               </div>
             </div>
           </div>
-        
+
 
           <!-- Pagination Controls -->
           <div *ngIf="totalPages > 1" class="pagination-container">
