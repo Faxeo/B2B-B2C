@@ -369,6 +369,12 @@
   border-radius: 4px;
 }
 
+.add-to-cart-btn:disabled {
+  cursor:not-allowed;
+  color: white;
+  background-color: #e16868;
+}
+
 .red-div {
   background-color: #b71c1c;
   color: white;
@@ -464,6 +470,12 @@
     li {
       padding: 10px;
       border-bottom: 1px solid #ddd;
+      transition: background-color 0.3s;
+
+      /* Change background color on hover */
+      &:hover {
+        background-color: #f0f0f0;
+      }
 
       a {
         text-decoration: none;
@@ -477,6 +489,7 @@
     }
   }
 }
+
 
 /* .admin-sidebar-options:hover li a {
   background-color: #e6e6e6;
@@ -535,7 +548,7 @@ input[disabled] {
   background-color: #ffffff;
   color: #999; /* Dull the text color */
   cursor: not-allowed; /* Show not-allowed cursor */
-}
+} 
 
 /* Style the button when it's disabled */
 button[disabled] {
@@ -706,6 +719,9 @@ span.input-group-text button i {
   cursor: not-allowed;
 }
 
+.Horizontal-text{
+  margin-left: 20px;
+}
 
 @keyframes fadeInOut {
   0% { opacity: 1; }

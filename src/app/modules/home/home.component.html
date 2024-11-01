@@ -27,7 +27,7 @@
       <div class="d-flex align-items-center">
         <!-- Display the login type button if it's set and not "admin" -->
         <button *ngIf="loginType === 'business'" class="btn btn-outline-light me-2 red-button business-btn"
-          (click)="toggleAdminSidebar()">Business</button>
+          (click)="toggleAdminSidebar($event)">Business</button>
 
         <!-- Display the Login/Sign-up button only if loginType is not set and not "admin" -->
         <button *ngIf="!loginType" class="btn btn-outline-light me-2 red-button login-btn" (click)="openSidebar()">Login
@@ -35,7 +35,7 @@
 
         <!-- Admin Sidebar Trigger, shown only if loginType is "admin" -->
         <button *ngIf="loginType === 'admin'" class="btn btn-outline-light me-2 red-button"
-          (click)="toggleAdminSidebar()">Admin</button>
+          (click)="toggleAdminSidebar($event)">Admin</button>
 
         <!-- Optionally display the login type text -->
         <!-- <span *ngIf="loginType" class="text-white me-2">{{ loginType }}</span> -->
@@ -73,8 +73,6 @@
   <ul>
     <li><a routerLink="/admin-dashboard">Profile</a></li>
     <li><a routerLink="/" (click)="logout()">Logout</a></li>
-    <li><a routerLink="/admin-reports">Wishlist</a></li>
-    <li><a routerLink="/admin-settings">Your Orders</a></li>
   </ul>
 </div>
 
@@ -264,9 +262,9 @@
 
 <!-- Horizontal Scrollable Product Row Section -->
 <div *ngIf="!showSearchComponent">
-  <h2>Explore Our Top Sellers</h2>
+  <h2 class="Horizontal-text">Explore Our Top Sellers</h2>
   <div class="scrolling-product-row container-fluid my-5">
-    <div class="scroll-container">
+    <div class="scroll-container"> 
       <div class="product-container" *ngFor="let product of products$ | async">
         <div class="product-item border p-3">
           <!-- Product Image -->
@@ -294,7 +292,8 @@
 
           <!-- Add to Cart and View Buttons -->
           <div id="shopping_cart-view-buttons" class="d-flex justify-content-between pt-2">
-            <button class="btn btn-danger w-100 me-1" (click)="addToCart(product)">Add to Cart</button>
+            <button class="btn btn-danger w-100 me-1 add-to-cart-btn" (click)="addToCart(product)"
+            [disabled]="loginType === 'admin' || product.product_quantity === 0 || loginType == null">Add to Cart</button>
             <button class="btn btn-outline-danger w-100 ms-1">VIEW</button>
           </div>
 
@@ -308,5 +307,6 @@
   </div>
 </div>
 
+<app-chat-bot></app-chat-bot>
 
 <app-footer></app-footer>

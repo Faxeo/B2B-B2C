@@ -16,10 +16,13 @@ export class DeleteCartService {
 
   /**
    * Deletes a product from the cart based on the provided cart ID.
+   * Now uses a POST request instead of DELETE.
    * @param cartId - The ID of the cart item to be deleted.
-   * @returns Observable containing the response from the server. 
+   * @returns Observable containing the response from the server.
    */
   deleteCart(cartId: number): Observable<DeleteResponse> {
-    return this.apiService.delete<DeleteResponse>(`Cart/deleteCart/${cartId}`);
+    // Construct the endpoint with cartId as a query parameter
+    const endpoint = `Cart/deleteCart?cartId=${cartId}`;
+    return this.apiService.post<DeleteResponse>(endpoint, {});
   }
 }

@@ -1,0 +1,153 @@
+.chat-wrapper {
+    display: flex;
+    flex-direction: column; /* Arrange children vertically */
+    align-items: flex-end; /* Align items to the start (left) */
+    position: relative; /* Positioning context for the chat container */
+    margin-top: 10px; /* Space between the button and chat container */
+}
+.chat-container {
+    position: fixed;
+    bottom: 170px;
+    right: 130px;
+    width: 350px;
+    height: 450px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    padding: 0; /* Remove padding to avoid overflow */
+}
+
+.chat-header {
+    background-color: #b71c1c;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    box-sizing: border-box;
+    padding: 0; /* Remove extra padding */
+}
+
+
+.chat-box {
+    flex: 1; /* Take available space */
+    padding: 10px; /* Padding inside chat box */
+    overflow-y: auto; /* Enable vertical scrolling if needed */
+    display: flex;
+    flex-direction: column; /* Stack messages vertically */
+}
+
+.user {
+    align-self: flex-end; /* Align user messages to the right */
+    background-color: #b71c1c; /* User message background */
+    color: white; /* User message text color */
+    padding: 8px; /* Padding inside user messages */
+    border-radius: 15px; /* Rounded corners for user messages */
+    margin-bottom: 10px; /* Space between messages */
+    max-width: 80%; /* Max width for user messages */
+}
+
+.bot {
+    align-self: flex-start; /* Align bot messages to the left */
+    background-color: #e4e6eb; /* Bot message background */
+    color: black; /* Bot message text color */
+    padding: 8px; /* Padding inside bot messages */
+    border-radius: 15px; /* Rounded corners for bot messages */
+    margin-bottom: 10px; /* Space between messages */
+    max-width: 80%; /* Max width for bot messages */
+}
+
+.chat-input {
+    display: flex;
+    padding: 10px;
+    background-color: white;
+    justify-content: space-between;
+}
+
+.chat-input input {
+    width: 65%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.chat-input button {
+    width: 30%;
+    background-color: #b71c1c;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button {
+    padding: 5px; /* Padding for send button */
+    border: none; /* No border */
+   /* Let the width adjust automatically */
+    color: white; /* Text color */
+    cursor: pointer; /* Pointer cursor */
+     /* Background color for send button */
+    margin-left: 10px; /* Space between input and send button */
+    width: auto;
+    height: auto;
+    border-radius: 100px;
+}
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-30px); /* Adjust bounce height */
+    }
+}
+
+button img {
+    width: 120px; /* Width for the icon */
+    height: 120px; /* Height for the icon */
+    display: block; /* Ensures the image takes its own space */
+   
+    border-radius: 70px;
+    position: fixed;
+    animation: bounce 1s infinite;
+    
+    bottom: 20px;
+    right: 20px;
+    background-color: transparent;
+    border: none;
+    padding: 25px;
+    cursor: pointer;
+    z-index: 1000;
+
+    
+}
+#sentbtn{
+    background-color: #b71c1c;;
+}
+.close-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    font-size: 20px; /* Increased font size for the "X" */
+    font-weight: bold; /* Makes the "X" more prominent */
+    color:white; /* Ensures the color is solid white */
+    cursor: pointer;
+    padding: 0; /* Minimal padding */
+    width: 24px; /* Fixed small width */
+    height: 24px; /* Fixed small height */
+    text-align: center;
+    line-height: 24px; /* Centers "X" vertically */
+    border-radius: 50%; /* Optional: makes it circular */
+}
+
+.close-button:hover {
+    color: #f1f1f1; /* Slightly lighter on hover for effect */
+    background-color: rgba(255, 255, 255, 0.1); /* Optional: soft background on hover */
+}

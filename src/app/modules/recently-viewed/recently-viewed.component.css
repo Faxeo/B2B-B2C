@@ -1,0 +1,89 @@
+.recently-viewed-container {
+    width: 80%; /* Full width */
+    overflow-x: auto; /* Enable horizontal scroll */
+    white-space: nowrap; /* Prevent wrapping to new lines */
+    padding: 10px 0;
+    margin-left: 50px;
+    cursor: pointer;
+    /* border-top: 1px solid #ddd; */
+  }
+
+  /* .recently-viewed-container h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    position: fixed;
+    z-index: 2000;
+  } */
+  
+  .product-item {
+    display: inline-block; /* Display items in a row */
+    width: 250px; /* Fixed width for each product */
+    /* height: 250px;  */
+    margin-right: 10px; /* Space between items */
+    vertical-align: top;
+    text-align: center;
+    border: 1px solid #ddd;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+  
+  .product-item img {
+    width: 100%; /* Make image fit the container */
+    height: 100px; /* Set image height */
+    object-fit: cover; /* Crop image to fit */
+    margin-bottom: 8px;
+  }
+  
+  .product-info h5 {
+    font-size: 14px;
+    margin: 0 0 5px;
+    max-width: 180px;
+    word-wrap: break-word; /* Ensure long names wrap to the next line */
+    overflow-wrap: break-word; /* Alternative wrap behavior for long words */
+    white-space: normal; /* Allows wrapping */
+    text-align: center;
+  }
+  
+  .product-info p {
+    font-size: 12px;
+    margin: 0;
+  }
+  
+  .product-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .product-item {
+    position: relative;
+    width: 150px;
+    height: 200px;
+    margin-right: 10px;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+    border: 1px solid #ddd;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #999;
+  }
+  
+  .close-btn:hover {
+    color: #333;
+  }
+  

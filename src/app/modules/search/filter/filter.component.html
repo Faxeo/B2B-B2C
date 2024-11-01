@@ -1,84 +1,87 @@
 <div class="filter-container">
-    <div class="filter-section">
-      <input type="text" class="filter-input" placeholder="Filter by Part Number...">
+  <!-- Back Button -->
+  <button class="back-button" (click)="onBackClick()">
+    <i class="fa fa-arrow-left back-button" aria-hidden="true"></i>
+  </button>
+  <div class="filter-section">
+    <input type="text" class="filter-input" placeholder="Filter by Part Number...">
+  </div>
+
+  <div class="filter-section">
+    <h3>Filters</h3>
+    <div class="filter-checkbox">
+      <label><input type="checkbox"> In Stock</label>
+      <span class="count">1000+</span>
     </div>
-  
-    <div class="filter-section">
-      <h3>Filters</h3>
-      <div class="filter-checkbox">
-        <label><input type="checkbox"> In Stock</label>
-        <span class="count">1000+</span>
-      </div>
-      <div class="filter-checkbox">
-        <label><input type="checkbox"> Top Seller</label>
-        <span class="count">1000+</span>
-      </div>
-      <div class="filter-checkbox">
-        <label><input type="checkbox"> Top Rated</label>
-        <span class="count">1000+</span>
-      </div>
-      <div class="filter-checkbox">
-        <label><input type="checkbox"> Free Shipping</label>
-        <span class="count">1000+</span>
-      </div>
+    <div class="filter-checkbox">
+      <label><input type="checkbox"> Top Seller</label>
+      <span class="count">1000+</span>
     </div>
-  
-    <div class="filter-section">
-      <h3>Category</h3>
-      <div class="filter-checkbox">
-        <label><input type="checkbox"> Brake</label>
-        <span class="count">1000+</span>
-      </div>
-      <div class="filter-checkbox">
-        <label><input type="checkbox"> Driveline and Axles</label>
-        <span class="count">1000+</span>
-      </div>
-      <div class="filter-checkbox">
-        <label><input type="checkbox"> Electrical, Lighting and Body</label>
-        <span class="count">1000+</span>
-      </div>
-      <!-- Add more categories as necessary -->
-      <a class="see-more">See more...</a>
+    <div class="filter-checkbox">
+      <label><input type="checkbox"> Top Rated</label>
+      <span class="count">1000+</span>
     </div>
-  
-    <div class="filter-section">
-      <h3>Manufacturer</h3>
-      <div class="filter-checkbox">
-        <label><input type="checkbox"> PAI</label>
-        <span class="count">1000+</span>
-      </div>
-      <div class="filter-checkbox">
-        <label><input type="checkbox"> DANA</label>
-        <span class="count">1000+</span>
-      </div>
-      <!-- Add more manufacturers as necessary -->
-      <a class="see-more">See more...</a>
-    </div>
-  
-    <div class="filter-section">
-      <h3>Price</h3>
-      <div class="filter-checkbox">
-        <label><input type="checkbox"> &lt; $100</label>
-        <span class="count">1000+</span>
-      </div>
-      <div class="filter-checkbox">
-        <label><input type="checkbox"> $100 to $250</label>
-        <span class="count">1000+</span>
-      </div>
-      <!-- Add more price ranges as necessary -->
-    </div>
-  
-    <div class="filter-section">
-      <h3>Material</h3>
-      <div class="filter-checkbox">
-        <label><input type="checkbox"> Steel</label>
-        <span class="count">1000+</span>
-      </div>
-      <div class="filter-checkbox">
-        <label><input type="checkbox"> EPDM</label>
-        <span class="count">1000+</span>
-      </div>
-      <!-- Add more materials as necessary -->
+    <div class="filter-checkbox">
+      <label><input type="checkbox"> Free Shipping</label>
+      <span class="count">1000+</span>
     </div>
   </div>
-  
+
+  <div class="filter-section">
+    <h3>Category</h3>
+    <div class="filter-checkbox">
+      <label><input type="checkbox"> Brake</label>
+      <span class="count">1000+</span>
+    </div>
+    <div class="filter-checkbox">
+      <label><input type="checkbox"> Driveline and Axles</label>
+      <span class="count">1000+</span>
+    </div>
+    <div class="filter-checkbox">
+      <label><input type="checkbox"> Electrical, Lighting and Body</label>
+      <span class="count">1000+</span>
+    </div>
+    <!-- Add more categories as necessary -->
+    <a class="see-more">See more...</a>
+  </div>
+
+  <div class="filter-section">
+    <h3>Manufacturer</h3>
+    <div class="filter-checkbox">
+      <label><input type="checkbox"> PAI</label>
+      <span class="count">1000+</span>
+    </div>
+    <div class="filter-checkbox">
+      <label><input type="checkbox"> DANA</label>
+      <span class="count">1000+</span>
+    </div>
+    <!-- Add more manufacturers as necessary -->
+    <a class="see-more">See more...</a>
+  </div>
+
+  <div class="filter-section">
+    <h3>Price</h3>
+    <div class="filter-checkbox">
+      <label><input type="checkbox"> &lt; $100</label>
+      <span class="count">1000+</span>
+    </div>
+    <div class="filter-checkbox">
+      <label><input type="checkbox"> $100 to $250</label>
+      <span class="count">1000+</span>
+    </div>
+    <!-- Add more price ranges as necessary -->
+  </div>
+
+  <div class="filter-section">
+    <h3>Material</h3>
+    <div class="filter-checkbox">
+      <label><input type="checkbox"> Steel</label>
+      <span class="count">1000+</span>
+    </div>
+    <div class="filter-checkbox">
+      <label><input type="checkbox"> EPDM</label>
+      <span class="count">1000+</span>
+    </div>
+    <!-- Add more materials as necessary -->
+  </div>
+</div>

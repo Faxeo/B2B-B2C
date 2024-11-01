@@ -177,7 +177,7 @@ export class CheckoutComponent implements OnInit {
       orderItems: cartItems.map((item: any) => ({
         productId: item.productId,
         name: item.name,
-        upc: item.upc || '',
+        upc: item.upc,
         price: item.price,
         image: item.image,
         quantity: item.quantity,

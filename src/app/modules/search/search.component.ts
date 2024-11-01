@@ -20,10 +20,18 @@ import { FilterComponent } from './filter/filter.component';
 import { NavigationService } from '../../core/services/navigation-service/navigation-service.service';
 import { ActivatedRoute } from '@angular/router';
 import { DynamicSearchService } from '../../core/services/dynamic-search/dynamic-search.service';
+import { FetchYearService } from '../../core/services/fetch-year/fetch-year.service';
+import { FetchMakeService } from '../../core/services/fetch-make/fetch-make.service';
+import { FetchChildService } from '../../core/services/fetch-child/fetch-child.service';
+import { MainCategoryService } from '../../core/services/main-category/main-category.service';
+import { SubCategoryService } from '../../core/services/sub-category/sub-category.service';
+import { NavbarComponent } from '../../layout/navbar/navbar.component';
+import { RecentlyViewedService } from '../../core/services/recently-viewed/recently-viewed.service';
+import { RecentlyViewedComponent } from '../recently-viewed/recently-viewed.component';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, FilterComponent],
+  imports: [CommonModule, FormsModule, FilterComponent, NavbarComponent, RecentlyViewedComponent],
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css'],
@@ -48,15 +56,36 @@ export class SearchComponent implements OnChanges {
   userID: string | null = null;
   message: string = '';
   showMessage: boolean = false;
+  showAlert: boolean = false;
   cartItemCount: number = 0;
   isLocallyLoading: boolean = false;
   notificationMessage: string = '';
+  notificationAlert: string = '';
   showNotification: boolean = false;
   isCollapsed: boolean = false;
   searchQuery: string = '';
   vehicleData: any = {}; // Define structure based on the actual vehicle data requirements
   categoryData: any = {}; // Define structure based on the actual category data requirements
   currentRequestData: any = {};
+
+  years: any[] = [];
+  makes: any[] = [];
+  models: any[] = [];
+  trims: any[] = [];
+  engines: any[] = [];
+  mainCategories: any[] = [];
+  firstSubCategories: any[] = [];
+  secondSubCategories: any[] = [];
+
+  selectedYear: string | null = null;
+  selectedMake: string | null = null;
+  selectedModel: string | null = null;
+  selectedTrim: string | null = null;
+  selectedEngine: string | null = null;
+  selectedMainCategory: string | null = null;
+  selectedFirstSubCategory: string | null = null;
+  selectedSecondSubCategory: string | null = null;
+  showRecentlyViewed: boolean = false;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -69,9 +98,20 @@ export class SearchComponent implements OnChanges {
     private navigationService: NavigationService,
     private activatedRoute: ActivatedRoute,
     private dynamicSearchService: DynamicSearchService,
+    private fetchYearService: FetchYearService,
+    private fetchMakeService: FetchMakeService,
+    private fetchChildService: FetchChildService,
+    private mainCategoryService: MainCategoryService,
+    private subCategoryService: SubCategoryService,
+    private recentlyViewedService: RecentlyViewedService,
   ) {}
 
   ngOnInit(): void {
+    this.getYears();
+    this.getMainCategories();
+    this.recentlyViewedService.recentlyViewed$.subscribe((products) => {
+      this.showRecentlyViewed = products.length > 0;
+    });
     if (isPlatformBrowser(this.platformId)) {
       this.userID = localStorage.getItem('userID');
       this.loginService.getUserID().subscribe((userID) => {
@@ -161,9 +201,19 @@ export class SearchComponent implements OnChanges {
     }
   }
 
+  addToRecentlyViewed(product: any): void {
+    // console.log('Adding to recently viewed:', product); 
+    this.recentlyViewedService.addProductToRecentlyViewed(product);
+  }
 
+  closeRecentlyViewed(): void {
+    this.showRecentlyViewed = false;
+  }
+  
   emitPageChange(page: number): void {
-    console.log(`emitPageChange called with page: ${page} and searchType: ${this.searchType}`);
+    console.log(
+      `emitPageChange called with page: ${page} and searchType: ${this.searchType}`
+    );
     this.currentPage = page;
     this.isLocallyLoading = true;
 
@@ -179,10 +229,201 @@ export class SearchComponent implements OnChanges {
         this.cdr.detectChanges();
       },
       (error: any) => {
-        console.error(`Error fetching products for ${this.searchType} pagination:`, error);
+        console.error(
+          `Error fetching products for ${this.searchType} pagination:`,
+          error
+        );
         this.isLocallyLoading = false;
       }
     );
+  }
+
+  getYears(): void {
+    this.fetchYearService.fetchYears().subscribe(
+      (data: any[]) => {
+        this.years = data.map((item) => ({ year: item.value_name }));
+      },
+      (error) => {
+        console.error('Error fetching years:', error);
+      }
+    );
+  }
+
+  getMainCategories(): void {
+    this.mainCategoryService.getMainCategories().subscribe(
+      (data: any[]) => {
+        if (Array.isArray(data)) {
+          this.mainCategories = data.map((category) => ({
+            id: category.id,
+            name: category.name,
+          }));
+        } else {
+          this.mainCategories = [];
+        }
+      },
+      (error: any) => {
+        console.error('Error fetching main categories:', error);
+      }
+    );
+  }
+  
+
+  updateVehicleSelection(vehicle: any): void {
+    this.vehicleSearchService.setVehicleData(vehicle);
+  }
+
+  onYearChange(): void {
+    if (this.selectedYear) {
+      this.fetchMakeService.fetchMakes(this.selectedYear).subscribe(
+        (data: any[]) => {
+          this.makes = data.map((item) => ({
+            name: item.value_name,
+            cvalue_id: item.cvalue_id,
+          }));
+          this.updateVehicleSelection({ year: this.selectedYear });
+          this.selectedMake = '';
+          this.models = [];
+          this.trims = [];
+          this.engines = [];
+          this.selectedModel = '';
+          this.selectedTrim = '';
+          this.selectedEngine = '';
+        },
+        (error) => {
+          console.error('Error fetching makes:', error);
+        }
+      );
+    }
+  }
+
+  onMakeChange(): void {
+    if (this.selectedMake) {
+      const selectedMakeObject = this.makes.find(
+        (make) => make.name === this.selectedMake
+      );
+      const parentID = selectedMakeObject ? selectedMakeObject.cvalue_id : 0;
+
+      this.fetchChildService.fetchChildren(parentID).subscribe(
+        (data: any[]) => {
+          this.models = data.map((item) => ({
+            name: item.value_name,
+            cvalue_id: item.cvalue_id,
+          }));
+          this.updateVehicleSelection({ make: this.selectedMake });
+          this.selectedModel = '';
+          this.trims = [];
+          this.engines = [];
+          this.selectedTrim = '';
+          this.selectedEngine = '';
+          this.cdr.detectChanges();
+        },
+        (error) => {
+          console.error('Error fetching models:', error);
+        }
+      );
+    }
+  }
+  onModelChange(): void {
+    if (this.selectedModel) {
+      const selectedModelObject = this.models.find(
+        (model) => model.name === this.selectedModel
+      );
+      const modelID = selectedModelObject ? selectedModelObject.cvalue_id : 0;
+
+      this.fetchChildService.fetchChildren(modelID).subscribe(
+        (data: any[]) => {
+          this.trims = data.map((item) => ({
+            name: item.value_name,
+            cvalue_id: item.cvalue_id,
+          }));
+          this.updateVehicleSelection({ model: this.selectedModel });
+          this.selectedTrim = '';
+          this.engines = [];
+          this.selectedEngine = '';
+          this.cdr.detectChanges();
+        },
+        (error) => {
+          console.error('Error fetching trims:', error);
+        }
+      );
+    }
+  }
+
+  onTrimChange(): void {
+    if (this.selectedTrim) {
+      const selectedTrimObject = this.trims.find(
+        (trim) => trim.name === this.selectedTrim
+      );
+      const trimID = selectedTrimObject ? selectedTrimObject.cvalue_id : 0;
+
+      this.fetchChildService.fetchChildren(trimID).subscribe(
+        (data: any[]) => {
+          this.engines = data.map((item) => ({ name: item.value_name }));
+          this.updateVehicleSelection({ trim: this.selectedTrim });
+          this.selectedEngine = '';
+          this.cdr.detectChanges();
+        },
+        (error) => {
+          console.error('Error fetching engines:', error);
+        }
+      );
+    }
+  }
+
+  onEngineChange(): void {
+    if (this.selectedEngine) {
+      this.updateVehicleSelection({ engine: this.selectedEngine });
+    } else {
+      console.log('Engine is not selected');
+    }
+  }
+
+  onMainCategoryChange(): void {
+    if (this.selectedMainCategory) {
+      this.subCategoryService
+        .getSubCategories(1, Number(this.selectedMainCategory))
+        .subscribe(
+          (data: any[]) => {
+            if (Array.isArray(data)) {
+              this.firstSubCategories = data.map((subCategory) => ({
+                id: subCategory.id,
+                name: subCategory.name,
+              }));
+            } else {
+              this.firstSubCategories = [];
+            }
+            this.selectedFirstSubCategory = '';
+            this.secondSubCategories = [];
+            this.selectedSecondSubCategory = '';
+          },
+          (error: any) => {
+            console.error('Error fetching first sub-categories:', error);
+          }
+        );
+    }
+  }
+
+  onFirstSubCategoryChange(): void {
+    if (this.selectedFirstSubCategory) {
+      this.subCategoryService
+        .getSubCategories(2, Number(this.selectedFirstSubCategory))
+        .subscribe(
+          (data: any[]) => {
+            if (Array.isArray(data)) {
+              this.secondSubCategories = data.map((subCategory) => ({
+                id: subCategory.id,
+                name: subCategory.name,
+              }));
+            } else {
+              this.secondSubCategories = [];
+            }
+            this.selectedSecondSubCategory = '';
+          },
+          (error: any) => {
+            console.error('Error fetching second sub-categories:', error);
+          }
+        );
+    }
   }
 
   // Ensure that `performGeneralSearch` respects the current page setting
@@ -229,8 +470,9 @@ export class SearchComponent implements OnChanges {
       attributeSearch: false,
       page: this.currentPage,
     };
+    this.isLocallyLoading = true;
 
-    this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
+    this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe( 
       (response: any) => {
         if (response && response.products) {
           this.searchResults = response.products;
@@ -286,10 +528,12 @@ export class SearchComponent implements OnChanges {
         notes: '',
         isDeleted: null,
       },
-      product_Attributes: "SELECT product_id FROM product_attributes_view WHERE concatenated_attributes LIKE '%%' order by product_id",
+      product_Attributes:
+        "SELECT product_id FROM product_attributes_view WHERE concatenated_attributes LIKE '%%' order by product_id",
       attributeSearch: false,
       page: this.currentPage,
     };
+    this.isLocallyLoading = true;
 
     console.log('Category search requestData:', this.currentRequestData);
 
@@ -305,7 +549,9 @@ export class SearchComponent implements OnChanges {
       (error) => {
         console.error('Error performing category search:', error);
         this.isLocallyLoading = false;
-        this.displayMessage('An error occurred while fetching search results. Please try again later.');
+        this.displayMessage(
+          'An error occurred while fetching search results. Please try again later.'
+        );
       }
     );
   }
@@ -357,6 +603,7 @@ export class SearchComponent implements OnChanges {
       attributeSearch: false,
       page: this.currentPage,
     };
+    this.isLocallyLoading = true;
 
     // Initial vehicle search request
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
@@ -380,7 +627,6 @@ export class SearchComponent implements OnChanges {
     this.currentPage = page;
     this.emitPageChange(page); // Triggers pagination with currentRequestData
   }
-
 
   toggleSidebar() {
     this.isCollapsed = !this.isCollapsed;
@@ -483,6 +729,15 @@ export class SearchComponent implements OnChanges {
     }, 3000);
   }
 
+  displayAlert(alert: string): void {
+    this.notificationAlert = alert;
+    this.showAlert = true;
+
+    setTimeout(() => {
+      this.showAlert = false;
+    }, 3000);
+  }
+
   addVehicle(product: any): void {
     const vehicleData = this.vehicleSearchService.getVehicleData();
 
@@ -506,9 +761,16 @@ export class SearchComponent implements OnChanges {
 
     this.addVehicleService.addCustomerVehicle().subscribe({
       next: (response) => {
-        this.displayNotification(
-          'Vehicle has been added to your garage successfully.'
-        );
+        if (response.statusCode === 409) {
+          // Vehicle already exists in the garage
+          this.displayAlert('Vehicle already exists in the garage.');
+        } else {
+          // Vehicle added successfully
+          this.displayMessage(
+            'Vehicle has been added to your garage successfully.'
+          );
+          console.log('Vehicle added successfully:', response);
+        }
       },
       error: (error) => {
         this.displayNotification(

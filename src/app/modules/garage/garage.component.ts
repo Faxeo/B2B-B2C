@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Output, PLATFORM_ID, SimpleChanges } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { EventEmitter } from '@angular/core';
 import { FetchYearService } from '../../core/services/fetch-year/fetch-year.service';
@@ -10,7 +10,7 @@ import { AddVehicleService } from '../../core/services/add-vehicle/add-vehicle.s
 import { LoginService } from '../../core/services/login-service/login-service.service';
 import { GetVehicleService } from '../../core/services/get-vehicle/get-vehicle.service';
 import { DeleteVehicleService } from '../../core/services/delete-vehicle/delete-vehicle.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavigationService } from '../../core/services/navigation-service/navigation-service.service';
 
@@ -44,6 +44,7 @@ export class GarageComponent {
   userID: string | null = null;
   showDeleteModal: boolean = false; // Controls the visibility of the delete confirmation modal
   vehicleToDelete: number | null = null; // Holds the ID of the vehicle to be deleted
+  isLocallyLoading: boolean = false;
 
   @Output() formVisibilityChanged = new EventEmitter<boolean>();
   showVehicleForm: boolean = false;
@@ -51,6 +52,8 @@ export class GarageComponent {
   demoVehicleData: any[] = [];
 
   constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private cdr: ChangeDetectorRef,
     private fetchYearService: FetchYearService,
     private fetchMakeService: FetchMakeService,
     private fetchChildService: FetchChildService,
@@ -83,6 +86,37 @@ export class GarageComponent {
     });
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (isPlatformBrowser(this.platformId)) {
+      if (changes['isLoading'] && changes['isLoading'].currentValue === true) {
+        this.isLocallyLoading = true;
+      } else if (
+        changes['isLoading'] &&
+        changes['isLoading'].currentValue === false
+      ) {
+        this.isLocallyLoading = false;
+      }
+
+      if (
+        changes['isPaginationLoading'] &&
+        changes['isPaginationLoading'].currentValue === true
+      ) {
+        this.isLocallyLoading = true;
+      } else if (
+        changes['isPaginationLoading'] &&
+        changes['isPaginationLoading'].currentValue === false
+      ) {
+        this.isLocallyLoading = false;
+      }
+
+      if (changes['searchResults'] && changes['searchResults'].currentValue) {
+        this.isLocallyLoading = false;
+      }
+
+      this.cdr.detectChanges();
+    }
+  }
+
   onBackClick(): void {
     this.navigationService.goBack();
   }
@@ -94,6 +128,9 @@ export class GarageComponent {
       return;
     }
 
+    this.isLocallyLoading = true;
+    this.cdr.detectChanges();
+
     this.getVehicleService.getCustomerVehicles(customerId).subscribe(
       (response) => {
         if (response && response.data && Array.isArray(response.data)) {
@@ -101,15 +138,22 @@ export class GarageComponent {
           this.demoVehicleData = response.data.map((vehicle) => {
             vehicle.purchasedProducts = vehicle.products.filter(p => p.status === 'purchased');
             vehicle.searchedProducts = vehicle.products.filter(p => p.status === 'searched');
+            this.isLocallyLoading = true;
+            // console.log('Fetched vehicle data:', vehicle); 
             return vehicle;
           });
         } else {
           console.error('Invalid response format:', response);
         }
+        this.isLocallyLoading = false;
+        this.cdr.detectChanges();
+        // console.log('Fetched Vehicles:', this.demoVehicleData);
       },
       (error) => {
         console.error('Error fetching vehicles:', error);
         alert('Failed to fetch vehicles. Please try again later.');
+        this.isLocallyLoading = false;
+        this.cdr.detectChanges();
       }
     );
   }
