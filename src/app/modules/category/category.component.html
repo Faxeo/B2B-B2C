@@ -1,8 +1,5 @@
 <app-navbar></app-navbar>
 
-<!-- back-button.component.html -->
-<button class="back-button" (click)="onBackClick()"><i class="fa fa-arrow-left back-button"
-    aria-hidden="true"></i></button>
 <div class="page-container d-flex">
 
   <!-- Filter Sidebar -->
@@ -12,12 +9,12 @@
   <button class="toggle-btn" (click)="toggleSidebar()">
     {{ isCollapsed ? '>>' : '<<' }} </button>
 
-      <div class="content-container">
-        <!-- Display a spinner when loading -->
-        <div *ngIf="isLoading" class="loading-overlay">
-          <div class="spinner-border text-danger" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div> 
+      <div class="content-container" [class.expanded]="!isCollapsed">
+
+        <!-- Spinner for both initial loading and pagination -->
+        <div *ngIf="isLocallyLoading" class="loading-overlay">
+          <img src="https://socialsecurity.mp.gov.in/DefaultHeader/Image/setting.gif" alt="Loading..."
+            class="loading-gif" />
         </div>
 
         <div *ngIf="showMessage" class="cart-message">
@@ -27,14 +24,14 @@
         <!-- Display products when they are loaded -->
         <div class="product-list container-fluid my-5" *ngIf="!isLoading && products.length > 0">
           <div class="row">
-            <div class="col-12 mb-4" *ngFor="let product of products">
+            <div *ngFor="let product of products">
               <div class="product-item border p-3 d-flex justify-content-between align-items-start">
                 <!-- Product Image -->
                 <div class="product-image">
                   <img [src]="'https://usaperp.com:5001/Images/Products/' + product.product_image"
                     [alt]="product.product_name" class="img-fluid mb-2">
                 </div>
-        
+
                 <!-- Product Details -->
                 <div class="product-info">
                   <h5 class="product-name">{{ product.product_name }}</h5>
@@ -52,14 +49,30 @@
                     <span class="label">Interchange number:</span> {{ product.interchangeable_identifier }}
                   </p>
                 </div>
-        
+
                 <!-- Price and Delivery Info -->
                 <div class="product-divider">
                   <div class="product-price-info">
-                    <h3 class="product-price">
-                      ${{ product.product_price !== undefined ? product.product_price : 'Price not available' }} / each
-                    </h3>
-        
+                    <!-- Display "Log in to see the prices" if user is not logged in -->
+                    <ng-container *ngIf="loginType === null; else loggedInPrice">
+                      <div class="login-overlay">
+                        Log in to see the prices
+                      </div>
+                    </ng-container>
+
+                    <!-- Display 'Out of Stock' or Price based on conditions if logged in -->
+                    <ng-template #loggedInPrice>
+                      <h3 class="product-price"
+                        *ngIf="product.product_price === 0 || product.product_quantity === 0; else showPrice">
+                        Out of Stock
+                      </h3>
+                      <ng-template #showPrice>
+                        <h3 class="product-price">
+                          ${{ product.product_price }} / each
+                        </h3>
+                      </ng-template>
+                    </ng-template>
+
                     <!-- Delivery and Shipping Information with Icons -->
                     <p class="delivery-info">
                       <img src="assets/location.png" alt="Next-Day Delivery" class="info-icon">
@@ -69,20 +82,33 @@
                       <img src="assets/Delivery.png" alt="Free Shipping" class="info-icon">
                       Free Shipping: on orders over $35
                     </p>
+
+                    <!-- Prompt to log in if user is not logged in -->
+                    <ng-template #loginPrompt>
+                      <div class="login-overlay">
+                        Log-in to see the price
+                      </div>
+                    </ng-template>
                   </div>
-        
+
                   <!-- Add to Cart -->
                   <div class="cart-action">
                     <label for="quantity">Qty:</label>
                     <input type="number" id="quantity" [(ngModel)]="product.product_quantity" class="form-control"
-                      min="1" max="99">
-                    <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product)">Add to Cart</button>
+                      min="1" max="99"
+                      [disabled]="loginType === 'admin' || product.product_quantity === 0 || loginType == null" />
+                    <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product)"
+                      [disabled]="loginType === 'admin' || product.product_quantity === 0 || loginType == null">
+                      Add to Cart
+                    </button>
                   </div>
+                  <button class="btn btn-outline-danger w-100 ms-1 view-btn"
+                    (click)="addToRecentlyViewed(product)">VIEW</button>
                 </div>
               </div>
             </div>
           </div>
-        
+
 
           <!-- Pagination Controls -->
           <div *ngIf="totalPages > 1" class="pagination-container">
@@ -103,13 +129,27 @@
             <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages"
               class="pagination-arrow">&raquo;</button>
           </div>
+          <!-- Recently Viewed Section -->
+          <div *ngIf="showRecentlyViewed" class="recently-viewed-wrapper">
+            <div class="recently-viewed-header">
+              <h3>Recently Viewed</h3>
+              <button class="close-btn" (click)="closeRecentlyViewed()">×</button>
+            </div>
+            <app-recently-viewed></app-recently-viewed>
+          </div>
+
         </div>
 
         <!-- Message when no products are found -->
         <div *ngIf="!isLoading && products.length === 0">
           <p>No products found for this category.</p>
         </div>
+
+
+
+
       </div>
+
 </div>
 
 <app-footer></app-footer>

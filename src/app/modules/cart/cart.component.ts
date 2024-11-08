@@ -19,6 +19,7 @@ export class CartComponent implements OnInit {
   cartItems: Array<{
     cartId: string; // Add cartId for deletion
     productId: string;
+    upc: string;
     name: string;
     quantity: number;
     price: number;
@@ -93,11 +94,12 @@ export class CartComponent implements OnInit {
           quantity: item.prod_qty,
           price: item.product.product_price,
           image: item.product.product_image,
+          upc: item.product.product_identifier2,
           imageError: false,
           discounts_Seller: item.product.discounts_Seller || [], // Include discounts if available
         }));
         // Log all cart items after loading
-        // console.log('Loaded cart items:', this.cartItems);
+        console.log('Loaded cart items:', this.cartItems);
         // Update each item with its discounted price
         this.cartItems.forEach(item => this.getItemTotal(item));
       },
@@ -194,16 +196,19 @@ updateQuantity(productId: string, newQuantity: number): void {
   saveBillingDetails(): void {
     console.log('Billing details saved:', this.billing);
     this.cartService.saveBillingDetails(this.billing);
+    localStorage.setItem('billingDetails', JSON.stringify(this.billing));
   }
 
   goToCheckout(): void {
     // Save billing details before navigating to checkout
     this.saveBillingDetails(); 
+    console.log('Billing details saved before going to checkout:', this.billing);
   
     // Save cart items to localStorage
     const cartItemsToSave = this.cartItems.map(item => ({
       productId: item.productId,
       name: item.name,
+      upc: item.upc,
       quantity: item.quantity,
       price: item.price,
       discountedPrice: item.discountedPrice || item.price, // Include discounted price or original if no discount

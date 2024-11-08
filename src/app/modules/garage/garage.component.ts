@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Output, PLATFORM_ID, SimpleChanges } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { EventEmitter } from '@angular/core';
 import { FetchYearService } from '../../core/services/fetch-year/fetch-year.service';
@@ -10,7 +10,7 @@ import { AddVehicleService } from '../../core/services/add-vehicle/add-vehicle.s
 import { LoginService } from '../../core/services/login-service/login-service.service';
 import { GetVehicleService } from '../../core/services/get-vehicle/get-vehicle.service';
 import { DeleteVehicleService } from '../../core/services/delete-vehicle/delete-vehicle.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavigationService } from '../../core/services/navigation-service/navigation-service.service';
 
@@ -44,6 +44,7 @@ export class GarageComponent {
   userID: string | null = null;
   showDeleteModal: boolean = false; // Controls the visibility of the delete confirmation modal
   vehicleToDelete: number | null = null; // Holds the ID of the vehicle to be deleted
+  isLocallyLoading: boolean = false;
 
   @Output() formVisibilityChanged = new EventEmitter<boolean>();
   showVehicleForm: boolean = false;
@@ -51,6 +52,8 @@ export class GarageComponent {
   demoVehicleData: any[] = [];
 
   constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private cdr: ChangeDetectorRef,
     private fetchYearService: FetchYearService,
     private fetchMakeService: FetchMakeService,
     private fetchChildService: FetchChildService,
@@ -83,6 +86,37 @@ export class GarageComponent {
     });
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (isPlatformBrowser(this.platformId)) {
+      if (changes['isLoading'] && changes['isLoading'].currentValue === true) {
+        this.isLocallyLoading = true;
+      } else if (
+        changes['isLoading'] &&
+        changes['isLoading'].currentValue === false
+      ) {
+        this.isLocallyLoading = false;
+      }
+
+      if (
+        changes['isPaginationLoading'] &&
+        changes['isPaginationLoading'].currentValue === true
+      ) {
+        this.isLocallyLoading = true;
+      } else if (
+        changes['isPaginationLoading'] &&
+        changes['isPaginationLoading'].currentValue === false
+      ) {
+        this.isLocallyLoading = false;
+      }
+
+      if (changes['searchResults'] && changes['searchResults'].currentValue) {
+        this.isLocallyLoading = false;
+      }
+
+      this.cdr.detectChanges();
+    }
+  }
+
   onBackClick(): void {
     this.navigationService.goBack();
   }
@@ -94,6 +128,9 @@ export class GarageComponent {
       return;
     }
 
+    this.isLocallyLoading = true;
+    this.cdr.detectChanges();
+
     this.getVehicleService.getCustomerVehicles(customerId).subscribe(
       (response) => {
         if (response && response.data && Array.isArray(response.data)) {
@@ -101,15 +138,22 @@ export class GarageComponent {
           this.demoVehicleData = response.data.map((vehicle) => {
             vehicle.purchasedProducts = vehicle.products.filter(p => p.status === 'purchased');
             vehicle.searchedProducts = vehicle.products.filter(p => p.status === 'searched');
+            this.isLocallyLoading = true;
+            // console.log('Fetched vehicle data:', vehicle); 
             return vehicle;
           });
         } else {
           console.error('Invalid response format:', response);
         }
+        this.isLocallyLoading = false;
+        this.cdr.detectChanges();
+        // console.log('Fetched Vehicles:', this.demoVehicleData);
       },
       (error) => {
         console.error('Error fetching vehicles:', error);
         alert('Failed to fetch vehicles. Please try again later.');
+        this.isLocallyLoading = false;
+        this.cdr.detectChanges();
       }
     );
   }
@@ -319,48 +363,60 @@ export class GarageComponent {
   }
   
 
-  openDeleteModal(vehicleId: number): void {
-    this.vehicleToDelete = vehicleId;
+  openDeleteModal(vehicle: any): void {
+    this.vehicleToDelete = vehicle;
     this.showDeleteModal = true;
-    this.changeDetectorRef.detectChanges(); // Ensure changes are detected and UI is updated
-    console.log("delete modal",this.showDeleteModal)
+    this.changeDetectorRef.detectChanges(); // Ensure UI updates
+    console.log("delete modal", this.showDeleteModal);
   }
-  
+
   confirmDelete(): void {
-    if (this.vehicleToDelete !== null) {
+    if (this.vehicleToDelete) {
       this.deleteVehicle(this.vehicleToDelete);
       this.showDeleteModal = false;
       this.vehicleToDelete = null;
-      this.changeDetectorRef.detectChanges(); // Ensure changes are detected and UI is updated
+      this.changeDetectorRef.detectChanges();
     }
   }
-  
-  cancelDelete(): void {
+
+  cancelDelete(): void { 
     this.showDeleteModal = false;
     this.vehicleToDelete = null;
-    this.changeDetectorRef.detectChanges(); // Ensure changes are detected and UI is updated
+    this.changeDetectorRef.detectChanges();
   }
   
-  deleteVehicle(vehicleId: number): void {
-    this.deleteVehicleService.deleteVehicle(vehicleId).subscribe(
+  deleteVehicle(vehicle: any): void {
+    if (!vehicle.year || !vehicle.make || !vehicle.model || !vehicle.trim || !vehicle.engine) {
+      console.error("Incomplete vehicle data:", vehicle);
+      this.displayNotification("Vehicle data is incomplete. Unable to delete.");
+      return;
+    }
+  
+    const vehicleData = {
+      year: vehicle.year,
+      make: vehicle.make,
+      model: vehicle.model,
+      trim: vehicle.trim,
+      engine: vehicle.engine,
+      customerID: parseInt(this.userID || '0', 10),
+    };
+  
+    this.deleteVehicleService.deleteVehicle(vehicleData).subscribe(
       (response) => {
         if (response.success) {
-          this.displayNotification('Vehicle deleted successfully.'); // Show success notification
-          // Remove the deleted vehicle from the demoVehicleData array
-          this.demoVehicleData = this.demoVehicleData.filter(
-            (vehicle) => vehicle.id !== vehicleId
-          );
+          this.displayNotification('Vehicle deleted successfully.');
+          this.demoVehicleData = this.demoVehicleData.filter((v) => v.id !== vehicle.id);
         } else {
           console.error('Failed to delete vehicle:', response.statusReason);
-          this.displayNotification('Failed to delete vehicle. Please try again later.'); // Show error notification
+          this.displayNotification('Failed to delete vehicle. Please try again later.');
         }
       },
       (error) => {
         console.error('Error deleting vehicle:', error);
-        this.displayNotification('An error occurred while deleting the vehicle. Please try again later.'); // Show error notification
+        this.displayNotification('An error occurred while deleting the vehicle. Please try again later.');
       }
     );
-  } 
+  }
   
 
   nextPage(): void {

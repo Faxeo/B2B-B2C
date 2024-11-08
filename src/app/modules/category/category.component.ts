@@ -11,10 +11,12 @@ import { NavbarComponent } from '../../layout/navbar/navbar.component';
 import { FooterComponent } from '../../layout/footer/footer.component';
 import { FilterComponent } from '../search/filter/filter.component';
 import { NavigationService } from '../../core/services/navigation-service/navigation-service.service';
+import { RecentlyViewedService } from '../../core/services/recently-viewed/recently-viewed.service';
+import { RecentlyViewedComponent } from '../recently-viewed/recently-viewed.component';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, NavbarComponent, FooterComponent, FilterComponent],
+  imports: [CommonModule, FormsModule, NavbarComponent, FooterComponent, FilterComponent, RecentlyViewedComponent],
   selector: 'app-category',
   templateUrl: './category.component.html',
   styleUrls: ['./category.component.css'],
@@ -35,6 +37,7 @@ export class CategoryComponent implements OnInit {
   showNotification: boolean = false; // Controls notification visibility
   @Input() loginType: string | null = null;
   isCollapsed: boolean = false;
+  showRecentlyViewed: boolean = false;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -44,11 +47,15 @@ export class CategoryComponent implements OnInit {
     private addToCartService: AddToCartService,
     private cartService: CartService,
     private loginService: LoginService,
-    private navigationService: NavigationService
+    private navigationService: NavigationService,
+    private recentlyViewedService: RecentlyViewedService,
   ) {}
 
   ngOnInit(): void {
     // Retrieve the 'categoryId' from the service
+    this.recentlyViewedService.recentlyViewed$.subscribe((products) => {
+      this.showRecentlyViewed = products.length > 0;
+    });
     const categoryId = this.categoryIdService.getCategoryId();
 
     if (isPlatformBrowser(this.platformId)) {
@@ -65,7 +72,7 @@ export class CategoryComponent implements OnInit {
           this.loginType = username || this.loginType;
         }
         this.cartService.setUserDetails(this.userID, this.loginType);
-      });
+      }); 
     }
 
     // Ensure category ID (m_id) is set correctly
@@ -77,6 +84,15 @@ export class CategoryComponent implements OnInit {
       // console.error('No valid category ID found');
       this.isLoading = false;
     }
+  }
+
+  addToRecentlyViewed(product: any): void {
+    // console.log('Adding to recently viewed:', product); 
+    this.recentlyViewedService.addProductToRecentlyViewed(product);
+  }
+
+  closeRecentlyViewed(): void {
+    this.showRecentlyViewed = false;
   }
 
   onBackClick(): void {
@@ -122,7 +138,7 @@ export class CategoryComponent implements OnInit {
     // Log the request data to the console for debugging
     // console.log('Request Data for Category API:', requestData);
 
-    this.isLoading = true;
+    this.isLocallyLoading = true;
 
     this.hierarchyProductsService.getHierarchyProducts(requestData).subscribe(
       (response) => {
@@ -133,10 +149,12 @@ export class CategoryComponent implements OnInit {
         this.totalPages = response.totalPages;
         this.currentPage = response.currentPage;
         this.isLoading = false;
+        this.isLocallyLoading = false;
       },
       (error) => {
         console.error('Error fetching products:', error);
         this.isLoading = false;
+        this.isLocallyLoading = false;
       }
     );
   }
@@ -171,6 +189,7 @@ export class CategoryComponent implements OnInit {
     }
     if (this.m_id !== null) {
       this.currentPage = page;
+      this.isLocallyLoading = true;
       this.fetchProducts(this.m_id, this.currentPage); // Fetch products for the new page
     } else {
       console.error('m_id is null when attempting to change page');
@@ -179,6 +198,7 @@ export class CategoryComponent implements OnInit {
 
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
+      this.isLocallyLoading = true;
       this.currentPage++;
       if (this.m_id !== null) {
         this.fetchProducts(this.m_id, this.currentPage); // Ensure m_id is passed
@@ -190,6 +210,7 @@ export class CategoryComponent implements OnInit {
 
   prevPage(): void {
     if (this.currentPage > 1) {
+      this.isLocallyLoading = true;
       this.currentPage--;
       if (this.m_id !== null) {
         this.fetchProducts(this.m_id, this.currentPage); // Ensure m_id is passed

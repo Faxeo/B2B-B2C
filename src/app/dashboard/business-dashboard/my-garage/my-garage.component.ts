@@ -90,8 +90,8 @@ export class MyGarageComponent implements OnInit {
     this.getVehicleService.getCustomerVehicles(customerId).subscribe(
       (response) => {
         if (response && response.data && Array.isArray(response.data)) {
-          // Filter products based on status directly from the API response
           this.demoVehicleData = response.data.map((vehicle) => {
+            console.log('Fetched vehicle data:', vehicle); // Log each vehicle
             vehicle.purchasedProducts = vehicle.products.filter(p => p.status === 'purchased');
             vehicle.searchedProducts = vehicle.products.filter(p => p.status === 'searched');
             return vehicle;
@@ -106,6 +106,7 @@ export class MyGarageComponent implements OnInit {
       }
     );
   }
+
   getYears(): void {
     this.fetchYearService.fetchYears().subscribe(
       (data: any[]) => {
@@ -305,45 +306,57 @@ export class MyGarageComponent implements OnInit {
     });
   }
 
-  openDeleteModal(vehicleId: number): void {
-    this.vehicleToDelete = vehicleId;
+  openDeleteModal(vehicle: any): void {
+    this.vehicleToDelete = vehicle;
     this.showDeleteModal = true;
-    this.changeDetectorRef.detectChanges(); // Ensure changes are detected and UI is updated
-    console.log("delete modal",this.showDeleteModal)
+    this.changeDetectorRef.detectChanges(); // Ensure UI updates
+    console.log("delete modal", this.showDeleteModal);
   }
-  
+
   confirmDelete(): void {
-    if (this.vehicleToDelete !== null) {
+    if (this.vehicleToDelete) {
       this.deleteVehicle(this.vehicleToDelete);
       this.showDeleteModal = false;
       this.vehicleToDelete = null;
-      this.changeDetectorRef.detectChanges(); // Ensure changes are detected and UI is updated
+      this.changeDetectorRef.detectChanges();
     }
   }
-  
+
   cancelDelete(): void {
     this.showDeleteModal = false;
     this.vehicleToDelete = null;
-    this.changeDetectorRef.detectChanges(); // Ensure changes are detected and UI is updated
+    this.changeDetectorRef.detectChanges();
   }
   
-  deleteVehicle(vehicleId: number): void {
-    this.deleteVehicleService.deleteVehicle(vehicleId).subscribe(
+  deleteVehicle(vehicle: any): void {
+    if (!vehicle.year || !vehicle.make || !vehicle.model || !vehicle.trim || !vehicle.engine) {
+      console.error("Incomplete vehicle data:", vehicle);
+      this.displayNotification("Vehicle data is incomplete. Unable to delete.");
+      return;
+    }
+  
+    const vehicleData = {
+      year: vehicle.year,
+      make: vehicle.make,
+      model: vehicle.model,
+      trim: vehicle.trim,
+      engine: vehicle.engine,
+      customerID: parseInt(this.userID || '0', 10),
+    };
+  
+    this.deleteVehicleService.deleteVehicle(vehicleData).subscribe(
       (response) => {
         if (response.success) {
-          this.displayNotification('Vehicle deleted successfully.'); // Show success notification
-          // Remove the deleted vehicle from the demoVehicleData array
-          this.demoVehicleData = this.demoVehicleData.filter(
-            (vehicle) => vehicle.id !== vehicleId
-          );
+          this.displayNotification('Vehicle deleted successfully.');
+          this.demoVehicleData = this.demoVehicleData.filter((v) => v.id !== vehicle.id);
         } else {
           console.error('Failed to delete vehicle:', response.statusReason);
-          this.displayNotification('Failed to delete vehicle. Please try again later.'); // Show error notification
+          this.displayNotification('Failed to delete vehicle. Please try again later.');
         }
       },
       (error) => {
         console.error('Error deleting vehicle:', error);
-        this.displayNotification('An error occurred while deleting the vehicle. Please try again later.'); // Show error notification
+        this.displayNotification('An error occurred while deleting the vehicle. Please try again later.');
       }
     );
   }

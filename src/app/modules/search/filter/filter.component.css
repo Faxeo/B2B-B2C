@@ -52,3 +52,10 @@
     font-size: 14px;
   }
   
+  .back-button {
+    font-size: 28px;
+    margin-left: 35px;
+    background-color: transparent;
+    padding-bottom: 8px;
+    border: none;
+  }
