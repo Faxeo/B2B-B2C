@@ -66,7 +66,7 @@
   (categorySearchPageChange)="currentSearchType === 'categorySearch' ? searchByCategory($event) : null"
   [loginType]="loginType">
 </app-search>
-
+ 
 
 <!-- Admin Sidebar Options -->
 <div *ngIf="isAdminSidebarVisible && loginType === 'admin'" class="admin-sidebar-options">
@@ -293,11 +293,12 @@
           <!-- Add to Cart and View Buttons -->
           <div id="shopping_cart-view-buttons" class="d-flex justify-content-between pt-2">
             <button class="btn btn-danger w-100 me-1 add-to-cart-btn" (click)="addToCart(product)"
-            [disabled]="loginType === 'admin' || product.product_quantity === 0 || loginType == null">Add to Cart</button>
-            <button class="btn btn-outline-danger w-100 ms-1">VIEW</button>
+            [disabled]="loginType === 'admin' || product.product_quantity === 0 || loginType == null || product.product_price === 0">Add to Cart</button>
+            
+            <button class="btn btn-outline-danger w-100 ms-1" (click)="viewProductDetails(product.product_id)">VIEW</button>
           </div>
 
-          <!-- Cart Confirmation Message -->
+          <!-- Cart Confirmation Message --> 
           <div *ngIf="showMessage" class="cart-message">
             {{ message }}
           </div>

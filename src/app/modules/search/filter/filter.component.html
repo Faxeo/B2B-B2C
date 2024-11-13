@@ -3,85 +3,128 @@
   <button class="back-button" (click)="onBackClick()">
     <i class="fa fa-arrow-left back-button" aria-hidden="true"></i>
   </button>
+
+
+  <!-- Filters Section -->
   <div class="filter-section">
-    <input type="text" class="filter-input" placeholder="Filter by Part Number...">
+    <h3 class="Options" (click)="toggleSection('filters')">
+      Filters<i class="fa" [ngClass]="showFilters ? 'fa-minus' : 'fa-plus'"></i>
+    </h3>
+    <div *ngIf="showFilters">
+      <div class="filter-checkbox">
+        <label><input type="checkbox"> In Stock</label>
+        <span class="count">1000+</span>
+      </div>
+      <div class="filter-checkbox">
+        <label><input type="checkbox"> Top Seller</label>
+        <span class="count">1000+</span>
+      </div>
+      <div class="filter-checkbox">
+        <label><input type="checkbox"> Top Rated</label>
+        <span class="count">1000+</span>
+      </div>
+      <div class="filter-checkbox">
+        <label><input type="checkbox"> Free Shipping</label>
+        <span class="count">1000+</span>
+      </div>
+    </div>
   </div>
 
-  <div class="filter-section">
-    <h3>Filters</h3>
-    <div class="filter-checkbox">
-      <label><input type="checkbox"> In Stock</label>
-      <span class="count">1000+</span>
+<!-- Category Section -->
+<div class="filter-section">
+  <h3 class="Options" (click)="toggleSection('categories')">
+    <span>Category</span>
+    <i class="fa" [ngClass]="showCategories ? 'fa-minus' : 'fa-plus'"></i>
+  </h3>
+  <div *ngIf="showCategories">
+    <div *ngFor="let category of mainCategories" class="filter-checkbox">
+      <div class="category-item">
+        <label>
+          <input type="checkbox" [(ngModel)]="category.selected" (change)="onMainCategoryChange(category)" />
+          {{ category.name }}
+        </label>
+        <span (click)="toggleSubCategories(category)" class="toggle-icon">
+          <i class="fa" [ngClass]="category.showSubCategories ? 'fa-minus' : 'fa-plus'"></i>
+        </span>
+        <div *ngIf="category.showSubCategories" class="sub-category-section">
+          <div *ngFor="let subCategory of category.firstSubCategories" class="filter-checkbox sub-category">
+            <label>
+              <input type="checkbox" [(ngModel)]="subCategory.selected" (change)="onFirstSubCategoryChange(subCategory)" />
+              {{ subCategory.name }}
+            </label>
+            <span (click)="toggleSecondSubCategories(subCategory)" class="toggle-icon">
+              <i class="fa" [ngClass]="subCategory.showSecondSubCategories ? 'fa-minus' : 'fa-plus'"></i>
+            </span>
+            <div *ngIf="subCategory.showSecondSubCategories" class="second-sub-category-section">
+              <div *ngFor="let secondSubCategory of subCategory.secondSubCategories" class="filter-checkbox nested-sub-category">
+                <label>
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="secondSubCategory.selected"
+                    (change)="onSecondSubCategoryChange(subCategory, secondSubCategory)"
+                  />
+                  {{ secondSubCategory.name }}
+                </label>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="filter-checkbox">
-      <label><input type="checkbox"> Top Seller</label>
-      <span class="count">1000+</span>
-    </div>
-    <div class="filter-checkbox">
-      <label><input type="checkbox"> Top Rated</label>
-      <span class="count">1000+</span>
-    </div>
-    <div class="filter-checkbox">
-      <label><input type="checkbox"> Free Shipping</label>
-      <span class="count">1000+</span>
-    </div>
-  </div>
-
-  <div class="filter-section">
-    <h3>Category</h3>
-    <div class="filter-checkbox">
-      <label><input type="checkbox"> Brake</label>
-      <span class="count">1000+</span>
-    </div>
-    <div class="filter-checkbox">
-      <label><input type="checkbox"> Driveline and Axles</label>
-      <span class="count">1000+</span>
-    </div>
-    <div class="filter-checkbox">
-      <label><input type="checkbox"> Electrical, Lighting and Body</label>
-      <span class="count">1000+</span>
-    </div>
-    <!-- Add more categories as necessary -->
-    <a class="see-more">See more...</a>
-  </div>
-
-  <div class="filter-section">
-    <h3>Manufacturer</h3>
-    <div class="filter-checkbox">
-      <label><input type="checkbox"> PAI</label>
-      <span class="count">1000+</span>
-    </div>
-    <div class="filter-checkbox">
-      <label><input type="checkbox"> DANA</label>
-      <span class="count">1000+</span>
-    </div>
-    <!-- Add more manufacturers as necessary -->
-    <a class="see-more">See more...</a>
-  </div>
-
-  <div class="filter-section">
-    <h3>Price</h3>
-    <div class="filter-checkbox">
-      <label><input type="checkbox"> &lt; $100</label>
-      <span class="count">1000+</span>
-    </div>
-    <div class="filter-checkbox">
-      <label><input type="checkbox"> $100 to $250</label>
-      <span class="count">1000+</span>
-    </div>
-    <!-- Add more price ranges as necessary -->
-  </div>
-
-  <div class="filter-section">
-    <h3>Material</h3>
-    <div class="filter-checkbox">
-      <label><input type="checkbox"> Steel</label>
-      <span class="count">1000+</span>
-    </div>
-    <div class="filter-checkbox">
-      <label><input type="checkbox"> EPDM</label>
-      <span class="count">1000+</span>
-    </div>
-    <!-- Add more materials as necessary -->
   </div>
 </div>
+
+
+  <!-- Manufacturer Section -->
+  <div class="filter-section">
+    <h3 class="Options" (click)="toggleSection('manufacturers')">
+      Manufacturer <i class="fa" [ngClass]="showCategories ? 'fa-minus' : 'fa-plus'"></i>
+    </h3>
+    <div *ngIf="showManufacturers">
+      <div class="filter-checkbox">
+        <label><input type="checkbox"> PAI</label>
+        <span class="count">1000+</span>
+      </div>
+      <div class="filter-checkbox">
+        <label><input type="checkbox"> DANA</label>
+        <span class="count">1000+</span>
+      </div>
+      <a class="see-more">See more...</a>
+    </div>
+  </div>
+
+  <!-- Price Section -->
+  <div class="filter-section">
+    <h3 class="Options" (click)="toggleSection('prices')">
+      Price <i class="fa" [ngClass]="showPrices ? 'fa-minus' : 'fa-plus'"></i>
+    </h3>
+    <div *ngIf="showPrices">
+      <div class="filter-checkbox">
+        <label><input type="checkbox"> &lt; $100</label>
+        <span class="count">1000+</span>
+      </div>
+      <div class="filter-checkbox">
+        <label><input type="checkbox"> $100 to $250</label>
+        <span class="count">1000+</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Material Section -->
+  <div class="filter-section">
+    <h3 class="Options" (click)="toggleSection('materials')">
+      Material <i class="fa" [ngClass]="showMaterials ? 'fa-minus' : 'fa-plus'"></i>
+    </h3>
+    <div *ngIf="showMaterials">
+      <div class="filter-checkbox">
+        <label><input type="checkbox"> Steel</label>
+        <span class="count">1000+</span>
+      </div>
+      <div class="filter-checkbox">
+        <label><input type="checkbox"> EPDM</label>
+        <span class="count">1000+</span>
+      </div>
+    </div>
+  </div>
+</div> 

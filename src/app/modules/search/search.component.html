@@ -209,16 +209,18 @@
                   <!-- Add to Cart -->
                   <div class="cart-action">
                     <label for="quantity">Qty:</label>
-                    <input type="number" id="quantity" [(ngModel)]="product.product_quantity" class="form-control"
+                    <input type="number" id="quantity" [(ngModel)]="product.availableQuantity" class="form-control"
                       min="1" max="99"
-                      [disabled]="loginType === 'admin' || product.availableQuantity === 0 || loginType == null" />
+                      [disabled]="loginType === 'admin' || product.availableQuantity === 0 || product.price === 0 || loginType == null" />
                     <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product)"
-                      [disabled]="loginType === 'admin' || product.availableQuantity === 0 || loginType == null">
+                      [disabled]="loginType === 'admin' || product.availableQuantity === 0 || product.price === 0 || loginType == null">
                       Add to Cart
                     </button>
                   </div>
                   <button class="btn btn-outline-danger w-100 ms-1 view-btn"
-                    (click)="addToRecentlyViewed(product)">VIEW</button>
+                    (click)="viewProductDetails(product.product_id); addToRecentlyViewed(product)">
+                    VIEW
+                  </button>
                 </div>
               </div>
             </div>
@@ -336,15 +338,19 @@
                   <!-- Add to Cart -->
                   <div class="cart-action">
                     <label for="quantity">Qty:</label>
-                    <input type="number" id="quantity" [(ngModel)]="product.product_quantity" class="form-control"
-                      min="1" max="99" [disabled]="loginType === 'admin'  || loginType == null" />
+                    <input type="number" id="quantity" [(ngModel)]="product.availableQuantity" class="form-control"
+                      min="1" max="99"
+                      [disabled]="loginType === 'admin' || product.availableQuantity === 0  || product.price === 0 || loginType == null" />
                     <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product)"
-                      (click)="addVehicle(product)" [disabled]="loginType === 'admin'  || loginType == null">
+                      (click)="addVehicle(product)"
+                      [disabled]="loginType === 'admin' || product.availableQuantity === 0 || product.price === 0 || loginType == null">
                       Add to Cart
                     </button>
                   </div>
                   <button class="btn btn-outline-danger w-100 ms-1 view-btn"
-                    (click)="addToRecentlyViewed(product)">VIEW</button>
+                    (click)="viewProductDetails(product.product_id); addToRecentlyViewed(product)">
+                    VIEW
+                  </button>
                 </div>
               </div>
             </div>
@@ -381,7 +387,7 @@
         </div>
 
         <!-- Recently Viewed Section -->
-        <div *ngIf="showRecentlyViewed" >
+        <div *ngIf="showRecentlyViewed">
           <div class="recently-viewed-header">
             <h3>Recently Viewed</h3>
             <button class="close-btn" (click)="closeRecentlyViewed()">×</button>
@@ -460,16 +466,18 @@
                   <!-- Add to Cart -->
                   <div class="cart-action">
                     <label for="quantity">Qty:</label>
-                    <input type="number" id="quantity" [(ngModel)]="product.product_quantity" class="form-control"
+                    <input type="number" id="quantity" [(ngModel)]="product.availableQuantity" class="form-control"
                       min="1" max="99"
-                      [disabled]="loginType === 'admin' || product.availableQuantity === 0 || loginType == null" />
+                      [disabled]="loginType === 'admin' || product.availableQuantity === 0 || product.price === 0 || loginType == null" />
                     <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product)"
-                      [disabled]="loginType === 'admin' || product.availableQuantity === 0 || loginType == null">
+                      [disabled]="loginType === 'admin' || product.availableQuantity === 0 || product.price === 0 || loginType == null">
                       Add to Cart
                     </button>
                   </div>
                   <button class="btn btn-outline-danger w-100 ms-1 view-btn"
-                    (click)="addToRecentlyViewed(product)">VIEW</button>
+                    (click)="viewProductDetails(product.product_id); addToRecentlyViewed(product)">
+                    VIEW
+                  </button>
                 </div>
               </div>
             </div>
@@ -506,7 +514,7 @@
         </div>
 
         <!-- Recently Viewed Section -->
-        <div *ngIf="showRecentlyViewed" >
+        <div *ngIf="showRecentlyViewed">
           <div class="recently-viewed-header">
             <h3>Recently Viewed</h3>
             <button class="close-btn" (click)="closeRecentlyViewed()">×</button>
@@ -514,7 +522,135 @@
           <app-recently-viewed></app-recently-viewed>
         </div>
 
-
       </div>
 
-    </div>
+      <div *ngIf="searchType === 'filterCategorySearch'">
+        <!-- Display products when they are loaded -->
+        <div class="product-list container-fluid my-5" *ngIf="!isLoading && products.length > 0">
+          <!-- Spinner for both initial loading and pagination -->
+          <div *ngIf="isLocallyLoading" class="loading-overlay">
+            <img src="https://socialsecurity.mp.gov.in/DefaultHeader/Image/setting.gif" alt="Loading..."
+              class="loading-gif" />
+          </div>
+          <div class="row">
+            <div *ngFor="let product of products">
+              <div class="product-item border p-3 d-flex justify-content-between align-items-start">
+                <!-- Product Image -->
+                <div class="product-image">
+                  <img [src]="'https://usaperp.com:5001/Images/Products/' + product.product_image"
+                    [alt]="product.product_name" class="img-fluid mb-2">
+                </div>
+
+                <!-- Product Details -->
+                <div class="product-info">
+                  <h5 class="product-name">{{ product.product_name }}</h5>
+                  <p class="product-part-number">
+                    <span class="label">Brand:</span> {{ product.brand?.brand_name }}
+                  </p>
+                  <p class="product-part-number">
+                    <span class="label">Part number:</span> {{ product.product_identifier2 }}
+                  </p>
+                  <p class="product-part-number">
+                    <span class="label">Origin:</span> {{ product.product_origin }}
+                  </p>
+                  <p class="product-warning">⚠ Add a vehicle to guarantee fit</p>
+                  <p class="product-part-number">
+                    <span class="label">Interchange number:</span> {{ product.interchangeable_identifier }}
+                  </p>
+                </div>
+
+                <!-- Price and Delivery Info -->
+                <div class="product-divider">
+                  <div class="product-price-info">
+                    <!-- Display "Log in to see the prices" if user is not logged in -->
+                    <ng-container *ngIf="loginType === null; else loggedInPrice">
+                      <div class="login-overlay">
+                        Log in to see the prices
+                      </div>
+                    </ng-container>
+
+                    <!-- Display 'Out of Stock' or Price based on conditions if logged in -->
+                    <ng-template #loggedInPrice>
+                      <h3 class="product-price"
+                        *ngIf="product.product_price === 0 || product.product_quantity === 0; else showPrice">
+                        Out of Stock
+                      </h3>
+                      <ng-template #showPrice>
+                        <h3 class="product-price">
+                          ${{ product.product_price }} / each
+                        </h3>
+                      </ng-template>
+                    </ng-template>
+
+                    <!-- Delivery and Shipping Information with Icons -->
+                    <p class="delivery-info">
+                      <img src="assets/location.png" alt="Next-Day Delivery" class="info-icon">
+                      Next-Day Delivery: <strong>Order now</strong>
+                    </p>
+                    <p class="shipping-info">
+                      <img src="assets/Delivery.png" alt="Free Shipping" class="info-icon">
+                      Free Shipping: on orders over $35
+                    </p> 
+
+                    <!-- Prompt to log in if user is not logged in -->
+                    <ng-template #loginPrompt>
+                      <div class="login-overlay">
+                        Log-in to see the price
+                      </div>
+                    </ng-template>
+                  </div>
+
+                  <!-- Add to Cart -->
+                  <div class="cart-action">
+                    <label for="quantity">Qty:</label>
+                    <input type="number" id="quantity" [(ngModel)]="product.product_quantity" class="form-control"
+                      min="1" max="99"
+                      [disabled]="loginType === 'admin' || product.product_quantity === 0 || product.product_price === 0 || loginType == null" />
+                    <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product)"
+                      [disabled]="loginType === 'admin' || product.product_quantity === 0 || product.product_price === 0 || loginType == null">
+                      Add to Cart
+                    </button>
+                  </div>
+                  <button class="btn btn-outline-danger w-100 ms-1 view-btn"
+                    (click)="viewProductDetails(product.product_id); addToRecentlyViewed(product)">
+                    VIEW
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pagination Controls -->
+          <div *ngIf="totalPages > 1" class="pagination-container">
+            <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1"
+              class="pagination-arrow">&laquo;</button>
+            <button (click)="changePage(1)" [disabled]="currentPage === 1" class="pagination-page">1</button>
+            <span *ngIf="shouldShowLeftEllipsis()" class="pagination-ellipsis">...</span>
+            <span *ngFor="let page of getPagesToShow()">
+              <button (click)="changePage(page)"
+                [ngClass]="{'active-page': page === currentPage, 'pagination-page': true}">
+                {{ page }}
+              </button>
+            </span>
+            <span *ngIf="shouldShowRightEllipsis()" class="pagination-ellipsis">...</span>
+            <button (click)="changePage(totalPages)" [disabled]="currentPage === totalPages" class="pagination-page">
+              {{ totalPages }}
+            </button>
+            <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages"
+              class="pagination-arrow">&raquo;</button>
+          </div>
+
+          <!-- Recently Viewed Section -->
+          <div *ngIf="showRecentlyViewed" class="recently-viewed-wrapper">
+            <div class="recently-viewed-header">
+              <h3>Recently Viewed</h3>
+              <button class="close-btn" (click)="closeRecentlyViewed()">×</button>
+            </div>
+            <app-recently-viewed></app-recently-viewed>
+          </div>
+
+
+        </div>
+
+
+      </div>

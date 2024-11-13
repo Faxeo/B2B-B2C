@@ -244,7 +244,6 @@
   background-color: #b34444;
 }
 
-
 /* Styles for the product categories section */
 .product-categories {
   width: 100%; /* Full width */
@@ -372,7 +371,7 @@
 .add-to-cart-btn:disabled {
   cursor:not-allowed;
   color: white;
-  background-color: #e16868;
+  opacity: 0.6;
 }
 
 .red-div {
@@ -555,7 +554,7 @@ button[disabled] {
   background-color: #ffffff; /* Set button background to white */
   color: #999; /* Dull the text color */
   border: none; /* Remove border */
-  opacity: 1; /* Set opacity to full so button is clearly visible */
+  /* opacity: 1;  */
   cursor: not-allowed; /* Not-allowed cursor */
 }
 

@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnInit, PLATFORM_ID } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { HierarchyProductsService } from '../../core/services/hierarchy-products/hierarchy-products.service';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,16 +13,28 @@ import { FilterComponent } from '../search/filter/filter.component';
 import { NavigationService } from '../../core/services/navigation-service/navigation-service.service';
 import { RecentlyViewedService } from '../../core/services/recently-viewed/recently-viewed.service';
 import { RecentlyViewedComponent } from '../recently-viewed/recently-viewed.component';
+import { FilterSearchService } from '../../core/services/filter-search/filter-search.service';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, NavbarComponent, FooterComponent, FilterComponent, RecentlyViewedComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    NavbarComponent,
+    FooterComponent,
+    FilterComponent,
+    RecentlyViewedComponent,
+    RouterModule
+  ], 
   selector: 'app-category',
   templateUrl: './category.component.html',
   styleUrls: ['./category.component.css'],
 })
+
 export class CategoryComponent implements OnInit {
-  m_id: number | null = null; // The category id (m_id) passed from the home component
+  m_id: number | null = null;
+  f_id: number | null = null;
+  s_id: number | null = null;
   products: any[] = [];
   pageSize: number = 10; // Number of products per page
   currentPage: number = 1;
@@ -38,6 +50,7 @@ export class CategoryComponent implements OnInit {
   @Input() loginType: string | null = null;
   isCollapsed: boolean = false;
   showRecentlyViewed: boolean = false;
+  isInitialLoad: boolean = true;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -49,7 +62,16 @@ export class CategoryComponent implements OnInit {
     private loginService: LoginService,
     private navigationService: NavigationService,
     private recentlyViewedService: RecentlyViewedService,
-  ) {}
+    private filterSearchService: FilterSearchService
+  ) {
+    this.filterSearchService.selectedCategories$.subscribe((categories) => {
+      this.m_id = categories.m_id;
+      this.f_id = categories.f_id;
+      this.s_id = categories.s_id;
+      // Fetch products based on updated filter values, starting from page 1
+      this.fetchProducts(this.m_id ?? 0, this.f_id ?? 0, this.s_id ?? 0, 1);
+    });
+  }
 
   ngOnInit(): void {
     // Retrieve the 'categoryId' from the service
@@ -72,22 +94,30 @@ export class CategoryComponent implements OnInit {
           this.loginType = username || this.loginType;
         }
         this.cartService.setUserDetails(this.userID, this.loginType);
-      }); 
+      });
     }
 
     // Ensure category ID (m_id) is set correctly
     if (categoryId !== null) {
       this.m_id = categoryId;
       // console.log('CategoryComponent received categoryId:', categoryId);
-      this.fetchProducts(this.m_id, this.currentPage); // Fetch products based on the 'categoryId'
+      this.fetchProducts(this.m_id, 0, 0, this.currentPage);
     } else {
       // console.error('No valid category ID found');
       this.isLoading = false;
     }
   }
 
+  viewProductDetails(productId: number): void {
+    if (productId) {
+      this.router.navigate(['/product-details', productId]);
+    } else {
+      console.error('Product ID is undefined');
+    }
+  }
+
   addToRecentlyViewed(product: any): void {
-    // console.log('Adding to recently viewed:', product); 
+    // console.log('Adding to recently viewed:', product);
     this.recentlyViewedService.addProductToRecentlyViewed(product);
   }
 
@@ -122,30 +152,34 @@ export class CategoryComponent implements OnInit {
     return this.currentPage < this.totalPages - 2;
   }
 
-  fetchProducts(m_id: number, page: number): void {
-    const take = this.pageSize; // Number of products per page
-    const skip = (page - 1) * take; // Calculate how many products to skip
-
-    // Update the request data to include f_id and s_id
-    const requestData = {
-      m_id: m_id,
-      f_id: 0, // You can replace 0 with actual f_id value if available
-      s_id: 0, // You can replace 0 with actual s_id value if available
-      page: page, // Add the page number here
-      pageSize: take, // The number of products to take
-    };
-
-    // Log the request data to the console for debugging
-    // console.log('Request Data for Category API:', requestData);
-
+  // Fetch products with the current m_id, f_id, s_id, and page number
+  fetchProducts(m_id: number, f_id: number, s_id: number, page: number): void {
+    // Exit early if m_id is not valid
+    if (!m_id) {
+      console.log('Invalid m_id: No products to fetch');
+      this.products = [];
+      this.isLoading = false;
+      this.isLocallyLoading = false;
+      return;
+    }
+  
+    const take = this.pageSize;
+    const requestData = { m_id, f_id, s_id, page, pageSize: take };
+  
+    console.log('Request Data for Category API:', requestData);
     this.isLocallyLoading = true;
-
+    this.isLoading = true;
+  
     this.hierarchyProductsService.getHierarchyProducts(requestData).subscribe(
       (response) => {
-        // Log the response data to the console
-        // console.log('Response Data from Category API:', response);
-
-        this.products = response.products;
+        if (response.products && response.products.length > 0) {
+          this.products = response.products;
+        } else {
+          this.products = [];
+          console.log('No products found for this category.');
+        }
+  
+        // Update pagination
         this.totalPages = response.totalPages;
         this.currentPage = response.currentPage;
         this.isLoading = false;
@@ -153,12 +187,14 @@ export class CategoryComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching products:', error);
+        this.products = [];
         this.isLoading = false;
         this.isLocallyLoading = false;
       }
     );
   }
-
+  
+  
   displayMessage(msg: string): void {
     this.message = msg;
     this.showMessage = true;
@@ -169,42 +205,42 @@ export class CategoryComponent implements OnInit {
   }
 
   getProductImageUrl(imagePath: string): string {
-    const baseUrl =
-      'https://usaperp.com:5001/Images/Products/';
+    const baseUrl = 'https://usaperp.com:5001/Images/Products/';
     return `${baseUrl}${imagePath}`;
   }
 
   onPageChange(page: number): void {
     this.currentPage = page;
-    if (this.m_id) {
-      this.fetchProducts(this.m_id, this.currentPage); // Fetch products for the new page
-    }
+    this.fetchProducts(
+      this.m_id ?? 0,
+      this.f_id ?? 0,
+      this.s_id ?? 0,
+      this.currentPage
+    );
   }
 
-  // Pagination: Move to next page
-
   changePage(page: number): void {
-    if (page < 1 || page > this.totalPages || page === this.currentPage) {
-      return;
-    }
-    if (this.m_id !== null) {
-      this.currentPage = page;
-      this.isLocallyLoading = true;
-      this.fetchProducts(this.m_id, this.currentPage); // Fetch products for the new page
-    } else {
-      console.error('m_id is null when attempting to change page');
-    }
+    if (page < 1 || page > this.totalPages || page === this.currentPage) return;
+    this.currentPage = page;
+    this.isLocallyLoading = true;
+    this.fetchProducts(
+      this.m_id ?? 0,
+      this.f_id ?? 0,
+      this.s_id ?? 0,
+      this.currentPage
+    );
   }
 
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.isLocallyLoading = true;
       this.currentPage++;
-      if (this.m_id !== null) {
-        this.fetchProducts(this.m_id, this.currentPage); // Ensure m_id is passed
-      } else {
-        console.error('m_id is null in nextPage');
-      }
+      this.fetchProducts(
+        this.m_id ?? 0,
+        this.f_id ?? 0,
+        this.s_id ?? 0,
+        this.currentPage
+      );
     }
   }
 
@@ -212,11 +248,12 @@ export class CategoryComponent implements OnInit {
     if (this.currentPage > 1) {
       this.isLocallyLoading = true;
       this.currentPage--;
-      if (this.m_id !== null) {
-        this.fetchProducts(this.m_id, this.currentPage); // Ensure m_id is passed
-      } else {
-        console.error('m_id is null in prevPage');
-      }
+      this.fetchProducts(
+        this.m_id ?? 0,
+        this.f_id ?? 0,
+        this.s_id ?? 0,
+        this.currentPage
+      );
     }
   }
 

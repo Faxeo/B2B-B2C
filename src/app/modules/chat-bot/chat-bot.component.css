@@ -5,6 +5,7 @@
     position: relative; /* Positioning context for the chat container */
     margin-top: 10px; /* Space between the button and chat container */
 }
+
 .chat-container {
     position: fixed;
     bottom: 170px;
@@ -86,6 +87,7 @@
     border-radius: 5px;
     cursor: pointer;
 }
+
 button {
     padding: 5px; /* Padding for send button */
     border: none; /* No border */
@@ -98,6 +100,7 @@ button {
     height: auto;
     border-radius: 100px;
 }
+
 @keyframes bounce {
     0%, 100% {
         transform: translateY(0);
@@ -122,29 +125,29 @@ button img {
     border: none;
     padding: 25px;
     cursor: pointer;
-    z-index: 1000;
-
-    
+    z-index: 1000;    
 }
+
 #sentbtn{
     background-color: #b71c1c;;
 }
+
 .close-button {
     position: absolute;
     top: 8px;
     right: 8px;
     background: none;
     border: none;
-    font-size: 20px; /* Increased font size for the "X" */
-    font-weight: bold; /* Makes the "X" more prominent */
-    color:white; /* Ensures the color is solid white */
+    font-size: 20px; 
+    font-weight: bold; 
+    color:white; 
     cursor: pointer;
-    padding: 0; /* Minimal padding */
-    width: 24px; /* Fixed small width */
-    height: 24px; /* Fixed small height */
+    padding: 0; 
+    width: 24px; 
+    height: 24px; 
     text-align: center;
-    line-height: 24px; /* Centers "X" vertically */
-    border-radius: 50%; /* Optional: makes it circular */
+    line-height: 24px; 
+    border-radius: 50%; 
 }
 
 .close-button:hover {
