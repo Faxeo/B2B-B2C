@@ -50,5 +50,9 @@ export const routes: Routes = [
     {
         path: 'privacy-policy',
         loadChildren: () => import('./layout/footer/privacy-policy/privacy-policy.module').then(m => m.PrivacyPolicyModule)
-    }
+    },
+    {
+        path: 'product-details/:id',
+        loadChildren: () => import('./modules/product-details/product-details.module').then(m => m.ProductDetailsModule)
+    },
 ];

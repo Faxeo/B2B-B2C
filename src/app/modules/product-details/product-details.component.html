@@ -1,0 +1,174 @@
+<div *ngIf="showMessage" class="cart-message">
+  {{ message }}
+</div>
+
+<button class="back-button" (click)="onBackClick()">
+  <i class="fa fa-arrow-left back-button" aria-hidden="true"></i>
+</button>
+
+<div class="product-details-container" *ngIf="product; else loadingTemplate">
+
+  <div class="product-section">
+    <!-- Product Images Section -->
+    <div class="product-images">
+      <img *ngIf="mainImage" [src]="mainImage" alt="Product Image" class="main-image" />
+
+      <div class="thumbnail-gallery" *ngIf="product.images?.length">
+        <div class="thumbnail-container" *ngFor="let img of product.images">
+          <img [src]="'https://usaperp.com:5001/' + img.image_path"
+            (click)="setMainImage('https://usaperp.com:5001/' + img.image_path)" class="thumbnail"
+            alt="Product Thumbnail" />
+        </div>
+      </div>
+
+      <!-- Features Section -->
+      <div class="features-section">
+        <h4>FEATURES</h4>
+        <ul>
+          <!-- Features List -->
+          <li>Support Long Engine Life And Performance</li>
+          <li>Protect Fuel Injection System</li>
+          <li>Increase Fuel Economy</li>
+
+          <!-- Packaging Details -->
+          <!-- <li><strong>Packaging Details:</strong></li> -->
+          <li><strong>Pcs per Box:</strong> {{ product.pcs_per_box || 'N/A' }}</li>
+          <li><strong>Pcs per Carton:</strong> {{ product.pcs_per_carton || 'N/A' }}</li>
+
+          <!-- Dimensions & Weight -->
+          <li><strong>Dimensions & Weight:</strong></li>
+          <li><strong>Length:</strong> {{ product.product_length || 'N/A' }} cm</li>
+          <li><strong>Width:</strong> {{ product.product_width || 'N/A' }} cm</li>
+          <li><strong>Height:</strong> {{ product.product_height || 'N/A' }} cm</li>
+          <li><strong>Gross Weight:</strong> {{ product.gross_weight || 'N/A' }} kg</li>
+          <li><strong>Net Weight:</strong> {{ product.net_weight || 'N/A' }} kg</li>
+        </ul>
+      </div>
+
+
+    </div>
+
+    <!-- Product Information Section -->
+    <div class="product-info">
+      <h1 class="product-title">{{ product.product_name }}</h1>
+      <h2 class="model-year">Model 2014-2024</h2>
+
+      <!-- Price and Availability Section -->
+      <div class="product-price-info">
+
+        <!-- Display "Log in to see the prices" if the user is not logged in -->
+        <ng-container *ngIf="loginType === null; else loggedInPrice">
+          <div class="login-overlay">
+            Log in to see the prices
+          </div>
+        </ng-container>
+
+        <!-- Display price or out-of-stock message if the user is logged in -->
+        <ng-template #loggedInPrice>
+          <h3 class="product-price"
+            *ngIf="product.product_price === 0 || product.product_quantity === 0; else showPrice">
+            Out of Stock
+          </h3>
+          <ng-template #showPrice>
+            <h3 class="product-price">
+              ${{ product.product_price }} / each
+            </h3>
+          </ng-template>
+        </ng-template>
+        
+
+      <!-- Additional Information Section -->
+      <div class="additional-info">
+        <div class="info-row">
+          <p><span class="label">UPC:</span> {{ product.product_identifier2 }}</p>
+          <p><span class="label">Origin:</span> {{ product.product_origin }}</p>
+        </div>
+      </div>
+
+        <!-- Delivery and Shipping Information with Icons -->
+         <div class="delivery-box">
+          <p class="delivery-info">
+            <img src="assets/location.png" alt="Next-Day Delivery" class="info-icon">
+            Next-Day Delivery: <strong>Order now</strong>
+          </p>
+          <p class="shipping-info">
+            <img src="assets/Delivery.png" alt="Free Shipping" class="info-icon">
+            Free Shipping: on orders over $35
+          </p>
+         </div>
+      </div>
+
+      <div class="selection-row">
+        <!-- Company Selection -->
+        <div class="selection-group">
+          <label><strong>Company</strong></label>
+          <div class="tag-group">
+            <span class="tag" [ngClass]="{'selected': selectedCompany === product.brand.brand_name}">
+              {{ product.brand.brand_name || 'N/A' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Status Selection -->
+        <div class="selection-group">
+          <label><strong>Status</strong></label>
+          <div class="tag-group">
+            <span class="tag" [ngClass]="{'selected': selectedCompany === product.brand.brand_name}">
+              {{ product.brand.brand_desp || 'N/A' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quantity Selector -->
+      <div class="selection-group">
+        <label><strong>Quantity</strong></label>
+        <div class="quantity-selector">
+          <button class="quantity-btn" (click)="decreaseQuantity()">−</button>
+          <input type="text" [value]="quantity" readonly />
+          <button class="quantity-btn" (click)="increaseQuantity()">+</button>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button class="buy-now-btn" (click)="addToCart(product)">Add to Cart</button>
+        <button class="wishlist-btn btn btn-outline-danger w-100 ms-1 view-btn">
+          <i style="font-size:16px; margin-right: 10px;" class="fa">&#xf08a;</i>Add to Wishlist
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Description Section -->
+  <div class="description-section">
+    <h4>Description</h4>
+    <p>{{ product.product_desp || 'No description available.' }}</p>
+  </div>
+
+  <div class="testimonials-section">
+    <h4>Testimonials</h4>
+    <div class="testimonial-slider" [style.transform]="transformStyle">
+      <div class="testimonial" *ngFor="let review of testimonials; let i = index"
+        [ngClass]="{'active': i === currentTestimonialIndex}">
+        <div class="testimonial-header">
+          <span class="customer-name">{{ review.customerName }}</span>
+          <div class="rating">★★★★★</div>
+          <span class="verified-badge">Verified Customer ✓</span>
+        </div>
+        <p class="testimonial-text">"{{ review.text }}"</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Loading Template -->
+<ng-template #loadingTemplate>
+  <div class="loading-overlay">
+    <img src="https://socialsecurity.mp.gov.in/DefaultHeader/Image/setting.gif" alt="Loading..." class="loading-gif" />
+  </div>
+</ng-template>
+
+<app-footer></app-footer>

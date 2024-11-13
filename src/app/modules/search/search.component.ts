@@ -18,7 +18,7 @@ import { AddVehicleService } from '../../core/services/add-vehicle/add-vehicle.s
 import { VehicleSearchService } from '../../core/services/search-vehicle/search-vehicle.service';
 import { FilterComponent } from './filter/filter.component';
 import { NavigationService } from '../../core/services/navigation-service/navigation-service.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DynamicSearchService } from '../../core/services/dynamic-search/dynamic-search.service';
 import { FetchYearService } from '../../core/services/fetch-year/fetch-year.service';
 import { FetchMakeService } from '../../core/services/fetch-make/fetch-make.service';
@@ -28,14 +28,25 @@ import { SubCategoryService } from '../../core/services/sub-category/sub-categor
 import { NavbarComponent } from '../../layout/navbar/navbar.component';
 import { RecentlyViewedService } from '../../core/services/recently-viewed/recently-viewed.service';
 import { RecentlyViewedComponent } from '../recently-viewed/recently-viewed.component';
+import { FilterSearchService } from '../../core/services/filter-search/filter-search.service';
+import { CategoryIdService } from '../../core/services/category-id/category-id.service';
+import { HierarchyProductsService } from '../../core/services/hierarchy-products/hierarchy-products.service';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, FilterComponent, NavbarComponent, RecentlyViewedComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    FilterComponent,
+    NavbarComponent,
+    RecentlyViewedComponent,
+    RouterModule,
+  ],
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css'],
 })
+
 export class SearchComponent implements OnChanges {
   @Input() searchResults: any[] = [];
   @Input() currentPage: number = 1;
@@ -46,6 +57,7 @@ export class SearchComponent implements OnChanges {
     | 'generalSearch'
     | 'vehicleSearch'
     | 'categorySearch'
+    | 'filterCategorySearch'
     | null = null;
   @Input() loginType: string | null = null;
 
@@ -87,6 +99,13 @@ export class SearchComponent implements OnChanges {
   selectedSecondSubCategory: string | null = null;
   showRecentlyViewed: boolean = false;
 
+  m_id: number | null = null;
+  f_id: number | null = null;
+  s_id: number | null = null;
+  products: any[] = [];
+  pageSize: number = 10;
+
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private cdr: ChangeDetectorRef,
@@ -104,10 +123,42 @@ export class SearchComponent implements OnChanges {
     private mainCategoryService: MainCategoryService,
     private subCategoryService: SubCategoryService,
     private recentlyViewedService: RecentlyViewedService,
-  ) {}
+    private router: Router,
+    private filterSearchService: FilterSearchService,
+    private categoryIdService: CategoryIdService,
+    private hierarchyProductsService: HierarchyProductsService
+  ) {
+    this.filterSearchService.selectedCategories$.subscribe((categories) => {
+      this.m_id = categories.m_id;
+      this.f_id = categories.f_id;
+      this.s_id = categories.s_id;
+      // Fetch products based on updated filter values, starting from page 1
+      this.fetchProducts(this.m_id ?? 0, this.f_id ?? 0, this.s_id ?? 0, 1);
+    });
+    this.filterSearchService.selectedCategories$.subscribe((categories) => {
+      this.currentSearchState = {
+        type: 'filterCategorySearch',
+        data: categories
+      };
+      
+      this.m_id = categories.m_id;
+      this.f_id = categories.f_id;
+      this.s_id = categories.s_id;
+      
+      // Reset the search results when filter changes
+      this.searchResults = [];
+      this.currentPage = 1;
+      
+      // Only fetch if we have valid category ID
+      if (this.m_id) {
+        this.fetchProducts(this.m_id, this.f_id ?? 0, this.s_id ?? 0, 1);
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.getYears();
+    const categoryId = this.categoryIdService.getCategoryId();
     this.getMainCategories();
     this.recentlyViewedService.recentlyViewed$.subscribe((products) => {
       this.showRecentlyViewed = products.length > 0;
@@ -134,10 +185,33 @@ export class SearchComponent implements OnChanges {
     });
 
     this.activatedRoute.queryParams.subscribe((params) => {
+      // Reset search results when params change
+      this.searchResults = [];
+      this.currentPage = 1;
+
       if (params['query']) {
+        this.currentSearchState = {
+          type: 'generalSearch',
+          data: params['query']
+        };
         this.searchType = 'generalSearch';
-        const query = params['query'];
-        this.performGeneralSearch(query);
+        this.performGeneralSearch(params['query']);
+      } else if (
+        params['mainCategory'] ||
+        params['firstSubCategory'] ||
+        params['secondSubCategory']
+      ) {
+        const categoryData = {
+          mainCategory: params['mainCategory'],
+          firstSubCategory: params['firstSubCategory'],
+          secondSubCategory: params['secondSubCategory']
+        };
+        this.currentSearchState = {
+          type: 'categorySearch',
+          data: categoryData
+        };
+        this.searchType = 'categorySearch';
+        this.performCategorySearch(categoryData);
       } else if (
         params['year'] ||
         params['make'] ||
@@ -145,77 +219,137 @@ export class SearchComponent implements OnChanges {
         params['trim'] ||
         params['engine']
       ) {
-        this.searchType = 'vehicleSearch';
         const vehicleData = {
           year: params['year'],
           make: params['make'],
           model: params['model'],
           trim: params['trim'],
-          engine: params['engine'],
+          engine: params['engine']
         };
+        this.currentSearchState = {
+          type: 'vehicleSearch',
+          data: vehicleData
+        };
+        this.searchType = 'vehicleSearch';
         this.performVehicleSearch(vehicleData);
-      } else if (
-        params['mainCategory'] ||
-        params['firstSubCategory'] ||
-        params['secondSubCategory']
-      ) {
-        this.searchType = 'categorySearch';
-        const categoryData = {
-          mainCategory: params['mainCategory'],
-          firstSubCategory: params['firstSubCategory'],
-          secondSubCategory: params['secondSubCategory'],
-        };
-        this.performCategorySearch(categoryData);
       }
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (isPlatformBrowser(this.platformId)) {
-      if (changes['isLoading'] && changes['isLoading'].currentValue === true) {
-        this.isLocallyLoading = true;
-      } else if (
-        changes['isLoading'] &&
-        changes['isLoading'].currentValue === false
-      ) {
-        this.isLocallyLoading = false;
+      if (changes['isLoading'] || changes['isPaginationLoading']) {
+        const isLoadingNow = 
+          (changes['isLoading']?.currentValue === true) || 
+          (changes['isPaginationLoading']?.currentValue === true);
+        
+        this.isLocallyLoading = isLoadingNow;
+        this.cdr.detectChanges();
       }
-
-      if (
-        changes['isPaginationLoading'] &&
-        changes['isPaginationLoading'].currentValue === true
-      ) {
-        this.isLocallyLoading = true;
-      } else if (
-        changes['isPaginationLoading'] &&
-        changes['isPaginationLoading'].currentValue === false
-      ) {
-        this.isLocallyLoading = false;
-      }
-
+  
       if (changes['searchResults'] && changes['searchResults'].currentValue) {
         this.isLocallyLoading = false;
+        this.cdr.detectChanges();
       }
+    }
+  }
 
-      this.cdr.detectChanges();
+  private currentSearchState: {
+    type: 'generalSearch' | 'vehicleSearch' | 'categorySearch' | 'filterCategorySearch' | null;
+    data: any;
+  } = {
+    type: null,
+    data: null
+  };
+
+
+  fetchProducts(m_id: number, f_id: number, s_id: number, page: number): void {
+    if (!m_id) {
+      console.log('Invalid m_id: No products to fetch');
+      this.products = [];
+      this.isLoading = false;
+      this.isLocallyLoading = false;
+      this.isPaginationLoading = false;
+      return;
+    }
+  
+    this.searchType = 'filterCategorySearch';
+    const take = this.pageSize;
+    const requestData = { m_id, f_id, s_id, page, pageSize: take };
+  
+    console.log('Request Data for Category API:', requestData);
+  
+    // Set loading state BEFORE making the API call
+    this.isLocallyLoading = true;
+    
+    this.hierarchyProductsService.getHierarchyProducts(requestData).subscribe(
+      (response) => {
+        if (response.products && response.products.length > 0) {
+          this.products = response.products;
+          this.totalPages = response.totalPages;
+          this.currentPage = response.currentPage;
+        } else {
+          this.products = [];
+          console.log('No products found for this category.');
+        }
+        
+        // Reset loading state after successful response
+        this.isLocallyLoading = false;
+        this.isLoading = false;
+        this.isPaginationLoading = false;
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        console.error('Error fetching products:', error);
+        this.products = [];
+        // Reset loading state on error
+        this.isLocallyLoading = false;
+        this.isLoading = false;
+        this.isPaginationLoading = false;
+        this.cdr.detectChanges();
+      }
+    );
+  }
+
+  changePage(page: number): void {
+    if (page < 1 || page > this.totalPages || page === this.currentPage) return;
+
+    // Set loading flags for pagination
+    this.isPaginationLoading = true;
+    this.isLocallyLoading = true;
+
+    this.currentPage = page;
+    this.fetchProducts(
+      this.m_id ?? 0,
+      this.f_id ?? 0,
+      this.s_id ?? 0,
+      this.currentPage
+    );
+  }
+
+  viewProductDetails(productId: number): void {
+    if (productId) {
+      this.router.navigate(['/product-details', productId]);
+    } else {
+      console.error('Product ID is undefined');
     }
   }
 
   addToRecentlyViewed(product: any): void {
-    // console.log('Adding to recently viewed:', product); 
+    // console.log('Adding to recently viewed:', product);
     this.recentlyViewedService.addProductToRecentlyViewed(product);
   }
 
   closeRecentlyViewed(): void {
     this.showRecentlyViewed = false;
   }
-  
+
   emitPageChange(page: number): void {
     console.log(
       `emitPageChange called with page: ${page} and searchType: ${this.searchType}`
     );
     this.currentPage = page;
-    this.isLocallyLoading = true;
+    this.isLocallyLoading = true; 
 
     // Update skip and page for pagination
     this.currentRequestData.skip = (this.currentPage - 1) * 10;
@@ -266,7 +400,6 @@ export class SearchComponent implements OnChanges {
       }
     );
   }
-  
 
   updateVehicleSelection(vehicle: any): void {
     this.vehicleSearchService.setVehicleData(vehicle);
@@ -472,7 +605,7 @@ export class SearchComponent implements OnChanges {
     };
     this.isLocallyLoading = true;
 
-    this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe( 
+    this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
         if (response && response.products) {
           this.searchResults = response.products;
@@ -494,6 +627,7 @@ export class SearchComponent implements OnChanges {
 
   performCategorySearch(categoryData: any): void {
     // Initialize `currentRequestData` with full request structure
+    this.searchResults = [];
     this.currentRequestData = {
       productName: '',
       manufacturer: '',

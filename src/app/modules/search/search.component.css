@@ -4,17 +4,12 @@
   align-items: flex-start; /* Align items at the top */
   width: 100%;
   overflow-x: hidden;
-  /* padding: 20px; */
   background-color: #f9f9f9;
 }
 
-/* .sidebar-arrangement{
-  position: sticky;
-} */
-
 /* Sidebar styles */
 .sidebar {
-  width: 250px; /* Set the width for the sidebar */
+  width: 350px; /* Set the width for the sidebar */
   height: 100%;
   transform: translateX(0);
   transition: transform 0.5s ease;
@@ -22,16 +17,19 @@
   display: flex;
   flex-direction: column;
   padding: 10px;
+  position: relative;
 }
 
 .sidebar.collapsed {
-  transform: translateX(-250px); /* Collapse the sidebar */
+  transform: translateX(-350px); /* Collapse the sidebar */
 }
 
+/* Toggle Button Styling */
 .toggle-btn {
   position: absolute;
-  top: 65%;
-  left: 250px;
+  top: 57%;
+  left: 340px;
+  transform: translateY(-50%); /* Center the button vertically */
   background-color: #b71c1c;
   color: white;
   border: none;
@@ -47,11 +45,12 @@
   left: 0;
 }
 
-  /* Content container */
-  .main-content {
-    flex-grow: 1; /* Take up remaining space for content */
-    padding: 20px;
-  }
+/* Content container */
+.main-content {
+  flex-grow: 1; /* Take up remaining space for content */
+  padding: 20px;
+}
+
   
   /* Product List */
   .product-list {
@@ -146,7 +145,7 @@
   height: 30px;
   margin-right: 8px;
   object-fit: contain;
-}
+} 
 
 /* Cart Action */
 .cart-action {
@@ -211,7 +210,7 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
-}
+} 
 
 .loading-gif {
   width: 180px; /* Adjust the size as needed */
@@ -313,7 +312,7 @@
 
 /* Expanded main-content when sidebar is not collapsed */
 .main-content.expanded {
-  width: calc(100% - 250px); /* Adjust this based on sidebar width */
+  width: calc(100% - 350px); /* Adjust this based on sidebar width */
   transition: width 0.5s ease;
 }
 
@@ -324,7 +323,7 @@
 }
 
 .sidebar {
-  width: 250px;
+  width: 350px;
 }
 
 .sidebar.collapsed {
@@ -404,5 +403,3 @@
 .close-btn:hover {
   color: #333;
 }
-
-

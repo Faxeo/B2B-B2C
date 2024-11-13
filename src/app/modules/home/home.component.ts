@@ -73,7 +73,7 @@ export class HomeComponent implements OnInit {
   isPaginationLoading: boolean = false;
   totalPages: number = 0;
   currentPage: number = 1;
-  searchEnabled: boolean = false;
+  searchEnabled: boolean = false; 
   searchPlaceholder: string = '';
   showVehicleForm: boolean = false;
   selectedYear: string = '';
@@ -174,6 +174,15 @@ export class HomeComponent implements OnInit {
       this.isAdminSidebarVisible = false;
     }
   }
+
+  viewProductDetails(productId: number): void {
+    if (productId) {
+      this.router.navigate(['/product-details', productId]);
+    } else {
+      console.error('Product ID is undefined');
+    }
+  }
+
 
   getMainCategories(): void {
     this.mainCategoryService.getMainCategories().subscribe(
