@@ -1,0 +1,133 @@
+
+  
+  /* Back button styling */
+  .back-button {
+    background: none;
+    border: none; 
+    cursor: pointer;
+    color: #b71c1c;
+    font-size: 25px;
+    padding-left: 20px;
+    font-weight: 600;
+  }
+  
+  /* Header text styles */
+  .wishh1{
+    text-align: center;
+    margin-top: 10px;
+    color: #333;
+  }
+
+  .wishh2 {
+    text-align: center;
+    margin-top: 10px;
+    color: #707070;
+  }
+  
+  /* Center and increase table width */
+  .table-container {
+    display: flex;
+    justify-content: center;
+    /* padding: 20px; */
+  }
+  
+  .wishlist-table {
+    width: 90%; /* Increased width to use more horizontal space */
+    /* max-width: 2100px; */
+    border-collapse: collapse;
+    color: #333;
+    margin: 0 auto; /* Center the table */
+    table-layout: auto; /* Allows columns to adjust based on content */
+    margin-bottom: 100px;
+    padding-bottom: 50px;
+  }
+  
+  .wishlist-table th, .wishlist-table td {
+    border: 1px solid rgba(173, 173, 170, 0.747);
+    padding: 20px; /* Increased padding for more prominent rows and columns */
+    text-align: center;
+    font-size: 18px; /* Larger font for better readability */
+  }
+  
+  .wishlist-table th {
+    background-color:black;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+  }
+  
+  .wishlist-table td {
+    background-color: white;
+  }
+  
+  /* Product image styling */
+  img {
+    vertical-align: middle;
+    width: 120px; /* Increased width */
+    height: 120px; /* Increased height */
+  }
+  
+  /* Move to cart button styling */
+  .move-to-bag {
+    background-color: #b71c1c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 12px 20px; /* Increased padding */
+    width: 100%;
+  }
+  
+  .move-to-bag:hover {
+    background-color: #a01717;
+  }
+  
+  /* Style for the remove icon (bi-x) */
+  /* Style for the remove button box */
+  /* Style for the remove button */
+  .remove-link {
+    background: none;           /* Remove any background */
+    border: none;               /* Remove border */
+    padding: 0;                 /* Remove padding */
+    cursor: pointer;           /* Change the cursor on hover */
+    display: inline-flex;       /* Align the icon properly */
+    justify-content: center;    /* Center the icon horizontally */
+    align-items: center;        /* Center the icon vertically */
+  }
+  
+  /* Style for the cross icon inside the button */
+  .remove-link i.bi-x {
+    font-size: 38px;            /* Set the size of the icon */
+    color: #333;                /* Set the color of the cross */
+  }
+  
+  /* Hover effect for the cross icon */
+  .remove-link:hover i.bi-x {
+    color: red;                 /* Change color to red on hover */
+  }
+  
+  /* Styles for the stock status text */
+  .in-stock {
+    color: green;  /* Green color for In Stock */
+    font-weight: bold;
+  }
+  
+  .out-of-stock {
+    color: red;  /* Red color for Out of Stock */
+    font-weight: bold;
+  }
+
+  .bi-arrow-left{
+    font-weight: 1200;
+    margin-left: 20px;
+    margin-top: 20px;
+    font-size: 40px;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
+  

@@ -403,3 +403,68 @@
 .close-btn:hover {
   color: #333;
 }
+
+
+.price-view{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+
+
+.login-overlay{
+  color: #b71c1c;
+  font-weight: 700;
+  font-size: 18px;
+  margin-right: 30px;
+  margin-top: 13px;
+}
+
+
+.wishlist-btn{
+  font-size: 30px; 
+  margin:0px 20px 10px 0px;
+  border: none;
+  cursor: pointer;
+  color: #b71c1c;
+}
+
+.wishlist-btn {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.wishlist-btn:hover {
+  transform: scale(1.1);
+}
+
+.bi-bag-heart-fill {
+  color: red !important;
+  font-size: 30px;
+  margin-right: 20px;
+}
+
+.bi-bag-heart {
+  color: gray !important;
+  font-size: 30px;
+  margin-right: 20px;
+}
+
+.bi-bag-heart, .bi-bag-heart-fill {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.bi-bag-heart:hover {
+  color: #ff4081;
+  transform: scale(1.1);
+}
+  
+.product-price {
+  font-size: 22px;
+  color: #b71c1c;
+  margin-bottom: 10px;
+  margin-left: 30px;
+  margin-top: 10px;
+}

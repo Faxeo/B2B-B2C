@@ -169,24 +169,31 @@
                 <div class="product-divider">
                   <!-- Price and Delivery Info -->
                   <div class="product-price-info">
-                    <ng-container *ngIf="loginType === null; else loggedInPrice">
-                      <div class="login-overlay">
-                        Log in to see the prices
-                      </div>
-                    </ng-container>
-
-                    <!-- Display 'Out of Stock' or Price based on conditions if logged in -->
-                    <ng-template #loggedInPrice>
-                      <h3 class="product-price"
-                        *ngIf="product.price === 0 || product.availableQuantity === 0; else showPrice">
-                        Out of Stock
-                      </h3>
-                      <ng-template #showPrice>
-                        <h3 class="product-price">
-                          ${{ product.price }} / each
+                    <div class="price-view">
+                      <ng-container *ngIf="loginType === null; else loggedInPrice">
+                        <div class="login-overlay">
+                          Log in to see the prices
+                        </div>
+                      </ng-container>
+                    
+                      <ng-template #loggedInPrice>
+                        <h3 class="product-price" *ngIf="product.product_price === 0 || product.availableQuantity === 0; else showPrice">
+                          Out of Stock
                         </h3>
+                        <ng-template #showPrice>
+                          <h3 class="product-price">
+                            ${{ product.product_price }} / each
+                          </h3>
+                        </ng-template>
                       </ng-template>
-                    </ng-template>
+                      
+                      <!-- Updated wishlist icon with dynamic class binding -->
+                      <i class="bi wushlist-btn" 
+                         [class.bi-bag-heart-fill]="product.isInWishlist" 
+                         [class.bi-bag-heart]="!product.isInWishlist" 
+                         (click)="toggleWishlist(product)">
+                      </i>
+                    </div> 
 
                     <!-- Delivery and Shipping Information with Icons -->
                     <p class="delivery-info">
@@ -298,24 +305,31 @@
                 <div class="product-divider">
                   <!-- Price and Delivery Info -->
                   <div class="product-price-info">
-                    <ng-container *ngIf="loginType === null; else loggedInPrice">
-                      <div class="login-overlay">
-                        Log in to see the prices
-                      </div>
-                    </ng-container>
-
-                    <!-- Display 'Out of Stock' or Price based on conditions if logged in -->
-                    <ng-template #loggedInPrice>
-                      <h3 class="product-price"
-                        *ngIf="product.price === 0 || product.availableQuantity === 0; else showPrice">
-                        Out of Stock
-                      </h3>
-                      <ng-template #showPrice>
-                        <h3 class="product-price">
-                          ${{ product.price }} / each
+                    <div class="price-view">
+                      <ng-container *ngIf="loginType === null; else loggedInPrice">
+                        <div class="login-overlay">
+                          Log in to see the prices
+                        </div>
+                      </ng-container>
+                    
+                      <ng-template #loggedInPrice>
+                        <h3 class="product-price" *ngIf="product.product_price === 0 || product.availableQuantity === 0; else showPrice">
+                          Out of Stock
                         </h3>
+                        <ng-template #showPrice>
+                          <h3 class="product-price">
+                            ${{ product.product_price }} / each
+                          </h3>
+                        </ng-template>
                       </ng-template>
-                    </ng-template>
+                      
+                      <!-- Updated wishlist icon with dynamic class binding -->
+                      <i class="bi wushlist-btn" 
+                         [class.bi-bag-heart-fill]="product.isInWishlist" 
+                         [class.bi-bag-heart]="!product.isInWishlist" 
+                         (click)="toggleWishlist(product)">
+                      </i>
+                    </div> 
 
                     <!-- Delivery and Shipping Information with Icons -->
                     <p class="delivery-info">
@@ -426,25 +440,32 @@
                 <div class="product-divider">
                   <!-- Price and Delivery Info -->
                   <div class="product-price-info">
-                    <ng-container *ngIf="loginType === null; else loggedInPrice">
-                      <div class="login-overlay">
-                        Log in to see the prices
-                      </div>
-                    </ng-container>
-
-                    <!-- Display 'Out of Stock' or Price based on conditions if logged in -->
-                    <ng-template #loggedInPrice>
-                      <h3 class="product-price"
-                        *ngIf="product.price === 0 || product.availableQuantity === 0; else showPrice">
-                        Out of Stock
-                      </h3>
-                      <ng-template #showPrice>
-                        <h3 class="product-price">
-                          ${{ product.price }} / each
+                    <div class="price-view">
+                      <ng-container *ngIf="loginType === null; else loggedInPrice">
+                        <div class="login-overlay">
+                          Log in to see the prices
+                        </div>
+                      </ng-container>
+                    
+                      <ng-template #loggedInPrice>
+                        <h3 class="product-price" *ngIf="product.product_price === 0 || product.availableQuantity === 0; else showPrice">
+                          Out of Stock
                         </h3>
+                        <ng-template #showPrice>
+                          <h3 class="product-price">
+                            ${{ product.product_price }} / each
+                          </h3>
+                        </ng-template>
                       </ng-template>
-                    </ng-template>
-
+                      
+                      <!-- Updated wishlist icon with dynamic class binding -->
+                      <i class="bi wushlist-btn" 
+                         [class.bi-bag-heart-fill]="product.isInWishlist" 
+                         [class.bi-bag-heart]="!product.isInWishlist" 
+                         (click)="toggleWishlist(product)">
+                      </i>
+                    </div> 
+                    
                     <!-- Delivery and Shipping Information with Icons -->
                     <p class="delivery-info">
                       <img src="assets/location.png" alt="Next-Day Delivery" class="info-icon">

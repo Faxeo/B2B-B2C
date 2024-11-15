@@ -1,0 +1,62 @@
+
+<!-- Notification Banner -->
+<div *ngIf="showNotification" class="notification">
+  {{ notificationMessage }}
+</div>
+
+<button class="back-button" onclick="history.back()">
+  <i class="bi bi-arrow-left"></i>
+</button>
+<br>
+ 
+<div>
+  <h1 class="wishh1">Wishlist</h1>
+  <h4 class="wishh2">{{ wishlistItems.length }} items</h4>
+</div>
+<br>
+
+<div class="table-container container-fluid">
+  <table class="wishlist-table">
+    <thead>
+      <tr>
+        <th>Product Image</th>
+        <th>Product Name</th>
+        <th>Price</th>
+        <th>Stock Status</th> <!-- Added Stock Status column -->
+        <th>Move to Cart</th>
+        <th>Remove</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Use *ngFor to create table rows dynamically -->
+      <tr *ngFor="let product of wishlistItems">
+        <td>
+          <img *ngIf="!product.imageError" 
+               [src]="'https://usautoparts-beta.azurewebsites.net/Images/Products/' + product.product_image"
+               [alt]="product.product_name" 
+               (error)="handleImageError(product)">
+          <div *ngIf="product.imageError" class="image-placeholder">{{ product.product_name }}</div>
+        </td>
+        <td>{{ product.product_name }}</td>
+        <td>{{ product.product_price }} $</td>
+        <td>
+          <!-- Conditional check for stock status -->
+          <span *ngIf="product.product_quantity > 0 && product.product_price > 0" class="in-stock">In Stock</span>
+          <span *ngIf="product.product_quantity == 0 || product.product_price == 0" class="out-of-stock">Out of Stock</span>
+        </td>
+        <td>
+          <!-- Disable Move to Cart button if product is out of stock or price is 0 -->
+          <button class="move-to-bag" (click)="moveToCart(product)" 
+                  [disabled]="product.product_price === 0 || product.product_quantity === 0">
+            Move To Cart
+          </button>
+        </td>
+        <td>
+          <button class="remove-link" (click)="onRemove(product.product_id)">
+            <i class="bi bi-x"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

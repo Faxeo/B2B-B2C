@@ -1,5 +1,11 @@
 <app-navbar></app-navbar>
 
+<!-- Notification Message -->
+<div *ngIf="showNotification" class="notification">
+  {{ notificationMessage }}
+</div>
+
+
 <div class="page-container d-flex">
 
   <!-- Filter Sidebar -->
@@ -8,8 +14,8 @@
   </div>
 
   <button class="toggle-btn" (click)="toggleSidebar()">
-    {{ isCollapsed ? '>>' : '<<' }} </button> 
-
+    {{ isCollapsed ? '>>' : '<<' }} </button>
+ 
       <div class="content-container" [class.expanded]="!isCollapsed">
 
         <!-- Spinner for both initial loading and pagination -->
@@ -54,25 +60,33 @@
                 <!-- Price and Delivery Info -->
                 <div class="product-divider">
                   <div class="product-price-info">
-                    <!-- Display "Log in to see the prices" if user is not logged in -->
-                    <ng-container *ngIf="loginType === null; else loggedInPrice">
-                      <div class="login-overlay">
-                        Log in to see the prices
-                      </div>
-                    </ng-container>
 
-                    <!-- Display 'Out of Stock' or Price based on conditions if logged in -->
-                    <ng-template #loggedInPrice>
-                      <h3 class="product-price"
-                        *ngIf="product.product_price === 0 || product.product_quantity === 0; else showPrice">
-                        Out of Stock
-                      </h3>
-                      <ng-template #showPrice>
-                        <h3 class="product-price">
-                          ${{ product.product_price }} / each
+                    <div class="price-view">
+                      <ng-container *ngIf="loginType === null; else loggedInPrice">
+                        <div class="login-overlay">
+                          Log in to see the prices
+                        </div>
+                      </ng-container>
+                    
+                      <ng-template #loggedInPrice>
+                        <h3 class="product-price" *ngIf="product.product_price === 0 || product.product_quantity === 0; else showPrice">
+                          Out of Stock
                         </h3>
+                        <ng-template #showPrice>
+                          <h3 class="product-price">
+                            ${{ product.product_price }} / each
+                          </h3>
+                        </ng-template>
                       </ng-template>
-                    </ng-template>
+                      
+                      <!-- Updated wishlist icon with dynamic class binding -->
+                      <i class="bi wushlist-btn" 
+                         [class.bi-bag-heart-fill]="product.isInWishlist" 
+                         [class.bi-bag-heart]="!product.isInWishlist" 
+                         (click)="toggleWishlist(product)">
+                      </i>
+                    </div> 
+
 
                     <!-- Delivery and Shipping Information with Icons -->
                     <p class="delivery-info">
@@ -103,6 +117,7 @@
                       Add to Cart
                     </button>
                   </div>
+
                   <button class="btn btn-outline-danger w-100 ms-1 view-btn"
                     (click)="viewProductDetails(product.product_id); addToRecentlyViewed(product)">
                     VIEW
@@ -131,7 +146,7 @@
             <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages"
               class="pagination-arrow">&raquo;</button>
           </div>
-          
+
           <!-- Recently Viewed Section -->
           <div *ngIf="showRecentlyViewed" class="recently-viewed-wrapper">
             <div class="recently-viewed-header">

@@ -1,7 +1,16 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, Input, PLATFORM_ID, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Inject,
+  Input,
+  PLATFORM_ID,
+  SimpleChanges,
+} from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { ProductDetailsService, ProductDetails } from '../../core/services/product-details/product-details.service';
+import {
+  ProductDetailsService,
+  ProductDetails,
+} from '../../core/services/product-details/product-details.service';
 import { FooterComponent } from '../../layout/footer/footer.component';
 import { LoginService } from '../../core/services/login-service/login-service.service';
 import { CartService } from '../../core/services/cart/cart.service';
@@ -20,26 +29,42 @@ interface Testimonial {
   standalone: true,
   imports: [RouterModule, CommonModule, FooterComponent],
   templateUrl: './product-details.component.html',
-  styleUrls: ['./product-details.component.css']
+  styleUrls: ['./product-details.component.css'],
 })
 
-
 export class ProductDetailsComponent {
-
   testimonials: Testimonial[] = [
-    { customerName: 'Gavin', text: 'Always highly responsive, great customer service and always an awesome price.' },
-    { customerName: 'Sophia', text: 'Excellent quality, received exactly as described. Highly recommended!' },
-    { customerName: 'Liam', text: 'Fast shipping and fantastic customer support. Very satisfied!' },
-    { customerName: 'Olivia', text: 'Great value for money, and the parts are truly genuine!' },
-    { customerName: 'Noah', text: 'Top-notch products and quick delivery. Will buy again!' },
-    { customerName: 'Emma', text: 'Very reliable and trustworthy seller. Excellent experience overall.' }
+    {
+      customerName: 'Gavin',
+      text: 'Always highly responsive, great customer service and always an awesome price.',
+    },
+    {
+      customerName: 'Sophia',
+      text: 'Excellent quality, received exactly as described. Highly recommended!',
+    },
+    {
+      customerName: 'Liam',
+      text: 'Fast shipping and fantastic customer support. Very satisfied!',
+    },
+    {
+      customerName: 'Olivia',
+      text: 'Great value for money, and the parts are truly genuine!',
+    },
+    {
+      customerName: 'Noah',
+      text: 'Top-notch products and quick delivery. Will buy again!',
+    },
+    {
+      customerName: 'Emma',
+      text: 'Very reliable and trustworthy seller. Excellent experience overall.',
+    },
   ];
-  
+
   currentTestimonialIndex: number = 0;
   testimonialInterval: any;
-  
+
   product: ProductDetails | null = null;
-  mainImage: string = '';
+  // mainImage: string = '';
   quantity: number = 1;
   isLoading: boolean = false;
 
@@ -55,10 +80,27 @@ export class ProductDetailsComponent {
   mainCategories: any[] = [];
   firstSubCategories: any[] = [];
   secondSubCategories: any[] = [];
+  // product: any;
+  // mainImage: string;
+  // zoomed: boolean = false;
+  // zoomTransform: string = 'scale(1)';
+  // currentImageIndex: number = 0;
+  // zoomOriginX: number = 50;
+  // zoomOriginY: number = 50;
   @Input() loginType: string | null = null;
+  isFullScreen: boolean = false;
+  private zoomTimeout: any;
+  zoomed: boolean = false;
+  zoomTransform: string = 'scale(1)';
+  zoomOriginX: number = 50;
+  zoomOriginY: number = 50;
+  currentImageIndex: number = 0;
+  mainImage: string = '';
+  private zoomScale: number = 2.5;
+  private debounceTimer: any;
 
   constructor(
-    @Inject(PLATFORM_ID)private platformId: Object,
+    @Inject(PLATFORM_ID) private platformId: Object,
     private productDetailsService: ProductDetailsService,
     private route: ActivatedRoute,
     private addToCartService: AddToCartService,
@@ -67,7 +109,7 @@ export class ProductDetailsComponent {
     private navigationService: NavigationService,
     private fetchChildService: FetchChildService,
     private mainCategoryService: MainCategoryService,
-    private subCategoryService: SubCategoryService,
+    private subCategoryService: SubCategoryService
   ) {}
 
   ngOnInit(): void {
@@ -101,7 +143,113 @@ export class ProductDetailsComponent {
     } else {
       console.error('Invalid product ID');
     }
+    if (this.product?.images?.length) {
+      this.mainImage = 'https://usaperp.com:5001/' + this.product.images[0].image_path;
+    }
   }
+
+  // Set the main image
+  setMainImage(imageUrl: string, index: number): void {
+    this.mainImage = imageUrl;
+    this.currentImageIndex = index;
+  }
+
+  // setMainImage(imagePath: string): void {
+  //   this.mainImage = imagePath;
+  // }
+
+  // Navigate to the previous image
+  prevImage(): void {
+    if (this.product?.images?.length) {
+      this.currentImageIndex =
+        (this.currentImageIndex - 1 + this.product.images.length) %
+        this.product.images.length;
+      this.setMainImage(
+        'https://usaperp.com:5001/' +
+          this.product.images[this.currentImageIndex].image_path,
+        this.currentImageIndex
+      );
+    }
+  }
+
+  // Navigate to the next image
+  nextImage(): void {
+    if (this.product?.images?.length) {
+      this.currentImageIndex =
+        (this.currentImageIndex + 1) % this.product.images.length;
+      this.setMainImage(
+        'https://usaperp.com:5001/' +
+          this.product.images[this.currentImageIndex].image_path,
+        this.currentImageIndex
+      );
+    }
+  }
+
+  // Toggle zoom on image click
+  toggleZoom(event: MouseEvent): void {
+    this.zoomed = !this.zoomed;
+    
+    if (this.zoomed) {
+      const rect = (event.target as HTMLImageElement).getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 100;
+      const y = ((event.clientY - rect.top) / rect.height) * 100;
+      
+      this.zoomTransform = `scale(${this.zoomScale})`;
+      this.zoomOriginX = x;
+      this.zoomOriginY = y;
+    } else {
+      this.resetZoom();
+    }
+  }
+
+
+  onImageMouseMove(event: MouseEvent): void {
+    if (!this.zoomed) return;
+  
+    if (this.debounceTimer) {
+      clearTimeout(this.debounceTimer);
+    }
+  
+    this.debounceTimer = setTimeout(() => {
+      const rect = (event.target as HTMLImageElement).getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 100;
+      const y = ((event.clientY - rect.top) / rect.height) * 100;
+      
+      // Enhanced sensitivity calculation
+      const sensitivity = 1; // Adjust this value to increase/decrease sensitivity
+      const centerX = 50;
+      const centerY = 50;
+      
+      // Calculate offset from center with increased sensitivity
+      const offsetX = (x - centerX) * sensitivity;
+      const offsetY = (y - centerY) * sensitivity;
+      
+      // Apply the offset to create more sensitive movement
+      this.zoomOriginX = Math.min(Math.max(centerX + offsetX, 10), 90);
+      this.zoomOriginY = Math.min(Math.max(centerY + offsetY, 10), 90);
+    }, 5); // Even faster response time
+  }
+
+  resetZoom(): void {
+    this.zoomed = false;
+    this.zoomTransform = 'scale(1)';
+    this.zoomOriginX = 50;
+    this.zoomOriginY = 50;
+  }
+
+  // Open the image in fullscreen
+// Open the custom fullscreen overlay
+openFullScreen(): void {
+  this.isFullScreen = true;
+  this.resetZoom(); // Reset zoom when entering fullscreen
+}
+
+// Close the custom fullscreen overlay
+closeFullScreen(): void {
+  this.isFullScreen = false;
+  this.resetZoom(); // Reset zoom when exiting fullscreen
+}
+
 
   getMainCategories(): void {
     this.mainCategoryService.getMainCategories().subscribe(
@@ -140,12 +288,7 @@ export class ProductDetailsComponent {
     const selectedQuantity = this.quantity;
 
     this.addToCartService
-      .addToCart(
-        product.product_id,
-        userID,
-        businessId,
-        selectedQuantity
-      )
+      .addToCart(product.product_id, userID, businessId, selectedQuantity)
       .subscribe({
         next: () => {
           this.cartService.addToCart({
@@ -187,7 +330,8 @@ export class ProductDetailsComponent {
 
   startTestimonialSlider(): void {
     this.testimonialInterval = setInterval(() => {
-      this.currentTestimonialIndex = (this.currentTestimonialIndex + 1) % this.testimonials.length;
+      this.currentTestimonialIndex =
+        (this.currentTestimonialIndex + 1) % this.testimonials.length;
     }, 3000); // Change testimonial every 3 seconds
   }
 
@@ -214,12 +358,8 @@ export class ProductDetailsComponent {
       },
       error: (err) => {
         console.error('Error fetching product details:', err);
-      }
+      },
     });
-  }
-
-  setMainImage(imagePath: string): void {
-    this.mainImage = imagePath;
   }
 
   // Methods to handle company and variant selection
@@ -230,7 +370,6 @@ export class ProductDetailsComponent {
   selectVariant(variant: string): void {
     this.selectedVariant = variant;
   }
-
 
   buyNow(): void {
     console.log('Buy Now clicked for:', {

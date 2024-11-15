@@ -55,4 +55,8 @@ export const routes: Routes = [
         path: 'product-details/:id',
         loadChildren: () => import('./modules/product-details/product-details.module').then(m => m.ProductDetailsModule)
     },
+    {
+        path: 'wishlist',
+        loadChildren: () => import('./modules/wishlist/wishlist.module').then(m => m.WishlistModule)
+    },
 ];
