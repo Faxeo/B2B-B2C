@@ -11,15 +11,54 @@
   <div class="product-section">
     <!-- Product Images Section -->
     <div class="product-images">
-      <img *ngIf="mainImage" [src]="mainImage" alt="Product Image" class="main-image" />
+      <!-- Main Product Images Section -->
+      <div class="product-images">
+        <!-- Main Image with zoom functionality -->
+        <div class="main-image-container">
+          <img *ngIf="mainImage" [src]="mainImage" alt="Product Image" class="main-image" [class.zoomed]="zoomed"
+            [style.transform]="zoomTransform" [style.transform-origin]="zoomOriginX + '% ' + zoomOriginY + '%'"
+            [style.cursor]="zoomed ? 'zoom-out' : 'zoom-in'" (click)="toggleZoom($event)"
+            (mousemove)="onImageMouseMove($event)" (mouseleave)="resetZoom()" />
 
-      <div class="thumbnail-gallery" *ngIf="product.images?.length">
-        <div class="thumbnail-container" *ngFor="let img of product.images">
-          <img [src]="'https://usaperp.com:5001/' + img.image_path"
-            (click)="setMainImage('https://usaperp.com:5001/' + img.image_path)" class="thumbnail"
-            alt="Product Thumbnail" />
+          <!-- Arrows for navigating images -->
+          <button *ngIf="product.images.length > 1" class="nav-arrow left-arrow" (click)="prevImage()">&#8249;</button>
+          <button *ngIf="product.images.length > 1" class="nav-arrow right-arrow" (click)="nextImage()">&#8250;</button>
+
+          <!-- Fullscreen button -->
+          <button class="fullscreen-btn" (click)="openFullScreen()">
+            <i class="fa fa-expand" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <!-- Thumbnails row -->
+        <div class="thumbnail-gallery">
+          <div class="thumbnail-container" *ngFor="let img of product.images; let i = index">
+            <img [src]="'https://usaperp.com:5001/' + img.image_path"
+              (click)="setMainImage('https://usaperp.com:5001/' + img.image_path, i)" class="thumbnail"
+              [ngClass]="{'selected-thumbnail': currentImageIndex === i}" alt="Product Thumbnail" />
+          </div>
         </div>
       </div>
+
+      <!-- Fullscreen Overlay (Separate from main content) -->
+      <div *ngIf="isFullScreen" class="fullscreen-overlay">
+        <!-- Close Button -->
+        <button class="close-fullscreen-btn" (click)="closeFullScreen()">&#10006;</button>
+
+        <!-- Navigation Arrows for Fullscreen -->
+        <button *ngIf="product.images.length > 1" class="nav-arrow fullscreen-left-arrow"
+          (click)="prevImage()">&#8249;</button>
+        <button *ngIf="product.images.length > 1" class="nav-arrow fullscreen-right-arrow"
+          (click)="nextImage()">&#8250;</button>
+
+        <!-- Fullscreen Image -->
+        <img [src]="mainImage" class="fullscreen-image" [class.zoomed]="zoomed" [style.transform]="zoomTransform"
+          [style.transform-origin]="zoomOriginX + '% ' + zoomOriginY + '%'"
+          [style.cursor]="zoomed ? 'zoom-out' : 'zoom-in'" (click)="toggleZoom($event)"
+          (mousemove)="onImageMouseMove($event)" (mouseleave)="resetZoom()" />
+      </div>
+
+
 
       <!-- Features Section -->
       <div class="features-section">
@@ -75,18 +114,18 @@
             </h3>
           </ng-template>
         </ng-template>
-        
 
-      <!-- Additional Information Section -->
-      <div class="additional-info">
-        <div class="info-row">
-          <p><span class="label">UPC:</span> {{ product.product_identifier2 }}</p>
-          <p><span class="label">Origin:</span> {{ product.product_origin }}</p>
+
+        <!-- Additional Information Section -->
+        <div class="additional-info">
+          <div class="info-row">
+            <p><span class="label">UPC:</span> {{ product.product_identifier2 }}</p>
+            <p><span class="label">Origin:</span> {{ product.product_origin }}</p>
+          </div>
         </div>
-      </div>
 
         <!-- Delivery and Shipping Information with Icons -->
-         <div class="delivery-box">
+        <div class="delivery-box">
           <p class="delivery-info">
             <img src="assets/location.png" alt="Next-Day Delivery" class="info-icon">
             Next-Day Delivery: <strong>Order now</strong>
@@ -95,7 +134,7 @@
             <img src="assets/Delivery.png" alt="Free Shipping" class="info-icon">
             Free Shipping: on orders over $35
           </p>
-         </div>
+        </div>
       </div>
 
       <div class="selection-row">

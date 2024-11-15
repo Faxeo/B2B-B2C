@@ -14,6 +14,9 @@ import { NavigationService } from '../../core/services/navigation-service/naviga
 import { RecentlyViewedService } from '../../core/services/recently-viewed/recently-viewed.service';
 import { RecentlyViewedComponent } from '../recently-viewed/recently-viewed.component';
 import { FilterSearchService } from '../../core/services/filter-search/filter-search.service';
+import { AddToWishlistService } from '../../core/services/add-to-wishlist/add-to-wishlist.service';
+import { RemoveFromWishlistService } from '../../core/services/remove-from-wishlist/remove-from-wishlist.service';
+import { WishlistService } from '../../core/services/wishlist/wishlist.service';
 
 @Component({
   standalone: true,
@@ -24,13 +27,12 @@ import { FilterSearchService } from '../../core/services/filter-search/filter-se
     FooterComponent,
     FilterComponent,
     RecentlyViewedComponent,
-    RouterModule
-  ], 
+    RouterModule,
+  ],
   selector: 'app-category',
   templateUrl: './category.component.html',
   styleUrls: ['./category.component.css'],
 })
-
 export class CategoryComponent implements OnInit {
   m_id: number | null = null;
   f_id: number | null = null;
@@ -52,6 +54,9 @@ export class CategoryComponent implements OnInit {
   showRecentlyViewed: boolean = false;
   isInitialLoad: boolean = true;
 
+  wishlist: number[] = []; // Array to store product IDs in the wishlist
+  businessId: number = 123; // Replace with your actual business ID
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private router: Router,
@@ -62,7 +67,10 @@ export class CategoryComponent implements OnInit {
     private loginService: LoginService,
     private navigationService: NavigationService,
     private recentlyViewedService: RecentlyViewedService,
-    private filterSearchService: FilterSearchService
+    private filterSearchService: FilterSearchService,
+    private addToWishlistService: AddToWishlistService,
+    private removeFromWishlistService: RemoveFromWishlistService,
+    private wishlistService: WishlistService
   ) {
     this.filterSearchService.selectedCategories$.subscribe((categories) => {
       this.m_id = categories.m_id;
@@ -106,7 +114,99 @@ export class CategoryComponent implements OnInit {
       // console.error('No valid category ID found');
       this.isLoading = false;
     }
+    this.loadWishlist();
   }
+
+// Fetch wishlist details
+loadWishlist(): void {
+  if (!this.userID) return;
+  
+  this.wishlistService.getWishlistDetailsByBusinessId(this.businessId).subscribe({
+    next: (response) => {
+      if (response && response.length > 0) {
+        const wishlistIds = response.map((item: any) => item.productId);
+        this.markWishlistProducts(wishlistIds);
+      }
+    },
+    error: (error) => {
+      console.error('Error loading wishlist:', error);
+    }
+  });
+}
+
+markWishlistProducts(wishlistIds: number[]): void {
+  this.products = this.products.map(product => ({
+    ...product,
+    isInWishlist: wishlistIds.includes(product.product_id)
+  }));
+}
+
+toggleWishlist(product: any): void {
+  if (!this.userID) {
+    alert('Please log in to manage your wishlist.');
+    return;
+  }
+
+  if (product.isInWishlist) {
+    this.removeFromWishlist(product);
+  } else {
+    this.addToWishlist(product);
+  }
+}
+
+addToWishlist(product: any): void {
+  if (!this.userID) {
+    this.displayNotification('Please log in to add items to wishlist.');
+    return;
+  }
+
+  this.addToWishlistService
+    .addToWishlist(
+      product.product_id,
+      this.userID,
+      Number(this.userID)  // Convert to number for businessId
+    )
+    .subscribe({
+      next: () => {
+        product.isInWishlist = true;
+        this.displayNotification('Product added to wishlist successfully!');
+      },
+      error: (error) => {
+        console.error('Error adding to wishlist:', error);
+        this.displayNotification('Error adding item to wishlist: ' + error.message);
+      }
+    });
+}
+
+removeFromWishlist(product: any): void {
+  if (!this.userID) {
+    this.displayNotification('Please log in to remove items from wishlist.');
+    return;
+  }
+
+  this.removeFromWishlistService
+    .removeFromWishlist(
+      Number(this.userID), 
+      Number(this.userID),  // Convert to number for businessId
+      product.product_id
+    )
+    .subscribe({
+      next: () => {
+        product.isInWishlist = false;
+        this.displayNotification('Product removed from wishlist successfully!');
+      },
+      error: (error) => {
+        console.error('Error removing from wishlist:', error);
+        this.displayNotification('Error removing item from wishlist: ' + error.message);
+      }
+    });
+}
+
+private displayNotification(message: string): void {
+  // You can implement this using your preferred notification system
+  // For now, let's use a simple alert
+  alert(message);
+}
 
   viewProductDetails(productId: number): void {
     if (productId) {
@@ -162,14 +262,14 @@ export class CategoryComponent implements OnInit {
       this.isLocallyLoading = false;
       return;
     }
-  
+
     const take = this.pageSize;
     const requestData = { m_id, f_id, s_id, page, pageSize: take };
-  
+
     console.log('Request Data for Category API:', requestData);
     this.isLocallyLoading = true;
     this.isLoading = true;
-  
+
     this.hierarchyProductsService.getHierarchyProducts(requestData).subscribe(
       (response) => {
         if (response.products && response.products.length > 0) {
@@ -178,7 +278,7 @@ export class CategoryComponent implements OnInit {
           this.products = [];
           console.log('No products found for this category.');
         }
-  
+
         // Update pagination
         this.totalPages = response.totalPages;
         this.currentPage = response.currentPage;
@@ -193,8 +293,7 @@ export class CategoryComponent implements OnInit {
       }
     );
   }
-  
-  
+
   displayMessage(msg: string): void {
     this.message = msg;
     this.showMessage = true;

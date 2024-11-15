@@ -32,6 +32,7 @@ export interface ProductDetails {
   brand_name: string;
   brand: { brand_name: string; brand_desp: string};
   product_quantity: number;
+  // mainImage : string;
 }
 
 @Injectable({

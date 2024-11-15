@@ -24,6 +24,12 @@
         <i class="fa fa-car" aria-hidden="true"></i>
         <span *ngIf="cartItemCount > 0" class="cart-count-badge">{{ cartItemCount }}</span>
       </button>
+      <button *ngIf="loginType == 'business'" class="btn btn-outline-light ms-2 red-button wishlist-button"
+        style="font-size: 10px;" id="wishlist" routerLink="/wishlist">
+        <img src="assets/wishlist.png" alt="Wishlist" class="wishlist-icon" />
+        <!-- <span *ngIf="wishlistItemCount > 0" class="wishlist-count-badge">{{ wishlistItemCount }}</span> -->
+      </button>
+
       <div class="d-flex align-items-center">
         <!-- Display the login type button if it's set and not "admin" -->
         <button *ngIf="loginType === 'business'" class="btn btn-outline-light me-2 red-button business-btn"
@@ -66,7 +72,7 @@
   (categorySearchPageChange)="currentSearchType === 'categorySearch' ? searchByCategory($event) : null"
   [loginType]="loginType">
 </app-search>
- 
+
 
 <!-- Admin Sidebar Options -->
 <div *ngIf="isAdminSidebarVisible && loginType === 'admin'" class="admin-sidebar-options">
@@ -80,7 +86,7 @@
   <ul>
     <li><a routerLink="/business-dashboard">Profile</a></li>
     <li><a routerLink="/" (click)="logout()">Logout</a></li>
-    <li><a routerLink="/admin-reports">Wishlist</a></li>
+    <li><a routerLink="/wishlist">Wishlist</a></li>
     <li><a routerLink="/admin-settings">Your Orders</a></li>
   </ul>
 </div>
@@ -213,7 +219,7 @@
             </option>
           </select>
         </div>
- 
+
         <!-- First Sub-Category Dropdown -->
         <div class="form-group">
           <label class="category-form" for="firstSubCategory">First Sub-Category:</label>
@@ -248,8 +254,8 @@
 <div *ngIf="!showSearchComponent" class="product-categories container-fluid my-5 px-5">
   <div class="row">
     <div class="col-md-3 col-sm-6 mb-4" *ngFor="let category of categories$ | async">
-      <div class="category-item d-flex justify-content-between align-items-center p-3 border" 
-           (click)="onCategoryClick(category.id)"> <!-- Add click event -->
+      <div class="category-item d-flex justify-content-between align-items-center p-3 border"
+        (click)="onCategoryClick(category.id)"> <!-- Add click event -->
         <div>
           <h5>{{ category.name }}</h5>
           <p>{{ category.productCount }} products</p>
@@ -264,12 +270,12 @@
 <div *ngIf="!showSearchComponent">
   <h2 class="Horizontal-text">Explore Our Top Sellers</h2>
   <div class="scrolling-product-row container-fluid my-5">
-    <div class="scroll-container"> 
+    <div class="scroll-container">
       <div class="product-container" *ngFor="let product of products$ | async">
         <div class="product-item border p-3">
           <!-- Product Image -->
-          <img [src]="'https://usaperp.com:5001/Images/Products/' + product.product_image"
-            [alt]="product.product_name" class="img-fluid mb-2">
+          <img [src]="'https://usaperp.com:5001/Images/Products/' + product.product_image" [alt]="product.product_name"
+            class="img-fluid mb-2">
 
           <div class="d-flex justify-content-between align-items-center mb-2">
             <!-- Product Name and Price -->
@@ -293,12 +299,14 @@
           <!-- Add to Cart and View Buttons -->
           <div id="shopping_cart-view-buttons" class="d-flex justify-content-between pt-2">
             <button class="btn btn-danger w-100 me-1 add-to-cart-btn" (click)="addToCart(product)"
-            [disabled]="loginType === 'admin' || product.product_quantity === 0 || loginType == null || product.product_price === 0">Add to Cart</button>
-            
-            <button class="btn btn-outline-danger w-100 ms-1" (click)="viewProductDetails(product.product_id)">VIEW</button>
+              [disabled]="loginType === 'admin' || product.product_quantity === 0 || loginType == null || product.product_price === 0">Add
+              to Cart</button>
+
+            <button class="btn btn-outline-danger w-100 ms-1"
+              (click)="viewProductDetails(product.product_id)">VIEW</button>
           </div>
 
-          <!-- Cart Confirmation Message --> 
+          <!-- Cart Confirmation Message -->
           <div *ngIf="showMessage" class="cart-message">
             {{ message }}
           </div>

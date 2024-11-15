@@ -31,6 +31,9 @@ import { RecentlyViewedComponent } from '../recently-viewed/recently-viewed.comp
 import { FilterSearchService } from '../../core/services/filter-search/filter-search.service';
 import { CategoryIdService } from '../../core/services/category-id/category-id.service';
 import { HierarchyProductsService } from '../../core/services/hierarchy-products/hierarchy-products.service';
+import { AddToWishlistService } from '../../core/services/add-to-wishlist/add-to-wishlist.service';
+import { RemoveFromWishlistService } from '../../core/services/remove-from-wishlist/remove-from-wishlist.service';
+import { WishlistService } from '../../core/services/wishlist/wishlist.service';
 
 @Component({
   standalone: true,
@@ -105,6 +108,10 @@ export class SearchComponent implements OnChanges {
   products: any[] = [];
   pageSize: number = 10;
 
+  wishlist: number[] = []; // Array to store product IDs in the wishlist
+  businessId: number = 123; // Replace with your actual business ID
+
+
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -126,7 +133,10 @@ export class SearchComponent implements OnChanges {
     private router: Router,
     private filterSearchService: FilterSearchService,
     private categoryIdService: CategoryIdService,
-    private hierarchyProductsService: HierarchyProductsService
+    private hierarchyProductsService: HierarchyProductsService,
+    private addToWishlistService: AddToWishlistService,
+    private removeFromWishlistService: RemoveFromWishlistService,
+    private wishlistService: WishlistService
   ) {
     this.filterSearchService.selectedCategories$.subscribe((categories) => {
       this.m_id = categories.m_id;
@@ -234,6 +244,7 @@ export class SearchComponent implements OnChanges {
         this.performVehicleSearch(vehicleData);
       }
     });
+    this.loadWishlist();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -253,6 +264,92 @@ export class SearchComponent implements OnChanges {
       }
     }
   }
+  
+// Fetch wishlist details
+loadWishlist(): void {
+  if (!this.userID) return;
+  
+  this.wishlistService.getWishlistDetailsByBusinessId(this.businessId).subscribe({
+    next: (response) => {
+      if (response && response.length > 0) {
+        const wishlistIds = response.map((item: any) => item.productId);
+        this.markWishlistProducts(wishlistIds);
+      }
+    },
+    error: (error) => {
+      console.error('Error loading wishlist:', error);
+    }
+  });
+}
+
+markWishlistProducts(wishlistIds: number[]): void {
+  this.products = this.products.map(product => ({
+    ...product,
+    isInWishlist: wishlistIds.includes(product.product_id)
+  }));
+}
+
+toggleWishlist(product: any): void {
+  if (!this.userID) {
+    alert('Please log in to manage your wishlist.');
+    return;
+  }
+
+  if (product.isInWishlist) {
+    this.removeFromWishlist(product);
+  } else {
+    this.addToWishlist(product);
+  }
+}
+
+addToWishlist(product: any): void {
+  if (!this.userID) {
+    this.displayNotification('Please log in to add items to wishlist.');
+    return;
+  }
+
+  this.addToWishlistService
+    .addToWishlist(
+      product.product_id,
+      this.userID,
+      Number(this.userID)  // Convert to number for businessId
+    )
+    .subscribe({
+      next: () => {
+        product.isInWishlist = true;
+        this.displayNotification('Product added to wishlist successfully!');
+      },
+      error: (error) => {
+        console.error('Error adding to wishlist:', error);
+        this.displayNotification('Error adding item to wishlist: ' + error.message);
+      }
+    });
+}
+
+removeFromWishlist(product: any): void {
+  if (!this.userID) {
+    this.displayNotification('Please log in to remove items from wishlist.');
+    return;
+  }
+
+  this.removeFromWishlistService
+    .removeFromWishlist(
+      Number(this.userID), 
+      Number(this.userID),  // Convert to number for businessId
+      product.product_id
+    )
+    .subscribe({
+      next: () => {
+        product.isInWishlist = false;
+        this.displayNotification('Product removed from wishlist successfully!');
+      },
+      error: (error) => {
+        console.error('Error removing from wishlist:', error);
+        this.displayNotification('Error removing item from wishlist: ' + error.message);
+      }
+    });
+}
+
 
   private currentSearchState: {
     type: 'generalSearch' | 'vehicleSearch' | 'categorySearch' | 'filterCategorySearch' | null;
@@ -635,7 +732,7 @@ export class SearchComponent implements OnChanges {
       brand: '',
       description: '',
       upc: '',
-      partNumber: '',
+      partNumber: '', 
       attribute: '',
       includeCompatibility: false,
       includeManufacturer: false,
