@@ -34,6 +34,9 @@ import { HierarchyProductsService } from '../../core/services/hierarchy-products
 import { AddToWishlistService } from '../../core/services/add-to-wishlist/add-to-wishlist.service';
 import { RemoveFromWishlistService } from '../../core/services/remove-from-wishlist/remove-from-wishlist.service';
 import { WishlistService } from '../../core/services/wishlist/wishlist.service';
+import { SearchByVehicleComponent } from '../search-by-vehicle/search-by-vehicle.component';
+import { CategoryNavbarSearchService } from '../../core/services/category-navbar-search/category-navbar-search.service';
+import { CartSidebarComponent } from '../cart-sidebar/cart-sidebar.component';
 
 @Component({
   standalone: true,
@@ -44,6 +47,8 @@ import { WishlistService } from '../../core/services/wishlist/wishlist.service';
     NavbarComponent,
     RecentlyViewedComponent,
     RouterModule,
+    SearchByVehicleComponent,
+    // CartSidebarComponent,
   ],
   selector: 'app-search',
   templateUrl: './search.component.html',
@@ -136,7 +141,8 @@ export class SearchComponent implements OnChanges {
     private hierarchyProductsService: HierarchyProductsService,
     private addToWishlistService: AddToWishlistService,
     private removeFromWishlistService: RemoveFromWishlistService,
-    private wishlistService: WishlistService
+    private wishlistService: WishlistService,
+    private categoryNavbarSearchService: CategoryNavbarSearchService,
   ) {
     this.filterSearchService.selectedCategories$.subscribe((categories) => {
       this.m_id = categories.m_id;
@@ -245,6 +251,9 @@ export class SearchComponent implements OnChanges {
       }
     });
     this.loadWishlist();
+    const { m_id, f_id, s_id } =
+      this.categoryNavbarSearchService.getCategoryData();
+    console.log('Saved Category Data:', { m_id, f_id, s_id });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -659,6 +668,8 @@ removeFromWishlist(product: any): void {
   // Ensure that `performGeneralSearch` respects the current page setting
   performGeneralSearch(query: string): void {
     console.log('Performing general search with query:', query);
+     // Get m_id, f_id, and s_id from CategoryNavbarSearchService
+     const { m_id, f_id, s_id } = this.categoryNavbarSearchService.getCategoryData();
 
     this.currentRequestData = {
       // Store request data
@@ -677,9 +688,9 @@ removeFromWishlist(product: any): void {
       includeImages: false,
       skip: (this.currentPage - 1) * 10,
       take: 10,
-      m_id: null,
-      f_id: null,
-      s_id: null,
+      m_id: m_id ?? null, // Use m_id if available, otherwise null
+      f_id: f_id ?? null, // Use f_id if available, otherwise null
+      s_id: s_id ?? null, // Use s_id if available, otherwise null
       keyFeature: '',
       vendor: null,
       search_description: query,

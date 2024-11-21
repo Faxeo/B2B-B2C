@@ -1,5 +1,12 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectorRef, Component, HostListener, Inject, Input, PLATFORM_ID } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  Inject,
+  Input,
+  PLATFORM_ID,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { BehaviorSubject, catchError, map, Observable, of } from 'rxjs';
@@ -11,24 +18,24 @@ import { CartService } from '../../core/services/cart/cart.service';
 import { LogoutService } from '../../core/services/logout-service/logout-service.service';
 import { DynamicSearchService } from '../../core/services/dynamic-search/dynamic-search.service';
 import { SidebarComponent } from '../sidebar/sidebar/sidebar.component';
+import { CategoryNavbarSearchService } from '../../core/services/category-navbar-search/category-navbar-search.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule,FormsModule, SidebarComponent, RouterModule],
+  imports: [CommonModule, FormsModule, SidebarComponent, RouterModule],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css'
+  styleUrl: './navbar.component.css',
 })
 export class NavbarComponent {
-
   @Input() loginType: string | null = null;
   @Input() cartItemCount: number = 0;
   isAdminSidebarVisible: boolean = false;
   currentSearchType:
-  | 'generalSearch'
-  | 'vehicleSearch'
-  | 'categorySearch'
-  | null = null;
+    | 'generalSearch'
+    | 'vehicleSearch'
+    | 'categorySearch'
+    | null = null;
   isPaginationLoading: boolean = false;
   isLoading: boolean = false;
   categories$: Observable<any[]> | undefined;
@@ -43,7 +50,7 @@ export class NavbarComponent {
   searchQuery: string = '';
   totalPages: number = 0;
   currentPage: number = 1;
-  searchEnabled: boolean = false; 
+  searchEnabled: boolean = false;
   searchPlaceholder: string = '';
   showVehicleForm: boolean = false;
   selectedYear: string = '';
@@ -76,9 +83,9 @@ export class NavbarComponent {
     private logoutService: LogoutService,
     private dynamicSearchService: DynamicSearchService,
     private cdr: ChangeDetectorRef,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private categoryNavbarSearchService: CategoryNavbarSearchService
   ) {}
-
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -120,6 +127,10 @@ export class NavbarComponent {
     this.cartService.cartItemCount$.subscribe((count) => {
       this.cartItemCount = count;
     });
+
+    const { m_id, f_id, s_id } =
+      this.categoryNavbarSearchService.getCategoryData();
+    console.log('Saved Category Data:', { m_id, f_id, s_id });
   }
 
   @HostListener('document:click', ['$event'])
@@ -132,12 +143,10 @@ export class NavbarComponent {
     }
   }
 
-
   openSidebar(): void {
     this.sidebarToggleService.toggleSidebar();
   }
 
- 
   toggleAdminSidebar(event: Event) {
     event.stopPropagation();
     this.isAdminSidebarVisible = !this.isAdminSidebarVisible;
@@ -145,26 +154,26 @@ export class NavbarComponent {
 
   onSearch(page: number = 1): void {
     this.currentSearchType = 'generalSearch';
-    const searchInputElement = document.getElementById(
-      'search-input'
-    ) as HTMLInputElement;
-    const newSearchQuery = searchInputElement
-      ? searchInputElement.value.trim()
-      : '';
-
+  
+    const searchInputElement = document.getElementById('search-input') as HTMLInputElement;
+    const newSearchQuery = searchInputElement ? searchInputElement.value.trim() : '';
+  
     // Initialize loading states
     this.isPaginationLoading = page !== 1; // Only show pagination loading for pages other than 1
     this.isLoading = page === 1; // Show main loading spinner only on the first page
-
+  
     // Update search query if it has changed
     if (newSearchQuery !== this.searchQuery) {
       this.searchQuery = newSearchQuery;
     }
-
+  
     this.showSearchComponent = true;
     const take = 10;
     const skip = (page - 1) * take;
-
+  
+    // Get m_id, f_id, and s_id from CategoryNavbarSearchService
+    const { m_id, f_id, s_id } = this.categoryNavbarSearchService.getCategoryData();
+  
     const requestData = {
       productName: '',
       manufacturer: '',
@@ -181,6 +190,11 @@ export class NavbarComponent {
       includeImages: false,
       skip: skip,
       take: take,
+      m_id: m_id ?? null, // Use m_id if available, otherwise null
+      f_id: f_id ?? null, // Use f_id if available, otherwise null
+      s_id: s_id ?? null, // Use s_id if available, otherwise null
+      keyFeature: '',
+      vendor: null,
       search_description: this.searchQuery,
       compatiblityValues: {
         compatibilityID: 0,
@@ -199,14 +213,15 @@ export class NavbarComponent {
       attributeSearch: false,
       page: page,
     };
-
+    console.log('Request Data:', requestData);
+  
     // Update query params if there's a search query
     if (this.searchQuery) {
       this.router.navigate(['/search'], {
         queryParams: { query: this.searchQuery },
       });
     }
-
+  
     this.dynamicSearchService
       .searchProducts(requestData)
       .pipe(
@@ -223,7 +238,7 @@ export class NavbarComponent {
         this.searchProducts$ = of(products.products || []);
         this.totalPages = products.totalPages || 1;
         this.currentPage = page;
-
+  
         // Reset loading states
         this.isLoading = false;
         this.isPaginationLoading = false;

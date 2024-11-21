@@ -77,3 +77,37 @@
     font-weight: bold;
   }
   
+  .track-order-container {
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .track-input {
+    display: flex;
+    margin-bottom: 20px;
+  }
+  
+  .track-input input {
+    flex: 1;
+    padding: 8px;
+    margin-right: 10px;
+  }
+  
+  .track-input button {
+    padding: 8px 16px;
+    cursor: pointer;
+  }
+  
+  .shipment-info {
+    margin-top: 20px;
+  }
+  
+  .error-message {
+    color: red;
+    margin-top: 10px;
+  }
+  

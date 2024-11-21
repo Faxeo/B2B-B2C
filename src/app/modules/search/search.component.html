@@ -141,8 +141,9 @@
       </div>
 
       <!-- General Search Section -->
-      <div class="search-results container-fluid my-5" *ngIf="searchType === 'generalSearch'">
+      <div class="search-results container-fluid" *ngIf="searchType === 'generalSearch'">
         <!-- <h2>General Search Results</h2> -->
+         <app-search-by-vehicle></app-search-by-vehicle>
 
         <!-- General Search Product Grid -->
         <div class="product-list container-fluid my-5" *ngIf="!isLoading && searchResults.length > 0">
@@ -414,6 +415,7 @@
       <!-- Category Search Section -->
       <div class="search-results container-fluid my-5" *ngIf="searchType === 'categorySearch'">
         <!-- <h2>Category Search Results</h2> -->
+        <app-search-by-vehicle></app-search-by-vehicle>
 
         <!-- Category Search Product Grid -->
         <div class="product-list container-fluid my-5" *ngIf="!isLoading && searchResults.length > 0">
@@ -675,3 +677,5 @@
 
 
       </div>
+
+      <!-- <app-cart-sidebar></app-cart-sidebar> -->
