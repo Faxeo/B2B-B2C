@@ -3,24 +3,37 @@ import { ApiService } from '../api.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+
 @Injectable({
   providedIn: 'root'
 })
 export class WishlistService {
 
-  constructor(private http: HttpClient,private apiService: ApiService) { }
- 
+  constructor(private http: HttpClient, private apiService: ApiService) {}
+
+  /**
+   * Fetch wishlist details by business ID using POST
+   * @param businessId - ID of the business
+   * @returns Observable of wishlist details
+   */
   getWishlistDetailsByBusinessId(businessId: number): Observable<any> {
     console.log('Sending payload to API:', businessId);
 
-    return this.apiService.get<any>(`Wishlist/GetWishlistDetailsByBusinessId/${businessId}`).pipe(
+    return this.apiService.post<any>(`Wishlist/GetWishlistDetailsByBusinessId?businessId=${businessId}`, {}).pipe(
       catchError(error => {
         console.error('API error:', error);
         return throwError(() => new Error(this.getErrorMessage(error)));
       })
     );
-  
   }
+
+  /**
+   * Remove a product from the wishlist
+   * @param productId - Product ID
+   * @param customerId - Customer ID
+   * @param businessId - Business ID
+   * @returns Observable of the removal response
+   */
   removeFromWishlist(productId: number, customerId: number, businessId: number): Observable<any> {
     const payload = {
       customerId: customerId,
@@ -34,22 +47,20 @@ export class WishlistService {
       })
     );
   }
+
   private getErrorMessage(error: HttpErrorResponse): string {
     return error.message || 'An unknown error occurred';
   }
+
   removeItem(productId: string): void {
-    // Logic to remove item from wishlist
     console.log(`Removing item with ID: ${productId}`);
   }
 
   updateQuantity(productId: string, quantity: number): void {
-    // Logic to update quantity of item in wishlist
     console.log(`Updating quantity for item with ID: ${productId} to ${quantity}`);
   }
 
-  // Implementing getUserID to retrieve the business/user ID
   getUserID(): string | null {
-    // Here, we assume the user ID is stored in localStorage with the key 'userID'
-    return localStorage.getItem('userID'); // You can replace this with your logic to get the user ID
+    return localStorage.getItem('userID');
   }
 }

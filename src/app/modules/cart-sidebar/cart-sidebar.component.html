@@ -1,0 +1,40 @@
+<ng-container *ngIf="isSidebarVisible; else sidebarHidden">
+  <div class="cart-sidebar">
+    <div class="cart-header">
+      <span class="cart-count">{{ cartItems.length }}</span>
+      <h2>Your Cart</h2>
+      <button class="close-btn" (click)="closeCartSidebar()">&times;</button>
+    </div>
+    <div class="cart-items">
+      <div class="cart-item" *ngFor="let item of cartItems">
+        <img
+          *ngIf="!item.imageError"
+          [src]="'https://usaperp.com:5001/Images/Products/' + item.image"
+          alt="Product Image"
+          (error)="handleImageError(item)"
+        />
+        <div class="item-details">
+          <h3>{{ item.name }}</h3>
+          <p>{{ item.quantity }} x ${{ item.price.toFixed(2) }} = ${{ (item.price * item.quantity).toFixed(2) }}</p>
+          <p *ngIf="item.discountedPrice && item.discountedPrice < item.price * item.quantity">
+            Discount: ${{ item.discountedPrice.toFixed(2) }}
+          </p>
+        </div>
+        <input
+          type="number"
+          class="quantity-input"
+          [(ngModel)]="item.quantity"
+          (change)="onQuantityInput(item.productId, $event)"
+          min="1"
+        />
+        <button class="delete-btn" (click)="removeFromCart(item.cartId)">&times;</button>
+      </div>
+    </div>
+    <div class="cart-footer">
+      <p class="subtotal">Subtotal: ${{ calculateSubtotal().toFixed(2) }}</p>
+      <button class="view-cart-btn" (click)="goToCart()">View Cart</button>
+      <button class="checkout-btn" (click)="goToCheckout()">Checkout</button>
+    </div>
+  </div>
+</ng-container>
+<ng-template #sidebarHidden></ng-template>

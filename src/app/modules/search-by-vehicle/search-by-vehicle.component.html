@@ -1,0 +1,56 @@
+<!-- Vehicle Search Form -->
+<div class="vehicle-search-form-wrapper">
+    <div class="vehicle-search-form row g-3">
+      <!-- Input Fields for Vehicle Search -->
+      <div class="col-md-2 form-group">
+        <label for="year">Year</label>
+        <select id="year" class="form-select" [(ngModel)]="selectedYear" (change)="onYearChange()">
+          <option value="" disabled selected>Select Year</option>
+          <option *ngFor="let year of years" [value]="year.year">{{ year.year }}</option>
+        </select>
+      </div>
+      <div class="col-md-2 form-group">
+        <label for="make">Make</label>
+        <select id="make" class="form-select" [(ngModel)]="selectedMake" (change)="onMakeChange()"
+          [disabled]="!selectedYear">
+          <option value="" disabled selected>Select Make</option>
+          <option *ngFor="let make of makes" [value]="make.name">{{ make.name }}</option>
+        </select>
+      </div>
+      <div class="col-md-2 form-group">
+        <label for="model">Model</label>
+        <select id="model" class="form-select" [(ngModel)]="selectedModel" (change)="onModelChange()"
+          [disabled]="!selectedMake">
+          <option value="" disabled selected>Select Model</option>
+          <option *ngFor="let model of models" [value]="model.name">{{ model.name }}</option>
+        </select>
+      </div>
+      <div class="col-md-2 form-group">
+        <label for="trim">Trim</label>
+        <select id="trim" class="form-select" [(ngModel)]="selectedTrim" (change)="onTrimChange()"
+          [disabled]="!selectedModel">
+          <option value="" disabled selected>Select Trim</option>
+          <option *ngFor="let trim of trims" [value]="trim.name">{{ trim.name }}</option>
+        </select>
+      </div>
+      <div class="col-md-2 form-group">
+        <label for="engine">Engine</label>
+        <select id="engine" class="form-select" [(ngModel)]="selectedEngine" (change)="onEngineChange()">
+          <option *ngFor="let engine of engines" [value]="engine.name">{{ engine.name }}</option>
+        </select>
+      </div>
+
+      <!-- Search Button in the same row -->
+      <div class="col-md-2 d-flex align-items-end">
+        <button class="btn search-button w-100" (click)="performVehicleSearch({
+            year: selectedYear, 
+            make: selectedMake, 
+            model: selectedModel, 
+            trim: selectedTrim, 
+            engine: selectedEngine 
+        })" [disabled]="!selectedYear || !selectedMake || !selectedModel || !selectedTrim || !selectedEngine">
+          Search
+        </button>
+      </div>
+    </div>
+  </div>

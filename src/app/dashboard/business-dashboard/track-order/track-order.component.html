@@ -1,25 +1,32 @@
 <div class="track-order-container">
-    <h2>Track Your Shipment</h2>
-    <p>Enter any combination of tracking reference number.</p>
-    <div class="track-input">
-      <input type="text" placeholder="Tracking Number" [(ngModel)]="trackingNumber" />
-      <button (click)="trackShipment()">Track Shipment</button>
+  <h2>Track Your Shipment</h2>
+  <p>Enter any combination of tracking reference number.</p>
+  <div class="track-input">
+    <input type="text" placeholder="Tracking Number" [(ngModel)]="trackingNumber" />
+    <button (click)="trackShipment()">Track Shipment</button>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading">Loading...</div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+
+  <!-- Shipment Information -->
+  <div *ngIf="shipmentDetails.trackingNumber" class="shipment-info">
+    <div class="shipment-details">
+      <h3>Shipment Booking Details</h3>
+      <p><strong>Tracking Number:</strong> {{ shipmentDetails.trackingNumber }}</p>
+      <p><strong>Agent Reference Number:</strong> {{ shipmentDetails.agentReferenceNumber }}</p>
+      <p><strong>Origin:</strong> {{ shipmentDetails.origin }}</p>
+      <p><strong>Destination:</strong> {{ shipmentDetails.destination }}</p>
+      <p><strong>Booking Date:</strong> {{ shipmentDetails.bookingDate }}</p>
     </div>
-  
-    <div class="shipment-info">
-      <div class="shipment-details">
-        <h3>Shipment Booking Details</h3>
-        <p><strong>Tracking Number:</strong> {{shipmentDetails.trackingNumber || ''}}</p>
-        <p><strong>Shipment Details:</strong></p>
-        <p><strong>Agent Reference Number:</strong> {{shipmentDetails.agentReferenceNumber || ''}}</p>
-        <p><strong>Origin:</strong> {{shipmentDetails.origin || ''}}</p>
-        <p><strong>Destination:</strong> {{shipmentDetails.destination || ''}}</p>
-        <p><strong>Booking Date:</strong> {{shipmentDetails.bookingDate || ''}}</p>
-      </div>
-      <div class="shipment-status">
-        <h3>Shipment Track Summary</h3>
-        <p><strong>Current Status:</strong> {{shipmentDetails.currentStatus || 'N/A'}}</p>
-      </div>
+    <div class="shipment-status">
+      <h3>Shipment Track Summary</h3>
+      <p><strong>Current Status:</strong> {{ shipmentDetails.currentStatus }}</p>
     </div>
   </div>
-  
+</div>
+
+<!-- 1ZCIETST0111111114 -->
