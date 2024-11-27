@@ -1,7 +1,6 @@
 
-.vehicle-search-form-wrapper{
-  margin-bottom: 10px;
-  margin-top: 5px;
+.category-search-form-wrapper{
+  margin-bottom: 15px;
 }
 
 .form-group {
@@ -23,9 +22,9 @@
     background-color: #9a1717;
   }
 
-  /* .form-select {
-    margin-top: -0.5rem;
-  } */
+  .form-select {
+    margin-top: 0.5rem;
+  }
   
   .form-select option[disabled] {
     color: #999; /* Placeholder color */

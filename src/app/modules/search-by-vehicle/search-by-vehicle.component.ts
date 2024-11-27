@@ -158,14 +158,14 @@ export class SearchByVehicleComponent {
             name: item.value_name,
             cvalue_id: item.cvalue_id,
           }));
-          this.updateVehicleSelection({ year: this.selectedYear });
-          this.selectedMake = '';
+          // Reset dependent fields
+          this.selectedMake = null;
           this.models = [];
           this.trims = [];
           this.engines = [];
-          this.selectedModel = '';
-          this.selectedTrim = '';
-          this.selectedEngine = '';
+          this.selectedModel = null;
+          this.selectedTrim = null;
+          this.selectedEngine = null;
         },
         (error) => {
           console.error('Error fetching makes:', error);
@@ -304,3 +304,4 @@ export class SearchByVehicleComponent {
     );
   }  
 }
+ 

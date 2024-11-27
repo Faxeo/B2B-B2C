@@ -1,0 +1,51 @@
+<!-- Category Search Form -->
+<div class="category-search-form-wrapper">
+    <div class="category-search-form row g-3 align-items-end">
+      <!-- Main Category Field -->
+      <div class="col-md-3 form-group">
+        <!-- <label for="mainCategory">Main Category</label> -->
+        <select id="mainCategory" class="form-select" [(ngModel)]="selectedMainCategory"
+          (change)="onMainCategoryChange()">
+          <option value="" disabled selected>Select Main Category</option>
+          <option *ngFor="let mainCategory of mainCategories" [value]="mainCategory.id">
+            {{ mainCategory.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- First Sub-Category Field -->
+      <div class="col-md-3 form-group">
+        <!-- <label for="firstSubCategory">First Sub-Category</label> -->
+        <select id="firstSubCategory" class="form-select" [(ngModel)]="selectedFirstSubCategory"
+          (change)="onFirstSubCategoryChange()" [disabled]="!selectedMainCategory">
+          <option value="" disabled selected>Select First Sub-Category</option>
+          <option *ngFor="let firstSubCategory of firstSubCategories" [value]="firstSubCategory.id">
+            {{ firstSubCategory.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Second Sub-Category Field -->
+      <div class="col-md-3 form-group">
+        <!-- <label for="secondSubCategory">Second Sub-Category</label> -->
+        <select id="secondSubCategory" class="form-select" [(ngModel)]="selectedSecondSubCategory"
+          [disabled]="!selectedFirstSubCategory">
+          <option value="" disabled selected>Select Second Sub-Category</option>
+          <option *ngFor="let secondSubCategory of secondSubCategories" [value]="secondSubCategory.id">
+            {{ secondSubCategory.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Search Button in the same row -->
+      <div class="col-md-3 d-flex align-items-end justify-content-center">
+        <button class="btn search-button w-100" (click)="performCategorySearch({
+          mainCategory: selectedMainCategory, 
+          firstSubCategory: selectedFirstSubCategory, 
+          secondSubCategory: selectedSecondSubCategory 
+      })" [disabled]="!selectedMainCategory || !selectedFirstSubCategory || !selectedSecondSubCategory">
+          Search
+        </button>
+      </div>
+    </div>
+  </div>
