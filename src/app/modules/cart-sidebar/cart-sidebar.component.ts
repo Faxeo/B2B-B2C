@@ -8,12 +8,13 @@ import { BusinessCartService } from '../../core/services/business-cart/business-
 import { DeleteCartService } from '../../core/services/delete-cart/delete-cart.service';
 
 @Component({
-  standalone: true,
+  standalone: true, 
   imports: [CommonModule, FormsModule],
   selector: 'app-cart-sidebar',
   templateUrl: './cart-sidebar.component.html',
   styleUrls: ['./cart-sidebar.component.css']
 })
+
 export class CartSidebarComponent implements OnInit {
  // Define the type for cartItems, adding cartId and discountedPrice as optional fields
  cartItems: Array<{
@@ -35,6 +36,7 @@ export class CartSidebarComponent implements OnInit {
     customer_type: string;
   }>; // Optional discounts_Seller array to handle products without discounts
 }> = [];
+
 
 businessId: number | null = null;
 isSidebarVisible: boolean = true;

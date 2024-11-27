@@ -45,12 +45,37 @@
   left: 0;
 }
 
+/* Right Sidebar styles */
+/* .sidebar-cart {
+  width: 350px;
+  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  position: relative;
+}
+
+.main-content-cart {
+  width: 100%;
+  transition: width 0.5s ease;
+  display: flex;
+}
+
+.main-content-cart.expanded {
+  transition: width 0.5s ease;
+} */
+
 /* Content container */
 .main-content {
   flex-grow: 1; /* Take up remaining space for content */
   padding: 20px;
 }
 
+/* Main and Right Sidebar Wrapper */
+.main-and-right-sidebar {
+  display: flex;
+  flex-grow: 1; /* Allow the main content to grow */
+}
   
   /* Product List */
   .product-list {
@@ -322,6 +347,8 @@
   transition: width 0.5s ease;
 }
 
+
+
 .sidebar {
   width: 350px;
 }
@@ -353,6 +380,7 @@
 .category-search-form .form-group {
   display: flex;
   flex-direction: column;
+  /* margin-top: -65px; */
 }
 
 .search-button {

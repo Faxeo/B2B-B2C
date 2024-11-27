@@ -111,3 +111,98 @@
     margin-top: 10px;
   }
   
+  .track-order-container {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .track-order-container h2 {
+    font-size: 26px;
+    margin-bottom: 10px;
+  }
+  
+  .track-order-container p {
+    font-size: 16px;
+    color: #555;
+  }
+  
+  .track-input {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .track-input input {
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 300px;
+    margin-right: 10px;
+  }
+  
+  /* .track-input button {
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .track-input button:hover {
+    background-color: #0056b3;
+  } */
+  
+  .loading {
+    color: #007BFF;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+  
+  .error-message {
+    color: red;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+  
+  .shipment-info {
+    margin-top: 20px;
+    text-align: left;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+  
+  .shipment-details, .shipment-status, .additional-details {
+    margin-bottom: 20px;
+  }
+  
+  .shipment-details h3, .shipment-status h3, .additional-details h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .additional-details h3 {
+    font-size: 20px;
+    font-weight: 550;
+    margin-bottom: 10px;
+    margin-top: 7px;
+    color: #333;
+  }
+
+
+  .shipment-details p, .shipment-status p, .additional-details p {
+    font-size: 14px;
+    color: #555;
+  }
+  

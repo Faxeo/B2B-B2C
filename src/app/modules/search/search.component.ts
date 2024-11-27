@@ -37,6 +37,7 @@ import { WishlistService } from '../../core/services/wishlist/wishlist.service';
 import { SearchByVehicleComponent } from '../search-by-vehicle/search-by-vehicle.component';
 import { CategoryNavbarSearchService } from '../../core/services/category-navbar-search/category-navbar-search.service';
 import { CartSidebarComponent } from '../cart-sidebar/cart-sidebar.component';
+import { SearchByCategoryComponent } from '../search-by-category/search-by-category.component';
 
 @Component({
   standalone: true,
@@ -48,7 +49,8 @@ import { CartSidebarComponent } from '../cart-sidebar/cart-sidebar.component';
     RecentlyViewedComponent,
     RouterModule,
     SearchByVehicleComponent,
-    // CartSidebarComponent,
+    SearchByCategoryComponent,
+    CartSidebarComponent,
   ],
   selector: 'app-search',
   templateUrl: './search.component.html',

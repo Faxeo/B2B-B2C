@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { OrderTrackingService } from '../../../core/services/order-tracking/order-tracking.service';
-import { UpsService } from '../../../core/services/ups/ups.service';
+import { UpsDetailsService } from '../../../core/services/ups-details/ups-details.service';
 
 @Component({
   selector: 'app-track-order',
@@ -15,27 +14,9 @@ export class TrackOrderComponent {
   trackingNumber: string = '';
   shipmentDetails: any = {}; // Holds the shipment details
   isLoading: boolean = false;
-  errorMessage: string = ''; 
-  trackingData: any = null; 
-  upsToken: string = ''; // Store the fetched UPS token
+  errorMessage: string = '';
 
-  constructor(
-    private orderTrackingService: OrderTrackingService,
-    private upsService: UpsService
-  ) {}
-
-  async fetchUpsToken() {
-    try {
-      const requestData = { client_id: 'your-client-id', client_secret: 'your-client-secret' }; // Replace with actual payload
-      const response = await this.upsService.getUpsToken(requestData).toPromise(); // Convert Observable to Promise
-      console.log('Token Response:', response);
-      this.upsToken = response.access_token; // Extract the token
-      console.log('Fetched UPS Token:', this.upsToken);
-    } catch (error) {
-      this.errorMessage = 'Failed to fetch UPS token';
-      console.error('Error fetching UPS Token:', error);
-    }
-  }
+  constructor(private upsDetailsService: UpsDetailsService) {}
 
   async trackShipment() {
     if (!this.trackingNumber.trim()) {
@@ -45,28 +26,32 @@ export class TrackOrderComponent {
   
     this.isLoading = true;
     this.errorMessage = '';
-    this.trackingData = null;
+    this.shipmentDetails = {};
   
     try {
-      // Fetch the UPS token before tracking the shipment
-      await this.fetchUpsToken();
+      const response = await this.upsDetailsService.trackUpsOrder(this.trackingNumber).toPromise();
   
-      // Fetch tracking details using the service
-      const data = await this.orderTrackingService
-        .getTrackingDetails(this.trackingNumber, this.upsToken)
-        .toPromise();
+      console.log('API Response:', response);
   
-      console.log('Full Response from UPS:', data); // Log the raw response for debugging
+      if (response?.trackResponse?.shipment?.[0]?.package?.[0]) {
+        const packageData = response.trackResponse.shipment[0].package[0];
+        const lastActivity = packageData.activity?.[0] || {};
   
-      if (data?.trackResponse?.shipment?.[0]?.package?.[0]) {
-        const packageData = data.trackResponse.shipment[0].package[0];
         this.shipmentDetails = {
           trackingNumber: packageData.trackingNumber,
-          agentReferenceNumber: data.trackResponse.shipment[0].inquiryNumber,
-          origin: 'Origin not provided',
-          destination: 'Destination not provided',
-          bookingDate: 'Date not available',
+          agentReferenceNumber: response.trackResponse.shipment[0].inquiryNumber,
+          origin: packageData.packageAddress.find((addr: any) => addr.type === 'ORIGIN')?.address.city || 'N/A',
+          destination: packageData.packageAddress.find((addr: any) => addr.type === 'DESTINATION')?.address.stateProvince || 'N/A',
+          bookingDate: packageData.deliveryDate?.[0]?.date || 'N/A',
           currentStatus: packageData.currentStatus?.description || 'N/A',
+          lastActivity: {
+            description: lastActivity.status?.description || 'No recent updates',
+            date: lastActivity.date || 'N/A',
+            time: lastActivity.time || 'N/A',
+          },
+          weight: packageData.weight?.weight || 'N/A',
+          dimensions: `${packageData.dimension?.length} x ${packageData.dimension?.width} x ${packageData.dimension?.height} ${packageData.dimension?.unitOfDimension || ''}` || 'N/A',
+          service: packageData.service?.description || 'N/A',
         };
       } else {
         this.errorMessage = 'No shipment details found.';
