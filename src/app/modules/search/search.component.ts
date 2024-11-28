@@ -50,13 +50,12 @@ import { SearchByCategoryComponent } from '../search-by-category/search-by-categ
     RouterModule,
     SearchByVehicleComponent,
     SearchByCategoryComponent,
-    CartSidebarComponent,
+    // CartSidebarComponent,
   ],
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css'],
 })
-
 export class SearchComponent implements OnChanges {
   @Input() searchResults: any[] = [];
   @Input() currentPage: number = 1;
@@ -117,7 +116,11 @@ export class SearchComponent implements OnChanges {
 
   wishlist: number[] = []; // Array to store product IDs in the wishlist
   businessId: number = 123; // Replace with your actual business ID
+  lastQuery: string = '';
+  lastCategoryData: string = '';
+  lastVehicleData: string = '';
 
+  activeSearchType: 'general' | 'category' | 'vehicle' = 'general'; // Default to 'general'
 
 
   constructor(
@@ -144,7 +147,7 @@ export class SearchComponent implements OnChanges {
     private addToWishlistService: AddToWishlistService,
     private removeFromWishlistService: RemoveFromWishlistService,
     private wishlistService: WishlistService,
-    private categoryNavbarSearchService: CategoryNavbarSearchService,
+    private categoryNavbarSearchService: CategoryNavbarSearchService
   ) {
     this.filterSearchService.selectedCategories$.subscribe((categories) => {
       this.m_id = categories.m_id;
@@ -156,17 +159,17 @@ export class SearchComponent implements OnChanges {
     this.filterSearchService.selectedCategories$.subscribe((categories) => {
       this.currentSearchState = {
         type: 'filterCategorySearch',
-        data: categories
+        data: categories,
       };
-      
+
       this.m_id = categories.m_id;
       this.f_id = categories.f_id;
       this.s_id = categories.s_id;
-      
+
       // Reset the search results when filter changes
       this.searchResults = [];
       this.currentPage = 1;
-      
+
       // Only fetch if we have valid category ID
       if (this.m_id) {
         this.fetchProducts(this.m_id, this.f_id ?? 0, this.s_id ?? 0, 1);
@@ -177,6 +180,17 @@ export class SearchComponent implements OnChanges {
   ngOnInit(): void {
     this.getYears();
     const categoryId = this.categoryIdService.getCategoryId();
+    this.filterSearchService.selectedBrand$.subscribe((brandId) => {
+      if (brandId !== null) {
+        if (this.activeSearchType === 'general') {
+          this.performGeneralSearch(this.lastQuery || '');
+        } else if (this.activeSearchType === 'category') {
+          this.performCategorySearch(this.lastCategoryData || '');
+        } else if (this.activeSearchType === 'vehicle') {
+          this.performVehicleSearch(this.lastVehicleData || '');
+        }
+      }
+    });
     this.getMainCategories();
     this.recentlyViewedService.recentlyViewed$.subscribe((products) => {
       this.showRecentlyViewed = products.length > 0;
@@ -210,7 +224,7 @@ export class SearchComponent implements OnChanges {
       if (params['query']) {
         this.currentSearchState = {
           type: 'generalSearch',
-          data: params['query']
+          data: params['query'],
         };
         this.searchType = 'generalSearch';
         this.performGeneralSearch(params['query']);
@@ -222,11 +236,11 @@ export class SearchComponent implements OnChanges {
         const categoryData = {
           mainCategory: params['mainCategory'],
           firstSubCategory: params['firstSubCategory'],
-          secondSubCategory: params['secondSubCategory']
+          secondSubCategory: params['secondSubCategory'],
         };
         this.currentSearchState = {
           type: 'categorySearch',
-          data: categoryData
+          data: categoryData,
         };
         this.searchType = 'categorySearch';
         this.performCategorySearch(categoryData);
@@ -242,11 +256,11 @@ export class SearchComponent implements OnChanges {
           make: params['make'],
           model: params['model'],
           trim: params['trim'],
-          engine: params['engine']
+          engine: params['engine'],
         };
         this.currentSearchState = {
           type: 'vehicleSearch',
-          data: vehicleData
+          data: vehicleData,
         };
         this.searchType = 'vehicleSearch';
         this.performVehicleSearch(vehicleData);
@@ -261,115 +275,126 @@ export class SearchComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (isPlatformBrowser(this.platformId)) {
       if (changes['isLoading'] || changes['isPaginationLoading']) {
-        const isLoadingNow = 
-          (changes['isLoading']?.currentValue === true) || 
-          (changes['isPaginationLoading']?.currentValue === true);
-        
+        const isLoadingNow =
+          changes['isLoading']?.currentValue === true ||
+          changes['isPaginationLoading']?.currentValue === true;
+
         this.isLocallyLoading = isLoadingNow;
         this.cdr.detectChanges();
       }
-  
+
       if (changes['searchResults'] && changes['searchResults'].currentValue) {
         this.isLocallyLoading = false;
         this.cdr.detectChanges();
       }
     }
   }
-  
-// Fetch wishlist details
-loadWishlist(): void {
-  if (!this.userID) return;
-  
-  this.wishlistService.getWishlistDetailsByBusinessId(this.businessId).subscribe({
-    next: (response) => {
-      if (response && response.length > 0) {
-        const wishlistIds = response.map((item: any) => item.productId);
-        this.markWishlistProducts(wishlistIds);
-      }
-    },
-    error: (error) => {
-      console.error('Error loading wishlist:', error);
+
+  // Fetch wishlist details
+  loadWishlist(): void {
+    if (!this.userID) return;
+
+    this.wishlistService
+      .getWishlistDetailsByBusinessId(this.businessId)
+      .subscribe({
+        next: (response) => {
+          if (response && response.length > 0) {
+            const wishlistIds = response.map((item: any) => item.productId);
+            this.markWishlistProducts(wishlistIds);
+          }
+        },
+        error: (error) => {
+          console.error('Error loading wishlist:', error);
+        },
+      });
+  }
+
+  markWishlistProducts(wishlistIds: number[]): void {
+    this.products = this.products.map((product) => ({
+      ...product,
+      isInWishlist: wishlistIds.includes(product.product_id),
+    }));
+  }
+
+  toggleWishlist(product: any): void {
+    if (!this.userID) {
+      alert('Please log in to manage your wishlist.');
+      return;
     }
-  });
-}
 
-markWishlistProducts(wishlistIds: number[]): void {
-  this.products = this.products.map(product => ({
-    ...product,
-    isInWishlist: wishlistIds.includes(product.product_id)
-  }));
-}
-
-toggleWishlist(product: any): void {
-  if (!this.userID) {
-    alert('Please log in to manage your wishlist.');
-    return;
+    if (product.isInWishlist) {
+      this.removeFromWishlist(product);
+    } else {
+      this.addToWishlist(product);
+    }
   }
 
-  if (product.isInWishlist) {
-    this.removeFromWishlist(product);
-  } else {
-    this.addToWishlist(product);
-  }
-}
+  addToWishlist(product: any): void {
+    if (!this.userID) {
+      this.displayNotification('Please log in to add items to wishlist.');
+      return;
+    }
 
-addToWishlist(product: any): void {
-  if (!this.userID) {
-    this.displayNotification('Please log in to add items to wishlist.');
-    return;
-  }
-
-  this.addToWishlistService
-    .addToWishlist(
-      product.product_id,
-      this.userID,
-      Number(this.userID)  // Convert to number for businessId
-    )
-    .subscribe({
-      next: () => {
-        product.isInWishlist = true;
-        this.displayNotification('Product added to wishlist successfully!');
-      },
-      error: (error) => {
-        console.error('Error adding to wishlist:', error);
-        this.displayNotification('Error adding item to wishlist: ' + error.message);
-      }
-    });
-}
-
-removeFromWishlist(product: any): void {
-  if (!this.userID) {
-    this.displayNotification('Please log in to remove items from wishlist.');
-    return;
+    this.addToWishlistService
+      .addToWishlist(
+        product.product_id,
+        this.userID,
+        Number(this.userID) // Convert to number for businessId
+      )
+      .subscribe({
+        next: () => {
+          product.isInWishlist = true;
+          this.displayNotification('Product added to wishlist successfully!');
+        },
+        error: (error) => {
+          console.error('Error adding to wishlist:', error);
+          this.displayNotification(
+            'Error adding item to wishlist: ' + error.message
+          );
+        },
+      });
   }
 
-  this.removeFromWishlistService
-    .removeFromWishlist(
-      Number(this.userID), 
-      Number(this.userID),  // Convert to number for businessId
-      product.product_id
-    )
-    .subscribe({
-      next: () => {
-        product.isInWishlist = false;
-        this.displayNotification('Product removed from wishlist successfully!');
-      },
-      error: (error) => {
-        console.error('Error removing from wishlist:', error);
-        this.displayNotification('Error removing item from wishlist: ' + error.message);
-      }
-    });
-}
+  removeFromWishlist(product: any): void {
+    if (!this.userID) {
+      this.displayNotification('Please log in to remove items from wishlist.');
+      return;
+    }
 
+    this.removeFromWishlistService
+      .removeFromWishlist(
+        Number(this.userID),
+        Number(this.userID), // Convert to number for businessId
+        product.product_id
+      )
+      .subscribe({
+        next: () => {
+          product.isInWishlist = false;
+          this.displayNotification(
+            'Product removed from wishlist successfully!'
+          );
+        },
+        error: (error) => {
+          console.error('Error removing from wishlist:', error);
+          this.displayNotification(
+            'Error removing item from wishlist: ' + error.message
+          );
+        },
+      });
+  }
 
   private currentSearchState: {
-    type: 'generalSearch' | 'vehicleSearch' | 'categorySearch' | 'filterCategorySearch' | null;
+    type:
+      | 'generalSearch'
+      | 'vehicleSearch'
+      | 'categorySearch'
+      | 'filterCategorySearch'
+      | null;
     data: any;
   } = {
     type: null,
-    data: null
+    data: null,
   };
-
 
   fetchProducts(m_id: number, f_id: number, s_id: number, page: number): void {
     if (!m_id) {
@@ -380,16 +405,16 @@ removeFromWishlist(product: any): void {
       this.isPaginationLoading = false;
       return;
     }
-  
+
     this.searchType = 'filterCategorySearch';
     const take = this.pageSize;
     const requestData = { m_id, f_id, s_id, page, pageSize: take };
-  
+
     console.log('Request Data for Category API:', requestData);
-  
+
     // Set loading state BEFORE making the API call
     this.isLocallyLoading = true;
-    
+
     this.hierarchyProductsService.getHierarchyProducts(requestData).subscribe(
       (response) => {
         if (response.products && response.products.length > 0) {
@@ -400,7 +425,7 @@ removeFromWishlist(product: any): void {
           this.products = [];
           console.log('No products found for this category.');
         }
-        
+
         // Reset loading state after successful response
         this.isLocallyLoading = false;
         this.isLoading = false;
@@ -457,7 +482,7 @@ removeFromWishlist(product: any): void {
       `emitPageChange called with page: ${page} and searchType: ${this.searchType}`
     );
     this.currentPage = page;
-    this.isLocallyLoading = true; 
+    this.isLocallyLoading = true;
 
     // Update skip and page for pagination
     this.currentRequestData.skip = (this.currentPage - 1) * 10;
@@ -666,19 +691,32 @@ removeFromWishlist(product: any): void {
         );
     }
   }
-
+  
   // Ensure that `performGeneralSearch` respects the current page setting
   performGeneralSearch(query: string): void {
+    
+    if (this.activeSearchType !== 'general' || this.lastQuery !== query) {
+      this.filterSearchService.clearSelectedBrand();
+    }
+
+    this.lastQuery = query;
+    this.activeSearchType = 'general';
     console.log('Performing general search with query:', query);
-     // Get m_id, f_id, and s_id from CategoryNavbarSearchService
-     const { m_id, f_id, s_id } = this.categoryNavbarSearchService.getCategoryData();
+    // Get m_id, f_id, and s_id from CategoryNavbarSearchService
+    const { m_id, f_id, s_id } =
+      this.categoryNavbarSearchService.getCategoryData();
+
+    let selectedBrandId: number | null = null;
+    this.filterSearchService.selectedBrand$.subscribe((brandId) => {
+      selectedBrandId = brandId;
+    });
 
     this.currentRequestData = {
       // Store request data
       productName: '',
       manufacturer: '',
       compatibility: '',
-      brand: '',
+      brand: selectedBrandId !== null ? `${selectedBrandId}` : '',
       description: '',
       upc: '',
       partNumber: '',
@@ -736,16 +774,26 @@ removeFromWishlist(product: any): void {
   }
 
   performCategorySearch(categoryData: any): void {
+    if (this.activeSearchType !== 'category' || this.lastCategoryData !== categoryData) {
+      this.filterSearchService.clearSelectedBrand();
+    }
+    this.activeSearchType = 'category';
+    this.lastCategoryData = categoryData;
+    let selectedBrandId: number | null = null;
+    
+    this.filterSearchService.selectedBrand$.subscribe((brandId) => {
+      selectedBrandId = brandId;
+    });
     // Initialize `currentRequestData` with full request structure
     this.searchResults = [];
     this.currentRequestData = {
       productName: '',
       manufacturer: '',
       compatibility: '',
-      brand: '',
+      brand: selectedBrandId !== null ? `${selectedBrandId}` : '',
       description: '',
       upc: '',
-      partNumber: '', 
+      partNumber: '',
       attribute: '',
       includeCompatibility: false,
       includeManufacturer: false,
@@ -807,12 +855,22 @@ removeFromWishlist(product: any): void {
   }
 
   performVehicleSearch(vehicleData: any): void {
+    if (this.activeSearchType !== 'vehicle' || this.lastVehicleData !== vehicleData) {
+      this.filterSearchService.clearSelectedBrand();
+    }
+    this.activeSearchType = 'vehicle';
+    this.lastVehicleData = vehicleData;
+    let selectedBrandId: number | null = null;
+    // Subscribe to the brand observable to get the selected brand ID
+    this.filterSearchService.selectedBrand$.subscribe((brandId) => {
+      selectedBrandId = brandId;
+    });
     // Set up initial request data structure for vehicle search
     this.currentRequestData = {
       productName: '',
       manufacturer: '',
       compatibility: '',
-      brand: '',
+      brand: selectedBrandId !== null ? `${selectedBrandId}` : '',
       description: '',
       upc: '',
       partNumber: '',
@@ -848,6 +906,7 @@ removeFromWishlist(product: any): void {
       page: this.currentPage,
     };
     this.isLocallyLoading = true;
+    console.log('Vehicle search requestData:', this.currentRequestData);
 
     // Initial vehicle search request
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(

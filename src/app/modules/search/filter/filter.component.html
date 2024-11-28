@@ -18,7 +18,7 @@
       <div class="filter-checkbox">
         <label><input type="checkbox"> Top Seller</label>
         <span class="count">1000+</span>
-      </div> 
+      </div>
       <div class="filter-checkbox">
         <label><input type="checkbox"> Top Rated</label>
         <span class="count">1000+</span>
@@ -30,50 +30,74 @@
     </div>
   </div>
 
-<!-- Category Section -->
-<div class="filter-section">
-  <h3 class="Options" (click)="toggleSection('categories')">
-    <span>Category</span>
-    <i class="fa" [ngClass]="showCategories ? 'fa-minus' : 'fa-plus'"></i>
-  </h3>
-  <div *ngIf="showCategories">
-    <div *ngFor="let category of mainCategories" class="filter-checkbox">
-      <div class="category-item">
-        <label>
-          <input type="checkbox" [(ngModel)]="category.selected" (change)="onMainCategoryChange(category)" />
-          {{ category.name }}
-        </label>
-        <span (click)="toggleSubCategories(category)" class="toggle-icon">
-          <i class="fa" [ngClass]="category.showSubCategories ? 'fa-minus' : 'fa-plus'"></i>
-        </span>
-        <div *ngIf="category.showSubCategories" class="sub-category-section">
-          <div *ngFor="let subCategory of category.firstSubCategories" class="filter-checkbox sub-category">
-            <label>
-              <input type="checkbox" [(ngModel)]="subCategory.selected" (change)="onFirstSubCategoryChange(subCategory)" />
-              {{ subCategory.name }}
-            </label>
-            <span (click)="toggleSecondSubCategories(subCategory)" class="toggle-icon">
-              <i class="fa" [ngClass]="subCategory.showSecondSubCategories ? 'fa-minus' : 'fa-plus'"></i>
-            </span>
-            <div *ngIf="subCategory.showSecondSubCategories" class="second-sub-category-section">
-              <div *ngFor="let secondSubCategory of subCategory.secondSubCategories" class="filter-checkbox nested-sub-category">
-                <label>
-                  <input
-                    type="checkbox"
-                    [(ngModel)]="secondSubCategory.selected"
-                    (change)="onSecondSubCategoryChange(subCategory, secondSubCategory)"
-                  />
-                  {{ secondSubCategory.name }}
-                </label>
+  <!-- Category Section -->
+  <div class="filter-section">
+    <h3 class="Options" (click)="toggleSection('categories')">
+      <span>Category</span>
+      <i class="fa" [ngClass]="showCategories ? 'fa-minus' : 'fa-plus'"></i>
+    </h3>
+    <div *ngIf="showCategories">
+      <div *ngFor="let category of mainCategories" class="filter-checkbox">
+        <div class="category-item">
+          <label>
+            <input type="checkbox" [(ngModel)]="category.selected" (change)="onMainCategoryChange(category)" />
+            {{ category.name }}
+          </label>
+          <span (click)="toggleSubCategories(category)" class="toggle-icon">
+            <i class="fa" [ngClass]="category.showSubCategories ? 'fa-minus' : 'fa-plus'"></i>
+          </span>
+          <div *ngIf="category.showSubCategories" class="sub-category-section">
+            <div *ngFor="let subCategory of category.firstSubCategories" class="filter-checkbox sub-category">
+              <label>
+                <input type="checkbox" [(ngModel)]="subCategory.selected"
+                  (change)="onFirstSubCategoryChange(subCategory)" />
+                {{ subCategory.name }}
+              </label>
+              <span (click)="toggleSecondSubCategories(subCategory)" class="toggle-icon">
+                <i class="fa" [ngClass]="subCategory.showSecondSubCategories ? 'fa-minus' : 'fa-plus'"></i>
+              </span>
+              <div *ngIf="subCategory.showSecondSubCategories" class="second-sub-category-section">
+                <div *ngFor="let secondSubCategory of subCategory.secondSubCategories"
+                  class="filter-checkbox nested-sub-category">
+                  <label>
+                    <input type="checkbox" [(ngModel)]="secondSubCategory.selected"
+                      (change)="onSecondSubCategoryChange(subCategory, secondSubCategory)" />
+                    {{ secondSubCategory.name }}
+                  </label>
+                </div>
               </div>
             </div>
-            
           </div>
         </div>
       </div>
     </div>
   </div>
+
+
+<!-- Brands Section -->
+<div class="filter-section">
+  <h3 class="Options" (click)="toggleSection('brands')">
+    <span>Brands</span>
+    <i class="fa" [ngClass]="showBrands ? 'fa-minus' : 'fa-plus'"></i>
+  </h3>
+  <div *ngIf="showBrands" class="brands-container">
+    <!-- Iterate through the brands and create radio buttons -->
+    <div *ngFor="let brand of brands" class="filter-radio">
+      <label>
+        <input
+          type="radio"
+          name="brand"
+          [value]="brand.id"
+          [(ngModel)]="selectedBrand"
+          (change)="onBrandChange(brand.id)"
+        />
+        {{ brand.name }}
+      </label>
+    </div>
+  </div>
 </div>
+
+
 
 
   <!-- Manufacturer Section -->
@@ -127,4 +151,4 @@
       </div>
     </div>
   </div>
-</div> 
+</div>

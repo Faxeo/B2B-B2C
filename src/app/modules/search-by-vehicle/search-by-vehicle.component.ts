@@ -17,6 +17,7 @@ import { FetchYearService } from '../../core/services/fetch-year/fetch-year.serv
 import { FetchMakeService } from '../../core/services/fetch-make/fetch-make.service';
 import { FetchChildService } from '../../core/services/fetch-child/fetch-child.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FilterSearchService } from '../../core/services/filter-search/filter-search.service';
 
 @Component({
   selector: 'app-search-by-vehicle',
@@ -35,6 +36,8 @@ export class SearchByVehicleComponent {
 
   // @Output() pageChange = new EventEmitter<number>();
   // @Output() vehicleSearchPageChange = new EventEmitter<number>();
+
+  lastVehicleData: string = '';
 
   currentSearchType:
   | 'generalSearch'
@@ -77,6 +80,8 @@ export class SearchByVehicleComponent {
   pageSize: number = 10;
   currentRequestData: any = {};
 
+  activeSearchType: 'general' | 'category' | 'vehicle' = 'general';
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private loginService: LoginService,
@@ -87,7 +92,8 @@ export class SearchByVehicleComponent {
     private fetchChildService: FetchChildService,
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private filterSearchService: FilterSearchService
   ) {}
 
   ngOnInit(): void {
@@ -259,6 +265,16 @@ export class SearchByVehicleComponent {
   performVehicleSearch(vehicleData: any): void {
     // Set search type
     this.searchType = 'vehicleSearch';
+    if (this.activeSearchType !== 'vehicle' || this.lastVehicleData !== vehicleData) {
+      this.filterSearchService.clearSelectedBrand();
+    }
+    this.activeSearchType = 'vehicle';
+    this.lastVehicleData = vehicleData;
+    let selectedBrandId: number | null = null;
+    // Subscribe to the brand observable to get the selected brand ID
+    this.filterSearchService.selectedBrand$.subscribe((brandId) => {
+      selectedBrandId = brandId;
+    });
   
     // Set up initial request data structure for vehicle search
     this.currentRequestData = {

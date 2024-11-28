@@ -19,6 +19,7 @@ import { LogoutService } from '../../core/services/logout-service/logout-service
 import { DynamicSearchService } from '../../core/services/dynamic-search/dynamic-search.service';
 import { SidebarComponent } from '../sidebar/sidebar/sidebar.component';
 import { CategoryNavbarSearchService } from '../../core/services/category-navbar-search/category-navbar-search.service';
+import { FilterSearchService } from '../../core/services/filter-search/filter-search.service';
 
 @Component({
   selector: 'app-navbar',
@@ -84,7 +85,8 @@ export class NavbarComponent {
     private dynamicSearchService: DynamicSearchService,
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object,
-    private categoryNavbarSearchService: CategoryNavbarSearchService
+    private categoryNavbarSearchService: CategoryNavbarSearchService,
+    private filterSearchService: FilterSearchService
   ) {}
 
   ngOnInit(): void {
@@ -154,31 +156,49 @@ export class NavbarComponent {
 
   onSearch(page: number = 1): void {
     this.currentSearchType = 'generalSearch';
-  
-    const searchInputElement = document.getElementById('search-input') as HTMLInputElement;
-    const newSearchQuery = searchInputElement ? searchInputElement.value.trim() : '';
-  
+
+    const searchInputElement = document.getElementById(
+      'search-input'
+    ) as HTMLInputElement;
+    const newSearchQuery = searchInputElement
+      ? searchInputElement.value.trim()
+      : '';
+
+    // Clear brand ID if the search type changes or a new query is performed
+    if (
+      this.currentSearchType !== 'generalSearch' ||
+      this.searchQuery !== newSearchQuery
+    ) {
+      this.filterSearchService.clearSelectedBrand();
+    }
+
     // Initialize loading states
     this.isPaginationLoading = page !== 1; // Only show pagination loading for pages other than 1
     this.isLoading = page === 1; // Show main loading spinner only on the first page
-  
+
     // Update search query if it has changed
     if (newSearchQuery !== this.searchQuery) {
       this.searchQuery = newSearchQuery;
     }
-  
+
     this.showSearchComponent = true;
     const take = 10;
     const skip = (page - 1) * take;
-  
+
     // Get m_id, f_id, and s_id from CategoryNavbarSearchService
-    const { m_id, f_id, s_id } = this.categoryNavbarSearchService.getCategoryData();
-  
+    const { m_id, f_id, s_id } =
+      this.categoryNavbarSearchService.getCategoryData();
+    // Fetch the selected brand ID from FilterSearchService
+    let selectedBrandId: number | null = null;
+    this.filterSearchService.selectedBrand$.subscribe((brandId) => {
+      selectedBrandId = brandId;
+    });
+
     const requestData = {
       productName: '',
       manufacturer: '',
       compatibility: '',
-      brand: '',
+      brand: selectedBrandId !== null ? `${selectedBrandId}` : '',
       description: '',
       upc: '',
       partNumber: '',
@@ -214,14 +234,14 @@ export class NavbarComponent {
       page: page,
     };
     console.log('Request Data:', requestData);
-  
+
     // Update query params if there's a search query
     if (this.searchQuery) {
       this.router.navigate(['/search'], {
         queryParams: { query: this.searchQuery },
       });
     }
-  
+
     this.dynamicSearchService
       .searchProducts(requestData)
       .pipe(
@@ -238,7 +258,7 @@ export class NavbarComponent {
         this.searchProducts$ = of(products.products || []);
         this.totalPages = products.totalPages || 1;
         this.currentPage = page;
-  
+
         // Reset loading states
         this.isLoading = false;
         this.isPaginationLoading = false;
