@@ -206,3 +206,71 @@
   animation: slideDown 0.3s ease;
 }
 
+.Options {
+  font-size: 1.2rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.brands-container {
+  max-height: 200px; /* Set the height for the scrollable area */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding-right: 10px; /* Add some padding for better readability */
+}
+
+
+input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+.filter-section::-webkit-scrollbar {
+  width: 8px;
+}
+
+.filter-section::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+.filter-section::-webkit-scrollbar-thumb:hover {
+  background-color: #bbb;
+}
+
+.filter-section::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+.filter-radio {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.filter-radio label {
+  font-size: 1rem;
+  cursor: pointer;
+  margin-left: 5px;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+
+.filter-radio label:hover {
+  color: #007bff; /* Highlight text on hover */
+}
+
+input[type="radio"] {
+  margin-right: 0.5rem;
+  accent-color: #007bff; /* Style the radio button */
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+input[type="radio"]:hover {
+  transform: scale(1.1); /* Slightly enlarge on hover */
+}

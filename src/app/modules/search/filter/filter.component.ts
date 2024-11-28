@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FilterSearchService } from '../../../core/services/filter-search/filter-search.service';
 import { CategoryNavbarSearchService } from '../../../core/services/category-navbar-search/category-navbar-search.service';
+import { GetBrandsService } from '../../../core/services/get-brands/get-brands.service';
 
 @Component({
   selector: 'app-filter',
@@ -21,6 +22,7 @@ import { CategoryNavbarSearchService } from '../../../core/services/category-nav
   templateUrl: './filter.component.html',
   styleUrl: './filter.component.css',
 })
+
 export class FilterComponent {
   mainCategories: any[] = [];
   firstSubCategories: any[] = [];
@@ -38,6 +40,11 @@ export class FilterComponent {
   showManufacturers: boolean = false;
   showPrices: boolean = false;
   showMaterials: boolean = false;
+  brands: { id: number; name: string; selected: boolean }[] = [];
+  selectedBrand: number | null = null;
+  showBrands: boolean = false;
+  selectedBrandName: string | null = null; // Holds the name of the selected brand
+
 
   constructor(
     private navigationService: NavigationService,
@@ -49,10 +56,43 @@ export class FilterComponent {
     private cdr: ChangeDetectorRef,
     private filterSearchService: FilterSearchService,
     private categoryNavbarSearchService: CategoryNavbarSearchService,
+    private getBrandsService: GetBrandsService,
   ) {}
 
   ngOnInit(): void {
     this.getMainCategories();
+    this.getBrands();
+  }
+
+  getBrands(): void {
+    this.getBrandsService.fetchBrands().subscribe(
+      (data) => {
+        this.brands = data; // Now includes `selected` property
+      },
+      (error) => {
+        console.error('Error fetching brands:', error);
+      }
+    );
+  }
+
+  onBrandChange(brandId: number | null): void {
+    if (brandId === null) {
+      // Brand deselected
+      console.log('Brand deselected, setting brandId to null');
+      this.selectedBrand = null;
+      this.filterSearchService.clearSelectedBrand(); // Clear the selected brand
+    } else {
+      // Brand selected
+      console.log(`Selected brand ID: ${brandId}`);
+      this.selectedBrand = brandId;
+      this.filterSearchService.updateSelectedBrand(brandId); // Update the selected brand
+    }
+  }
+   
+  
+  updateSelectedBrands(brandIds: number[]): void {
+    console.log('Selected brands:', brandIds);
+    this.filterSearchService.updateSelectedBrands(brandIds); // Pass the correct parameter
   }
 
   onBackClick(): void {
@@ -61,7 +101,7 @@ export class FilterComponent {
 
   onCategorySelectionChange(): void {
     const selectedData = {
-      mainCategory: this.selectedMainCategory,  
+      mainCategory: this.selectedMainCategory,
       firstSubCategory: this.selectedFirstSubCategory,
       secondSubCategory: this.selectedSecondSubCategory,
     };
@@ -88,6 +128,9 @@ export class FilterComponent {
         break;
       case 'materials':
         this.showMaterials = !this.showMaterials;
+        break;
+      case 'brands': // Add this case
+        this.showBrands = !this.showBrands;
         break;
     }
   }
@@ -160,8 +203,7 @@ export class FilterComponent {
       );
   }
 
-
-   onFirstSubCategoryChange(subCategory: any): void {
+  onFirstSubCategoryChange(subCategory: any): void {
     // Reset selected second subcategory when first subcategory changes
     this.secondSubCategories.forEach(
       (secondSub) => (secondSub.selected = false)
@@ -291,6 +333,4 @@ export class FilterComponent {
       );
     }
   }
-
- 
 }

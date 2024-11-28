@@ -11,6 +11,7 @@ import { SubCategoryService } from '../../core/services/sub-category/sub-categor
 import { Router } from '@angular/router';
 import { CategoryIdService } from '../../core/services/category-id/category-id.service';
 import { HierarchyProductsService } from '../../core/services/hierarchy-products/hierarchy-products.service';
+import { FilterSearchService } from '../../core/services/filter-search/filter-search.service';
 
 @Component({
   selector: 'app-search-by-category',
@@ -64,7 +65,8 @@ export class SearchByCategoryComponent {
   s_id: number | null = null;
   products: any[] = [];
   pageSize: number = 10;
-
+  
+  lastCategoryData: string = '';
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -79,6 +81,7 @@ export class SearchByCategoryComponent {
     private router: Router,
     private categoryIdService: CategoryIdService,
     private hierarchyProductsService: HierarchyProductsService,
+    private filterSearchService: FilterSearchService
   ) { }
 
   ngOnInit(): void {
@@ -256,6 +259,18 @@ export class SearchByCategoryComponent {
   }
 
   performCategorySearch(categoryData: any): void {
+    // Clear brand ID if the search type changes or new category data is provided
+  if (
+    this.searchType !== 'categorySearch' ||
+    JSON.stringify(this.lastCategoryData) !== JSON.stringify(categoryData)
+  ) {
+    this.filterSearchService.clearSelectedBrand();
+  }
+    this.lastCategoryData = categoryData;
+    let selectedBrandId: number | null = null;
+    this.filterSearchService.selectedBrand$.subscribe((brandId) => {
+      selectedBrandId = brandId;
+    });
     // Initialize `currentRequestData` with full request structure
     this.searchType = 'categorySearch';
     this.currentSearchState.type = 'categorySearch';
@@ -266,7 +281,7 @@ export class SearchByCategoryComponent {
       productName: '',
       manufacturer: '',
       compatibility: '',
-      brand: '',
+      brand: selectedBrandId !== null ? `${selectedBrandId}` : '',
       description: '',
       upc: '',
       partNumber: '', 
