@@ -1,15 +1,16 @@
 .cart-sidebar {
-    width: 350px;
+    /* width: 350px; */
     background-color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
-    position: fixed;
+    /* position: fixed;
     right: 0;
-    top: 0;
+    top: 0; */
     height: 100%;
     display: flex;
     flex-direction: column;
     z-index: 1000;
+    /* margin-right: 0px; */
   }
   
   .cart-header {
@@ -150,7 +151,7 @@
   scrollbar-width: thin; /* Adjust scrollbar width for Firefox */
   scrollbar-color: #b71c1c #eaeaea; /* Custom scrollbar colors for Firefox */
 }
-
+ 
 .billing-information h3 {
   margin-bottom: 15px;
   font-size: 18px;

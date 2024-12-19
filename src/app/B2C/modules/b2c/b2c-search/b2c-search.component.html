@@ -1,0 +1,30 @@
+<div class="container">
+  <!-- Left Sidebar -->
+  <div class="sidebar" [class.collapsed]="isCollapsed">
+    <app-filter *ngIf="!isCollapsed"></app-filter>
+  </div>
+
+  <!-- Toggle Button for Filter Sidebar -->
+  <button class="toggle-btn filter-toggle" (click)="toggleSidebar()">
+    {{ isCollapsed ? '>>' : '<<' }}
+  </button>
+
+  <!-- General Search Component -->
+  <div
+    class="general-search"
+    [class.expanded-left]="isCollapsed"
+    [class.expanded-right]="isCartCollapsed"
+  >
+    <app-b2c-general-search></app-b2c-general-search>
+  </div>
+
+  <!-- Right Sidebar (Cart Sidebar) -->
+  <div
+    class="sidebar-cart"
+    [class.collapsed]="isCartCollapsed"
+    *ngIf="!isCartCollapsed"
+  >
+    <button class="cancel-btn" (click)="collapseCartSidebar()">X</button>
+    <app-cart-sidebar></app-cart-sidebar>
+  </div>
+</div>

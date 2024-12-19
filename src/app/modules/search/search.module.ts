@@ -6,10 +6,11 @@ import { SearchComponent } from './search.component';
 
 const routes: Routes = [
   {
-    path: '',
-    component: SearchComponent,
+    path: 'B2B/search',
+    component: SearchComponent, 
   },
 ];
+
 @NgModule({
   declarations: [],
   imports: [

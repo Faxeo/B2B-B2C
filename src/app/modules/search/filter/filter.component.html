@@ -74,30 +74,23 @@
   </div>
 
 
-<!-- Brands Section -->
-<div class="filter-section">
-  <h3 class="Options" (click)="toggleSection('brands')">
-    <span>Brands</span>
-    <i class="fa" [ngClass]="showBrands ? 'fa-minus' : 'fa-plus'"></i>
-  </h3>
-  <div *ngIf="showBrands" class="brands-container">
-    <!-- Iterate through the brands and create radio buttons -->
-    <div *ngFor="let brand of brands" class="filter-radio">
-      <label>
-        <input
-          type="radio"
-          name="brand"
-          [value]="brand.id"
-          [(ngModel)]="selectedBrand"
-          (change)="onBrandChange(brand.id)"
-        />
-        {{ brand.name }}
-      </label>
+  <!-- Brands Section -->
+  <div class="filter-section">
+    <h3 class="Options" (click)="toggleSection('brands')">
+      <span>Brands</span>
+      <i class="fa" [ngClass]="showBrands ? 'fa-minus' : 'fa-plus'"></i>
+    </h3>
+    <div *ngIf="showBrands" class="brands-container">
+      <!-- Iterate through the brands and create radio buttons -->
+      <div *ngFor="let brand of brands" class="filter-radio">
+        <label>
+          <input type="radio" name="brand" [value]="brand.id" [(ngModel)]="selectedBrand"
+            (change)="onBrandChange(brand.id)" />
+          {{ brand.name }}
+        </label>
+      </div>
     </div>
   </div>
-</div>
-
-
 
 
   <!-- Manufacturer Section -->

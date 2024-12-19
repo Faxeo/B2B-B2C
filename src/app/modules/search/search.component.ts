@@ -78,7 +78,7 @@ export class SearchComponent implements OnChanges {
   message: string = '';
   showMessage: boolean = false;
   showAlert: boolean = false;
-  cartItemCount: number = 0;
+  cartItemCount: number = 0; 
   isLocallyLoading: boolean = false;
   notificationMessage: string = '';
   notificationAlert: string = '';
@@ -189,7 +189,7 @@ export class SearchComponent implements OnChanges {
         } else if (this.activeSearchType === 'vehicle') {
           this.performVehicleSearch(this.lastVehicleData || '');
         }
-      }
+      } 
     });
     this.getMainCategories();
     this.recentlyViewedService.recentlyViewed$.subscribe((products) => {

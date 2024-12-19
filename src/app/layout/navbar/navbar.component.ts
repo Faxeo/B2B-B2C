@@ -237,7 +237,7 @@ export class NavbarComponent {
 
     // Update query params if there's a search query
     if (this.searchQuery) {
-      this.router.navigate(['/search'], {
+      this.router.navigate(['/B2B/search'], {
         queryParams: { query: this.searchQuery },
       });
     }
