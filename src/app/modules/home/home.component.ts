@@ -140,7 +140,7 @@ export class HomeComponent implements OnInit {
         this.cartService.setUserDetails(this.userID, this.loginType);
       });
     }
-
+ 
     this.categories$ = this.apiService.getMainCategory().pipe(
       map((categories) =>
         categories.map((category: { name: string }) => ({
@@ -628,7 +628,7 @@ export class HomeComponent implements OnInit {
 
     // Update query params if there's a search query
     if (this.searchQuery) {
-      this.router.navigate(['/search'], {
+      this.router.navigate(['/B2B/search'], {
         queryParams: { query: this.searchQuery },
       });
     }

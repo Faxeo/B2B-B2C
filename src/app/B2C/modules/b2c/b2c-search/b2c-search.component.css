@@ -1,0 +1,186 @@
+* {
+  margin: 0px 0px 0px 0px;
+  /* padding: 0px 0px 0px 0px; */
+  /* background-color: aliceblue; */
+  /* margin-right: 0px;
+  width: 100%; */
+}
+
+  /* Toggle Button Styling */
+  .toggle-btn {
+    position: absolute;
+    top: 57%;
+    left: 340px;
+    transform: translateY(-50%); /* Center the button vertically */
+    background-color: #b71c1c;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    height: 50px;
+    width: 50px;
+    z-index: 10;
+    transition: left 0.5s ease;
+  }
+  
+  .sidebar.collapsed + .toggle-btn {
+    left: 0;
+  }
+
+  /* Container Styling */
+.container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+}
+
+/* Sidebar styles */
+.sidebar {
+  width: 350px;
+  height: 100%;
+  margin-right: 0px;
+  padding-right: 0px;
+  /* transform: translateX(0); */
+  transition: transform 0.5s ease, width 0.5s ease;
+  /* background-color: #f8f9fa; */
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.sidebar.collapsed {
+  width: 0;
+  transform: translateX(-350px);
+  overflow: hidden;
+}
+
+/* Toggle Button Styling for Filter Sidebar */
+.filter-toggle {
+  position: absolute;
+  top: 50%;
+  left: 350px;
+  transform: translateY(-50%);
+  background-color: #b71c1c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  height: 50px;
+  width: 50px;
+  z-index: 10;
+  transition: left 0.5s ease;
+}
+
+.sidebar.collapsed + .filter-toggle {
+  left: 0;
+}
+
+/* General Search Component */
+.general-search {
+  flex: 1;
+  transition: flex 0.5s ease;
+  background-color: #fff;
+  padding: 20px;
+  margin-left: 10px;
+}
+
+.general-search.expanded-left {
+  flex-grow: 2; /* Expand more when filter sidebar is collapsed */
+}
+
+.general-search.expanded-right {
+  flex-grow: 2; /* Expand more when cart sidebar is collapsed */
+  margin-right: -170px;
+}
+
+/* Right Sidebar (Cart Sidebar) */
+.sidebar-cart {
+  width: 350px;
+  height: 100%;
+  background-color: #f8f9fa;
+  transition: transform 0.5s ease, width 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-right: -180px;
+}
+
+
+.sidebar-cart.collapsed {
+  width: 0;
+  transform: translateX(-350px);
+  overflow: hidden;
+}
+
+/* Cancel Button for Cart Sidebar */
+.cancel-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;  /* Transparent */
+  color: #1a3056;  /* Dark Navy */
+  border: none;
+  cursor: pointer;
+  font-size: 32px;  /* Larger and more visible */
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, color 0.3s ease;
+  z-index: 10;
+}
+
+.cancel-btn:hover {
+  color: #0f1d3a;  /* Darker navy on hover */
+  transform: rotate(90deg) scale(1.2);  /* Rotation and slight enlargement */
+}
+
+.cancel-btn:active {
+  transform: scale(0.9);  /* Slight shrink on click */
+  color: #0c172b;
+}
+
+
+
+/* Toggle Button Styling */
+.toggle-btn {
+  position: absolute;
+  top: 50%;
+  left: 340px;
+  transform: translateY(-50%);
+  background: radial-gradient(circle, #4a90e2 20%, #005bbb 80%);
+  color: white;
+  border: none;
+  border-radius: 50%;  /* Circular Shape */
+  cursor: pointer;
+  height: 45px;
+  width: 45px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  margin-left: 5px;
+}
+
+.toggle-btn:hover {
+  background: radial-gradient(circle, #005bbb 20%, #003d82 80%);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.toggle-btn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.toggle-icon {
+  font-size: 1.5rem;
+  font-weight: 500;
+  transition: transform 0.3s ease;
+}
+
+.toggle-btn.is-collapsed .toggle-icon {
+  transform: rotate(180deg);
+}

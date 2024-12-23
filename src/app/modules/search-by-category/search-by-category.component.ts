@@ -317,7 +317,7 @@ export class SearchByCategoryComponent {
       page: this.currentPage,
     };
     this.isLocallyLoading = true;
-    this.router.navigate(['/search'], { queryParams: 
+    this.router.navigate(['/B2B/search'], { queryParams: 
       {
         mainCategory: categoryData.mainCategory,
         firstSubCategory: categoryData.firstSubCategory,

@@ -15,8 +15,8 @@ import { FormsModule } from '@angular/forms';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AdminDashboardComponent } from './dashboard/admin-dashboard/admin-dashboard.component';
 import { CartComponent } from './modules/cart/cart.component';
-
-
+import { B2cSearchComponent } from './B2C/modules/b2c/b2c-search/b2c-search.component';
+// import { B2cSearchModule } from './B2C/modules/b2c/b2c-search/b2c-search.module';
 
 
 @NgModule({
@@ -35,10 +35,13 @@ import { CartComponent } from './modules/cart/cart.component';
     DashboardComponent,
     AdminDashboardComponent,
     CartComponent,
+    B2cSearchComponent,
+    // B2cSearchModule
   ],
   providers: [
     ApiService,
     provideHttpClient(withFetch())
   ]
 })
+
 export class AppModule { }

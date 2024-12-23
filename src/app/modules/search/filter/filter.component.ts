@@ -155,33 +155,102 @@ export class FilterComponent {
     );
   }
 
-  onMainCategoryChange(selectedCategory: any): void {
-    // Deselect all other main categories
-    this.mainCategories.forEach((category) => {
-      if (category !== selectedCategory) {
-        category.selected = false;
+  isAnySubCategorySelected(category: any): boolean {
+    if (category.firstSubCategories) {
+      return category.firstSubCategories.some((sub: any) => 
+        sub.selected || 
+        (sub.secondSubCategories && sub.secondSubCategories.some((secSub: any) => secSub.selected))
+      );
+    }
+    return false;
+  }
+  
+  updateCategorySelection(selectedCategory: any): void {
+    // Update selection logic here if necessary
+    console.log('Updating category selection:', selectedCategory);
+  
+    // Example: Update other parts of the component state if required
+    this.onCategorySelectionChange();
+  }
+
+  // Disable firstSubCategories if any secondSubCategory is selected
+isAnySecondSubCategorySelected(subCategory: any): boolean {
+  if (subCategory.secondSubCategories) {
+    return subCategory.secondSubCategories.some((secondSub: any) => secondSub.selected);
+  }
+  return false;
+}
+
+isAnyOtherFirstSubCategorySelected(currentSubCategory: any, category: any): boolean {
+  if (!category.firstSubCategories) return false;
+  
+  return category.firstSubCategories.some((firstSub: any) => {
+    if (firstSub === currentSubCategory) return false;
+    
+    // Check if this first subcategory is selected
+    if (firstSub.selected) return true;
+    
+    // Check if any of its second subcategories are selected
+    if (firstSub.secondSubCategories) {
+      return firstSub.secondSubCategories.some((secondSub: any) => secondSub.selected);
+    }
+    
+    return false;
+  });
+}
+
+// Disable main categories if any subcategories or second subcategories are selected
+
+
+
+onMainCategoryChange(selectedCategory: any): void {
+  // Deselect all other main categories and their subcategories
+  this.mainCategories.forEach((category) => {
+    if (category !== selectedCategory) {
+      category.selected = false;
+
+      // Deselect all first and second subcategories of the unselected main category
+      if (category.firstSubCategories) {
+        category.firstSubCategories.forEach((sub: any) => {
+          sub.selected = false;
+          if (sub.secondSubCategories) {
+            sub.secondSubCategories.forEach((secSub: any) => secSub.selected = false);
+          }
+        });
+      }
+    }
+  });
+
+  // Update selectedMainCategory
+  this.selectedMainCategory = selectedCategory.selected ? selectedCategory.id : null;
+
+  this.categoryNavbarSearchService.setCategoryData(
+    Number(this.selectedMainCategory),
+    0,
+    0
+  );
+
+  // Update the service with main category, and reset subcategory selections
+  this.filterSearchService.updateSelectedCategories(
+    Number(this.selectedMainCategory),
+    0,
+    0
+  );
+
+  // Reset first subcategories if the main category is unchecked
+  if (!selectedCategory.selected && selectedCategory.firstSubCategories) {
+    selectedCategory.firstSubCategories.forEach((sub: any) => {
+      sub.selected = false;
+      if (sub.secondSubCategories) {
+        sub.secondSubCategories.forEach((secSub: any) => secSub.selected = false);
       }
     });
+  }
 
-    // Update selectedMainCategory
-    this.selectedMainCategory = selectedCategory.selected
-      ? selectedCategory.id
-      : null;
+  this.updateCategorySelection(selectedCategory);
 
-    this.categoryNavbarSearchService.setCategoryData(
-      Number(this.selectedMainCategory),
-      0,
-      0
-    );
-
-    // Update the service with m_id, f_id as 0 (no subcategory selected yet), s_id as 0
-    this.filterSearchService.updateSelectedCategories(
-      Number(this.selectedMainCategory),
-      0,
-      0
-    );
-
-    // Fetch first subcategories for the selected main category
+  // Fetch first subcategories for the selected main category
+  if (this.selectedMainCategory) {
     this.subCategoryService
       .getSubCategories(1, Number(this.selectedMainCategory))
       .subscribe(
@@ -193,95 +262,115 @@ export class FilterComponent {
                 selected: false,
               }))
             : [];
-          this.selectedFirstSubCategory = '';
-          this.secondSubCategories = [];
-          this.selectedSecondSubCategory = '';
         },
         (error: any) => {
           console.error('Error fetching first sub-categories:', error);
         }
       );
   }
+}
 
-  onFirstSubCategoryChange(subCategory: any): void {
-    // Reset selected second subcategory when first subcategory changes
-    this.secondSubCategories.forEach(
-      (secondSub) => (secondSub.selected = false)
-    );
-    this.selectedSecondSubCategory = null;
 
-    // Update selectedFirstSubCategory
-    this.selectedFirstSubCategory = subCategory.selected
-      ? subCategory.id
-      : null;
 
-    // Save data to CategoryNavbarSearchService
-    this.categoryNavbarSearchService.setCategoryData(
-      Number(this.selectedMainCategory),
-      Number(this.selectedFirstSubCategory),
-      0
-    );
+onFirstSubCategoryChange(subCategory: any): void {
+  // Find the parent main category
+  const parentCategory = this.mainCategories.find(category => 
+    category.firstSubCategories?.some((sub: any) => sub === subCategory)
+  );
 
-    // Update the service with m_id, f_id, and s_id as 0 (no second subcategory selected yet)
-    this.filterSearchService.updateSelectedCategories(
-      Number(this.selectedMainCategory),
-      Number(this.selectedFirstSubCategory),
-      0
-    );
+  if (!parentCategory) return;
 
-    // Fetch second subcategories for the selected first subcategory
-    if (this.selectedFirstSubCategory) {
-      this.subCategoryService
-        .getSubCategories(2, Number(this.selectedFirstSubCategory))
-        .subscribe(
-          (data: any[]) => {
-            this.secondSubCategories = Array.isArray(data)
-              ? data.map((subCategory) => ({
-                  id: subCategory.id,
-                  name: subCategory.name,
-                  selected: false,
-                }))
-              : [];
-          },
-          (error: any) => {
-            console.error('Error fetching second sub-categories:', error);
-          }
-        );
+  // Deselect all other first subcategories of the same main category
+  parentCategory.firstSubCategories.forEach((firstSub: any) => {
+    if (firstSub !== subCategory) {
+      firstSub.selected = false;
+
+      // Deselect all second subcategories if the parent first subcategory is deselected
+      if (firstSub.secondSubCategories) {
+        firstSub.secondSubCategories.forEach((secSub: any) => secSub.selected = false);
+      }
     }
+  });
+
+  // Clear second subcategories when switching first subcategories
+  if (!subCategory.selected) {
+    if (subCategory.secondSubCategories) {
+      subCategory.secondSubCategories.forEach((secSub: any) => secSub.selected = false);
+    }
+    this.secondSubCategories = [];
+    this.selectedSecondSubCategory = null;
   }
 
-  onSecondSubCategoryChange(
-    subCategory: any,
-    selectedSecondSubCategory: any
-  ): void {
-    // Ensure only one second subcategory can be selected at a time
-    if (selectedSecondSubCategory.selected) {
-      subCategory.secondSubCategories.forEach(
-        (secondSub: { id: number; selected: boolean }) => {
-          if (secondSub !== selectedSecondSubCategory) {
-            secondSub.selected = false;
-          }
+  // Update selectedFirstSubCategory
+  this.selectedFirstSubCategory = subCategory.selected ? subCategory.id : null;
+
+  // Update CategoryNavbarSearchService
+  this.categoryNavbarSearchService.setCategoryData(
+    Number(this.selectedMainCategory),
+    Number(this.selectedFirstSubCategory),
+    0
+  );
+
+  // Reset second subcategory selection
+  this.filterSearchService.updateSelectedCategories(
+    Number(this.selectedMainCategory),
+    Number(this.selectedFirstSubCategory),
+    0
+  );
+
+  // Fetch second subcategories for the selected first subcategory
+  if (this.selectedFirstSubCategory) {
+    this.subCategoryService
+      .getSubCategories(2, Number(this.selectedFirstSubCategory))
+      .subscribe(
+        (data: any[]) => {
+          this.secondSubCategories = Array.isArray(data)
+            ? data.map((subCategory) => ({
+                id: subCategory.id,
+                name: subCategory.name,
+                selected: false,
+              }))
+            : [];
+        },
+        (error: any) => {
+          console.error('Error fetching second sub-categories:', error);
         }
       );
-      this.selectedSecondSubCategory = selectedSecondSubCategory.id;
-    } else {
-      this.selectedSecondSubCategory = null;
-    }
-
-    // Save data to CategoryNavbarSearchService
-    this.categoryNavbarSearchService.setCategoryData(
-      Number(this.selectedMainCategory),
-      Number(this.selectedFirstSubCategory),
-      Number(this.selectedSecondSubCategory)
-    );
-
-    // Update the service with the selected m_id, f_id, and s_id
-    this.filterSearchService.updateSelectedCategories(
-      Number(this.selectedMainCategory),
-      Number(this.selectedFirstSubCategory),
-      Number(this.selectedSecondSubCategory)
-    );
   }
+}
+
+
+
+onSecondSubCategoryChange(subCategory: any, selectedSecondSubCategory: any): void {
+  // Deselect other second subcategories of the same parent subcategory
+  if (selectedSecondSubCategory.selected) {
+    subCategory.secondSubCategories.forEach(
+      (secondSub: { id: number; selected: boolean }) => {
+        if (secondSub !== selectedSecondSubCategory) {
+          secondSub.selected = false;
+        }
+      }
+    );
+    this.selectedSecondSubCategory = selectedSecondSubCategory.id;
+  } else {
+    this.selectedSecondSubCategory = null;
+  }
+
+  // Update CategoryNavbarSearchService
+  this.categoryNavbarSearchService.setCategoryData(
+    Number(this.selectedMainCategory),
+    Number(this.selectedFirstSubCategory),
+    Number(this.selectedSecondSubCategory)
+  );
+
+  // Update the service with the selected m_id, f_id, and s_id
+  this.filterSearchService.updateSelectedCategories(
+    Number(this.selectedMainCategory),
+    Number(this.selectedFirstSubCategory),
+    Number(this.selectedSecondSubCategory)
+  );
+}
+
 
   // Method to toggle and fetch first subcategories
   toggleSubCategories(category: any): void {
@@ -333,4 +422,7 @@ export class FilterComponent {
       );
     }
   }
+
+  
 }
+ 

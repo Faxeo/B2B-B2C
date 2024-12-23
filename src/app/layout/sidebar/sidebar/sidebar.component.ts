@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SidebarToggleService } from '../../../core/services/sidebar-toggle/sidebar-toggle.service';
@@ -8,7 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../core/services/api.service';
 import { SignUpService } from '../../../core/services/signup-service/signup-service.service';
 
-@Component({
+@Component({ 
   selector: 'app-sidebar',
   standalone: true,
   templateUrl: './sidebar.component.html',
@@ -23,6 +23,8 @@ export class SidebarComponent implements OnInit {
   showPassword: boolean = false;
   selectedLoginType: string = '';
   errorMessage: string = '';
+  @Input() isVisible: boolean = false;
+
 
   constructor(
     private sidebarToggleService: SidebarToggleService,

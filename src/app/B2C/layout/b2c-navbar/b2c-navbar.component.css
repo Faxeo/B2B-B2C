@@ -1,0 +1,163 @@
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Navbar Styling */
+.navbar {
+  width: 100%;
+  padding: 12px 2%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Light, soft shadow */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  margin-bottom: 20px;
+}
+
+/* Logo Styling */
+.logo img {
+  height: 55px;
+  width: auto;
+  transition: transform 0.3s ease;
+  margin-left: 60px;
+}
+
+.logo:hover img {
+  transform: scale(1.1);
+}
+
+/* Hamburger Menu */
+.hamburger-menu {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 26px;
+  width: 35px;
+  margin-left: 0px;
+}
+
+.hamburger-menu span {
+  background-color: #333;  /* Default color for menu bars */
+  height: 4px;
+  width: 100%;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.hamburger-menu:hover span {
+  background-color: #1a3056;  /* Dark Navy on Hover */
+}
+
+/* Search Bar */
+.search-bar {
+  display: flex;
+  width: 850px;
+  margin-left: 80px;
+  max-width: 100%;
+  background: #f1f1f1;  /* Slightly lighter grey for contrast */
+  border-radius: 50px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+/* .search-bar:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);  
+} */
+
+.search-bar input {
+  flex-grow: 1;
+  border: none;
+  padding: 15px 20px;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  color: #333;
+}
+
+.search-bar input::placeholder {
+  color: #64748b;  /* Darker grey for readability */
+}
+
+/* Search Icon */
+.search-icon {
+  background: #1a3056;  /* Dark Navy Blue */
+  border: none;
+  padding: 14px 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-icon i {
+  color: white;
+  font-size: 1.2rem;
+}
+
+.search-icon:hover {
+  background: #142647;  /* Slightly darker navy on hover */
+}
+
+/* Navigation Icons */
+.nav-icons {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.nav-icons .btn {
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 1.6rem;
+  cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+  position: relative;
+}
+
+.nav-icons .btn:hover {
+  transform: scale(1.1);
+  color: #1a3056;  /* Dark Navy Hover */
+}
+
+/* Cart Badge */
+.cart-count-badge {
+  background-color: #1a3056;  /* Dark Navy Badge */
+  color: white;
+  border-radius: 50%;
+  padding: 4px 8px;
+  font-size: 13px;
+  position: absolute;
+  top: 2px;
+  right: 0;
+}
+
+/* Login & Heart Buttons */
+.heart-btn i,
+.login-btn i {
+  font-size: 1.4rem;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .search-bar {
+    width: 100%;
+    margin: 20px 0;
+  }
+
+  .nav-icons {
+    flex-direction: row;
+    gap: 20px;
+  }
+
+  .logo img {
+    height: 45px;
+  }
+}

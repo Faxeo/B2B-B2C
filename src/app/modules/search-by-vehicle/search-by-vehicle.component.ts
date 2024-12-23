@@ -291,7 +291,7 @@ export class SearchByVehicleComponent {
     };
   
     // Navigate to the /search route with query parameters for the vehicle data
-    this.router.navigate(['/search'], {
+    this.router.navigate(['/B2B/search'], {
       queryParams: {
         year: vehicleData.year,
         make: vehicleData.make,
