@@ -3,13 +3,14 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FilterComponent } from "../../../../modules/search/filter/filter.component";
-import { CartSidebarComponent } from '../../../../modules/cart-sidebar/cart-sidebar.component';
 import { B2cGeneralSearchComponent } from '../b2c-general-search/b2c-general-search.component';
+import { B2cNavbarComponent } from '../../../layout/b2c-navbar/b2c-navbar.component';
+import { B2cCartSidebarComponent } from "../b2c-cart-sidebar/b2c-cart-sidebar.component";
 
 @Component({
   selector: 'app-b2c-search',
   standalone: true,
-  imports: [RouterModule, CommonModule, FormsModule, FilterComponent, CartSidebarComponent, B2cGeneralSearchComponent],
+  imports: [RouterModule, CommonModule, FormsModule, FilterComponent, B2cGeneralSearchComponent, B2cNavbarComponent, B2cCartSidebarComponent],
   templateUrl: './b2c-search.component.html',
   styleUrls: ['./b2c-search.component.css'],
 })

@@ -203,7 +203,7 @@
     left: 0;
     width: 100%;
     height: 100%;  
-    background-image: url('/assets/new-background.png');
+    background-image: url('/assets/new-background-1.jpg');
     background-size: cover;
     background-position: center;
     /* filter: blur(3px);  */
@@ -251,21 +251,29 @@
     letter-spacing: 5px;
     font-weight: bold;
   }
-  .B2C-message{
+
+  .B2C-message {
     padding: 10px;
     display: inline-block;
     text-align: center;
-    /* text-decoration: underline; */
     width: 100%;
     max-width: 1500px;
-    margin-top: auto; /* Center the heading in the vertical space */
+    margin-top: auto;
     margin-bottom: 40px;
-    font-family:Bai Jamjuree ;
+    font-family: 'Bai Jamjuree', sans-serif;
     font-size: 48px;
     letter-spacing: 3px;
-    color: #b71c1c;;
-  
-  }
+    color: #ff1a1a;  /* Bright red text */
+    text-shadow: 
+        1px 1px 0 #cc0000,  /* Dark red */
+        2px 2px 0 #b30000,
+        3px 3px 0 #990000,
+        4px 4px 0 #800000,
+        5px 5px 0 #660000,
+        6px 6px 8px rgba(255, 0, 0, 0.7);  /* Red glow */
+    transform: translateY(-5px);
+}
+
   
   .welcome-message-outer-div{
     position: relative;
