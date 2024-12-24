@@ -4,17 +4,20 @@ import { HomeComponent } from './modules/home/home.component';
 import { B2CHomeComponent } from './B2C/modules/b2c/b2c-home/b2c-home.component';
 import { B2cSearchComponent } from './B2C/modules/b2c/b2c-search/b2c-search.component';
 import { SearchComponent } from './modules/search/search.component';
+import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
-    canActivate: [HomeGuard], // Apply HomeGuard to determine redirection
+    canActivate: [HomeGuard], 
+    
     loadChildren: () =>
       import('./B2C/modules/b2c/b2c.module').then((m) => m.B2CModule),
   },
   {
     path: 'B2C',
     component: B2CHomeComponent,
+    canActivate: [authGuard],
     // children: [
     //   { path: 'search', component: B2cSearchComponent }
     // ]
@@ -22,6 +25,7 @@ export const routes: Routes = [
   {
     path: 'B2C/search',
     component: B2cSearchComponent,
+    canActivate: [authGuard],
     loadChildren: () =>
       import('./B2C/modules/b2c/b2c.module').then((m) => m.B2CModule),
   },

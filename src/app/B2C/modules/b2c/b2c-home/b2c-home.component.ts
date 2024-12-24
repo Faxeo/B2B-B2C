@@ -195,18 +195,17 @@ export class B2CHomeComponent implements OnInit {
     this.isAdminSidebarVisible = !this.isAdminSidebarVisible;
   }
 
-
   toggleSlider(): void {
     this.isSliderVisible = !this.isSliderVisible;
     this.cdr.detectChanges();
-    this.sidebarToggleService.toggleSidebar();
+    // this.sidebarToggleService.toggleSidebar();
 
      // Toggle sidebar visibility when slider is activated
-     if (this.isSliderVisible) {
-      this.isSidebarVisible = true;
-    } else {
-      this.isSidebarVisible = false;
-    }
+    //  if (this.isSliderVisible) {
+    //   this.isSidebarVisible = true;
+    // } else {
+    //   this.isSidebarVisible = false;
+    // }
     console.log('isSliderVisible:', this.isSliderVisible, 'isSidebarVisible:', this.isSidebarVisible);
   
     // Use Angular's Renderer2 for DOM manipulation if necessary
@@ -222,6 +221,10 @@ export class B2CHomeComponent implements OnInit {
         sliderButton.classList.remove('slide-out');
       }
     }
+  }
+
+  becomeB2BUser() {
+    this.router.navigate(['/B2B']);
   }
 
   onCategoryClick(categoryId: number): void {
