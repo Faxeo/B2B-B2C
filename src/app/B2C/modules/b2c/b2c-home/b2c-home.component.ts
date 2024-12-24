@@ -53,7 +53,10 @@ import { B2cSearchComponent } from '../b2c-search/b2c-search.component';
   ],
   providers: [ApiService, SidebarToggleService],
   templateUrl: './b2c-home.component.html',
-  styleUrl: './b2c-home.component.css'
+  styleUrls:[
+    './b2c-home.component.css',
+    './b2c-theme.component.css'
+  ]
 })
 
 export class B2CHomeComponent implements OnInit {
