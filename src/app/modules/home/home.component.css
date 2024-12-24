@@ -453,7 +453,7 @@
 }
 
 .product-container {
-  min-width: 450px;
+  min-width: 500px;
   height: 300px;
   padding-right: 15px;
   margin-bottom: 10px;
@@ -748,3 +748,6 @@ span.input-group-text button i {
   100% { opacity: 1; }
 }
 
+.name-price{
+  width: 100px;
+}

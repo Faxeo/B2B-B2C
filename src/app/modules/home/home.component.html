@@ -1,7 +1,7 @@
 <!-- Toolbar -->
 <nav class="navbar navbar-expand-lg">
   <div class="container-fluid">
-    <a class="navbar-brand logo" href="/">
+    <a class="navbar-brand logo" href="/B2B">
       <img src="assets/logo.png" alt="US Auto Parts" height="50" width="80%">
     </a>
     <div class="d-flex flex-grow-1 align-items-center justify-content-between">
@@ -279,11 +279,26 @@
 
           <div class="d-flex justify-content-between align-items-center mb-2">
             <!-- Product Name and Price -->
-            <div class="red-div px-2 align-items-center justify-content-end"
+            <div class="red-div px-2 align-items-center justify-content-end name-price"
               style="padding-top: .3rem !important; padding-bottom: .5rem !important; width: 50%;">
               <span class="me-2">{{ product.product_name }}</span>
-              <span>${{ product.product_price }}</span>
+
+              <ng-container *ngIf="loginType === null; else loggedInPrice">
+                <div class="login-overlay">
+                  Log in to see the prices
+                </div>
+              </ng-container>
+
+              <ng-template #loggedInPrice>
+                <span *ngIf="product.product_price === 0 || product.availableQuantity === 0; else showPrice">
+                  Out of Stock
+                </span>
+                <ng-template #showPrice>
+                  <span>${{ product.product_price }}</span>
+                </ng-template>
+              </ng-template>
             </div>
+
 
             <!-- Quantity Control in Home Component -->
             <div class="quantity-control d-flex align-items-center red-div px-2 me-2">
