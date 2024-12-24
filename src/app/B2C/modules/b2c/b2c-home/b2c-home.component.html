@@ -104,7 +104,7 @@
     <div class="container-fluid h-100 d-flex flex-column justify-content-center align-items-center">
       <div class="welcome-message-outer-div">
         <h2 class="welcome-message">Welcome to</h2>
-        <h2 class="USAP-message"> US AUTOPARTS Experts</h2>
+        <h2 class="USAP-message"> US AUTOPARTS EXPERTS</h2>
         <h2 class="B2C-message"> B2C Platform </h2>
       </div>
 
@@ -130,10 +130,13 @@
 </div>
 <div class="slider-container" style="height: inherit;" id="sliderContainer" [ngClass]="{'active': isSliderVisible}">
   <div class="inner-container" *ngIf="isSliderVisible">
-    <h4>Do You Want To Become a B2B User!</h4>
-    <p>Us Auto Parts</p>
+    <div class="content-wrapper">
+      <h2 class="slider-title">Unlock Exclusive B2B Benefits</h2>
+      <p class="slider-subtitle">Join Us Auto Parts as a B2B Partner</p>
+      <button class="action-button" (click)="becomeB2BUser()">Become a B2B User</button>
+    </div>
   </div>
-  <button class="slider-button" id="sliderButton" (click)="toggleSlider(); toggleAdminSidebar()">
+  <button class="slider-button" id="sliderButton" (click)="toggleSlider()">
     <span><strong>B2B</strong></span>
   </button>
 </div>

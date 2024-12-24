@@ -139,7 +139,7 @@ export class HomeComponent implements OnInit {
         }
         this.cartService.setUserDetails(this.userID, this.loginType);
       });
-    }
+    } 
  
     this.categories$ = this.apiService.getMainCategory().pipe(
       map((categories) =>
