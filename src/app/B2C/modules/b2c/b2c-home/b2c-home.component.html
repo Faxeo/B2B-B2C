@@ -10,7 +10,7 @@
 
 
 <!-- Admin Sidebar Options -->
-<div *ngIf="isAdminSidebarVisible && loginType === 'admin'" class="admin-sidebar-options">
+<!-- <div *ngIf="isAdminSidebarVisible && loginType === 'admin'" class="admin-sidebar-options">
   <ul>
     <li><a routerLink="/admin-dashboard">Profile</a></li>
     <li><a routerLink="/" (click)="logout()">Logout</a></li>
@@ -26,7 +26,7 @@
     <li><a routerLink="/admin-reports">Wishlist</a></li>
     <li><a routerLink="/admin-settings">Your Orders</a></li>
   </ul>
-</div>
+</div> -->
 
  
 <!-- New Section with Background Image -->
@@ -134,10 +134,10 @@
     <div class="content-wrapper">
       <h2 class="slider-title">Unlock Exclusive B2B Benefits</h2>
       <p class="slider-subtitle">Join Us Auto Parts as a B2B Partner</p>
-      <button class="action-button" (click)="becomeB2BUser()">Become a B2B User</button>
+      <button class="action-button" >Become a B2B User</button>
     </div>
   </div>
-  <button class="slider-button" id="sliderButton" (click)="toggleSlider()">
+  <button class="slider-button" id="sliderButton" (click)="becomeB2BUser()">
     <span><strong>B2B</strong></span>
   </button>
 </div>

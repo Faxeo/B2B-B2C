@@ -28,7 +28,7 @@ export class LogoutService {
         next: () => {
           localStorage.clear();
           this.loginService.clearData();
-          this.router.navigate(['/']); // Redirect to login page after logout
+          this.router.navigate(['/B2B']); // Redirect to login page after logout
         },
         error: (error) => {
           console.error('Logout failed', error);

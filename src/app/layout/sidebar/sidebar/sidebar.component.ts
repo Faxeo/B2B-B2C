@@ -7,6 +7,8 @@ import { LoginService } from '../../../core/services/login-service/login-service
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../core/services/api.service';
 import { SignUpService } from '../../../core/services/signup-service/signup-service.service';
+import { AuthService } from '../../../core/services/Session/auth.service';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({ 
   selector: 'app-sidebar',
@@ -31,7 +33,9 @@ export class SidebarComponent implements OnInit {
     private loginService: LoginService,
     private router: Router,
     private apiService: ApiService,
-    private signUpService: SignUpService
+    private signUpService: SignUpService,
+    private authService: AuthService,
+    private cookieService: CookieService
   ) {}
 
   ngOnInit() {
@@ -42,6 +46,22 @@ export class SidebarComponent implements OnInit {
     this.loginService.getLoginType().subscribe((type) => {
       this.selectedLoginType = type || '';
     });
+
+    this.sidebarToggleService.getSidebarState().subscribe((state) => {
+      this.isExpanded = state;
+    });
+
+    this.sidebarToggleService.getSidebarState().subscribe((state) => {
+      this.isExpanded = state;
+    });
+  
+    if (typeof window !== 'undefined' && localStorage) {
+      this.authService.checkTokenOnInit() ;
+    }
+  
+    this.loginService.getLoginType().subscribe((type) => {
+      this.selectedLoginType = type || '';
+    });
   }
 
   closeSidebar() { 
@@ -49,12 +69,11 @@ export class SidebarComponent implements OnInit {
   }
 
   onLogin() {
-    // Clear any previous error messages before attempting to log in again
     this.errorMessage = '';
   
     if (this.selectedLoginType && this.email && this.password) {
       let apiUrl = '';
-      let redirectUrl = '/'; // Default redirect URL after login
+      let redirectUrl = '/B2B';
   
       switch (this.selectedLoginType) {
         case 'admin':
@@ -66,7 +85,7 @@ export class SidebarComponent implements OnInit {
           apiUrl = `Profile/${this.selectedLoginType}Login`;
           break;
         default:
-          this.errorMessage = 'Wrong Login Type'; // Set error for wrong login type
+          this.errorMessage = 'Wrong Login Type';
           return;
       }
   
@@ -78,41 +97,37 @@ export class SidebarComponent implements OnInit {
       this.apiService.post<any>(apiUrl, loginData).subscribe({
         next: (response) => {
           if (response.token) {
-            localStorage.setItem('token', response.token);
+            // Use AuthService to set token instead of localStorage
+            this.authService.login(response.token);  // Use login to set token
             this.loginService.setLoginType(this.selectedLoginType);
   
-            if (response.response && response.response.data) {
-              const userID = response.response.data.customer_id; 
-  
-              if (userID) {
-                localStorage.setItem('userID', userID);
-                this.loginService.setUserID(userID);
-              } else {
-                this.errorMessage = 'User ID not found in the response data.';
-              }
+            if (response.response?.data?.customer_id) {
+              const userID = response.response.data.customer_id;
+              this.cookieService.set('userID', userID);
+              this.loginService.setUserID(userID);
+            } else {
+              this.errorMessage = 'User ID not found in the response data.';
             }
           } else {
-            this.errorMessage = 'Wrong password or email.'; // Set error for wrong email or password
+            this.errorMessage = 'Wrong password or email.';
           }
         },
         error: (error) => {
-          this.errorMessage = 'Login failed. Please check your credentials.'; // Set error on API failure
+          this.errorMessage = 'Login failed. Please check your credentials.';
           console.error('Login failed', error);
         },
         complete: () => {
-          if (!this.errorMessage) {  // Only proceed if there are no errors
+          if (!this.errorMessage) {
             this.router.navigate([redirectUrl]).then(() => {
-              // Close sidebar after successful navigation
               this.closeSidebar();
             });
           }
         },
       });
     } else {
-      this.errorMessage = 'Please fill in all the fields.'; // Handle empty fields
+      this.errorMessage = 'Please fill in all the fields.';
     }
   }
-  
 
   setLoginType(type: string) {
     this.loginService.setLoginType(type);

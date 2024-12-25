@@ -78,14 +78,14 @@
 <div *ngIf="isAdminSidebarVisible && loginType === 'admin'" class="admin-sidebar-options">
   <ul>
     <li><a routerLink="/admin-dashboard">Profile</a></li>
-    <li><a routerLink="/" (click)="logout()">Logout</a></li>
+    <li><a routerLink="/B2B" (click)="logout()">Logout</a></li>
   </ul>
 </div>
 
 <div *ngIf="isAdminSidebarVisible && loginType === 'business'" class="admin-sidebar-options">
   <ul>
     <li><a routerLink="/business-dashboard">Profile</a></li>
-    <li><a routerLink="/" (click)="logout()">Logout</a></li>
+    <li><a routerLink="/B2B" (click)="logout()">Logout</a></li>
     <li><a routerLink="/wishlist">Wishlist</a></li>
     <li><a routerLink="/admin-settings">Your Orders</a></li>
   </ul>
