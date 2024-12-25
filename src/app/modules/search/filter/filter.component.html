@@ -60,7 +60,7 @@
               <span (click)="toggleSecondSubCategories(subCategory)" class="toggle-icon">
                 <i class="fa" [ngClass]="subCategory.showSecondSubCategories ? 'fa-minus' : 'fa-plus'"></i>
               </span>
-
+ 
               <!-- Second Subcategory Level -->
               <div *ngIf="subCategory.showSecondSubCategories" class="second-sub-category-section">
                 <div *ngFor="let secondSubCategory of subCategory.secondSubCategories"
@@ -83,25 +83,23 @@
   </div>
 
 
-
-
-  <!-- Brands Section -->
-  <div class="filter-section">
-    <h3 class="Options" (click)="toggleSection('brands')">
-      <span>Brands</span>
-      <i class="fa" [ngClass]="showBrands ? 'fa-minus' : 'fa-plus'"></i>
-    </h3>
-    <div *ngIf="showBrands" class="brands-container">
-      <!-- Iterate through the brands and create radio buttons -->
-      <div *ngFor="let brand of brands" class="filter-radio">
-        <label>
-          <input type="radio" name="brand" [value]="brand.id" [(ngModel)]="selectedBrand"
-            (change)="onBrandChange(brand.id)" />
-          {{ brand.name }}
-        </label>
-      </div>
+<!-- Brands Section -->
+<div class="filter-section">
+  <h3 class="Options" (click)="toggleSection('brands')">
+    <span>Brands</span>
+    <i class="fa" [ngClass]="showBrands ? 'fa-minus' : 'fa-plus'"></i>
+  </h3>
+  <div *ngIf="showBrands" class="brands-container">
+    <!-- Iterate through the brands and create checkboxes -->
+    <div *ngFor="let brand of brands" class="filter-checkbox">
+      <label>
+        <input type="checkbox" [checked]="selectedBrand === brand.id" (change)="onCheckboxChange(brand.id)" />
+        {{ brand.name }}
+      </label>
     </div>
   </div>
+</div>
+
 
 
   <!-- Manufacturer Section -->

@@ -112,6 +112,28 @@ export class FilterComponent {
     );
   }
 
+  onCheckboxChange(brandId: number): void {
+    // If the selected brand is the same, deselect it
+    if (this.selectedBrand === brandId) {
+      this.selectedBrand = null;
+      this.filterSearchService.clearSelectedBrand();
+      console.log('Brand deselected:', brandId);
+    } else {
+      // Deselect all brands and select the new one
+      this.brands.forEach(brand => brand.selected = false);
+      
+      const selectedBrand = this.brands.find(brand => brand.id === brandId);
+      if (selectedBrand) {
+        selectedBrand.selected = true;
+        this.selectedBrand = brandId;
+        this.filterSearchService.updateSelectedBrand(brandId);
+        console.log('Brand selected:', brandId);
+      }
+    }
+  }
+  
+
+
   toggleSection(section: string): void {
     switch (section) {
       case 'filters':
@@ -337,7 +359,7 @@ onFirstSubCategoryChange(subCategory: any): void {
         }
       );
   }
-}
+} 
 
 
 

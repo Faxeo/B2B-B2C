@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from './layout/sidebar/sidebar/sidebar.component';
+import { AuthService } from './core/services/Session/auth.service';
 
 
 @Component({
@@ -13,4 +14,7 @@ import { SidebarComponent } from './layout/sidebar/sidebar/sidebar.component';
 })
 export class AppComponent {
   title = 'b2b-angular';
+  constructor(private authService: AuthService) {
+    // AuthService constructor will handle token check
+  }
 }

@@ -1,7 +1,7 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
+import { CommonModule } from '@angular/common';
+import { ChatbotService } from '../../core/services/chat-bot/chat-bot.service';
 
 interface Message {
   text: string;
@@ -11,17 +11,21 @@ interface Message {
 @Component({
   selector: 'app-chat-bot',
   standalone: true,
-  imports: [FormsModule,CommonModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './chat-bot.component.html',
   styleUrl: './chat-bot.component.css'
 })
 export class ChatBotComponent {
   messages: Message[] = [];
   userInput: string = '';
-  isChatVisible: boolean = false; // Initially set to false
+  isChatVisible: boolean = false;
+
+  constructor(private chatbotService: ChatbotService) {}
+
   toggleChat() {
-    this.isChatVisible = !this.isChatVisible; // Toggle chat visibility
+    this.isChatVisible = !this.isChatVisible;
   }
+
   sendMessage() {
     if (this.userInput.trim()) {
       this.messages.push({ text: this.userInput, sender: 'user' });
@@ -31,8 +35,13 @@ export class ChatBotComponent {
   }
 
   getBotResponse(input: string) {
-    setTimeout(() => {
-      this.messages.push({ text: `You said: ${input}`, sender: 'bot' });
-    }, 1000);
+    this.chatbotService.sendMessageToBot(input).subscribe(
+      (response) => {
+        this.messages.push({ text: response.reply || 'No response', sender: 'bot' });
+      },
+      (error) => {
+        this.messages.push({ text: 'Error contacting bot. Please try again.', sender: 'bot' });
+      }
+    );
   }
 }

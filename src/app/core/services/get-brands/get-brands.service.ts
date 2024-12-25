@@ -12,8 +12,10 @@ export class GetBrandsService {
   fetchBrands(requestData: any = {}): Observable<{ id: number; name: string; selected: boolean }[]> {
     return this.apiService.post<{ id: number; name: string }[]>('Product/getBrands', requestData).pipe(
       map((brands: { id: number; name: string }[]) =>
-        brands.map((brand: { id: number; name: string }) => ({ ...brand, selected: false }))
+        brands
+          .sort((a, b) => a.name.localeCompare(b.name)) // Sort by name in ascending order
+          .map((brand: { id: number; name: string }) => ({ ...brand, selected: false }))
       )
     );
-  }
+  }  
 }
