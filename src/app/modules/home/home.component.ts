@@ -301,7 +301,7 @@ export class HomeComponent implements OnInit {
       this.selectedFirstSubCategory ||
       this.selectedSecondSubCategory
     ) {
-      this.router.navigate(['/search'], {
+      this.router.navigate(['/B2B/search'], {
         queryParams: {
           mainCategory: this.selectedMainCategory || '',
           firstSubCategory: this.selectedFirstSubCategory || '',
@@ -537,7 +537,7 @@ export class HomeComponent implements OnInit {
       vehicleData.trim &&
       vehicleData.engine
     ) {
-      this.router.navigate(['/search'], {
+      this.router.navigate(['/B2B/search'], {
         queryParams: {
           year: vehicleData.year,
           make: vehicleData.make,
@@ -571,35 +571,33 @@ export class HomeComponent implements OnInit {
 
   onSearch(page: number = 1): void {
     this.currentSearchType = 'generalSearch';
+    
+    // Get the search input value
     const searchInputElement = document.getElementById(
       'search-input'
     ) as HTMLInputElement;
-    const newSearchQuery = searchInputElement
-      ? searchInputElement.value.trim()
-      : '';
+    
+    // Initialize the search query (can be empty string)
+    this.searchQuery = searchInputElement ? searchInputElement.value.trim() : '';
 
     // Initialize loading states
-    this.isPaginationLoading = page !== 1; // Only show pagination loading for pages other than 1
-    this.isLoading = page === 1; // Show main loading spinner only on the first page
-
-    // Update search query if it has changed
-    if (newSearchQuery !== this.searchQuery) {
-      this.searchQuery = newSearchQuery;
-    }
-
+    this.isPaginationLoading = page !== 1;
+    this.isLoading = page === 1;
     this.showSearchComponent = true;
+
     const take = 10;
     const skip = (page - 1) * take;
 
+    // Create request data - all fields empty by default
     const requestData = {
-      productName: '',
-      manufacturer: '',
-      compatibility: '',
-      brand: '',
-      description: '',
-      upc: '',
-      partNumber: '',
-      attribute: '',
+      productName: "",
+      manufacturer: "",
+      compatibility: "",
+      brand: "",
+      description: "",
+      upc: "",
+      partNumber: "",
+      attribute: "",
       includeCompatibility: false,
       includeManufacturer: false,
       includeAttribute: false,
@@ -607,32 +605,44 @@ export class HomeComponent implements OnInit {
       includeImages: false,
       skip: skip,
       take: take,
-      search_description: this.searchQuery,
+      m_id: null,
+      f_id: null,
+      s_id: null,
+      keyFeature: "",
+      vendor: null,
+      search_description: "",
       compatiblityValues: {
         compatibilityID: 0,
         productID: 0,
         sno: null,
-        year: '',
-        make: '',
-        model: '',
-        trim: '',
-        engine: '',
-        notes: '',
-        isDeleted: null,
+        year: "",
+        make: "",
+        model: "",
+        trim: "",
+        engine: "",
+        notes: "",
+        isDeleted: null
       },
-      product_Attributes:
-        "SELECT product_id FROM product_attributes_view WHERE concatenated_attributes LIKE '%%' order by product_id",
+      product_Attributes: "SELECT product_id FROM product_attributes_view WHERE concatenated_attributes LIKE '%%' order by product_id",
       attributeSearch: false,
-      page: page,
+      page: page
     };
 
-    // Update query params if there's a search query
+    // Update URL state
     if (this.searchQuery) {
       this.router.navigate(['/B2B/search'], {
-        queryParams: { query: this.searchQuery },
+        queryParams: { query: this.searchQuery }
+      });
+      requestData.search_description = this.searchQuery;
+    } else {
+      // Clear query params but still navigate to search page
+      this.router.navigate(['/B2B/search'], {
+        queryParams: {},
+        replaceUrl: true
       });
     }
 
+    // Always make the API call
     this.dynamicSearchService
       .searchProducts(requestData)
       .pipe(
@@ -644,18 +654,25 @@ export class HomeComponent implements OnInit {
           return of({ products: [], totalPages: 1 });
         })
       )
-      .subscribe((products: any) => {
-        // Update results and pagination data
-        this.searchProducts$ = of(products.products || []);
-        this.totalPages = products.totalPages || 1;
-        this.currentPage = page;
+      .subscribe({
+        next: (products: any) => {
+          this.searchProducts$ = of(products.products || []);
+          this.totalPages = products.totalPages || 1;
+          this.currentPage = page;
 
-        // Reset loading states
-        this.isLoading = false;
-        this.isPaginationLoading = false;
-        this.cdr.detectChanges(); // Ensure the UI is updated
+          // Reset loading states
+          this.isLoading = false;
+          this.isPaginationLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('Error in search subscription:', error);
+          this.isLoading = false;
+          this.isPaginationLoading = false;
+          this.cdr.detectChanges();
+        }
       });
-  }
+}
 
   onPageChange(page: number): void {
     this.currentPage = page; // Update currentPage in HomeComponent

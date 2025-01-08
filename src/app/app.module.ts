@@ -18,6 +18,7 @@ import { CartComponent } from './modules/cart/cart.component';
 import { B2cSearchComponent } from './B2C/modules/b2c/b2c-search/b2c-search.component';
 import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { CookieService } from 'ngx-cookie-service';
+import { B2cCartComponent } from './B2C/modules/b2c/b2c-cart/b2c-cart.component';
 // import { B2cSearchModule } from './B2C/modules/b2c/b2c-search/b2c-search.module';
 
 
@@ -38,6 +39,7 @@ import { CookieService } from 'ngx-cookie-service';
     AdminDashboardComponent,
     CartComponent,
     B2cSearchComponent,
+    B2cCartComponent
     // B2cSearchModule
   ],
   providers: [

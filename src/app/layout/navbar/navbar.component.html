@@ -9,11 +9,11 @@
         <div class="form-control inner-search" style="padding: 8px 0px 8px 12px;">
           <!-- Trigger search on 'Enter' key press by adding the (keydown.enter) -->
           <input id="search-input" class="form-control" type="search" placeholder="Search here" aria-label="Search"
-            (keydown.enter)="onSearch()">
-        </div>
+            (keydown.enter)="onSearch(); onSearchClick()">
+        </div> 
         <!-- Trigger search on button click -->
         <span class="input-group-text border-0 red-button inner-search">
-          <button class="bg-transparent border-0" (click)="onSearch()">
+          <button class="bg-transparent border-0" (click)="onSearch(); onSearchClick()">
             <i class="fa fa-search fa-xl text-white"></i>
           </button>
         </span>

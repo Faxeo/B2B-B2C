@@ -53,17 +53,6 @@ export class NavbarComponent {
   currentPage: number = 1;
   searchEnabled: boolean = false;
   searchPlaceholder: string = '';
-  showVehicleForm: boolean = false;
-  selectedYear: string = '';
-  selectedMake: string = '';
-  selectedModel: string = '';
-  selectedTrim: string = '';
-  selectedEngine: string = '';
-  years: { year: string }[] = [];
-  makes: { name: string; cvalue_id: number }[] = [];
-  models: { name: string; cvalue_id: number }[] = [];
-  trims: { name: string; cvalue_id: number }[] = [];
-  engines: { name: string }[] = [];
   hasSearched: boolean = false;
   showMainSearchBar: boolean = false;
   mainCategories: { id: number; name: string }[] = [];
@@ -73,6 +62,8 @@ export class NavbarComponent {
   selectedFirstSubCategory: string = '';
   selectedSecondSubCategory: string = '';
   showCategoryForm: boolean = false;
+  searchResults: any[] = [];
+
 
   constructor(
     private router: Router,
@@ -85,7 +76,7 @@ export class NavbarComponent {
     private dynamicSearchService: DynamicSearchService,
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object,
-    private categoryNavbarSearchService: CategoryNavbarSearchService,
+    private categoryNavbarSearchService: CategoryNavbarSearchService, 
     private filterSearchService: FilterSearchService
   ) {}
 
@@ -145,6 +136,11 @@ export class NavbarComponent {
     }
   }
 
+  onSearchClick(): void {
+    this.filterSearchService.clearAllFilters();
+    this.categoryNavbarSearchService.clearCategoryData();
+  }
+
   openSidebar(): void {
     this.sidebarToggleService.toggleSidebar();
   }
@@ -156,7 +152,7 @@ export class NavbarComponent {
 
   onSearch(page: number = 1): void {
     this.currentSearchType = 'generalSearch';
-
+  
     const searchInputElement = document.getElementById(
       'search-input'
     ) as HTMLInputElement;
@@ -183,7 +179,7 @@ export class NavbarComponent {
 
     this.showSearchComponent = true;
     const take = 10;
-    const skip = (page - 1) * take;
+    const skip = (page - 1) * take; 
 
     // Get m_id, f_id, and s_id from CategoryNavbarSearchService
     const { m_id, f_id, s_id } =
@@ -194,7 +190,7 @@ export class NavbarComponent {
       selectedBrandId = brandId;
     });
 
-    const requestData = {
+    const requestData = { 
       productName: '',
       manufacturer: '',
       compatibility: '',
@@ -243,27 +239,26 @@ export class NavbarComponent {
     }
 
     this.dynamicSearchService
-      .searchProducts(requestData)
-      .pipe(
-        map((response: any) => response || []),
-        catchError((error) => {
-          console.error('Error fetching products:', error);
-          this.isLoading = false;
-          this.isPaginationLoading = false;
-          return of({ products: [], totalPages: 1 });
-        })
-      )
-      .subscribe((products: any) => {
-        // Update results and pagination data
-        this.searchProducts$ = of(products.products || []);
-        this.totalPages = products.totalPages || 1;
-        this.currentPage = page;
-
-        // Reset loading states
+    .searchProducts(requestData)
+    .pipe(
+      map((response: any) => response || []),
+      catchError((error) => {
+        console.error('Error fetching products:', error);
         this.isLoading = false;
         this.isPaginationLoading = false;
-        this.cdr.detectChanges(); // Ensure the UI is updated
-      });
+        return of({ products: [], totalPages: 1 });
+      })
+    )
+    .subscribe((products: any) => {
+      this.searchProducts$ = of(products.products || []);
+      this.searchResults = products.products || [];
+      // console.log('Search Results:', this.searchResults); 
+      this.totalPages = products.totalPages || 1;
+      this.currentPage = page;
+      this.isLoading = false;
+      this.isPaginationLoading = false;
+      this.cdr.detectChanges();
+    });     
   }
 
   logout(): void {

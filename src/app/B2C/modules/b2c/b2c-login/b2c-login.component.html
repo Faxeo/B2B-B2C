@@ -1,0 +1,50 @@
+<div class="login-wrapper">
+      <!-- Close Button -->
+      <button class="close-button" (click)="closeLogin()">
+        X
+       </button>
+  <div class="login-container">
+    <!-- Left Section (Login Form) -->
+    <div class="login-left">
+      <div class="login-box">
+        <header class="logo">
+          <img src="assets/logo.png" alt="Website Logo">
+        </header>
+        <form class="login-form" (ngSubmit)="onLogin()">
+          <h2>Welcome to US Auto Parts EXPERTS</h2>
+          <p class="subtitle">Sign into your account</p>
+          
+          <div class="login__field">
+            <i class="fas fa-user login__icon"></i>
+            <input type="text" class="login__input" placeholder="Phone or Email address" [(ngModel)]="email" name="email" required>
+          </div>
+ 
+          <div class="login__field">
+            <i class="fas fa-lock login__icon"></i>
+            <div class="password-input">
+              <input [type]="showPassword ? 'text' : 'password'" class="login__input" placeholder="Password" [(ngModel)]="password" name="password" required>
+              <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
+                <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+              </button>
+            </div>
+          </div>          
+
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+
+          <button type="submit" class="button login__submit">
+            Log In
+          </button>
+
+          <a href="#" class="forgot-password">Forgot password?</a>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right Section (Image) -->
+    <div class="login-right">
+      <img src="assets/login-pic.jpg" alt="Login Illustration" class="login-image">
+    </div>
+  </div>
+</div>

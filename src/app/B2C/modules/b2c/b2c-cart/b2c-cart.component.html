@@ -1,0 +1,39 @@
+<div class="cart-container" *ngIf="cartItems.length > 0; else emptyCart">
+    <h2>Your Cart</h2>
+    <div class="cart-item" *ngFor="let item of cartItems">
+      <div class="item-image">
+        <img *ngIf="!item.imageError" [src]="'https://usaperp.com:5001/Images/Products/' + item.image"
+                    class="d-block ui-w-40 ui-bordered mr-4" alt="Product Image" (error)="handleImageError(item)">
+      </div>
+      <div class="item-details">
+        <h3>{{ item.name }}</h3>
+        <p>Origin: {{ item.product_origin || 'Unknown' }}</p>
+        <p>Quantity: {{ item.prod_qty || 0 }}</p> 
+        <div class="price-quantity">
+          <span>
+            Price: ${{ item.price }}
+            <span *ngIf="item.discounts_Seller && item.discounts_Seller.length > 0">
+                (Discount Applied: ${{ item.discounts_Seller[0].amount || 0 }} Off)
+              </span>              
+          </span>
+        </div>
+      </div>
+      <div class="remove-item">
+        <button (click)="removeFromCart(item.productId)">Remove</button>
+      </div>
+    </div>
+    <div class="cart-footer">
+      <h3>Total: ${{ calculateSubtotal() }}</h3>
+      <button class="checkout-btn" (click)="goToCheckout()">Proceed to Checkout</button>
+    </div>
+  </div>
+  
+  <ng-template #emptyCart>
+    <div class="empty-cart">
+      <img src="assets/empty-cart.png" alt="Empty Cart" />
+      <h2>Your Cart is Empty</h2>
+      <p>Start adding items to your cart now!</p>
+      <button class="shop-btn" routerLink="/B2C">Go to Shop</button>
+    </div>
+  </ng-template>
+  

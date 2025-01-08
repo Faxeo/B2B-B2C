@@ -17,6 +17,19 @@ const routes: Routes = [
             (m) => m.B2cSearchModule
           ),
       },
+      {
+        path: 'cart',
+        loadChildren: () =>
+          import('./b2c-cart/b2c-cart.module').then(
+            (m) => m.B2cCartModule),  
+      },
+      {
+        path: 'login',
+        loadChildren: () =>
+          import('./b2c-login/b2c-login.module').then(
+            (m) => m.B2cLoginModule
+          ),
+      },
     ]
   },
 ];
