@@ -43,6 +43,10 @@ export class FilterComponent {
   brands: { id: number; name: string; selected: boolean }[] = [];
   selectedBrand: number | null = null;
   showBrands: boolean = false;
+  filteredBrands: { id: number; name: string; selected: boolean }[] = [];
+  
+  searchTerm: string = '';
+
   selectedBrandName: string | null = null; // Holds the name of the selected brand
 
 
@@ -69,7 +73,11 @@ export class FilterComponent {
   getBrands(): void {
     this.getBrandsService.fetchBrands().subscribe(
       (data) => {
-        this.brands = data; // Now includes `selected` property
+        this.brands = data.map((brand) => ({
+          ...brand,
+          selected: false
+        }));
+        this.filteredBrands = [...this.brands]; // Initialize filtered list
       },
       (error) => {
         console.error('Error fetching brands:', error);
@@ -95,7 +103,13 @@ export class FilterComponent {
     console.log('Selected brands:', brandIds);
     this.filterSearchService.updateSelectedBrands(brandIds); // Pass the correct parameter
   }
-
+  filterBrands() {
+    
+    const term = this.searchTerm.toLowerCase();
+    this.filteredBrands = this.brands.filter(brand =>
+      brand.name.toLowerCase().includes(term)
+    );
+  }
   onBackClick(): void {
     this.navigationService.goBack();
     this.filterSearchService.clearAllFilters();

@@ -196,6 +196,7 @@ export class B2cGeneralSearchComponent {
 
     this.activatedRoute.queryParams.subscribe((params) => {
       // Reset search results when params change
+      debugger;
       this.searchResults = [];
       this.currentPage = 1;
 
@@ -243,6 +244,15 @@ export class B2cGeneralSearchComponent {
         this.searchType = 'vehicleSearch';
         this.performVehicleSearch(vehicleData);
       }
+      else{
+        this.currentSearchState = {
+          type: 'generalSearch',
+          data: "",
+        };
+        this.searchType = 'generalSearch';
+        this.performGeneralSearch("");
+      }
+      
     });
     this.loadWishlist();
     const { m_id, f_id, s_id } =
@@ -483,7 +493,9 @@ export class B2cGeneralSearchComponent {
     this.currentRequestData.page = this.currentPage;
 
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
+     
       (response: any) => {
+        debugger;
         this.searchResults = response.products || [];
         this.totalPages = response.totalPages || 1;
         this.isLocallyLoading = false;
@@ -688,7 +700,8 @@ export class B2cGeneralSearchComponent {
   
   // Ensure that `performGeneralSearch` respects the current page setting
   performGeneralSearch(query: string): void {
-    if (this.activeSearchType !== 'general' || this.lastQuery !== query) {
+    debugger;
+    if (this.activeSearchType !== 'general' ) {
       this.filterSearchService.clearSelectedBrand();
     }
 
@@ -751,6 +764,7 @@ export class B2cGeneralSearchComponent {
 
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
+        debugger;
         if (response && response.products) {
           this.searchResults = response.products;
           this.totalPages = response.totalPages || 1;
@@ -828,6 +842,7 @@ export class B2cGeneralSearchComponent {
     this.isLocallyLoading = true;
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
+        debugger;
         this.searchResults = response.products || [];
         this.totalPages = response.totalPages || 1;
         this.isLocallyLoading = false;
@@ -909,6 +924,7 @@ export class B2cGeneralSearchComponent {
     this.isLocallyLoading = true;
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
+        debugger;
         this.searchResults = response.products || [];
         this.totalPages = response.totalPages || 1;
         this.isLocallyLoading = false;

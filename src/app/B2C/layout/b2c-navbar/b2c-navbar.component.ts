@@ -114,6 +114,7 @@ export class B2cNavbarComponent {
       ) {}
 
    onSearch(page: number = 1): void {
+    debugger;
       this.currentSearchType = 'generalSearch';
       const searchInputElement = document.getElementById(
         'search-input'
@@ -171,11 +172,11 @@ export class B2cNavbarComponent {
       };
   
       // Update query params if there's a search query
-      if (this.searchQuery) {
+     
         this.router.navigate(['/B2C/search'], {
           queryParams: { query: this.searchQuery },
         });
-      }
+      
   
       this.dynamicSearchService
         .searchProducts(requestData)

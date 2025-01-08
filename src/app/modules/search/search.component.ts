@@ -218,6 +218,7 @@ export class SearchComponent implements OnChanges {
 
     this.activatedRoute.queryParams.subscribe((params) => {
       // Reset search results when params change
+      debugger;
       this.searchResults = [];
       this.currentPage = 1;
 
@@ -873,6 +874,7 @@ export class SearchComponent implements OnChanges {
   
   
   performVehicleSearch(vehicleData: any): void {
+    debugger;
     if (
       this.activeSearchType !== 'vehicle' ||
       this.lastVehicleData !== vehicleData

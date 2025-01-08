@@ -90,8 +90,15 @@
     <i class="fa" [ngClass]="showBrands ? 'fa-minus' : 'fa-plus'"></i>
   </h3>
   <div *ngIf="showBrands" class="brands-container">
+    <input
+      type="text"
+      class="brand-search"
+      placeholder="Search brands..."
+      [(ngModel)]="searchTerm"
+      (input)="filterBrands()"
+    />
     <!-- Iterate through the brands and create checkboxes -->
-    <div *ngFor="let brand of brands" class="filter-checkbox">
+    <div *ngFor="let brand of filteredBrands" class="filter-checkbox">
       <label>
         <input type="checkbox" [checked]="selectedBrand === brand.id" (change)="onCheckboxChange(brand.id)" />
         {{ brand.name }}
