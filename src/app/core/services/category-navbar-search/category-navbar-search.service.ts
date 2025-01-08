@@ -10,7 +10,7 @@ export class CategoryNavbarSearchService {
 
   constructor() {}
 
-  // Set the values
+  // Set the values  
   setCategoryData(m_id: number | null, f_id: number | null, s_id: number | null): void {
     this.m_id = m_id;
     this.f_id = f_id;
@@ -29,3 +29,4 @@ export class CategoryNavbarSearchService {
     this.s_id = null;
   }
 }
+ 

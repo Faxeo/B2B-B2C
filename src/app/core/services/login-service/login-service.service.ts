@@ -6,6 +6,7 @@ import { isPlatformBrowser } from '@angular/common';
 @Injectable({
   providedIn: 'root',
 })
+
 export class LoginService {
   private loginTypeSubject = new BehaviorSubject<string | null>(null);
   private userIDSubject = new BehaviorSubject<string | null>(null);

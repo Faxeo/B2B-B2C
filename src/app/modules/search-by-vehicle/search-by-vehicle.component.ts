@@ -18,11 +18,12 @@ import { FetchMakeService } from '../../core/services/fetch-make/fetch-make.serv
 import { FetchChildService } from '../../core/services/fetch-child/fetch-child.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FilterSearchService } from '../../core/services/filter-search/filter-search.service';
+import { CategoryNavbarSearchService } from '../../core/services/category-navbar-search/category-navbar-search.service';
 
 @Component({
   selector: 'app-search-by-vehicle',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule,],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './search-by-vehicle.component.html',
   styleUrl: './search-by-vehicle.component.css',
 })
@@ -40,17 +41,17 @@ export class SearchByVehicleComponent {
   lastVehicleData: string = '';
 
   currentSearchType:
-  | 'generalSearch'
-  | 'vehicleSearch'
-  | 'categorySearch'
-  | null = null;
+    | 'generalSearch'
+    | 'vehicleSearch'
+    | 'categorySearch'
+    | null = null;
 
   @Input() searchType:
-  | 'generalSearch'
-  | 'vehicleSearch'
-  | 'categorySearch'
-  | 'filterCategorySearch'
-  | null = null;
+    | 'generalSearch'
+    | 'vehicleSearch'
+    | 'categorySearch'
+    | 'filterCategorySearch'
+    | null = null;
 
   userID: string | null = null;
   message: string = '';
@@ -93,7 +94,8 @@ export class SearchByVehicleComponent {
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private filterSearchService: FilterSearchService
+    private filterSearchService: FilterSearchService,
+    private categoryNavbarSearchService: CategoryNavbarSearchService
   ) {}
 
   ngOnInit(): void {
@@ -139,6 +141,11 @@ export class SearchByVehicleComponent {
         this.performVehicleSearch(vehicleData);
       }
     });
+  }
+
+  onSearchClick(): void {
+    this.filterSearchService.clearAllFilters();
+    this.categoryNavbarSearchService.clearCategoryData();
   }
 
   getYears(): void {
@@ -265,7 +272,10 @@ export class SearchByVehicleComponent {
   performVehicleSearch(vehicleData: any): void {
     // Set search type
     this.searchType = 'vehicleSearch';
-    if (this.activeSearchType !== 'vehicle' || this.lastVehicleData !== vehicleData) {
+    if (
+      this.activeSearchType !== 'vehicle' ||
+      this.lastVehicleData !== vehicleData
+    ) {
       this.filterSearchService.clearSelectedBrand();
     }
     this.activeSearchType = 'vehicle';
@@ -275,7 +285,7 @@ export class SearchByVehicleComponent {
     this.filterSearchService.selectedBrand$.subscribe((brandId) => {
       selectedBrandId = brandId;
     });
-  
+
     // Set up initial request data structure for vehicle search
     this.currentRequestData = {
       ...this.currentRequestData,
@@ -289,7 +299,7 @@ export class SearchByVehicleComponent {
       },
       page: this.currentPage,
     };
-  
+
     // Navigate to the /search route with query parameters for the vehicle data
     this.router.navigate(['/B2B/search'], {
       queryParams: {
@@ -300,10 +310,10 @@ export class SearchByVehicleComponent {
         engine: vehicleData.engine,
       },
     });
-  
+
     // Display a loading indicator
     this.isLocallyLoading = true;
-  
+
     // Call the vehicle search service
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
@@ -318,6 +328,5 @@ export class SearchByVehicleComponent {
         this.isLocallyLoading = false;
       }
     );
-  }  
+  }
 }
- 

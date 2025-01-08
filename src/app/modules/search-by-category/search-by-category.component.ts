@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { CategoryIdService } from '../../core/services/category-id/category-id.service';
 import { HierarchyProductsService } from '../../core/services/hierarchy-products/hierarchy-products.service';
 import { FilterSearchService } from '../../core/services/filter-search/filter-search.service';
+import { CategoryNavbarSearchService } from '../../core/services/category-navbar-search/category-navbar-search.service';
 
 @Component({
   selector: 'app-search-by-category',
@@ -81,7 +82,8 @@ export class SearchByCategoryComponent {
     private router: Router,
     private categoryIdService: CategoryIdService,
     private hierarchyProductsService: HierarchyProductsService,
-    private filterSearchService: FilterSearchService
+    private filterSearchService: FilterSearchService,
+        private categoryNavbarSearchService: CategoryNavbarSearchService
   ) { }
 
   ngOnInit(): void {
@@ -161,6 +163,11 @@ export class SearchByCategoryComponent {
     this.isLocallyLoading = true;
 
     this.currentPage = page;
+  }
+
+  onSearchClick(): void {
+    this.filterSearchService.clearAllFilters();
+    this.categoryNavbarSearchService.clearCategoryData();
   }
 
   emitPageChange(page: number): void {

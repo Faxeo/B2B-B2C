@@ -5,6 +5,8 @@ import { B2CHomeComponent } from './B2C/modules/b2c/b2c-home/b2c-home.component'
 import { B2cSearchComponent } from './B2C/modules/b2c/b2c-search/b2c-search.component';
 import { SearchComponent } from './modules/search/search.component';
 import { authGuard } from './auth.guard';
+import { B2cCartComponent } from './B2C/modules/b2c/b2c-cart/b2c-cart.component';
+import { B2cLoginComponent } from './B2C/modules/b2c/b2c-login/b2c-login.component';
 
 export const routes: Routes = [
   {
@@ -25,6 +27,20 @@ export const routes: Routes = [
   {
     path: 'B2C/search',
     component: B2cSearchComponent,
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./B2C/modules/b2c/b2c.module').then((m) => m.B2CModule),
+  },
+  {
+    path: 'B2C/cart',
+    component: B2cCartComponent,
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./B2C/modules/b2c/b2c.module').then((m) => m.B2CModule),
+  },
+  {
+    path: 'B2C/login',
+    component: B2cLoginComponent,
     canActivate: [authGuard],
     loadChildren: () =>
       import('./B2C/modules/b2c/b2c.module').then((m) => m.B2CModule),
@@ -77,7 +93,7 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'cart',
+    path: 'B2B/cart',
     loadChildren: () =>
       import('./modules/cart/cart.module').then((m) => m.CartModule),
   },

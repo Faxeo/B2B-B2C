@@ -104,6 +104,7 @@ export class B2CHomeComponent implements OnInit {
   selectedSecondSubCategory: string = '';
   showCategoryForm: boolean = false;
   isBrowser: boolean = false;
+  showDropdown: boolean = false;
 
 
   constructor(
@@ -330,69 +331,64 @@ export class B2CHomeComponent implements OnInit {
 
   searchByCategory(page: number = 1): void {
     this.currentSearchType = 'categorySearch';
-  
-    // Create request data for category search
+
     const requestData = {
-      productName: "",
-      manufacturer: "",
-      compatibility: "",
-      brand: "",
-      description: "",
-      upc: "",
-      partNumber: "",
-      attribute: "",
+      productName: '',
+      manufacturer: '',
+      compatibility: '',
+      brand: '',
+      description: '',
+      upc: '',
+      partNumber: '',
+      attribute: '',
       includeCompatibility: false,
       includeManufacturer: false,
       includeAttribute: false,
       includeQuantity: false,
       includeImages: false,
-      skip: (page - 1) * 10, // Skip logic for pagination
-      take: 10, // Number of results per page
-      m_id: this.selectedMainCategory ? Number(this.selectedMainCategory) : null, // Main Category ID
-      f_id: this.selectedFirstSubCategory ? Number(this.selectedFirstSubCategory) : null, // First Sub-Category ID
-      s_id: this.selectedSecondSubCategory ? Number(this.selectedSecondSubCategory) : null, // Second Sub-Category ID
-      keyFeature: "",
-      vendor: null,
-      search_description: "",
-      compatiblityValues: {
-        compatibilityID: 0,
-        productID: 0,
-        sno: null,
-        year: "",
-        make: "",
-        model: "",
-        trim: "",
-        engine: "",
-        notes: "",
-        isDeleted: null,
-      },
-      product_Attributes: "SELECT product_id FROM product_attributes_view WHERE concatenated_attributes LIKE '%%' order by product_id",
-      attributeSearch: false,
-      page: page // Current page number
+      skip: (page - 1) * 10,
+      take: 10,
+      m_id: this.selectedMainCategory
+        ? Number(this.selectedMainCategory)
+        : null,
+      f_id: this.selectedFirstSubCategory
+        ? Number(this.selectedFirstSubCategory)
+        : null,
+      s_id: this.selectedSecondSubCategory
+        ? Number(this.selectedSecondSubCategory)
+        : null,
+      page: page,
     };
-  
-    console.log('Category Search Data:', requestData);
-  
-    // Call the dynamic search service with the category search request data
+
+    if (
+      this.selectedMainCategory ||
+      this.selectedFirstSubCategory ||
+      this.selectedSecondSubCategory
+    ) {
+      this.router.navigate(['/B2C/search'], {
+        queryParams: {
+          mainCategory: this.selectedMainCategory || '',
+          firstSubCategory: this.selectedFirstSubCategory || '',
+          secondSubCategory: this.selectedSecondSubCategory || '',
+        },
+      });
+    }
+
     this.dynamicSearchService.searchProducts(requestData).subscribe(
       (data: any) => {
-        console.log('Category Search Results:', data.products); // Log the product results
-  
         this.searchProducts$ = of(data.products || []);
-        this.showCategoryForm = false; // Hide the category form once the results are shown
-        // this.showSearchComponent = true; 
-        this.totalPages = data.totalPages || 1; // Set the total number of pages
-        this.currentPage = page; // Update the current page
-  
-        // Reset loading indicators after data is received
-        this.isLoading = false; // Stop the initial loading spinner
-        this.isPaginationLoading = false; // Stop the pagination loading spinner
-        this.cdr.detectChanges(); // Update the view
+        this.showCategoryForm = false;
+        // this.showSearchComponent = true;
+        this.totalPages = data.totalPages || 1;
+        this.currentPage = page;
+
+        this.isLoading = false;
+        this.isPaginationLoading = false;
+        this.cdr.detectChanges();
       },
       (error) => {
-        console.error('Category Search Error:', error); // Log any errors
-  
-        // Stop loading spinners in case of an error
+        console.error('Category Search Error:', error);
+
         this.isLoading = false;
         this.isPaginationLoading = false;
         this.cdr.detectChanges();
@@ -406,14 +402,25 @@ export class B2CHomeComponent implements OnInit {
   }
 
   onSearchOptionClick(option: string): void {
-    if (option === 'Vehicle' || option === 'Category' || option === 'Attributes') {
-      this.showSearchBar = false;
+    this.showSearchBar = false; // Hide main search bar by default
+  
+    if (option === 'Vehicle') {
+      this.showVehicleForm = true;
+      this.showCategoryForm = false;
+    } else if (option === 'Category') {
+      this.showCategoryForm = true;
+      this.showVehicleForm = false;
+      this.getMainCategories(); // Fetch categories immediately
     } else {
-      this.showSearchBar = true;
+      this.showCategoryForm = false;
+      this.showVehicleForm = false;
     }
-    this.searchEnabled = true; // Enable the main search input
-    this.searchPlaceholder = `Search By ${option}`; // Set the placeholder for the main search bar based on the clicked option
+  
+    this.searchEnabled = true;
+    this.searchPlaceholder = `Search By ${option}`;
+    this.cdr.detectChanges();  // Ensure the DOM reflects the change immediately
   }
+  
 
   onSearchClick(): void {
     if (this.searchPlaceholder === 'Search By Vehicle') {
@@ -560,35 +567,28 @@ export class B2CHomeComponent implements OnInit {
 
   searchByVehicle(page: number = 1): void {
     this.currentSearchType = 'vehicleSearch';
-  
-    // Retrieve stored vehicle data
     const vehicleData = this.vehicleSearchService.getVehicleData();
-  
-    // Get the search input value and trim it
-    const searchInputElement = document.getElementById('search-input') as HTMLInputElement;
-    const newSearchQuery = searchInputElement ? searchInputElement.value.trim() : '';
-  
-    // Check if it's a new search or a pagination request
-    // Since newSearchQuery and this.searchQuery are both empty, let's add another condition to differentiate the initial search.
-    if (newSearchQuery !== this.searchQuery) {
-      // console.log('New search detected or first search is being initiated. Setting initial loading to true.');
-      this.isLoading = true; // Show the initial loading spinner for new search
-      this.isPaginationLoading = false; // Reset pagination loading indicator
-      this.searchQuery = newSearchQuery;
-    } else {
-      // console.log('Pagination detected. Setting pagination loading to true.');
-      this.isLoading = false; // Hide initial loading for pagination
-      this.isPaginationLoading = true; // Show pagination loading spinner
-    }
-  
-    // Show the search component while loading
+    const searchInputElement = document.getElementById(
+      'search-input'
+    ) as HTMLInputElement;
+    const newSearchQuery = searchInputElement
+      ? searchInputElement.value.trim()
+      : '';
+
+    // if (!this.showSearchComponent || newSearchQuery !== this.searchQuery) {
+    //   this.isLoading = true;
+    //   this.isPaginationLoading = false;
+    //   this.searchQuery = newSearchQuery;
+    // } else {
+    //   this.isLoading = false;
+    //   this.isPaginationLoading = true;
+    // }
+
     // this.showSearchComponent = true;
-  
-    // Set pagination parameters
+
     const take = 10;
     const skip = (page - 1) * take;
-  
-    // Prepare request data based on vehicle details and pagination
+
     const requestData = {
       productName: '',
       manufacturer: '',
@@ -603,48 +603,59 @@ export class B2CHomeComponent implements OnInit {
       includeAttribute: false,
       includeQuantity: false,
       includeImages: false,
-      skip: skip, // Pagination calculation (skip)
-      take: take, // Number of results to take per page
+      skip: skip,
+      take: take,
       search_description: '',
       compatiblityValues: {
         compatibilityID: 0,
         productID: 0,
         sno: null,
-        year: vehicleData.year, // Use stored vehicle data
-        make: vehicleData.make, // Use stored vehicle data
-        model: vehicleData.model, // Use stored vehicle data
-        trim: vehicleData.trim, // Use stored vehicle data
-        engine: vehicleData.engine, // Use stored vehicle data
+        year: vehicleData.year,
+        make: vehicleData.make,
+        model: vehicleData.model,
+        trim: vehicleData.trim,
+        engine: vehicleData.engine,
         notes: '',
         isDeleted: null,
       },
       product_Attributes:
         "SELECT product_id FROM product_attributes_view WHERE concatenated_attributes LIKE '%%' order by product_id",
       attributeSearch: false,
-      page: page, // Page number for the request
+      page: page,
     };
-    console.log('Request Data:', requestData);
-  
-    // Call dynamic search service with vehicle search request data
+
+    if (
+      vehicleData.year &&
+      vehicleData.make &&
+      vehicleData.model &&
+      vehicleData.trim &&
+      vehicleData.engine
+    ) {
+      this.router.navigate(['/B2C/search'], {
+        queryParams: {
+          year: vehicleData.year,
+          make: vehicleData.make,
+          model: vehicleData.model,
+          trim: vehicleData.trim,
+          engine: vehicleData.engine,
+        },
+      }); 
+    }
+
     this.dynamicSearchService.searchProducts(requestData).subscribe(
       (data: any) => {
-        console.log('Vehicle Search Results:', data.products); // Log the product results
-  
         this.searchProducts$ = of(data.products || []);
-        this.showVehicleForm = false; // Hide the vehicle form once the results are shown
-        // this.showSearchComponent = true; 
-        this.totalPages = data.totalPages || 1; // Set the total number of pages
-        this.currentPage = page; // Update the current page
-  
-        // Reset loading indicators after data is received
-        this.isLoading = false; // Stop the initial loading spinner
-        this.isPaginationLoading = false; // Stop the pagination loading spinner
-        this.cdr.detectChanges(); // Update the view
+        this.showVehicleForm = false;
+        // this.showSearchComponent = true;
+        this.totalPages = data.totalPages || 1;
+        this.currentPage = page;
+
+        this.isLoading = false;
+        this.isPaginationLoading = false;
+        this.cdr.detectChanges();
       },
       (error) => {
-        console.error('Vehicle Search Error:', error); // Log any errors
-  
-        // Stop loading spinners in case of an error
+        console.error('Vehicle Search Error:', error);
         this.isLoading = false;
         this.isPaginationLoading = false;
         this.cdr.detectChanges();
@@ -770,6 +781,10 @@ export class B2CHomeComponent implements OnInit {
   // Utility to toggle between trending and search products
   get displayedProducts$(): Observable<any[]> {
     return this.showingSearchResults ? this.searchProducts$! : this.products$!;
+  }
+
+  toggleDropdown() {
+    this.showDropdown = !this.showDropdown;
   }
 
   logout() {

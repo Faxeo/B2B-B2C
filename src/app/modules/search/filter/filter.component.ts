@@ -64,6 +64,8 @@ export class FilterComponent {
     this.getBrands();
   }
 
+  
+
   getBrands(): void {
     this.getBrandsService.fetchBrands().subscribe(
       (data) => {
@@ -89,7 +91,6 @@ export class FilterComponent {
     }
   }
    
-  
   updateSelectedBrands(brandIds: number[]): void {
     console.log('Selected brands:', brandIds);
     this.filterSearchService.updateSelectedBrands(brandIds); // Pass the correct parameter
@@ -97,6 +98,8 @@ export class FilterComponent {
 
   onBackClick(): void {
     this.navigationService.goBack();
+    this.filterSearchService.clearAllFilters();
+    this.categoryNavbarSearchService.clearCategoryData();
   }
 
   onCategorySelectionChange(): void {
@@ -131,8 +134,6 @@ export class FilterComponent {
       }
     }
   }
-  
-
 
   toggleSection(section: string): void {
     switch (section) {
@@ -393,7 +394,6 @@ onSecondSubCategoryChange(subCategory: any, selectedSecondSubCategory: any): voi
   );
 }
 
-
   // Method to toggle and fetch first subcategories
   toggleSubCategories(category: any): void {
     category.showSubCategories = !category.showSubCategories;
@@ -444,7 +444,5 @@ onSecondSubCategoryChange(subCategory: any, selectedSecondSubCategory: any): voi
       );
     }
   }
-
   
 }
- 

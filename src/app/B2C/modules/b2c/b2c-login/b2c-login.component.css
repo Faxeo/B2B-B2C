@@ -1,0 +1,187 @@
+/* General reset and styles */
+body, html {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  /* background: #1f1f1f;  */
+}
+
+/* Close button styles */
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 30px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: white;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close-button:hover {
+  scale: 1.2;
+}
+
+/* Wrapper for layout */
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  background-color: #bab9b9;
+}
+
+/* Main container with left and right split */
+.login-container {
+  position: relative;
+  display: flex;
+  width: 100%;
+  max-width: 1000px;
+  height: 75%;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* Left Section (Login Form) */
+.login-left {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 400px;
+  padding: 50px;
+  text-align: center;
+}
+
+.logo img {
+  max-width: 120px;
+  margin-bottom: 30px;
+}
+
+h2 {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.subtitle {
+  color: #777;
+  font-size: 15px;
+  margin-bottom: 30px;
+}
+
+/* Form Fields */
+.login__field {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Focus effect */
+.login__field:focus-within {
+  border-color: #007bff;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+}
+
+/* Icon style */
+.login__icon {
+  padding: 15px;
+  background: #f7f7f7;
+  color: #888;
+}
+
+/* Password input container */
+.password-input {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Password input field */
+.login__input {
+  flex: 1;  /* Take remaining space */
+  padding: 15px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+}
+
+/* Toggle button (eye icon) */
+.toggle-password {
+  background: none;
+  border: none;
+  padding: 0 15px;
+  cursor: pointer;
+  color: #777;
+  display: flex;
+  align-items: center;
+}
+
+/* Error Message */
+.error-message {
+  color: #d9534f;
+  margin: 15px 0;
+  font-size: 14px;
+}
+
+/* Login Button */
+.button {
+  background-color: #1a3056;
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 30px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
+/* Forgot Password Link */
+.forgot-password {
+  display: block;
+  margin-top: 20px;
+  color: #007bff;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+/* Right Section (Image) */
+.login-right {
+  flex: 1;
+  background: linear-gradient(135deg, #1a3056, #1a3056);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-image {
+  max-width: 100%;
+  height: auto;
+}

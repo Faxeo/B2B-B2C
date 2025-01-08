@@ -132,7 +132,7 @@ export class B2cGeneralSearchComponent {
       this.f_id = categories.f_id;
       this.s_id = categories.s_id;
       // Fetch products based on updated filter values, starting from page 1
-      this.fetchProducts(this.m_id ?? 0, this.f_id ?? 0, this.s_id ?? 0, 1);
+      // this.fetchProducts(this.m_id ?? 0, this.f_id ?? 0, this.s_id ?? 0, 1);
     });
     this.filterSearchService.selectedCategories$.subscribe((categories) => {
       this.currentSearchState = {
@@ -149,9 +149,9 @@ export class B2cGeneralSearchComponent {
       this.currentPage = 1;
 
       // Only fetch if we have valid category ID
-      if (this.m_id) {
-        this.fetchProducts(this.m_id, this.f_id ?? 0, this.s_id ?? 0, 1);
-      }
+      // if (this.m_id) {
+      //   this.fetchProducts(this.m_id, this.f_id ?? 0, this.s_id ?? 0, 1);
+      // }
     });
   }
 
@@ -248,6 +248,25 @@ export class B2cGeneralSearchComponent {
     const { m_id, f_id, s_id } =
       this.categoryNavbarSearchService.getCategoryData();
     console.log('Saved Category Data:', { m_id, f_id, s_id });
+
+    
+    this.filterSearchService.selectedCategories$.subscribe((categories) => {
+      this.updateSearchWithFilters();
+    });
+
+    this.filterSearchService.selectedBrand$.subscribe((brandId) => {
+      this.updateSearchWithFilters();
+    });
+  }
+
+  updateSearchWithFilters(): void {
+    if (this.activeSearchType === 'general') {
+      this.performGeneralSearch(this.lastQuery);
+    } else if (this.activeSearchType === 'category') {
+      this.performCategorySearch(this.lastCategoryData);
+    } else if (this.activeSearchType === 'vehicle') {
+      this.performVehicleSearch(this.lastVehicleData);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -374,53 +393,50 @@ export class B2cGeneralSearchComponent {
     data: null,
   };
 
-  fetchProducts(m_id: number, f_id: number, s_id: number, page: number): void {
-    if (!m_id) {
-      console.log('Invalid m_id: No products to fetch');
-      this.products = [];
-      this.isLoading = false;
-      this.isLocallyLoading = false;
-      this.isPaginationLoading = false;
-      return;
-    }
+  // fetchProducts(m_id: number, f_id: number, s_id: number, page: number): void {
+  //   if (!m_id) {
+  //     console.log('Invalid m_id: No products to fetch');
+  //     this.products = [];
+  //     this.isLoading = false;
+  //     this.isLocallyLoading = false;
+  //     this.isPaginationLoading = false;
+  //     return;
+  //   }
 
-    this.searchType = 'filterCategorySearch';
-    const take = this.pageSize;
-    const requestData = { m_id, f_id, s_id, page, pageSize: take };
+  //   this.searchType = 'filterCategorySearch';
+  //   const take = this.pageSize;
+  //   const requestData = { m_id, f_id, s_id, page, pageSize: take };
 
-    console.log('Request Data for Category API:', requestData);
+  //   console.log('Request Data for Category API:', requestData);
 
-    // Set loading state BEFORE making the API call
-    this.isLocallyLoading = true;
+  //   this.isLocallyLoading = true;
 
-    this.hierarchyProductsService.getHierarchyProducts(requestData).subscribe(
-      (response) => {
-        if (response.products && response.products.length > 0) {
-          this.products = response.products;
-          this.totalPages = response.totalPages;
-          this.currentPage = response.currentPage;
-        } else {
-          this.products = [];
-          console.log('No products found for this category.');
-        }
+  //   this.hierarchyProductsService.getHierarchyProducts(requestData).subscribe(
+  //     (response) => {
+  //       if (response.products && response.products.length > 0) {
+  //         this.products = response.products;
+  //         this.totalPages = response.totalPages;
+  //         this.currentPage = response.currentPage;
+  //       } else {
+  //         this.products = [];
+  //         console.log('No products found for this category.');
+  //       }
 
-        // Reset loading state after successful response
-        this.isLocallyLoading = false;
-        this.isLoading = false;
-        this.isPaginationLoading = false;
-        this.cdr.detectChanges();
-      },
-      (error) => {
-        console.error('Error fetching products:', error);
-        this.products = [];
-        // Reset loading state on error
-        this.isLocallyLoading = false;
-        this.isLoading = false;
-        this.isPaginationLoading = false;
-        this.cdr.detectChanges();
-      }
-    );
-  }
+  //       this.isLocallyLoading = false;
+  //       this.isLoading = false;
+  //       this.isPaginationLoading = false;
+  //       this.cdr.detectChanges();
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching products:', error);
+  //       this.products = [];
+  //       this.isLocallyLoading = false;
+  //       this.isLoading = false;
+  //       this.isPaginationLoading = false;
+  //       this.cdr.detectChanges();
+  //     }
+  //   );
+  // }
 
   changePage(page: number): void {
     if (page < 1 || page > this.totalPages || page === this.currentPage) return;
@@ -430,12 +446,12 @@ export class B2cGeneralSearchComponent {
     this.isLocallyLoading = true;
 
     this.currentPage = page;
-    this.fetchProducts(
-      this.m_id ?? 0,
-      this.f_id ?? 0,
-      this.s_id ?? 0,
-      this.currentPage
-    );
+    // this.fetchProducts(
+    //   this.m_id ?? 0,
+    //   this.f_id ?? 0,
+    //   this.s_id ?? 0,
+    //   this.currentPage
+    // );
   }
 
   viewProductDetails(productId: number): void {
@@ -672,15 +688,17 @@ export class B2cGeneralSearchComponent {
   
   // Ensure that `performGeneralSearch` respects the current page setting
   performGeneralSearch(query: string): void {
-    
     if (this.activeSearchType !== 'general' || this.lastQuery !== query) {
       this.filterSearchService.clearSelectedBrand();
     }
 
     this.lastQuery = query;
     this.activeSearchType = 'general';
-    console.log('Performing general search with query:', query);
-    // Get m_id, f_id, and s_id from CategoryNavbarSearchService
+    console.log(
+      'Performing general search with query:',
+      query || 'Empty Query'
+    );
+
     const { m_id, f_id, s_id } =
       this.categoryNavbarSearchService.getCategoryData();
 
@@ -690,12 +708,11 @@ export class B2cGeneralSearchComponent {
     });
 
     this.currentRequestData = {
-      // Store request data
       productName: '',
       manufacturer: '',
       compatibility: '',
       brand: selectedBrandId !== null ? `${selectedBrandId}` : '',
-      description: '',
+      search_description: query,
       upc: '',
       partNumber: '',
       attribute: '',
@@ -706,12 +723,11 @@ export class B2cGeneralSearchComponent {
       includeImages: false,
       skip: (this.currentPage - 1) * 10,
       take: 10,
-      m_id: m_id ?? null, // Use m_id if available, otherwise null
-      f_id: f_id ?? null, // Use f_id if available, otherwise null
-      s_id: s_id ?? null, // Use s_id if available, otherwise null
+      m_id: m_id ?? null,
+      f_id: f_id ?? null,
+      s_id: s_id ?? null,
       keyFeature: '',
       vendor: null,
-      search_description: query,
       compatiblityValues: {
         compatibilityID: 0,
         productID: 0,
@@ -729,6 +745,8 @@ export class B2cGeneralSearchComponent {
       attributeSearch: false,
       page: this.currentPage,
     };
+
+    console.log('Current request data:', this.currentRequestData);
     this.isLocallyLoading = true;
 
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
@@ -755,15 +773,16 @@ export class B2cGeneralSearchComponent {
     if (this.activeSearchType !== 'category' || this.lastCategoryData !== categoryData) {
       this.filterSearchService.clearSelectedBrand();
     }
+    
     this.activeSearchType = 'category';
     this.lastCategoryData = categoryData;
-    let selectedBrandId: number | null = null;
-    
-    this.filterSearchService.selectedBrand$.subscribe((brandId) => {
-      selectedBrandId = brandId;
-    });
-    // Initialize `currentRequestData` with full request structure
-    this.searchResults = [];
+  
+    // Get updated category and brand filters
+    const selectedBrandId = this.filterSearchService.selectedBrandValue;
+    const { m_id, f_id, s_id } = this.filterSearchService.selectedCategoriesValue;
+
+  
+    // Reset and apply the new filters to request data
     this.currentRequestData = {
       productName: '',
       manufacturer: '',
@@ -780,9 +799,9 @@ export class B2cGeneralSearchComponent {
       includeImages: false,
       skip: (this.currentPage - 1) * 10,
       take: 10,
-      m_id: categoryData.mainCategory || null,
-      f_id: categoryData.firstSubCategory || null,
-      s_id: categoryData.secondSubCategory || null,
+      m_id: m_id || categoryData.mainCategory || null,
+      f_id: f_id || categoryData.firstSubCategory || null,
+      s_id: s_id || categoryData.secondSubCategory || null,
       keyFeature: '',
       vendor: null,
       search_description: '',
@@ -803,14 +822,12 @@ export class B2cGeneralSearchComponent {
       attributeSearch: false,
       page: this.currentPage,
     };
+  
+    console.log('Updated Category Search Request Data:', this.currentRequestData);
+  
     this.isLocallyLoading = true;
-
-    console.log('Category search requestData:', this.currentRequestData);
-
-    // Perform initial search request
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
-        console.log('Category search response:', response);
         this.searchResults = response.products || [];
         this.totalPages = response.totalPages || 1;
         this.isLocallyLoading = false;
@@ -819,9 +836,6 @@ export class B2cGeneralSearchComponent {
       (error) => {
         console.error('Error performing category search:', error);
         this.isLocallyLoading = false;
-        this.displayMessage(
-          'An error occurred while fetching search results. Please try again later.'
-        );
       }
     );
   }
@@ -829,21 +843,27 @@ export class B2cGeneralSearchComponent {
   searchByCategory(page: number): void {
     console.log('searchByCategory called with page:', page);
     this.currentPage = page;
-    this.emitPageChange(page); // Call `emitPageChange` to handle pagination
+    this.emitPageChange(page);  // Triggers pagination and updates request data
   }
-
+  
+  
   performVehicleSearch(vehicleData: any): void {
-    if (this.activeSearchType !== 'vehicle' || this.lastVehicleData !== vehicleData) {
+    if (
+      this.activeSearchType !== 'vehicle' ||
+      this.lastVehicleData !== vehicleData
+    ) {
       this.filterSearchService.clearSelectedBrand();
     }
+  
     this.activeSearchType = 'vehicle';
     this.lastVehicleData = vehicleData;
-    let selectedBrandId: number | null = null;
-    // Subscribe to the brand observable to get the selected brand ID
-    this.filterSearchService.selectedBrand$.subscribe((brandId) => {
-      selectedBrandId = brandId;
-    });
-    // Set up initial request data structure for vehicle search
+  
+    // Fetch updated brand and category filters
+    const selectedBrandId = this.filterSearchService.selectedBrandValue;
+    const { m_id, f_id, s_id } = this.filterSearchService.selectedCategoriesValue;
+
+  
+    // Apply updated filter values to vehicle request data
     this.currentRequestData = {
       productName: '',
       manufacturer: '',
@@ -860,9 +880,9 @@ export class B2cGeneralSearchComponent {
       includeImages: false,
       skip: (this.currentPage - 1) * 10,
       take: 10,
-      m_id: null,
-      f_id: null,
-      s_id: null,
+      m_id: m_id || null,
+      f_id: f_id || null,
+      s_id: s_id || null,
       keyFeature: '',
       vendor: null,
       search_description: '',
@@ -883,13 +903,12 @@ export class B2cGeneralSearchComponent {
       attributeSearch: false,
       page: this.currentPage,
     };
+  
+    console.log('Updated Vehicle Search Request Data:', this.currentRequestData);
+  
     this.isLocallyLoading = true;
-    console.log('Vehicle search requestData:', this.currentRequestData);
-
-    // Initial vehicle search request
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
-        console.log('Vehicle search response:', response);
         this.searchResults = response.products || [];
         this.totalPages = response.totalPages || 1;
         this.isLocallyLoading = false;

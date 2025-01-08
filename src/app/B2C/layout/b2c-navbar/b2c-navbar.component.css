@@ -25,37 +25,12 @@
   height: 55px;
   width: auto;
   transition: transform 0.3s ease;
-  margin-left: 60px;
 }
 
 .logo:hover img {
   transform: scale(1.1);
 }
 
-/* Hamburger Menu */
-.hamburger-menu {
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 26px;
-  width: 35px;
-  margin-left: 0px;
-}
-
-.hamburger-menu span {
-  background-color: #333;  /* Default color for menu bars */
-  height: 4px;
-  width: 100%;
-  border-radius: 10px;
-  transition: all 0.3s ease;
-}
-
-.hamburger-menu:hover span {
-  background-color: #1a3056;  /* Dark Navy on Hover */
-}
 
 /* Search Bar */
 .search-bar {
@@ -67,6 +42,7 @@
   border-radius: 50px;
   overflow: hidden;
   transition: box-shadow 0.3s ease;
+  margin-left: 150px;
 }
 
 /* .search-bar:hover {

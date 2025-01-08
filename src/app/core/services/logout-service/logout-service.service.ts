@@ -1,4 +1,3 @@
-// logout.service.ts
 import { Injectable } from '@angular/core';
 import { LoginService } from '../login-service/login-service.service';
 import { ApiService } from '../api.service';
@@ -17,6 +16,7 @@ export class LogoutService {
 
   logout() {
     const userID = localStorage.getItem('userID') || localStorage.getItem('businessID') || localStorage.getItem('merchantID');
+    const loginType = localStorage.getItem('loginType') || '';  // Fetch loginType from local storage
     
     this.loginService.getCategory().pipe(take(1)).subscribe(category => {
       const logoutData = {
@@ -28,7 +28,13 @@ export class LogoutService {
         next: () => {
           localStorage.clear();
           this.loginService.clearData();
-          this.router.navigate(['/B2B']); // Redirect to login page after logout
+
+          // Conditional redirection based on loginType
+          if (loginType === 'customer') {
+            this.router.navigate(['/B2C']);  // Redirect to B2C for customers
+          } else {
+            this.router.navigate(['/B2B']);  // Redirect to B2B for other users
+          }
         },
         error: (error) => {
           console.error('Logout failed', error);

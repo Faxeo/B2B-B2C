@@ -53,6 +53,7 @@ export class CategoryComponent implements OnInit {
   isCollapsed: boolean = false;
   showRecentlyViewed: boolean = false;
   isInitialLoad: boolean = true;
+  selectedBrandId: number | null = null;
 
   wishlist: number[] = []; // Array to store product IDs in the wishlist
   businessId: number = 123; // Replace with your actual business ID
@@ -115,98 +116,116 @@ export class CategoryComponent implements OnInit {
       this.isLoading = false;
     }
     this.loadWishlist();
+
+    this.filterSearchService.selectedBrand$.subscribe((brandId) => {
+      this.selectedBrandId = brandId;
+      this.fetchProducts(
+        this.m_id ?? 0,
+        this.f_id ?? 0,
+        this.s_id ?? 0,
+        this.currentPage
+      );
+    });
   }
 
-// Fetch wishlist details
-loadWishlist(): void {
-  if (!this.userID) return;
-  
-  this.wishlistService.getWishlistDetailsByBusinessId(this.businessId).subscribe({
-    next: (response) => {
-      if (response && response.length > 0) {
-        const wishlistIds = response.map((item: any) => item.productId);
-        this.markWishlistProducts(wishlistIds);
-      }
-    },
-    error: (error) => {
-      console.error('Error loading wishlist:', error);
+  // Fetch wishlist details
+  loadWishlist(): void {
+    if (!this.userID) return;
+
+    this.wishlistService
+      .getWishlistDetailsByBusinessId(this.businessId)
+      .subscribe({
+        next: (response) => {
+          if (response && response.length > 0) {
+            const wishlistIds = response.map((item: any) => item.productId);
+            this.markWishlistProducts(wishlistIds);
+          }
+        },
+        error: (error) => {
+          console.error('Error loading wishlist:', error);
+        },
+      });
+  }
+
+  markWishlistProducts(wishlistIds: number[]): void {
+    this.products = this.products.map((product) => ({
+      ...product,
+      isInWishlist: wishlistIds.includes(product.product_id),
+    }));
+  }
+
+  toggleWishlist(product: any): void {
+    if (!this.userID) {
+      alert('Please log in to manage your wishlist.');
+      return;
     }
-  });
-}
 
-markWishlistProducts(wishlistIds: number[]): void {
-  this.products = this.products.map(product => ({
-    ...product,
-    isInWishlist: wishlistIds.includes(product.product_id)
-  }));
-}
-
-toggleWishlist(product: any): void {
-  if (!this.userID) {
-    alert('Please log in to manage your wishlist.');
-    return;
+    if (product.isInWishlist) {
+      this.removeFromWishlist(product);
+    } else {
+      this.addToWishlist(product);
+    }
   }
 
-  if (product.isInWishlist) {
-    this.removeFromWishlist(product);
-  } else {
-    this.addToWishlist(product);
-  }
-}
+  addToWishlist(product: any): void {
+    if (!this.userID) {
+      this.displayNotification('Please log in to add items to wishlist.');
+      return;
+    }
 
-addToWishlist(product: any): void {
-  if (!this.userID) {
-    this.displayNotification('Please log in to add items to wishlist.');
-    return;
-  }
-
-  this.addToWishlistService
-    .addToWishlist(
-      product.product_id,
-      this.userID,
-      Number(this.userID)  // Convert to number for businessId
-    )
-    .subscribe({
-      next: () => {
-        product.isInWishlist = true;
-        this.displayNotification('Product added to wishlist successfully!');
-      },
-      error: (error) => {
-        console.error('Error adding to wishlist:', error);
-        this.displayNotification('Error adding item to wishlist: ' + error.message);
-      }
-    });
-}
-
-removeFromWishlist(product: any): void {
-  if (!this.userID) {
-    this.displayNotification('Please log in to remove items from wishlist.');
-    return;
+    this.addToWishlistService
+      .addToWishlist(
+        product.product_id,
+        this.userID,
+        Number(this.userID) // Convert to number for businessId
+      )
+      .subscribe({
+        next: () => {
+          product.isInWishlist = true;
+          this.displayNotification('Product added to wishlist successfully!');
+        },
+        error: (error) => {
+          console.error('Error adding to wishlist:', error);
+          this.displayNotification(
+            'Error adding item to wishlist: ' + error.message
+          );
+        },
+      });
   }
 
-  this.removeFromWishlistService
-    .removeFromWishlist(
-      Number(this.userID), 
-      Number(this.userID),  // Convert to number for businessId
-      product.product_id
-    )
-    .subscribe({
-      next: () => {
-        product.isInWishlist = false;
-        this.displayNotification('Product removed from wishlist successfully!');
-      },
-      error: (error) => {
-        console.error('Error removing from wishlist:', error);
-        this.displayNotification('Error removing item from wishlist: ' + error.message);
-      }
-    });
-}
+  removeFromWishlist(product: any): void {
+    if (!this.userID) {
+      this.displayNotification('Please log in to remove items from wishlist.');
+      return;
+    }
 
-private displayNotification(message: string): void {
-  // You can implement this using your preferred notification system
-  // For now, let's use a simple alert
-  alert(message);
-}
+    this.removeFromWishlistService
+      .removeFromWishlist(
+        Number(this.userID),
+        Number(this.userID), // Convert to number for businessId
+        product.product_id
+      )
+      .subscribe({
+        next: () => {
+          product.isInWishlist = false;
+          this.displayNotification(
+            'Product removed from wishlist successfully!'
+          );
+        },
+        error: (error) => {
+          console.error('Error removing from wishlist:', error);
+          this.displayNotification(
+            'Error removing item from wishlist: ' + error.message
+          );
+        },
+      });
+  }
+
+  private displayNotification(message: string): void {
+    // You can implement this using your preferred notification system
+    // For now, let's use a simple alert
+    alert(message);
+  }
 
   viewProductDetails(productId: number): void {
     if (productId) {
@@ -264,7 +283,14 @@ private displayNotification(message: string): void {
     }
 
     const take = this.pageSize;
-    const requestData = { m_id, f_id, s_id, page, pageSize: take };
+    const requestData = {
+      m_id,
+      f_id,
+      s_id,
+      page,
+      pageSize: take,
+      brand: this.selectedBrandId ?? '',
+    };
 
     console.log('Request Data for Category API:', requestData);
     this.isLocallyLoading = true;
