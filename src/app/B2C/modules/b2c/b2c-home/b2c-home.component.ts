@@ -402,6 +402,7 @@ export class B2CHomeComponent implements OnInit {
   }
 
   onSearchOptionClick(option: string): void {
+    debugger;
     this.showSearchBar = false; // Hide main search bar by default
   
     if (option === 'Vehicle') {
@@ -423,6 +424,7 @@ export class B2CHomeComponent implements OnInit {
   
 
   onSearchClick(): void {
+    debugger;
     if (this.searchPlaceholder === 'Search By Vehicle') {
       this.showVehicleForm = true; // Show the vehicle form
     }
@@ -666,6 +668,7 @@ export class B2CHomeComponent implements OnInit {
   
   // In home.component.ts, inside the `onSearch` function:
   onSearch(page: number = 1): void {
+    debugger;
     this.currentSearchType = 'generalSearch';
     const searchInputElement = document.getElementById(
       'search-input'
@@ -723,11 +726,10 @@ export class B2CHomeComponent implements OnInit {
     };
 
     // Update query params if there's a search query
-    if (this.searchQuery) {
+   
       this.router.navigate(['/B2C/search'], {
         queryParams: { query: this.searchQuery },
       });
-    }
 
     this.dynamicSearchService
       .searchProducts(requestData)
@@ -755,7 +757,7 @@ export class B2CHomeComponent implements OnInit {
 
   onPageChange(page: number): void { 
     // console.log('Current Search Type:', this.currentSearchType, 'Page:', page); 
-
+debugger;
     if (this.currentSearchType === 'generalSearch') {
       this.onSearch(page); // General search
     } else if (this.currentSearchType === 'vehicleSearch') {

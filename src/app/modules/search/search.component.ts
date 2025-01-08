@@ -266,6 +266,14 @@ export class SearchComponent implements OnChanges {
         this.searchType = 'vehicleSearch';
         this.performVehicleSearch(vehicleData);
       }
+      else{
+        this.currentSearchState = {
+          type: 'generalSearch',
+          data: "",
+        };
+        this.searchType = 'generalSearch';
+        this.performGeneralSearch("");
+      }
     });
     this.loadWishlist();
     const { m_id, f_id, s_id } =
@@ -714,7 +722,7 @@ export class SearchComponent implements OnChanges {
 
   // Ensure that `performGeneralSearch` respects the current page setting
   performGeneralSearch(query: string): void {
-    if (this.activeSearchType !== 'general' || this.lastQuery !== query) {
+    if (this.activeSearchType !== 'general' ) {
       this.filterSearchService.clearSelectedBrand();
     }
 
