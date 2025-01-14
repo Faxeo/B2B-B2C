@@ -180,14 +180,7 @@
     height: auto; /* Maintain the aspect ratio */
     align-items: center;
   }
-  h3{
-    text-align: center;
-    font-size: 25px;
-    font-family: Bai_Jamjuree;
-    margin-bottom: 20px; /* Space between each heading */
-    letter-spacing: 2px; /* Increase letter spacing */
-  
-  }
+
   .paragraph-container a {
     text-decoration: none;
     color: inherit;
@@ -233,28 +226,9 @@
   .tires-heading {
     color: red; /* Set the color of "Tires & Wheels" to red */
   }
-  
-  h4 {
-     /* Change font family */
-    font-size: 28px; /* Increase font size */
-    margin: 10px -550px; /* Remove default margin */
-    font-weight: bold; /* Bold font */
-    padding: 0 10px;
-    margin-left: 250px;
-      margin-top: 40px; /* Decrease spacing between the headings */
-   
-  }
-  .Rims{
-    margin-right: 270px;
-  }
+
   .flash-seller-title{
     margin-top: 90px;
-  }
-  .container {
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
-    box-sizing: border-box;
   }
   .product-listing {
     display: flex;
@@ -468,25 +442,6 @@
     padding: 20px;
   }
   
-  .card {
-    position: relative;
-    width: 30%;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease-in-out;
-  }
-  
-  .card:hover {
-    transform: scale(1.05);
-  }
-  
-  .card-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Ensures the image displays fully */
-  }
-  
   .card-overlay {
     position: absolute;
     top: 0;
@@ -508,10 +463,6 @@
     margin: 10px 0;
   }
   
-  .card p {
-    font-size: 1rem;
-    margin-bottom: 15px;
-  }
   
   .btn-shop {
     background-color: #ff0000;
@@ -889,9 +840,4 @@
   
   .slider-container.active .inner-container {
     display: flex;
-  }
-  
-  h4, p {
-    font-family: Arial, sans-serif;
-    text-align: center;
   }

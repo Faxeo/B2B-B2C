@@ -1,8 +1,16 @@
-*{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  /* overflow-x: hidden; */
+.img-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px; /* Adjust height as needed */
+  overflow: hidden;
+  border-radius: 10px; /* Optional: Matches the rounded card style */
+}
+
+.product-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* Ensures the image scales properly without distortion */
 }
 
 .customer-dropdown {
@@ -193,31 +201,6 @@
     padding-right: 13px;
   }
   
-  .form-control {
-    background-color: #D3D3D3; /* Deep red background for form field */
-    color: white; /* Text color */
-    border: none;
-  }
-  
-  .form-control::placeholder {
-    color: white; /* Placeholder text color */
-    font-size: 20px;
-  }
-  
-  .form-control:focus {
-    background-color: #D3D3D3; /* Keep the background color on focus */
-    color: white; /* Keep the text color on focus */
-    outline: none;
-    box-shadow: none;
-  }
-  
-  .input-group-text {
-    background-color: #b71c1c; /* Match input group text background color */
-    border: none; /* Remove border */
-  }
-  
-  
-  
   .btn-outline-light:hover {
     background-color: gray; /* Slightly lighter red for hover */
     color: white;
@@ -378,7 +361,7 @@
     height: auto;
   }
   
-  .btn-danger {
+  .btn-danger-button {
     border: none;
     background-color: rgba(238, 236, 231, 0.2); /* 20% opacity background */
     box-shadow: none;
@@ -403,7 +386,7 @@
     opacity: 1; /* Ensure text opacity is not reduced */
     font-weight: bold;
   }
-  .btn-danger:hover{
+  .btn-danger-button:hover{
     background-color: #b71c1c;
     opacity: 80%;
   }
@@ -738,22 +721,11 @@
     opacity: 1; /* Set opacity to full so button is clearly visible */
     cursor: not-allowed; /* Not-allowed cursor */
   }
-  
-  /* Style the span that contains the button when the button is disabled */
-  span.input-group-text.disabled-span {
-    background-color: #ffffff; /* Set span background to white */
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
+
   
   /* Style the icon inside the disabled button */
   button[disabled] i {
     color: #999999; /* Set the icon color to gray when the button is disabled */
-  }
-  
-  /* Default style for the enabled button and icon */
-  span.input-group-text button i {
-    color: #ffffff; /* White icon color when the button is enabled */
   }
   
   
