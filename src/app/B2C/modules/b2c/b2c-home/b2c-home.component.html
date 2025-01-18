@@ -306,77 +306,80 @@
           </div>
           <div class="card-body">
             <!-- Product Name and Price -->
-            <h5 class="card-title text-center">{{ product.product_name }}</h5>
-
-            <div class="row mt-1">
-              <div class="col">
-                <div class="mb-3">
-                  <ng-container *ngIf="loginType === null; else loggedInPrice">
-                    <div class="alert alert-warning p-2 text-center">
-                      Log in for prices
-                    </div>
-                  </ng-container>
-    
-                  <ng-template #loggedInPrice>
-                    <p class="text-danger mb-0">
-                      <span *ngIf="product.product_price === 0 || product.availableQuantity === 0; else showPrice">
-                        Out of Stock
-                      </span>
-                      <ng-template #showPrice>
-                        <span>${{ product.product_price }}</span>
-                      </ng-template>
-                    </p>
-                  </ng-template>
-                </div>
+             <div class="d-flex justify-content-between">
+               <h5 class="card-title text-center">{{ product.product_name }}</h5>
+               <h5 class="text-danger mb-0">
+                <span *ngIf="product.product_price === 0 || product.availableQuantity === 0; else showPrice">
+                  Out of Stock
+                </span>
+                <ng-template #showPrice>
+                  <span> <i class="fa-solid fa-dollar-sign"></i> {{ product.product_price }}</span>
+                </ng-template>
+              </h5>
+             </div>
+             <div class="row my-1 justify-content-center align-items-center">
+              <div class="col"></div>
+              <div class="col d-flex justify-content-between">
+              <div class="col-auto">
+                <!-- Decrease Button -->
+                <button 
+                  class="btn btn-danger" 
+                  (click)="decreaseQuantity(product)" 
+                  [disabled]="product.product_quantity === 0"
+                  title="Decrease quantity"
+                >
+                  <i class="fa fa-minus"></i>
+                </button>
               </div>
-              <div class="col">
-                   <!-- Quantity Control -->
-            <div class="input-group mb-3">
-              <span class="input-group-text">Qty.</span>
-              <button 
-                class="btn btn-outline-danger" 
-                (click)="decreaseQuantity(product)" 
-                [disabled]="product.product_quantity === 0"
-              >
-                -
-              </button>
-              <input 
-                type="number" 
-                class="form-control text-center" 
-                [(ngModel)]="product.product_quantity" 
-                style="max-width: 60px;"
-              />
-              <button 
-                class="btn btn-outline-success" 
-                (click)="increaseQuantity(product)"
-              >
-                +
-              </button>
-            </div>
+              <div class="col-auto">
+                <!-- Quantity Input -->
+                <input 
+                  type="number" 
+                  class="form-control text-center" 
+                  [(ngModel)]="product.product_quantity" 
+                  style="max-width: 80px;" 
+                  min="1"
+                />
               </div>
-            </div>
+              <div class="col-auto">
+                <!-- Increase Button -->
+                <button 
+                  class="btn btn-success" 
+                  (click)="increaseQuantity(product)"
+                  title="Increase quantity"
+                >
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </div></div>
 
             <div class="row">
               <div class="col">
-                <button [disabled]="
-                loginType === 'admin' || 
-                product.product_quantity === 0 || 
-                loginType == null || 
-                product.product_price === 0
-              "
-                class="btn btn-info w-100 mb-2" 
-                (click)="addToCart(product)"
+                <button class="btn btn-secondary w-100" 
+                (click)="viewProductDetails(product.product_id)"
               >
-                Add to Cart
+              <i class="fa-regular fa-eye"></i> <span class="ms-2">View Detail</span>
               </button>
               </div>
               <div class="col">
                 <button 
-                class="btn btn-outline-danger w-100" 
-                (click)="viewProductDetails(product.product_id)"
-              >
-                VIEW
-              </button>
+                  *ngIf="product.product_price > 0 || product.availableQuantity > 0; else wishlistButton"
+                  class="btn btn-outline-success w-100" 
+                  (click)="addToCart(product)"
+                >
+                  <i class="fa-solid fa-cart-shopping"></i>
+                  <span class="ms-2">Add to Cart</span>
+                </button>
+
+                <ng-template #wishlistButton>
+                  <button 
+                    class="btn btn-outline-warning w-100"
+                  >
+                    <i class="fa-solid fa-heart"></i>
+                    <span class="ms-2">Add to Wishlist</span>
+                  </button>
+                </ng-template>
+
               </div>
             </div>
             <!-- Cart Confirmation Message -->
@@ -390,7 +393,11 @@
   </div>
   
   <ng-template #loadingProducts>
-    <p>Loading products...</p>
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading Products...</span>
+      </div>
+    </div>
   </ng-template>
   <div class="best-seller-container">
 

@@ -166,7 +166,7 @@ export class B2CHomeComponent implements OnInit {
       map((categories) =>
         categories.map((category: { id: number, name: string, productCount: number }) => ({
           ...category,
-          image: `assets/car-parts-&-accessories.png`,
+          image: `assets/suspension.jpg`,
           productCount: category.productCount || 0  // Ensure productCount is used
         }))
       )
@@ -819,6 +819,7 @@ addToCart(product: {
   product_identifier2: string;
   showMessage?: boolean; // Add an optional property for showMessage
 }): void {
+  debugger;
   const userID = this.userID || '';
   const businessId = this.userID ? +this.userID : 0;
   const upc = product.product_identifier2;
