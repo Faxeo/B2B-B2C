@@ -72,7 +72,6 @@ export class B2CHomeComponent implements OnInit {
   isAdminSidebarVisible: boolean = false;
   userID: string | null = null;
   message: string = '';
-  showMessage: boolean = false;
   searchInput$ = new BehaviorSubject<string>(''); // Search input
   searchQuery: string = ''; // Store the search query entered by the user
   cartItemCount: number = 0; // Variable for cart item count
@@ -167,7 +166,7 @@ export class B2CHomeComponent implements OnInit {
       map((categories) =>
         categories.map((category: { id: number, name: string, productCount: number }) => ({
           ...category,
-          image: `assets/car-parts-&-accessories.png`,
+          image: `assets/suspension.jpg`,
           productCount: category.productCount || 0  // Ensure productCount is used
         }))
       )
@@ -181,6 +180,7 @@ export class B2CHomeComponent implements OnInit {
           ...product,
           image: `${product.product_image}`,
           product_quantity: 1,
+          showMessage: false
         }))
       )
     );
@@ -402,7 +402,6 @@ export class B2CHomeComponent implements OnInit {
   }
 
   onSearchOptionClick(option: string): void {
-    debugger;
     this.showSearchBar = false; // Hide main search bar by default
   
     if (option === 'Vehicle') {
@@ -757,7 +756,6 @@ export class B2CHomeComponent implements OnInit {
 
   onPageChange(page: number): void { 
     // console.log('Current Search Type:', this.currentSearchType, 'Page:', page); 
-debugger;
     if (this.currentSearchType === 'generalSearch') {
       this.onSearch(page); // General search
     } else if (this.currentSearchType === 'vehicleSearch') {
@@ -819,13 +817,14 @@ addToCart(product: {
   product_quantity: number;
   product_image: string;
   product_identifier2: string;
+  showMessage?: boolean; // Add an optional property for showMessage
 }): void {
+  debugger;
   const userID = this.userID || '';
   const businessId = this.userID ? +this.userID : 0;
   const upc = product.product_identifier2;
 
   console.log('Adding product to cart:', product);
-  // console.log('User ID:', userID, 'Business ID:', businessId);
 
   this.addToCartService
     .addToCart(
@@ -846,29 +845,30 @@ addToCart(product: {
           upc: upc
         });
 
-        this.displayMessage('Item added to cart successfully!');
+        // Show success message for this product
+        product.showMessage = true;
+
+        // Hide the message after 1 second
+        setTimeout(() => {
+          product.showMessage = false;
+        }, 1000);
       },
       error: (error) => {
         console.error('Error adding to cart:', error);
-        this.displayMessage('Error adding item to cart: ' + error.message);
       },
     });
 }
-
-
-  displayMessage(msg: string): void {
-    this.message = msg;
-    this.showMessage = true;
-
-    setTimeout(() => {
-      this.showMessage = false;
-    }, 1000);
-  }
-  
 
   closeForm(): void {
     this.showVehicleForm = false; // Hide the vehicle form
     this.showCategoryForm = false; // Hide category form if applicable
   }
   
+  viewProductDetails(productId: number): void {
+    if (productId) {
+      this.router.navigate(['/product-details', productId]);
+    } else {
+      console.error('Product ID is undefined');
+    }
+  }
 }

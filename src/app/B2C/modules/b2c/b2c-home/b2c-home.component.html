@@ -1,897 +1,713 @@
-<!-- Loading spinner -->
-<div *ngIf="isLoading" class="spinner-container">
-  <div class="spinner-border text-danger" role="status">
-    <span class="visually-hidden">Loading...</span>
+<div class="container-fluid g-0 m-0 p-0">
+  <!-- Loading spinner -->
+  <div *ngIf="isLoading" class="spinner-container">
+    <div class="spinner-border text-danger" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
   </div>
-</div>
 
-<!-- New Section with Background Image -->
-<div class="new-section">
+  <!-- New Section with Background Image -->
 
-  <nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-      <a class="navbar-brand logo" href="/">
-        <img src="assets/logo.png" alt="US Auto Parts" height="70" width="100%">
-      </a>
-      
-      <div class="d-flex flex-grow-1 align-items-center justify-content-between">
-        <div class="input-group search-bar me-3"
-          style="padding: 8px 12px; max-width: 1000px; height: 80px; margin-left: 120px; border-radius: 40px; overflow: hidden;">
-         
-          <div class="form-control inner-search d-flex align-items-center justify-content-between"
-            style="padding: 8px 12px; border-radius: 26px; background-color: #fff;">
-            
-            <input id="search-input" class="form-control border-0" type="search" placeholder="Search keyword"
-              aria-label="Search" (keydown.enter)="onSearch()"
-              style="flex: 1; outline: none; box-shadow: none; color:black">
-           
-            <button class="bg-transparent border-0 p-0 ms-2" (click)="onSearch()">
-              <i class="fa fa-search fa-xl text-dark"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-  
-      <!-- Right Section with Login, Signup, Heart, and Cart -->
-      <div class="Login d-flex align-items-center">
-        
-        <!-- Show Sign in and Sign up when loginType is not 'customer' -->
-        <ng-container *ngIf="loginType !== 'customer'; else customerSection">
-          <a class="Login d-flex align-items-center text-decoration-none" routerLink="/B2C/login">
-            <img src="assets/user.png" alt="User Icon" height="30" width="30" class="me-2">
-            <strong>Sign in</strong>
-          </a>
-    
-          <a class="signup-button ms-3 d-flex align-items-center" routerLink="/sidebar/signup">
-            Sign up
-          </a>
-        </ng-container>
-  
-        <!-- Customer Section (Visible only when loginType is 'customer') -->
-        <ng-template #customerSection>
-          <div class="position-relative customer-dropdown">
-            <button class="signup-button ms-3 d-flex align-items-center" (click)="toggleDropdown()">
-              Customer
-              <i class="fa fa-caret-down ms-2"></i>
-            </button>
-        
-            <!-- Animated Dropdown Menu -->
-            <div *ngIf="showDropdown" class="dropdown-menu-custom">
-              <a class="dropdown-item-custom" (click)="logout()">
-                <i class="fa fa-sign-out-alt me-2"></i> Log Out
-              </a>
+  <div class="new-section">
+
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <a class="navbar-brand logo" href="/">
+          <img src="assets/logo.png" alt="US Auto Parts" height="70" width="100%">
+        </a>
+
+        <div class="d-flex flex-grow-1 align-items-center justify-content-between">
+          <div class="input-group search-bar me-3"
+            style="padding: 8px 12px; max-width: 1000px; height: 80px; margin-left: 120px; border-radius: 40px; overflow: hidden;">
+
+            <div class="form-control inner-search d-flex align-items-center justify-content-between"
+              style="padding: 8px 12px; border-radius: 26px; background-color: #fff;">
+
+              <input id="search-input" class="form-control border-0" type="search" placeholder="Search keyword"
+                aria-label="Search" (keydown.enter)="onSearch()"
+                style="flex: 1; outline: none; box-shadow: none; color:black">
+
+              <button class="bg-transparent border-0 p-0 ms-2" (click)="onSearch()">
+                <i class="fa fa-search fa-xl text-dark"></i>
+              </button>
             </div>
           </div>
-        </ng-template>
-        
-        <button class="heart-btn ms-3">
-          <i class="far fa-heart wishlist"></i>
-        </button>
-        
-        <button *ngIf="loginType !== 'admin'" class="btn btn-outline-light ms-2 red-button" id="shopping_cart"
-          routerLink="/B2C/cart">
-          <i class="fa-solid fa-cart-shopping fa-2xl large-icon"></i>
-          <span *ngIf="cartItemCount > 0" class="cart-count-badge">{{ cartItemCount }}</span>
-        </button>
-      </div>
-    </div>
-  </nav>
-  
-  
-  
+        </div>
 
-  <div class="overlay">
-    <div class="container-fluid h-100 d-flex flex-column justify-content-center align-items-center">
-      <div class="welcome-message-outer-div">
-        <h2 class="welcome-message">Welcome to</h2>
-        <h2 class="USAP-message"> US AUTOPARTS EXPERTS</h2>
-        <h2 class="B2C-message"> B2C Platform </h2>
-      </div>
+        <!-- Right Section with Login, Signup, Heart, and Cart -->
+        <div class="Login d-flex align-items-center">
 
-      <div class="mt-auto w-100">
-        <div class="row btn-row justify-content-center">
-          <div class="col-md-4 text-center mb-2 btn-div">
-            <button class="btn btn-danger w-100" (click)="onSearchOptionClick('Vehicle')"
-              style="margin-bottom:-420px">Search By Vehicle</button>
-          </div>
-          <div class="col-md-4 text-center mb-2 btn-div">
-            <button class="btn btn-danger w-100" (click)="onSearchOptionClick('Category')"
-              style="margin-bottom:-420px">Search By Category</button>
-          </div>
-          <div class="col-md-4 text-center mb-2 btn-div">
-            <button class="btn btn-dangerAttribute w-100" (click)="onSearchOptionClick('Attributes')"
-              style="margin-bottom:-420px">Search By
-              Attributes</button>
+          <!-- Show Sign in and Sign up when loginType is not 'customer' -->
+          <ng-container *ngIf="loginType !== 'customer'; else customerSection">
+            <a class="Login d-flex align-items-center text-decoration-none" routerLink="/B2C/login">
+              <img src="assets/user.png" alt="User Icon" height="30" width="30" class="me-2">
+              <strong>Sign in</strong>
+            </a>
+
+            <a class="signup-button ms-3 d-flex align-items-center" routerLink="/sidebar/signup">
+              Sign up
+            </a>
+          </ng-container>
+
+          <!-- Customer Section (Visible only when loginType is 'customer') -->
+          <ng-template #customerSection>
+            <div class="position-relative customer-dropdown">
+              <button class="signup-button ms-3 d-flex align-items-center" (click)="toggleDropdown()">
+                Customer
+                <i class="fa fa-caret-down ms-2"></i>
+              </button>
+
+              <!-- Animated Dropdown Menu -->
+              <div *ngIf="showDropdown" class="dropdown-menu-custom">
+                <a class="dropdown-item-custom" (click)="logout()">
+                  <i class="fa fa-sign-out-alt me-2"></i> Log Out
+                </a>
+              </div>
+            </div>
+          </ng-template>
+
+          <button class="heart-btn ms-3">
+            <i class="far fa-heart wishlist"></i>
+          </button>
+
+          <button *ngIf="loginType !== 'admin'" class="btn btn-outline-light ms-2 red-button" id="shopping_cart"
+            routerLink="/B2C/cart">
+            <i class="fa-solid fa-cart-shopping fa-2xl large-icon"></i>
+            <span *ngIf="cartItemCount > 0" class="cart-count-badge">{{ cartItemCount }}</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+
+
+
+    <div class="overlay">
+      <div class="container-fluid h-100 d-flex flex-column justify-content-center align-items-center">
+        <div class="welcome-message-outer-div">
+          <h2 class="welcome-message">Welcome to</h2>
+          <h2 class="USAP-message"> US AUTOPARTS EXPERTS</h2>
+          <h2 class="B2C-message"> B2C Platform </h2>
+        </div>
+
+        <div class="mt-auto w-100">
+          <div class="row btn-row justify-content-center">
+            <div class="col-md-4 text-center mb-2 btn-div">
+              <button class="btn btn-danger-button w-100" (click)="onSearchOptionClick('Vehicle')"
+                style="margin-bottom:-420px">Search By Vehicle</button>
+            </div>
+            <div class="col-md-4 text-center mb-2 btn-div">
+              <button class="btn btn-danger-button w-100" (click)="onSearchOptionClick('Category')"
+                style="margin-bottom:-420px">Search By Category</button>
+            </div>
+            <div class="col-md-4 text-center mb-2 btn-div">
+              <button class="btn btn-dangerAttribute w-100" (click)="onSearchOptionClick('Attributes')"
+                style="margin-bottom:-420px">Search By
+                Attributes</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-<div class="slider-container" style="height: inherit;" id="sliderContainer" [ngClass]="{'active': isSliderVisible}">
-  <div class="inner-container" *ngIf="isSliderVisible">
-    <div class="content-wrapper">
-      <h2 class="slider-title">Unlock Exclusive B2B Benefits</h2>
-      <p class="slider-subtitle">Join Us Auto Parts as a B2B Partner</p>
-      <button class="action-button" >Become a B2B User</button>
+  <div class="slider-container" style="height: inherit;" id="sliderContainer" [ngClass]="{'active': isSliderVisible}">
+    <div class="inner-container" *ngIf="isSliderVisible">
+      <div class="content-wrapper">
+        <h2 class="slider-title">Unlock Exclusive B2B Benefits</h2>
+        <p class="slider-subtitle">Join Us Auto Parts as a B2B Partner</p>
+        <button class="action-button">Become a B2B User</button>
+      </div>
+    </div>
+    <button class="slider-button" id="sliderButton" (click)="becomeB2BUser()">
+      <span><strong>B2B</strong></span>
+    </button>
+  </div>
+
+  <!-- <app-sidebar *ngIf="isSidebarVisible" [isVisible]="isSidebarVisible"></app-sidebar> -->
+
+  <!-- <p *ngIf="isSidebarVisible">Sidebar is visible!</p> -->
+  <app-sidebar *ngIf="isSidebarVisible"></app-sidebar>
+  <!-- <div *ngIf="isSidebarVisible" style="background: #ccc; padding: 10px; z-index: 1000;">Sidebar Placeholder</div>
+<app-sidebar *ngIf="isSidebarVisible && isBrowser"></app-sidebar> -->
+  <!-- <app-sidebar style="display: block !important; visibility: visible !important;"></app-sidebar> -->
+
+
+
+  <div>
+    <div *ngIf="showVehicleForm" class="vehicle-search-modal">
+      <!-- Background blur overlay -->
+      <div class="modal-overlay">
+        <span class="overlay-close-icon" (click)="closeForm()">&#x2715;</span>
+      </div>
+
+      <!-- Centered form container -->
+      <div class="vehicle-search-form-wrapper">
+        <div class="vehicle-search-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="model" for="year">Year:</label>
+              <select id="year" [(ngModel)]="selectedYear" (change)="onYearChange()">
+                <option value="" disabled selected>Select Year</option>
+                <option *ngFor="let year of years" [value]="year.year">{{ year.year }}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="model" for="make">Make:</label>
+              <select id="make" [(ngModel)]="selectedMake" (change)="onMakeChange()" [disabled]="!selectedYear">
+                <option value="" disabled selected>Select Make</option>
+                <option *ngFor="let make of makes" [value]="make.name">{{ make.name }}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="model" for="model">Model:</label>
+              <select id="model" [(ngModel)]="selectedModel" (change)="onModelChange()" [disabled]="!selectedMake">
+                <option value="" disabled selected>Select Model</option>
+                <option *ngFor="let model of models" [value]="model.name">{{ model.name }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="model" for="trim">Trim:</label>
+              <select id="trim" [(ngModel)]="selectedTrim" (change)="onTrimChange()" [disabled]="!selectedModel">
+                <option value="" disabled selected>Select Trim</option>
+                <option *ngFor="let trim of trims" [value]="trim.name">{{ trim.name }}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="engine">Engine:</label>
+              <select [(ngModel)]="selectedEngine" (change)="onEngineChange()">
+                <option *ngFor="let engine of engines" [value]="engine.name">{{ engine.name }}</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="search-button" (click)="searchByVehicle()"
+            [disabled]="!selectedYear || !selectedMake || !selectedModel || !selectedTrim || !selectedEngine">
+            Search
+          </button>
+        </div>
+      </div>
     </div>
   </div>
-  <button class="slider-button" id="sliderButton" (click)="becomeB2BUser()">
-    <span><strong>B2B</strong></span>
-  </button>
-</div>
-
-<!-- <app-sidebar *ngIf="isSidebarVisible" [isVisible]="isSidebarVisible"></app-sidebar> -->
-
-<!-- <p *ngIf="isSidebarVisible">Sidebar is visible!</p> -->
-<app-sidebar *ngIf="isSidebarVisible"></app-sidebar>
-<!-- <div *ngIf="isSidebarVisible" style="background: #ccc; padding: 10px; z-index: 1000;">Sidebar Placeholder</div>
-<app-sidebar *ngIf="isSidebarVisible && isBrowser"></app-sidebar> -->
-<!-- <app-sidebar style="display: block !important; visibility: visible !important;"></app-sidebar> -->
 
 
-
-<div >
-  <div *ngIf="showVehicleForm" class="vehicle-search-modal">
-    <!-- Background blur overlay -->
+  <div *ngIf="showCategoryForm" class="category-search-modal">
     <div class="modal-overlay">
       <span class="overlay-close-icon" (click)="closeForm()">&#x2715;</span>
     </div>
-
-    <!-- Centered form container -->
-    <div class="vehicle-search-form-wrapper">
-      <div class="vehicle-search-form">
-        <div class="form-row">
+    <div class="category-search-form-wrapper">
+      <div class="category-search-form">
+        <h4 *ngIf="mainCategories.length === 0">No categories available. Please try again later.</h4>
+        <div class="form-row" *ngIf="mainCategories.length > 0">
+          <!-- Main Category Dropdown -->
           <div class="form-group">
-            <label class="model" for="year">Year:</label>
-            <select id="year" [(ngModel)]="selectedYear" (change)="onYearChange()">
-              <option value="" disabled selected>Select Year</option>
-              <option *ngFor="let year of years" [value]="year.year">{{ year.year }}</option>
+            <label class="category-form" for="mainCategory">Main Category:</label>
+            <select id="mainCategory" [(ngModel)]="selectedMainCategory" (change)="onMainCategoryChange()">
+              <option value="" disabled selected>Select Main Category</option>
+              <option *ngFor="let mainCategory of mainCategories" [value]="mainCategory.id">{{ mainCategory.name }}
+              </option>
             </select>
           </div>
 
+          <!-- First Sub-Category Dropdown -->
           <div class="form-group">
-            <label class="model" for="make">Make:</label>
-            <select id="make" [(ngModel)]="selectedMake" (change)="onMakeChange()" [disabled]="!selectedYear">
-              <option value="" disabled selected>Select Make</option>
-              <option *ngFor="let make of makes" [value]="make.name">{{ make.name }}</option>
+            <label class="category-form" for="firstSubCategory">First Sub-Category:</label>
+            <select id="firstSubCategory" [(ngModel)]="selectedFirstSubCategory" (change)="onFirstSubCategoryChange()"
+              [disabled]="!selectedMainCategory">
+              <option value="" disabled selected>Select First Sub-Category</option>
+              <option *ngFor="let firstSubCategory of firstSubCategories" [value]="firstSubCategory.id">{{
+                firstSubCategory.name }}</option>
             </select>
           </div>
 
+          <!-- Second Sub-Category Dropdown -->
           <div class="form-group">
-            <label class="model" for="model">Model:</label>
-            <select id="model" [(ngModel)]="selectedModel" (change)="onModelChange()" [disabled]="!selectedMake">
-              <option value="" disabled selected>Select Model</option>
-              <option *ngFor="let model of models" [value]="model.name">{{ model.name }}</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="model" for="trim">Trim:</label>
-            <select id="trim" [(ngModel)]="selectedTrim" (change)="onTrimChange()" [disabled]="!selectedModel">
-              <option value="" disabled selected>Select Trim</option>
-              <option *ngFor="let trim of trims" [value]="trim.name">{{ trim.name }}</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="engine">Engine:</label>
-            <select [(ngModel)]="selectedEngine" (change)="onEngineChange()">
-              <option *ngFor="let engine of engines" [value]="engine.name">{{ engine.name }}</option>
+            <label class="category-form" for="secondSubCategory">Second Sub-Category:</label>
+            <select id="secondSubCategory" [(ngModel)]="selectedSecondSubCategory"
+              [disabled]="!selectedFirstSubCategory">
+              <option value="" disabled selected>Select Second Sub-Category</option>
+              <option *ngFor="let secondSubCategory of secondSubCategories" [value]="secondSubCategory.id">{{
+                secondSubCategory.name }}</option>
             </select>
           </div>
         </div>
-
-        <button class="search-button" (click)="searchByVehicle()"
-          [disabled]="!selectedYear || !selectedMake || !selectedModel || !selectedTrim || !selectedEngine">
+        <button class="search-button" (click)="searchByCategory()"
+          [disabled]="!selectedMainCategory || !selectedFirstSubCategory || !selectedSecondSubCategory">
           Search
         </button>
       </div>
     </div>
   </div>
-</div>
 
+  <!------------ Product categories -------------------->
 
-<div *ngIf="showCategoryForm" class="category-search-modal">
-  <div class="modal-overlay">
-    <span class="overlay-close-icon" (click)="closeForm()">&#x2715;</span>
-  </div>
-  <div class="category-search-form-wrapper">
-    <div class="category-search-form">
-      <h4 *ngIf="mainCategories.length === 0">No categories available. Please try again later.</h4>
-      <div class="form-row" *ngIf="mainCategories.length > 0">
-        <!-- Main Category Dropdown -->
-        <div class="form-group">
-          <label class="category-form" for="mainCategory">Main Category:</label>
-          <select id="mainCategory" [(ngModel)]="selectedMainCategory" (change)="onMainCategoryChange()">
-            <option value="" disabled selected>Select Main Category</option>
-            <option *ngFor="let mainCategory of mainCategories" [value]="mainCategory.id">{{ mainCategory.name }}
-            </option>
-          </select>
-        </div>
-
-        <!-- First Sub-Category Dropdown -->
-        <div class="form-group">
-          <label class="category-form" for="firstSubCategory">First Sub-Category:</label>
-          <select id="firstSubCategory" [(ngModel)]="selectedFirstSubCategory" (change)="onFirstSubCategoryChange()"
-            [disabled]="!selectedMainCategory">
-            <option value="" disabled selected>Select First Sub-Category</option>
-            <option *ngFor="let firstSubCategory of firstSubCategories" [value]="firstSubCategory.id">{{
-              firstSubCategory.name }}</option>
-          </select>
-        </div>
-
-        <!-- Second Sub-Category Dropdown -->
-        <div class="form-group">
-          <label class="category-form" for="secondSubCategory">Second Sub-Category:</label>
-          <select id="secondSubCategory" [(ngModel)]="selectedSecondSubCategory" [disabled]="!selectedFirstSubCategory">
-            <option value="" disabled selected>Select Second Sub-Category</option>
-            <option *ngFor="let secondSubCategory of secondSubCategories" [value]="secondSubCategory.id">{{
-              secondSubCategory.name }}</option>
-          </select>
+  <div *ngIf="showSearchBar" class="container my-5">
+    <div class="row g-4">
+      <div class="col-lg-2 col-md-3 col-sm-4" *ngFor="let category of categories$ | async">
+        <div 
+          class="card h-100 text-center shadow-sm border-0" 
+          (click)="onCategoryClick(category.id)" 
+          style="cursor: pointer; border-radius: 10px;"
+        >
+          <!-- Card Image -->
+          <div class="position-relative">
+            <img 
+              [src]="category.image" 
+              [alt]="category.name" 
+              class="card-img-top rounded-top"
+              style="height: 150px; object-fit: cover; border-radius: 10px 10px 0 0;"
+            />
+          </div>
+          <!-- Card Body -->
+          <div class="card-body d-flex flex-column justify-content-center p-3">
+            <h5 class="card-title text-dark fw-bold text-truncate">{{ category.name }}</h5>
+            <p class="card-text text-secondary mb-0">{{ category.productCount }} products</p>
+          </div>
         </div>
       </div>
-      <button class="search-button" (click)="searchByCategory()"
-        [disabled]="!selectedMainCategory || !selectedFirstSubCategory || !selectedSecondSubCategory">
-        Search
-      </button>
     </div>
   </div>
-</div>
 
-<!-- Horizontal Scrollable Product Row Section  -->
+  <div class="d-flex align-items-center justify-content-center my-4">
+    <div class="flex-grow-1 bg-secondary" style="height: 2px;"></div>
+    <h2 class="mx-3 text-uppercase fs-1 fw-bolder" style="letter-spacing: 3px; color: grey">Best Sellers</h2>
+    <div class="flex-grow-1 bg-secondary" style="height: 2px;"></div>
+  </div>
 
-<div *ngIf="showSearchBar" class="d-flex" style="padding: 10px; flex-wrap: nowrap;">
-  <div class="col-1"
-    style="border-radius: 20px;border: 1px solid #808080; height: 530px;width:330px; padding: 8px; margin: 10px;background-color: white;">
-    <!-- Image Container -->
-    <div class="image-container">
-      <img src="../../../assets/rims2.png" alt="Image 1" class="col-image"
-        style="width: 150px; height: auto;  filter: none;margin-left: 80px;margin-top: 20px;">
-
-      <div class="image-title"
-        style="text-align: center; font-size: 28px; font-weight: bold; margin-top: 10px;font-family: Bai_Jamjuree;">
-        Automotive Rims
+  <div class="container">
+    <div class="row text-center">
+      <div class="col-md-4">
+        <h3 style="color:red">Tires & Wheels</h3>
+      </div>
+      <div class="col-md-4">
+        <h3>Headlights</h3>
+      </div>
+      <div class="col-md-4">
+        <h3>Automotive Rims</h3>
       </div>
     </div>
+  </div>
+  <br>
+  <div class="mx-5">
+    <div class="row g-3" *ngIf="products$ | async as products; else loadingProducts">
+      <div class="col-lg-3 col-md-4 col-sm-6" *ngFor="let product of products">
+        <div class="card">
+          <div class="d-flex rounded justify-content-center align-items-center img-container">
+            <img 
+              [src]="'https://usaperp.com:5001/Images/Products/' + product.image" 
+              class="img-fluid p-3 product-image h-500" 
+              [alt]="product.product_name"
+            >
+          </div>
+          <div class="card-body">
+            <!-- Product Name and Price -->
+             <div class="d-flex justify-content-between">
+               <h5 class="card-title text-center">{{ product.product_name }}</h5>
+               <h5 class="text-danger mb-0">
+                <span *ngIf="product.product_price === 0 || product.availableQuantity === 0; else showPrice">
+                  Out of Stock
+                </span>
+                <ng-template #showPrice>
+                  <span> <i class="fa-solid fa-dollar-sign"></i> {{ product.product_price }}</span>
+                </ng-template>
+              </h5>
+             </div>
+             <div class="row my-1 justify-content-center align-items-center">
+              <div class="col"></div>
+              <div class="col d-flex justify-content-between">
+              <div class="col-auto">
+                <!-- Decrease Button -->
+                <button 
+                  class="btn btn-danger" 
+                  (click)="decreaseQuantity(product)" 
+                  [disabled]="product.product_quantity === 0"
+                  title="Decrease quantity"
+                >
+                  <i class="fa fa-minus"></i>
+                </button>
+              </div>
+              <div class="col-auto">
+                <!-- Quantity Input -->
+                <input 
+                  type="number" 
+                  class="form-control text-center" 
+                  [(ngModel)]="product.product_quantity" 
+                  style="max-width: 80px;" 
+                  min="1"
+                />
+              </div>
+              <div class="col-auto">
+                <!-- Increase Button -->
+                <button 
+                  class="btn btn-success" 
+                  (click)="increaseQuantity(product)"
+                  title="Increase quantity"
+                >
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </div></div>
 
-    <!-- Paragraph Container -->
-    <div class="paragraph-container">
-      <br>
-      <h3><a href="https://example.com/fondmetal" target="_blank"
-          style="text-decoration: none; color: inherit;">Fondmetal</a></h3>
-      <h3><a href="https://example.com/american-racing" target="_blank"
-          style="text-decoration: none; color: inherit;">American Racing</a></h3>
-      <h3><a href="https://example.com/lexani" target="_blank" style="text-decoration: none; color: inherit;">Lexani</a>
-      </h3>
-      <h3><a href="https://example.com/vossen" target="_blank" style="text-decoration: none; color: inherit;">Vossen</a>
-      </h3>
-      <h3><a href="https://example.com/moto-metal" target="_blank" style="text-decoration: none; color: inherit;">Moto
-          Metal</a></h3>
-    </div>
-  </div>
+            <div class="row">
+              <div class="col">
+                <button class="btn btn-secondary w-100" 
+                (click)="viewProductDetails(product.product_id)"
+              >
+              <i class="fa-regular fa-eye"></i> <span class="ms-2">View Detail</span>
+              </button>
+              </div>
+              <div class="col">
+                <button 
+                  *ngIf="product.product_price > 0 || product.availableQuantity > 0; else wishlistButton"
+                  class="btn btn-outline-success w-100" 
+                  (click)="addToCart(product)"
+                >
+                  <i class="fa-solid fa-cart-shopping"></i>
+                  <span class="ms-2">Add to Cart</span>
+                </button>
 
+                <ng-template #wishlistButton>
+                  <button 
+                    class="btn btn-outline-warning w-100"
+                  >
+                    <i class="fa-solid fa-heart"></i>
+                    <span class="ms-2">Add to Wishlist</span>
+                  </button>
+                </ng-template>
 
-  <div class="col-2"
-    style="border-radius: 20px;border: 1px solid #808080; width:330px;height: 530px; padding: 8px; margin: 10px;background-color: white;">
-    <div class="image-container">
-      <img src="../../../assets/brake2.png" alt="Image 2" class="col-image"
-        style="width: 150px; height: auto;  filter: none;margin-left: 80px;margin-top: 20px;">
-      <div class="image-title"
-        style="text-align: center; font-size: 28px; font-weight: bold; margin-top: 10px;font-family: Bai_Jamjuree;">
-        Brakes System
-      </div>
-    </div>
-    <div class="paragraph-container">
-      <br>
-      <h3><a href="https://example.com/frictional-brake" target="_blank"
-          style="text-decoration: none; color: inherit;">Frictional Brake</a></h3>
-      <h3><a href="https://example.com/air-brake" target="_blank" style="text-decoration: none; color: inherit;">Air
-          Brake</a></h3>
-      <h3><a href="https://example.com/hydraulic-brake" target="_blank"
-          style="text-decoration: none; color: inherit;">Hydraulic Brake</a></h3>
-      <h3><a href="https://example.com/electromagnetic-brake" target="_blank"
-          style="text-decoration: none; color: inherit;">Electromagnetic Brake</a></h3>
-      <h3><a href="https://example.com/servo-brake" target="_blank" style="text-decoration: none; color: inherit;">Servo
-          Brake</a></h3>
-    </div>
-  </div>
-
-  <div class="col-3"
-    style="border-radius: 20px;border: 1px solid #808080; height:530px;width:330px;  padding: 8px; margin: 10px;background-color: white;">
-    <div class="image-container">
-      <img src="../../../assets/car-wheel2.png" alt="Image 3" class="col-image"
-        style="width: 150px; height: auto;  filter: none;margin-left: 80px;margin-top: 20px;">
-      <div class="image-title"
-        style="text-align: center; font-size: 28px; font-weight: bold; margin-top: 10px;font-family: Bai_Jamjuree;">
-        Tires & Wheels
-      </div>
-    </div>
-    <div class="paragraph-container">
-      <br>
-      <h3><a href="https://www.michelin.com" target="_blank" style="text-decoration: none; color: inherit;">Michelin</a>
-      </h3>
-      <h3><a href="https://www.goodyear.com" target="_blank" style="text-decoration: none; color: inherit;">Goodyear
-          Tires</a></h3>
-      <h3><a href="https://www.continental.com" target="_blank"
-          style="text-decoration: none; color: inherit;">Continental</a></h3>
-      <h3><a href="https://www.goodyear.com" target="_blank" style="text-decoration: none; color: inherit;">GoodYear</a>
-      </h3>
-      <h3><a href="https://www.yokohamatire.com" target="_blank"
-          style="text-decoration: none; color: inherit;">Yokohama</a></h3>
-    </div>
-  </div>
-
-  <div class="col-4"
-    style="border-radius: 20px;border: 1px solid #808080; background-color: white; width:330px;height: 530px; padding: 8px; margin: 10px;">
-    <div class="image-container">
-      <img src="../../../assets/audio-system2.png" alt="Image 4" class="col-image"
-        style="width: 150px; height: auto;  filter: none;margin-left: 80px;margin-top: 20px;">
-      <div class="image-title"
-        style="text-align: center; font-size: 28px; font-weight: bold; margin-top: 10px;font-family: Bai_Jamjuree;">
-        Audio System
-      </div>
-    </div>
-    <div class="paragraph-container">
-      <br>
-      <h3><a href="https://example.com/pioneer" target="_blank"
-          style="text-decoration: none; color: inherit;">Pioneer</a></h3>
-      <h3><a href="https://example.com/bose" target="_blank" style="text-decoration: none; color: inherit;">Bose
-          Corporation</a></h3>
-      <h3><a href="https://example.com/focal" target="_blank" style="text-decoration: none; color: inherit;">Focal</a>
-      </h3>
-      <h3><a href="https://example.com/boston-acoustics" target="_blank"
-          style="text-decoration: none; color: inherit;">Boston Acoustics</a></h3>
-      <h3><a href="https://example.com/sony" target="_blank" style="text-decoration: none; color: inherit;">Sony</a>
-      </h3>
-    </div>
-  </div>
-</div>
-<div class="best-seller-container">
-  <div class="line"></div>
-  <h2 class="best-seller-title">BEST SELLERS</h2>
-  <div class="line"></div>
-</div>
-<div class="headings-row">
-  <div class="heading-container">
-    <h4 class="tires-heading">Tires & Wheels</h4>
-  </div>
-  <div class="heading-container">
-    <h4 class="Light">Headlights</h4>
-  </div>
-  <div class="heading-container">
-    <h4 class="Rims">Automotive Rims</h4>
-  </div>
-</div>
-<div class="row" style="margin-left: 20px;">
-
-  <div class="col-2"
-    style="border: 1px solid #808080; border-radius: 20px; background-color: white; width: 330px; height: 300px; padding: 8px; margin: 10px;margin-right: 20px;">
-    <div class="image-container">
-      <img src="../../../assets/Black.jpg" alt="Image 5" class="col-image"
-        style="width: 200px; height: auto; margin-top: 20px; filter: none; margin-left: 80px;">
-    </div>
-  </div>
-
-  <div class="col-2"
-    style="border: 1px solid #808080; border-radius: 20px; background-color: white; width: 330px; height: 300px; padding: 8px; margin: 10px;">
-    <div class="image-container">
-      <img src="../../../assets/Black.jpg" alt="Image 5" class="col-image"
-        style="width: 200px; height: auto; margin-top: 20px; filter: none; margin-left: 80px;">
-    </div>
-  </div>
-
-  <div class="col-2"
-    style="border: 1px solid #808080; border-radius: 20px; background-color: white; width: 330px; height: 300px; padding: 8px; margin: 10px;">
-    <div class="image-container">
-      <img src="../../../assets/Brake.jpg" alt="Image 5" class="col-image"
-        style="width: 200px; height: auto; margin-top: 20px; filter: none; margin-left: 80px;">
-    </div>
-  </div>
-
-  <div class="col-2"
-    style="border: 1px solid #808080; border-radius: 20px; background-color: white; width: 330px; height: 300px; padding: 8px; margin: 10px;">
-    <div class="image-container">
-      <img src="../../../assets/suspension.jpg" alt="Image 5" class="col-image"
-        style="width: 200px; height: auto; margin-top: 20px; filter: none; margin-left: 80px;">
-    </div>
-  </div>
-
-  <div class="col-2"
-    style="border: 1px solid #808080; border-radius: 20px; background-color: white; width: 330px; height: 300px; padding: 8px; margin: 10px;">
-    <div class="image-container">
-      <img src="../../../assets/Tire.jpg" alt="Image 5" class="col-image"
-        style="width: 200px; height: auto; margin-top: 20px; filter: none; margin-left: 80px;">
-    </div>
-  </div>
-</div>
-<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-  <div class="colt1" style="flex: 1; text-align: left;">
-    <h5 class="tires-heading1" style="font-size: 28px; font-weight: bold; font-family: Bai_Jamjuree;margin-left: 40px;">
-      Tires & Wheels
-    </h5>
-    <h6 class="Phas" style="font-size: 18px; text-align: left; margin-left: 40px;">Phasellus commodo elit rutrum leo
-      <br> dignissim sagittis
-    </h6>
-    <div style="margin-left: 40px;">
-      <span style="font-size: 20px; color: gold;">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <!-- 5 stars -->
-      <span style="font-size: 18px; color: #333;">(0)</span> <!-- Rating count -->
-    </div>
-    <div style="margin-left: 40px; font-size: 22px; font-weight: bold; color: red;">
-      $99.99 <!-- Replace with actual price -->
-    </div>
-  </div>
-  <div class="colt2" style="flex: 1; text-align: center;">
-    <h5 class="tires-heading1"
-      style="font-size: 28px; font-weight: bold; font-family: Bai_Jamjuree;margin-right: 100px;margin-left: 40px;">
-      Tires & Wheels
-    </h5>
-    <h6 class="Phas" style="font-size: 18px; text-align: left; margin-left: 80px;">Phasellus commodo elit rutrum leo
-      <br> dignissim sagittis
-    </h6>
-    <div style="margin-right: 230px;margin-left: 40px;">
-      <span style="margin-left: 40px;font-size: 20px; color: gold;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-      <!-- 5 stars -->
-      <span style="font-size: 18px; color: #333;">(0)</span> <!-- Rating count -->
-    </div>
-    <div style="margin-right: 260px; font-size: 22px; font-weight: bold; color: red;margin-left: 80px;">
-      $199.99 <!-- Replace with actual price -->
-    </div>
-  </div>
-  <div class="colt3" style="flex: 1; text-align: center;">
-    <h5 class="Brake" style="font-size: 28px; font-weight: bold; font-family: Bai_Jamjuree;margin-right: 125px;">
-      Brakes System
-    </h5>
-    <h6 class="Phas" style="font-size: 18px; text-align: left; margin-left: 20px;">Phasellus commodo elit rutrum leo
-      <br> dignissim sagittis
-    </h6>
-    <div style="margin-right: 215px;">
-      <span style="font-size: 20px; color: gold;margin-left:20px;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-      <!-- 5 stars -->
-      <span style="font-size: 18px; color: #333;">(0)</span> <!-- Rating count -->
-    </div>
-    <div style="margin-right: 225px; font-size: 22px; font-weight: bold; color: red;">
-      $79.99 <!-- Replace with actual price -->
-    </div>
-  </div>
-  <div class="colt4" style="flex: 1; text-align: center;">
-    <h5 class="suspense" style="font-size: 28px; font-weight: bold; font-family: Bai_Jamjuree;margin-right: 145px;">
-      Suspension
-    </h5>
-    <h6 class="Phas" style="font-size: 18px; text-align: left; margin-left: 30px;">Phasellus commodo elit rutrum leo
-      <br> dignissim sagittis
-    </h6>
-    <div style="margin-right: 180px;">
-      <span style="font-size: 20px; color: gold;">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <!-- 5 stars -->
-      <span style="font-size: 18px; color: #333;">(0)</span> <!-- Rating count -->
-    </div>
-    <div style="margin-right: 205px; font-size: 22px; font-weight: bold; color: red;">
-      $299.99 <!-- Replace with actual price -->
-    </div>
-  </div>
-  <div class="colt5" style="flex: 1; text-align: right;">
-    <h5 class="tires-heading5"
-      style="font-size: 28px; font-weight: bold; font-family: Bai_Jamjuree;margin-right: 120px;">
-      Tires & Wheels
-    </h5>
-    <h6 class="Phas" style="font-size: 18px; text-align: left; margin-left: 40px;">Phasellus commodo elit rutrum leo
-      <br> dignissim sagittis
-    </h6>
-    <div style="margin-right: 200px;">
-      <span style="font-size: 20px; color: gold;">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <!-- 5 stars -->
-      <span style="font-size: 18px; color: #333;">(0)</span> <!-- Rating count -->
-    </div>
-    <div style="margin-right: 215px; font-size: 22px; font-weight: bold; color: red;">
-      $159.99 <!-- Replace with actual price -->
-    </div>
-  </div>
-</div>
-<div class="row" style="margin-left: 20px;">
-
-  <div class="col-2"
-    style="border: 1px solid #808080; border-radius: 20px; background-color: white; width: 330px; height: 300px; padding: 8px; margin: 10px;margin-right: 40px;">
-    <div class="image-container">
-      <img src="../../../assets/right-tire.jpg" alt="Image 5" class="col-image"
-        style="width: 200px; height: auto; margin-top: 20px; filter: none; margin-left: 80px;">
-    </div>
-  </div>
-
-  <div class="col-2"
-    style="border: 1px solid #808080; border-radius: 20px; background-color: white; width: 330px; height: 300px; padding: 8px; margin: 10px;">
-    <div class="image-container">
-      <img src="../../../assets/red-rim.jpg" alt="Image 5" class="col-image"
-        style="width: 200px; height: auto; margin-top: 20px; filter: none; margin-left: 80px;">
-    </div>
-  </div>
-
-  <div class="col-2"
-    style="border: 1px solid #808080; border-radius: 20px; background-color: white; width: 330px; height: 300px; padding: 8px; margin: 10px;">
-    <div class="image-container">
-      <img src="../../../assets/yellow-rim.jpg" alt="Image 5" class="col-image"
-        style="width: 200px; height: auto; margin-top: 20px; filter: none; margin-left: 80px;">
-    </div>
-  </div>
-
-  <div class="col-2"
-    style="border: 1px solid #808080; border-radius: 20px; background-color: white; width: 330px; height: 300px; padding: 8px; margin: 10px;">
-    <div class="image-container">
-      <img src="../../../assets/hammer-brak.jpg" alt="Image 5" class="col-image"
-        style="width: 200px; height: auto; margin-top: 20px; filter: none; margin-left: 80px;">
-    </div>
-  </div>
-
-  <div class="col-2"
-    style="border: 1px solid #808080; border-radius: 20px; background-color: white; width: 330px; height: 300px; padding: 8px; margin: 10px;">
-    <div class="image-container">
-      <img src="../../../assets/last-tire.jpg" alt="Image 5" class="col-image"
-        style="width: 200px; height: auto; margin-top: 20px; filter: none; margin-left: 80px;">
-    </div>
-  </div>
-</div>
-<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-  <div class="colt1" style="flex: 1; text-align: left;">
-    <h5 class="tires-heading1" style="font-size: 28px; font-weight: bold; font-family: Bai_Jamjuree;margin-left: 40px;">
-      Tires & Wheels
-    </h5>
-    <h6 class="Phas" style="font-size: 18px; text-align: left; margin-left: 40px;">Phasellus commodo elit rutrum leo
-      <br> dignissim sagittis
-    </h6>
-    <div style="margin-left: 40px;">
-      <span style="font-size: 20px; color: gold;">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <!-- 5 stars -->
-      <span style="font-size: 18px; color: #333;">(0)</span> <!-- Rating count -->
-    </div>
-    <div style="margin-left: 40px; font-size: 22px; font-weight: bold; color: red;">
-      $299.99 <!-- Replace with actual price -->
-    </div>
-  </div>
-  <div class="colt2" style="flex: 1; text-align: center;">
-    <h5 class="tires-heading1"
-      style="font-size: 28px; font-weight: bold; font-family: Bai_Jamjuree;margin-right: 50px;">
-      Tires & Wheels
-    </h5>
-    <h6 class="Phas" style="font-size: 18px; text-align: left; margin-left: 60px;">Phasellus commodo elit rutrum leo
-      <br> dignissim sagittis
-    </h6>
-    <div style="margin-right: 140px;">
-      <span style="font-size: 20px; color: gold;">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <!-- 5 stars -->
-      <span style="font-size: 18px; color: #333;">(0)</span> <!-- Rating count -->
-    </div>
-    <div style="margin-right: 160px; font-size: 22px; font-weight: bold; color: red;">
-      $164.99 <!-- Replace with actual price -->
-    </div>
-  </div>
-  <div class="colt3" style="flex: 1; text-align: center;">
-    <h5 class="Brake" style="font-size: 28px; font-weight: bold; font-family: Bai_Jamjuree;margin-right: 45px;">
-      Brakes System
-    </h5>
-    <h6 class="Phas" style="font-size: 18px; text-align: left; margin-left: 70px;">Phasellus commodo elit rutrum leo
-      <br> dignissim sagittis
-    </h6>
-    <div style="margin-right: 110px;">
-      <span style="font-size: 20px; color: gold;">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <!-- 5 stars -->
-      <span style="font-size: 18px; color: #333;">(0)</span> <!-- Rating count -->
-    </div>
-    <div style="margin-right: 150px; font-size: 22px; font-weight: bold; color: red;">
-      $79.99 <!-- Replace with actual price -->
-    </div>
-  </div>
-  <div class="colt4" style="flex: 1; text-align: center;">
-    <h5 class="suspense" style="font-size: 28px; font-weight: bold; font-family: Bai_Jamjuree;margin-right: 105px;">
-      Suspension
-    </h5>
-    <h6 class="Phas" style="font-size: 18px; text-align: left; margin-left: 60px;">Phasellus commodo elit rutrum leo
-      <br> dignissim sagittis
-    </h6>
-    <div style="margin-right: 130px;">
-      <span style="font-size: 20px; color: gold;">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <!-- 5 stars -->
-      <span style="font-size: 18px; color: #333;">(0)</span> <!-- Rating count -->
-    </div>
-    <div style="margin-right: 155px; font-size: 22px; font-weight: bold; color: red;">
-      $399.99 <!-- Replace with actual price -->
-    </div>
-  </div>
-  <div class="colt5" style="flex: 1; text-align: right;">
-    <h5 class="tires-heading5"
-      style="font-size: 28px; font-weight: bold; font-family: Bai_Jamjuree;margin-right:120px;">
-      Tires & Wheels
-    </h5>
-    <h6 class="Phas" style="font-size: 18px; text-align: left; margin-left: 60px;">Phasellus commodo elit rutrum leo
-      <br> dignissim sagittis
-    </h6>
-    <div style="margin-right: 190px;">
-      <span style="font-size: 20px; color: gold;">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <!-- 5 stars -->
-      <span style="font-size: 18px; color: #333;">(0)</span> <!-- Rating count -->
-    </div>
-    <div style="margin-right: 210px; font-size: 22px; font-weight: bold; color: red;">
-      $129.99 <!-- Replace with actual price -->
-    </div>
-  </div>
-</div>
-<div class="best-seller-container">
-
-  <h2 class="flash-seller-title">FLASH SALE</h2>
-
-</div>
-<div class="container">
-  <div class="product-listing">
-    <!-- Product Card 1 -->
-    <div class="product-card">
-      <div class="badge">NEW</div>
-      <div class="product-image">
-        <img src="../../../assets/last-tire.jpg" alt="Product 1" />
-      </div>
-      <div class="product-details">
-        <div class="rating">
-          <span class="stars">★★★★★</span>
-          <span class="reviews">(2)</span>
+              </div>
+            </div>
+            <!-- Cart Confirmation Message -->
+            <div *ngIf="product.showMessage" class="alert alert-success mt-2">
+              Item added to cart successfully!
+            </div>
+          </div>
         </div>
-        <p class="product-description">
-          Curabitur ultrices enim ut nunc commodo semper suscipit
-        </p>
-        <div class="price">
-          <span class="discounted">$100.00</span>
-          <span class="original">$140.00</span>
-        </div>
-        <div class="countdown">
-          <div class="time">01 Days</div>
-          <div class="time">13 Hours</div>
-          <div class="time">47 Minutes</div>
-          <div class="time">41 Seconds</div>
-        </div>
-        <div class="progress-bar">
-          <div class="progress" style="width: 87%;"></div>
-        </div>
-        <p class="stock">87% Sold - Available: 13</p>
       </div>
+    </div>
+  </div>
+  
+  <ng-template #loadingProducts>
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading Products...</span>
+      </div>
+    </div>
+  </ng-template>
+  <div class="best-seller-container">
+
+    <h2 class="flash-seller-title">FLASH SALE</h2>
+
+  </div>
+  <div class="container">
+    <div class="product-listing">
+      <!-- Product Card 1 -->
+      <div class="product-card">
+        <div class="badge">NEW</div>
+        <div class="product-image">
+          <img src="../../../assets/last-tire.jpg" alt="Product 1" />
+        </div>
+        <div class="product-details">
+          <div class="rating">
+            <span class="stars">★★★★★</span>
+            <span class="reviews">(2)</span>
+          </div>
+          <p class="product-description">
+            Curabitur ultrices enim ut nunc commodo semper suscipit
+          </p>
+          <div class="price">
+            <span class="discounted">$100.00</span>
+            <span class="original">$140.00</span>
+          </div>
+          <div class="countdown">
+            <div class="time">01 Days</div>
+            <div class="time">13 Hours</div>
+            <div class="time">47 Minutes</div>
+            <div class="time">41 Seconds</div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress" style="width: 87%;"></div>
+          </div>
+          <p class="stock">87% Sold - Available: 13</p>
+        </div>
+      </div>
+
+      <!-- Product Card 2 -->
+      <div class="product-card">
+        <div class="badge">NEW</div>
+        <div class="product-image">
+          <img src="../../../assets/red-rim.jpg" alt="Product 2" />
+        </div>
+        <div class="product-details">
+          <div class="rating">
+            <span class="stars">★★★★★</span>
+            <span class="reviews">(7)</span>
+          </div>
+          <p class="product-description">
+            Curabitur id est vel nisi dictum rutrum consectetur vel
+          </p>
+          <div class="price">
+            <span class="discounted">$130.00</span>
+            <span class="original">$190.00</span>
+            <span class="discount">-16%</span>
+          </div>
+          <div class="countdown">
+            <div class="time">31 Days</div>
+            <div class="time">13 Hours</div>
+            <div class="time">47 Minutes</div>
+            <div class="time">41 Seconds</div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress" style="width: 45%;"></div>
+          </div>
+          <p class="stock">45% Sold - Available: 78</p>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="badge">NEW</div>
+        <div class="product-image">
+          <img src="../../../assets/red-weel.jpg" alt="Product 2" />
+        </div>
+        <div class="product-details">
+          <div class="rating">
+            <span class="stars">★★★★★</span>
+            <span class="reviews">(7)</span>
+          </div>
+          <p class="product-description">
+            Curabitur id est vel nisi dictum rutrum consectetur vel
+          </p>
+          <div class="price">
+            <span class="discounted">$130.00</span>
+            <span class="original">$190.00</span>
+            <span class="discount">-16%</span>
+          </div>
+          <div class="countdown">
+            <div class="time">31 Days</div>
+            <div class="time">13 Hours</div>
+            <div class="time">47 Minutes</div>
+            <div class="time">41 Seconds</div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress" style="width: 45%;"></div>
+          </div>
+          <p class="stock">45% Sold - Available: 78</p>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Product Card 2 -->
-    <div class="product-card">
-      <div class="badge">NEW</div>
-      <div class="product-image">
-        <img src="../../../assets/red-rim.jpg" alt="Product 2" />
-      </div>
-      <div class="product-details">
-        <div class="rating">
-          <span class="stars">★★★★★</span>
-          <span class="reviews">(7)</span>
-        </div>
-        <p class="product-description">
-          Curabitur id est vel nisi dictum rutrum consectetur vel
-        </p>
-        <div class="price">
-          <span class="discounted">$130.00</span>
-          <span class="original">$190.00</span>
-          <span class="discount">-16%</span>
-        </div>
-        <div class="countdown">
-          <div class="time">31 Days</div>
-          <div class="time">13 Hours</div>
-          <div class="time">47 Minutes</div>
-          <div class="time">41 Seconds</div>
-        </div>
-        <div class="progress-bar">
-          <div class="progress" style="width: 45%;"></div>
-        </div>
-        <p class="stock">45% Sold - Available: 78</p>
-      </div>
-    </div>
-    <div class="product-card">
-      <div class="badge">NEW</div>
-      <div class="product-image">
-        <img src="../../../assets/red-weel.jpg" alt="Product 2" />
-      </div>
-      <div class="product-details">
-        <div class="rating">
-          <span class="stars">★★★★★</span>
-          <span class="reviews">(7)</span>
-        </div>
-        <p class="product-description">
-          Curabitur id est vel nisi dictum rutrum consectetur vel
-        </p>
-        <div class="price">
-          <span class="discounted">$130.00</span>
-          <span class="original">$190.00</span>
-          <span class="discount">-16%</span>
-        </div>
-        <div class="countdown">
-          <div class="time">31 Days</div>
-          <div class="time">13 Hours</div>
-          <div class="time">47 Minutes</div>
-          <div class="time">41 Seconds</div>
-        </div>
-        <div class="progress-bar">
-          <div class="progress" style="width: 45%;"></div>
-        </div>
-        <p class="stock">45% Sold - Available: 78</p>
-      </div>
-    </div>
 
   </div>
 
+  <br>
 
+  <div id="logoCarousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
+    <!-- Carousel Indicators -->
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#logoCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#logoCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    </div>
+  
+    <!-- Carousel Items -->
+    <div class="carousel-inner">
+      <!-- Slide 1 -->
+      <div class="carousel-item active">
+        <div class="row text-center justify-content-center align-items-center">
+          <div class="col-6 col-md-4 col-lg-2 mb-4 d-flex justify-content-center">
+            <img src="../../../assets/brand-1.png" class="img-fluid" alt="Bentley Logo">
+          </div>
+          <div class="col-6 col-md-4 col-lg-2 mb-4 d-flex justify-content-center">
+            <img src="../../../assets/brand-8.png" class="img-fluid" alt="Corporate Logo">
+          </div>
+          <div class="col-6 col-md-4 col-lg-2 mb-4 d-flex justify-content-center">
+            <img src="../../../assets/brand-9.png" class="img-fluid" alt="Redcar Logo">
+          </div>
+          <div class="col-6 col-md-4 col-lg-2 mb-4 d-flex justify-content-center">
+            <img src="../../../assets/brand-10.png" class="img-fluid" alt="Car Logo">
+          </div>
+          <div class="col-6 col-md-4 col-lg-2 mb-4 d-flex justify-content-center">
+            <img src="../../../assets/brand-1.png" class="img-fluid" alt="Mini Logo">
+          </div>
+          <div class="col-6 col-md-4 col-lg-2 mb-4 d-flex justify-content-center">
+            <img src="../../../assets/brand-2.png" class="img-fluid" alt="Auto Fast Logo">
+          </div>
+        </div>
+      </div>
+  
+      <!-- Slide 2 -->
+      <div class="carousel-item">
+        <div class="row text-center justify-content-center align-items-center">
+          <div class="col-6 col-md-4 col-lg-2 mb-4 d-flex justify-content-center">
+            <img src="../../../assets/brand-3.png" class="img-fluid" alt="Jaguar Logo">
+          </div>
+          <div class="col-6 col-md-4 col-lg-2 mb-4 d-flex justify-content-center">
+            <img src="../../../assets/brand-4.png" class="img-fluid" alt="Thaco Bus Logo">
+          </div>
+          <div class="col-6 col-md-4 col-lg-2 mb-4 d-flex justify-content-center">
+            <img src="../../../assets/brand-5.png" class="img-fluid" alt="Taggart Logo">
+          </div>
+          <div class="col-6 col-md-4 col-lg-2 mb-4 d-flex justify-content-center">
+            <img src="../../../assets/brand-6.png" class="img-fluid" alt="Honda Logo">
+          </div>
+          <div class="col-6 col-md-4 col-lg-2 mb-4 d-flex justify-content-center">
+            <img src="../../../assets/brand-7.png" class="img-fluid" alt="Princess Auto Logo">
+          </div>
+          <div class="col-6 col-md-4 col-lg-2 mb-4 d-flex justify-content-center">
+            <img src="../../../assets/brand-8.png" class="img-fluid" alt="Corporate Logo">
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Navigation Controls -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#logoCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#logoCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+
+  <!-- Title outside of columns -->
+  <div class="card-container">
+    <div class="card">
+      <div class="card-overlay">
+        <h3 class="card-product">MICHELIN TIRE</h3>
+        <p>PREMIUM PERFORMANCE</p>
+        <button class="btn-shop">SHOP NOW</button>
+      </div>
+      <img src="assets/banner2-1.jpg" alt="Michelin Tire" class="card-image" />
+    </div>
+
+    <div class="card">
+      <div class="card-overlay">
+        <h3 class="card-product">CAR WHEEL</h3>
+        <p>SPORT EDITION</p>
+        <button class="btn-shop">SHOP NOW</button>
+      </div>
+      <img src="assets/banner3-3.jpg" alt="Car Wheel" class="card-image" />
+    </div>
+
+    <div class="card">
+      <div class="card-overlay">
+        <h3 class="card-product">BEST SELLERS</h3>
+        <p>PROJECTOR HEADLIGHTS</p>
+        <button class="btn-shop">SHOP NOW</button>
+      </div>
+      <img src="assets/banner2-2.jpg" alt="Best Sellers" class="card-image" />
+    </div>
+  </div>
+  <div class="subscription-container">
+    <div class="subscription-content">
+      <div class="subscription-info">
+        <img src="assets/envelope-icon.jpg" alt="Subscribe Icon" class="subscribe-icon" />
+        <div>
+          <h2 class="subscribe-title">
+            Subscribe & <span class="highlight">Get 10% Discount</span>
+          </h2>
+          <p class="subscribe-description">
+            Get 10% off your first purchase! Plus, be the first to know about sales, new product launches, and exclusive
+            offers!
+          </p>
+        </div>
+      </div>
+      <div class="subscription-form">
+        <input type="email" placeholder="Enter your email" class="email-input" />
+        <button class="subscribe-btn">Subscribe</button>
+      </div>
+    </div>
+  </div>
+  <div class="footer-container">
+    <div class="footer-content">
+      <!-- Left Section: Company Description -->
+      <div class="footer-left">
+        <div class="footer-logo">
+          <img src="assets/logo.png" alt="US Auto Parts Experts Logo" />
+          <p class="para-US">US Auto Parts Expert is dedicated to delivering top-quality parts, competitive pricing, and
+            exceptional customer service in the automotive aftermarket sector. Our focus remains on ensuring customer
+            satisfaction.</p>
+        </div>
+        <div class="footer-social-media">
+          <a href="#" class="social-icon"><img src="assets/facebook.png" alt=""></a>
+          <a href="#" class="social-icon"><img src="assets/instagram.png" alt=""></a>
+          <a href="#" class="social-icon"><img src="assets/linkedin.png" alt=""></a>
+        </div>
+      </div>
+
+      <!-- Center Section: Help & Support Links -->
+      <div class="footer-center">
+        <h3 class="help">HELP & SUPPORT</h3>
+        <ul>
+          <li><a href="#">Shipping Info</a></li>
+          <li><a href="#">Returns</a></li>
+          <li><a href="#">How To Order</a></li>
+          <li><a href="#">How To Track</a></li>
+          <li><a href="#">Size Guide</a></li>
+        </ul>
+      </div>
+
+      <!-- Right Section: Company Info Links -->
+      <div class="footer-right">
+        <h3>COMPANY INFO</h3>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Our Blog</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Store Location</a></li>
+          <li><a href="#">Testimonials</a></li>
+        </ul>
+      </div>
+
+      <!-- Additional Section: Customer Care Links -->
+      <div class="footer-extra">
+        <h3>Customer Care</h3>
+        <ul>
+          <li><a href="#">FAQs</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Gift Cards</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <footer class="footer">
+    <div class="contact-info">
+      <div class="phone">
+        <i class="fas fa-phone"></i>
+        <span>We're available by phone</span>
+        <a href="tel:+123456789" class="phone-number">+123-456-789</a>
+      </div>
+      <div class="email">
+        <i class="fas fa-envelope"></i>
+        <span>Email:</span>
+        <a href="mailto:info@example.com">infoexample.com</a>
+
+      </div>
+      <div class="hours">
+        <i class="fas fa-clock"></i>
+        <span>Opening Hours: Monday till Friday 10 to 6 EST</span>
+      </div>
+    </div>
+    <div class="payment-options">
+      <img src="assets/icons/applepay.png" alt="Apple Pay" />
+      <img src="assets/icons/google-pay.png" alt="Google Pay" />
+      <img src="assets/icons/paypal.png" alt="PayPal" />
+      <img src="assets/icons/visa.png" alt="Visa" />
+      <img src="assets/icons/mastercard.png" alt="MasterCard" />
+    </div>
+    <div class="copyright">
+      <p>&copy; 2024 All Rights Reserved.</p>
+    </div>
+  </footer>
 </div>
-<div class="logo-container">
-  <!-- Pagination Dots -->
-
-  <!-- Logos Grid -->
-  <div class="logo-grid">
-    <!-- Row 1 -->
-    <div class="logo-card">
-      <img src="../../../assets/brand-1.png" alt="Bentley Logo" />
-    </div>
-    <div class="logo-card">
-      <img src="../../../assets/brand-8.png" alt="Corporate Logo" />
-    </div>
-    <div class="logo-card">
-      <img src="../../../assets/brand-9.png" alt="Redcar Logo" />
-    </div>
-    <div class="logo-card">
-      <img src="../../../assets/brand-10.png" alt="Car Logo" />
-    </div>
-    <div class="logo-card">
-      <img src="../../../assets/brand-1.png" alt="Mini Logo" />
-    </div>
-    <div class="logo-card">
-      <img src="../../../assets/brand-2.png" alt="Auto Fast Logo" />
-    </div>
-
-    <!-- Row 2 -->
-    <div class="logo-card">
-      <img src="../../../assets/brand-3.png" alt="Jaguar Logo" />
-    </div>
-    <div class="logo-card">
-      <img src="../../../assets/brand-3.png" alt="Princess Auto Logo" />
-    </div>
-    <div class="logo-card">
-      <img src="../../../assets/brand-4.png" alt="Thaco Bus Logo" />
-    </div>
-    <div class="logo-card">
-      <img src="../../../assets/brand-5.png" alt="Taggart Logo" />
-    </div>
-    <div class="logo-card">
-      <img src="../../../assets/brand-6.png" alt="Honda Logo" />
-    </div>
-    <div class="logo-card">
-      <img src="../../../assets/brand-7.png" alt="Honda Logo" />
-    </div>
-  </div>
-</div>
-
-<!-- Title outside of columns -->
-<div class="card-container">
-  <div class="card">
-    <div class="card-overlay">
-      <h3 class="card-product">MICHELIN TIRE</h3>
-      <p>PREMIUM PERFORMANCE</p>
-      <button class="btn-shop">SHOP NOW</button>
-    </div>
-    <img src="assets/banner2-1.jpg" alt="Michelin Tire" class="card-image" />
-  </div>
-
-  <div class="card">
-    <div class="card-overlay">
-      <h3 class="card-product">CAR WHEEL</h3>
-      <p>SPORT EDITION</p>
-      <button class="btn-shop">SHOP NOW</button>
-    </div>
-    <img src="assets/banner3-3.jpg" alt="Car Wheel" class="card-image" />
-  </div>
-
-  <div class="card">
-    <div class="card-overlay">
-      <h3 class="card-product">BEST SELLERS</h3>
-      <p>PROJECTOR HEADLIGHTS</p>
-      <button class="btn-shop">SHOP NOW</button>
-    </div>
-    <img src="assets/banner2-2.jpg" alt="Best Sellers" class="card-image" />
-  </div>
-</div>
-<div class="subscription-container">
-  <div class="subscription-content">
-    <div class="subscription-info">
-      <img src="assets/envelope-icon.jpg" alt="Subscribe Icon" class="subscribe-icon" />
-      <div>
-        <h2 class="subscribe-title">
-          Subscribe & <span class="highlight">Get 10% Discount</span>
-        </h2>
-        <p class="subscribe-description">
-          Get 10% off your first purchase! Plus, be the first to know about sales, new product launches, and exclusive
-          offers!
-        </p>
-      </div>
-    </div>
-    <div class="subscription-form">
-      <input type="email" placeholder="Enter your email" class="email-input" />
-      <button class="subscribe-btn">Subscribe</button>
-    </div>
-  </div>
-</div>
-<div class="footer-container">
-  <div class="footer-content">
-    <!-- Left Section: Company Description -->
-    <div class="footer-left">
-      <div class="footer-logo">
-        <img src="assets/logo.png" alt="US Auto Parts Experts Logo" />
-        <p class="para-US">US Auto Parts Expert is dedicated to delivering top-quality parts, competitive pricing, and
-          exceptional customer service in the automotive aftermarket sector. Our focus remains on ensuring customer
-          satisfaction.</p>
-      </div>
-      <div class="footer-social-media">
-        <a href="#" class="social-icon"><img src="assets/facebook.png" alt=""></a>
-        <a href="#" class="social-icon"><img src="assets/instagram.png" alt=""></a>
-        <a href="#" class="social-icon"><img src="assets/linkedin.png" alt=""></a>
-      </div>
-    </div>
-
-    <!-- Center Section: Help & Support Links -->
-    <div class="footer-center">
-      <h3 class="help">HELP & SUPPORT</h3>
-      <ul>
-        <li><a href="#">Shipping Info</a></li>
-        <li><a href="#">Returns</a></li>
-        <li><a href="#">How To Order</a></li>
-        <li><a href="#">How To Track</a></li>
-        <li><a href="#">Size Guide</a></li>
-      </ul>
-    </div>
-
-    <!-- Right Section: Company Info Links -->
-    <div class="footer-right">
-      <h3>COMPANY INFO</h3>
-      <ul>
-        <li><a href="#">About Us</a></li>
-        <li><a href="#">Our Blog</a></li>
-        <li><a href="#">Careers</a></li>
-        <li><a href="#">Store Location</a></li>
-        <li><a href="#">Testimonials</a></li>
-      </ul>
-    </div>
-
-    <!-- Additional Section: Customer Care Links -->
-    <div class="footer-extra">
-      <h3>Customer Care</h3>
-      <ul>
-        <li><a href="#">FAQs</a></li>
-        <li><a href="#">Terms of Service</a></li>
-        <li><a href="#">Privacy Policy</a></li>
-        <li><a href="#">Contact Us</a></li>
-        <li><a href="#">Gift Cards</a></li>
-      </ul>
-    </div>
-  </div>
-</div>
-<footer class="footer">
-  <div class="contact-info">
-    <div class="phone">
-      <i class="fas fa-phone"></i>
-      <span>We're available by phone</span>
-      <a href="tel:+123456789" class="phone-number">+123-456-789</a>
-    </div>
-    <div class="email">
-      <i class="fas fa-envelope"></i>
-      <span>Email:</span>
-      <a href="mailto:info@example.com">infoexample.com</a>
-
-    </div>
-    <div class="hours">
-      <i class="fas fa-clock"></i>
-      <span>Opening Hours: Monday till Friday 10 to 6 EST</span>
-    </div>
-  </div>
-  <div class="payment-options">
-    <img src="assets/icons/applepay.png" alt="Apple Pay" />
-    <img src="assets/icons/google-pay.png" alt="Google Pay" />
-    <img src="assets/icons/paypal.png" alt="PayPal" />
-    <img src="assets/icons/visa.png" alt="Visa" />
-    <img src="assets/icons/mastercard.png" alt="MasterCard" />
-  </div>
-  <div class="copyright">
-    <p>&copy; 2024 All Rights Reserved.</p>
-  </div>
-</footer>
 
 
 <router-outlet />
