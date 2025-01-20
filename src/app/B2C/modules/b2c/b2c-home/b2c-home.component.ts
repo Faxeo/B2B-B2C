@@ -35,6 +35,7 @@ import { MainCategoryService } from '../../../../core/services/main-category/mai
 import { SubCategoryService } from '../../../../core/services/sub-category/sub-category.service';
 import { CategoryIdService } from '../../../../core/services/category-id/category-id.service';
 import { B2cSearchComponent } from '../b2c-search/b2c-search.component';
+import { GetBrandsService } from '../../../../core/services/get-brands/get-brands.service';
 
 
 @Component({
@@ -104,6 +105,7 @@ export class B2CHomeComponent implements OnInit {
   showCategoryForm: boolean = false;
   isBrowser: boolean = false;
   showDropdown: boolean = false;
+  brands: any[] = [];
 
 
   constructor(
@@ -125,6 +127,7 @@ export class B2CHomeComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private categoryIdService: CategoryIdService,
+    private brandsService: GetBrandsService,
     @Inject(PLATFORM_ID) private platformId: Object,
   ) {}
   
@@ -189,6 +192,8 @@ export class B2CHomeComponent implements OnInit {
     this.cartService.cartItemCount$.subscribe((count) => {
       this.cartItemCount = count;
     });
+
+    this.loadBrands();
   }
 
   openSidebar(): void {
@@ -262,6 +267,16 @@ export class B2CHomeComponent implements OnInit {
     );
   }
   
+  loadBrands(): void {
+    this.brandsService.fetchAllBrands().subscribe({
+      next: (data) => {
+        this.brands = data;
+      },
+      error: (err) => {
+        console.error('Error fetching brands:', err);
+      },
+    });
+  }
   
   onMainCategoryChange(): void {
     if (this.selectedMainCategory) {
