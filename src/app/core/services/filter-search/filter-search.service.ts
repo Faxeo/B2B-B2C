@@ -16,25 +16,46 @@ export class FilterSearchService {
   selectedCategories$ = this.selectedCategoriesSource.asObservable();
 
   // Add this getter to FilterSearchService
-get selectedBrandValue(): number | null {
-  return this.selectedBrandSource.value;
-}
+  get selectedBrandValue(): number | null {
+    return this.selectedBrandSource.value;
+  }
 
-get selectedCategoriesValue(): { m_id: number | null; f_id: number | null; s_id: number | null } {
-  return this.selectedCategoriesSource.value;
-}
-
+  get selectedCategoriesValue(): {
+    m_id: number | null;
+    f_id: number | null;
+    s_id: number | null;
+  } {
+    return this.selectedCategoriesSource.value;
+  }
 
   // Brands BehaviorSubject (Updated to number | null)
   private selectedBrandSource = new BehaviorSubject<number | null>(null);
   selectedBrand$ = this.selectedBrandSource.asObservable();
- 
+
+  private selectedMakeSource = new BehaviorSubject<string | null>(null);
+  selectedMake$ = this.selectedMakeSource.asObservable();
+
+  updateSelectedMake(make: string | null): void {
+    console.log('FilterSearchService: Received make:', make);
+    this.selectedMakeSource.next(make);
+    console.log('FilterSearchService: Emitted new make value:', make);
+  }  
+
+  clearSelectedMake(): void {
+    this.selectedMakeSource.next(null);
+    console.log('Cleared selected make in service.');
+  }
+
   // Update categories
-  updateSelectedCategories(m_id: number | null, f_id: number | null, s_id: number | null): void {
+  updateSelectedCategories(
+    m_id: number | null,
+    f_id: number | null,
+    s_id: number | null
+  ): void {
     this.selectedCategoriesSource.next({ m_id, f_id, s_id });
     console.log('Updated categories in service:', { m_id, f_id, s_id });
   }
-  
+
   updateSelectedBrand(brandId: number | null): void {
     this.selectedBrandSource.next(brandId);
     console.log('Updated brand in service:', brandId);
@@ -48,8 +69,8 @@ get selectedCategoriesValue(): { m_id: number | null; f_id: number | null; s_id:
   // Call this method to update the selected brand ID
   setSelectedBrand(brandId: number | null): void {
     this.selectedBrandSource.next(brandId);
-  } 
-  
+  }
+
   clearSelectedBrand(): void {
     this.selectedBrandSource.next(null);
     console.log('Cleared selected brand in service.');
@@ -60,5 +81,4 @@ get selectedCategoriesValue(): { m_id: number | null; f_id: number | null; s_id:
     this.selectedBrandSource.next(null);
     console.log('All filters cleared.');
   }
-  
 }

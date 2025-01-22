@@ -13,7 +13,7 @@
     <div *ngIf="showFilters">
       <div class="filter-checkbox">
         <label><input type="checkbox"> In Stock</label>
-        <span class="count">1000+</span>
+        <span class="count">1000+</span> 
       </div>
       <div class="filter-checkbox">
         <label><input type="checkbox"> Top Seller</label>
@@ -73,10 +73,8 @@
                   </label>
                 </div>
               </div>
-
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -107,27 +105,34 @@
   </div>
 </div>
 
-
-
-  <!-- Manufacturer Section -->
-  <div class="filter-section">
-    <h3 class="Options" (click)="toggleSection('manufacturers')">
-      Manufacturer <i class="fa" [ngClass]="showCategories ? 'fa-minus' : 'fa-plus'"></i>
-    </h3>
-    <div *ngIf="showManufacturers">
-      <div class="filter-checkbox">
-        <label><input type="checkbox"> PAI</label>
-        <span class="count">1000+</span>
-      </div>
-      <div class="filter-checkbox">
-        <label><input type="checkbox"> DANA</label>
-        <span class="count">1000+</span>
-      </div>
-      <a class="see-more">See more...</a>
+<!-- Manufacturer Section -->
+<div class="filter-section">
+  <h3 class="Options" (click)="toggleSection('manufacturers')">
+    Vehicles <i class="fa" [ngClass]="showManufacturers ? 'fa-minus' : 'fa-plus'"></i>
+  </h3>
+  <div *ngIf="showManufacturers" class="brands-container">
+    <input
+      type="text"
+      class="manufacturer-search"
+      placeholder="Search vehicles..."
+      [(ngModel)]="searchVehicleTerm"
+      (input)="filterVehicles()"
+    />
+    <div *ngFor="let vehicle of filteredVehicles" class="filter-checkbox">
+      <label>
+        <input
+          type="checkbox"
+          [checked]="selectedVehicle === vehicle.value_name"
+          (change)="onVehicleCheckboxChange(vehicle.value_name)"
+        />
+        {{ vehicle.value_name }}
+      </label>
     </div>
   </div>
+</div>
 
-  <!-- Price Section -->
+  
+  <!-- Price Section -->  
   <div class="filter-section">
     <h3 class="Options" (click)="toggleSection('prices')">
       Price <i class="fa" [ngClass]="showPrices ? 'fa-minus' : 'fa-plus'"></i>
