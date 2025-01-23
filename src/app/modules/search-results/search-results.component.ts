@@ -7,7 +7,7 @@ import {
   EventEmitter,
   Inject,
   PLATFORM_ID,
-  ChangeDetectorRef,
+  ChangeDetectorRef, 
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -119,6 +119,8 @@ export class SearchResultsComponent implements OnChanges {
   lastVehicleData: string = '';
 
   activeSearchType: 'general' | 'category' | 'vehicle' = 'general'; // Default to 'general'
+
+  
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -284,6 +286,13 @@ export class SearchResultsComponent implements OnChanges {
 
     this.filterSearchService.selectedBrand$.subscribe((brandId) => {
       this.updateSearchWithFilters();
+    });
+
+    this.filterSearchService.selectedMake$.subscribe((make) => {
+      console.log('CategoryResultsComponent: Received new make from service:', make);
+      this.selectedMake = make;
+      console.log('CategoryResultsComponent: Updated local selectedMake:', this.selectedMake);
+      this.updateSearchWithFilters(); 
     });
   }
 
@@ -615,6 +624,7 @@ export class SearchResultsComponent implements OnChanges {
       );
     }
   }
+
   onModelChange(): void {
     if (this.selectedModel) {
       const selectedModelObject = this.models.find(
@@ -765,7 +775,7 @@ export class SearchResultsComponent implements OnChanges {
         productID: 0,
         sno: null,
         year: '',
-        make: '',
+        make: this.selectedMake || '',
         model: '',
         trim: '',
         engine: '',
@@ -842,7 +852,7 @@ export class SearchResultsComponent implements OnChanges {
         productID: 0,
         sno: null,
         year: '',
-        make: '',
+        make: this.selectedMake || '',
         model: '',
         trim: '',
         engine: '',
@@ -924,7 +934,7 @@ export class SearchResultsComponent implements OnChanges {
         productID: 0,
         sno: null,
         year: vehicleData.year,
-        make: vehicleData.make,
+        make: vehicleData.make && this.selectedMake || '',
         model: vehicleData.model,
         trim: vehicleData.trim,
         engine: vehicleData.engine,

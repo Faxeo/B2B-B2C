@@ -13,7 +13,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CategoryIdService } from '../../core/services/category-id/category-id.service';
 import { AddToCartService } from '../../core/services/add-to-cart/add-to-cart.service';
-import { CartService } from '../../core/services/cart/cart.service';
+import { CartService } from '../../core/services/cart/cart.service'; 
 import { LoginService } from '../../core/services/login-service/login-service.service';
 import { NavbarComponent } from '../../layout/navbar/navbar.component';
 import { FooterComponent } from '../../layout/footer/footer.component';
@@ -97,7 +97,7 @@ export class CategoryResultsComponent implements OnInit {
     private categoryNavbarSearchService: CategoryNavbarSearchService,
     private dynamicSearchService: DynamicSearchService,
     private cdr: ChangeDetectorRef,
-        private cartSidebarService: CartSidebarService,
+    private cartSidebarService: CartSidebarService,
   ) {
     this.filterSearchService.selectedCategories$.subscribe((categories) => {
       this.m_id = categories.m_id;
