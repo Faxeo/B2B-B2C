@@ -21,6 +21,10 @@
     border-bottom: 1px solid #ccc;
     background-color: #f9f9f9;
   }
+  .cart-title{
+    margin-right: 90px;
+    margin-left: 0px;
+  }
   
   .cart-count {
     background-color: #b71c1c;

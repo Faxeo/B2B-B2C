@@ -48,13 +48,14 @@ import { ChatBotComponent } from '../chat-bot/chat-bot.component';
     SidebarComponent,
     FooterComponent,
     FormsModule,
-    SearchComponent,
+    // SearchComponent,
     ChatBotComponent
   ],
   providers: [ApiService, SidebarToggleService],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
+
 export class HomeComponent implements OnInit {
   categories$: Observable<any[]> | undefined;
   products$: Observable<any[]> | undefined;

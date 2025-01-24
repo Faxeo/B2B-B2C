@@ -1,40 +1,26 @@
-<div *ngIf="showMessage" class="cart-message">
-  {{ message }}
-</div>
-
-<div *ngIf="showAlert" class="alert-message">
-  {{ notificationAlert }}
-</div>
-
-<div *ngIf="showNotification" class="notification">
-  {{ notificationMessage }}
-</div>
-
 <app-navbar></app-navbar>
 
-
-<div class="page-container">
-  <div class="sidebar-arrangement">
-
-    <div class="sidebar" [class.collapsed]="isCollapsed">
-      <app-filter *ngIf="!isCollapsed"></app-filter>
-    </div>
-
-
-    <button class="toggle-btn" (click)="toggleSidebar()">
-      {{ isCollapsed ? '>>' : '<<' }} </button>
+<div class="container">
+  <!-- Left Sidebar -->
+  <div class="sidebar" [class.collapsed]="isCollapsed">
+    <app-filter *ngIf="!isCollapsed"></app-filter>
   </div>
 
-  <div class="main-content" [class.expanded]="!isCollapsed">
+  <button class="toggle-btn" (click)="toggleSidebar()">
+    {{ isCollapsed ? '>>' : '<<' }} </button>
 
-    <app-search-by-vehicle></app-search-by-vehicle>
-    <app-search-by-category></app-search-by-category>
+      <!-- General Search Component -->
+      <div class="general-search" [class.expanded-left]="isCollapsed" [class.expanded-right]="isCartCollapsed">
+        <app-search-results></app-search-results>
+      </div>
 
-    <div class="main-content-cart" [class.expanded]="!isCollapsed">
-      <!-- Right Sidebar -->
-      <!-- <div class="sidebar-cart">
+      <!-- Right Sidebar (Cart Sidebar) -->
+      <div class="sidebar-cart" [class.collapsed]="isCartCollapsed" *ngIf="!isCartCollapsed">
+        <button class="cancel-btn" (click)="collapseCartSidebar()" aria-label="Close Cart">
+          &times; <!-- "×" Close Icon -->
+        </button>
         <app-cart-sidebar></app-cart-sidebar>
-      </div> -->
+      </div> 
 
       <!-- General Search Section -->
       <div class="search-results container-fluid" *ngIf="searchType === 'generalSearch'">
@@ -568,4 +554,5 @@
 
     </div>
   </div>
+
 </div>

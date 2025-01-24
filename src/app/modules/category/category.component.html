@@ -1,22 +1,13 @@
 <app-navbar></app-navbar>
 
-<!-- Notification Message -->
-<div *ngIf="showNotification" class="notification">
-  {{ notificationMessage }}
-</div>
-
-
-<div class="page-container d-flex">
-
-  <!-- Filter Sidebar -->
+<div class="container">
+  <!-- Left Sidebar -->
   <div class="sidebar" [class.collapsed]="isCollapsed">
     <app-filter *ngIf="!isCollapsed"></app-filter>
   </div>
 
   <button class="toggle-btn" (click)="toggleSidebar()">
     {{ isCollapsed ? '>>' : '<<' }} </button>
- 
-      <div class="content-container" [class.expanded]="!isCollapsed">
 
         <!-- Spinner for both initial loading and pagination -->
         <div *ngIf="isLocallyLoading" class="loading-overlay">
@@ -162,8 +153,16 @@
         <div *ngIf="!isLoading && products.length === 0">
           <p>No products found for this category.</p>
         </div>
+      <!-- General Search Component -->
+      <div class="general-search" [class.expanded-left]="isCollapsed" [class.expanded-right]="isCartCollapsed">
+        <app-category-results></app-category-results>
       </div>
 
+      <!-- Right Sidebar (Cart Sidebar) -->
+      <div class="sidebar-cart" [class.collapsed]="isCartCollapsed" *ngIf="!isCartCollapsed">
+        <button class="cancel-btn" (click)="collapseCartSidebar()" aria-label="Close Cart">
+          &times; <!-- "×" Close Icon -->
+        </button>
+        <app-cart-sidebar></app-cart-sidebar>
+      </div>
 </div>
-
-<app-footer></app-footer>

@@ -17,7 +17,7 @@ interface Message {
 })
 export class ChatBotComponent {
   messages: Message[] = [];
-  userInput: string = '';
+  userInput: string = ''; 
   isChatVisible: boolean = false;
 
   constructor(private chatbotService: ChatbotService) {}

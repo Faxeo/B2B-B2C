@@ -50,7 +50,7 @@ export class B2cSearchComponent implements OnInit {
 
   toggleSidebar() {
     this.isCollapsed = !this.isCollapsed;
-  }
+  } 
 
   toggleFilterSidebar(): void {
     this.isFilterCollapsed = !this.isFilterCollapsed;

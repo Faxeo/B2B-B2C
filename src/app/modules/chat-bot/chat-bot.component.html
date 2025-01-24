@@ -15,7 +15,7 @@
             <div *ngFor="let message of messages" class="message" 
                  [class.user]="message.sender === 'user'" 
                  [class.bot]="message.sender === 'bot'">
-                <span>{{ message.text }}</span>
+                <span>{{ message.text }}</span> 
             </div>
         </div>
 
