@@ -335,6 +335,51 @@
   </div>
 </div>
 
+<!--Login Modal-->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-describedby="loginModalDesc" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title fw-bold" id="loginModalLabel">
+          Log In to Keep Going
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white fw-bolder"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body text-center">
+        <p class="mb-3">
+          To proceed with this action, you need to log in to your account.
+        </p>
+        <p class="fw-semibold text-muted">
+          Click the button below to go to the login page.
+        </p>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer justify-content-center">
+        <button
+        type="button"
+        class="btn btn-danger px-4 py-2"
+        (click)="openLoginSidebar()"
+        style="transition: background-color 0.3s ease;"
+        onmouseover="this.style.backgroundColor='#c82333';"
+        onmouseout="this.style.backgroundColor='';"
+      >
+        Go to Login
+      </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <app-chat-bot></app-chat-bot>
 
 <app-footer></app-footer>
