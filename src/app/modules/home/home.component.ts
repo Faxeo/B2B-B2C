@@ -139,8 +139,8 @@ export class HomeComponent implements OnInit {
         }
         this.cartService.setUserDetails(this.userID, this.loginType);
       });
-    } 
- 
+    }
+
     this.categories$ = this.apiService.getMainCategory().pipe(
       map((categories) =>
         categories.map((category: { name: string }) => ({
@@ -163,6 +163,10 @@ export class HomeComponent implements OnInit {
     this.cartService.cartItemCount$.subscribe((count) => {
       this.cartItemCount = count;
     });
+
+    setTimeout(() => {
+      this.openLoginModal();
+    }, 5000);
   }
 
   @HostListener('document:click', ['$event'])
@@ -176,10 +180,15 @@ export class HomeComponent implements OnInit {
   }
 
   viewProductDetails(productId: number): void {
-    if (productId) {
-      this.router.navigate(['/product-details', productId]);
-    } else {
-      console.error('Product ID is undefined');
+    if (!this.loginType) {
+      this.openLoginModal();
+    }
+    else {
+      if (productId) {
+        this.router.navigate(['/product-details', productId]);
+      } else {
+        console.error('Product ID is undefined');
+      }
     }
   }
 
@@ -337,6 +346,10 @@ export class HomeComponent implements OnInit {
   }
 
   onSearchOptionClick(option: string): void {
+    if(!this.loginType){
+      this.openLoginModal();
+      return;
+    }
     this.searchEnabled = true;
     this.searchPlaceholder = `Search By ${option}`;
   }
@@ -570,13 +583,17 @@ export class HomeComponent implements OnInit {
   }
 
   onSearch(page: number = 1): void {
+    if(!this.loginType){
+      this.openLoginModal();
+      return;
+    }
     this.currentSearchType = 'generalSearch';
-    
+
     // Get the search input value
     const searchInputElement = document.getElementById(
       'search-input'
     ) as HTMLInputElement;
-    
+
     // Initialize the search query (can be empty string)
     this.searchQuery = searchInputElement ? searchInputElement.value.trim() : '';
 
@@ -672,7 +689,7 @@ export class HomeComponent implements OnInit {
           this.cdr.detectChanges();
         }
       });
-}
+  }
 
   onPageChange(page: number): void {
     this.currentPage = page; // Update currentPage in HomeComponent
@@ -771,6 +788,10 @@ export class HomeComponent implements OnInit {
   }
 
   onCategoryClick(categoryId: number): void {
+    if(!this.loginType){
+      this.openLoginModal();
+      return;
+    }
     console.log('Setting categoryId in service:', categoryId);
 
     // Set the categoryId in the service
@@ -778,5 +799,30 @@ export class HomeComponent implements OnInit {
 
     // Navigate to the category route
     this.router.navigate(['/category']);
+  }
+
+  openLoginModal() {
+    if (isPlatformBrowser(this.platformId)) {
+      import('bootstrap').then((bootstrap) => {
+        // Use Bootstrap here if needed
+        const loginModal = new bootstrap.Modal(document.getElementById('loginModal') as HTMLElement);
+        loginModal.show();
+      });
+    }
+  }
+
+  openLoginSidebar() {
+    this.openSidebar();
+    if (isPlatformBrowser(this.platformId)) {
+      import('bootstrap').then((bootstrap) => {
+        const modalElement = document.getElementById('loginModal');
+        if (modalElement) {
+          const loginModal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+          loginModal.hide();
+        } else {
+          console.error('Modal element with ID "loginModal" not found.');
+        }
+      });
+    }
   }
 }
