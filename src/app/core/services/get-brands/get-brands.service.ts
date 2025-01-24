@@ -18,4 +18,15 @@ export class GetBrandsService {
       )
     );
   }  
+
+  fetchAllBrands(requestData: any = {}): Observable<any[]> {
+    return this.apiService.post<{ success: boolean; statusCode: number; statusReason: string; data: any[] }>(
+      'Product/getAllBrands',
+      requestData
+    ).pipe(
+      map((response) =>
+        response.data.sort((a, b) => a.brand_name.localeCompare(b.brand_name)) // Sort by brand_name in ascending order
+      )
+    );
+  }
 }
