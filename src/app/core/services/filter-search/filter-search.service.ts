@@ -77,8 +77,16 @@ export class FilterSearchService {
   }
 
   clearAllFilters(): void {
+    // Clear categories
     this.selectedCategoriesSource.next({ m_id: null, f_id: null, s_id: null });
+    
+    // Clear brand
     this.selectedBrandSource.next(null);
-    console.log('All filters cleared.');
+    
+    // Clear make
+    this.selectedMakeSource.next(null);
+    
+    console.log('All filters cleared, including categories, brand, and make.');
   }
+  
 }
