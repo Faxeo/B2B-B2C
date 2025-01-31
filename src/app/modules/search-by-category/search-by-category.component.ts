@@ -57,9 +57,9 @@ export class SearchByCategoryComponent {
   mainCategories: any[] = [];
   firstSubCategories: any[] = [];
   secondSubCategories: any[] = [];
-  selectedMainCategory: string | null = null;
-  selectedFirstSubCategory: string | null = null;
-  selectedSecondSubCategory: string | null = null;
+  selectedMainCategory: string | null = '';
+  selectedFirstSubCategory: string | null = '';
+  selectedSecondSubCategory: string | null = '';
 
   m_id: number | null = null;
   f_id: number | null = null;
