@@ -72,11 +72,11 @@ export class SearchByVehicleComponent {
   trims: any[] = [];
   engines: any[] = [];
 
-  selectedYear: string | null = null;
-  selectedMake: string | null = null;
-  selectedModel: string | null = null;
-  selectedTrim: string | null = null;
-  selectedEngine: string | null = null;
+  selectedYear: string | null = '';
+  selectedMake: string | null = '';
+  selectedModel: string | null = '';
+  selectedTrim: string | null = '';
+  selectedEngine: string | null = '';
   products: any[] = [];
   pageSize: number = 10;
   currentRequestData: any = {};
@@ -172,13 +172,13 @@ export class SearchByVehicleComponent {
             cvalue_id: item.cvalue_id,
           }));
           // Reset dependent fields
-          this.selectedMake = null;
           this.models = [];
           this.trims = [];
           this.engines = [];
-          this.selectedModel = null;
-          this.selectedTrim = null;
-          this.selectedEngine = null;
+          this.selectedMake = '';
+          this.selectedModel = '';
+          this.selectedTrim = '';
+          this.selectedEngine = '';
         },
         (error) => {
           console.error('Error fetching makes:', error);
@@ -201,9 +201,9 @@ export class SearchByVehicleComponent {
             cvalue_id: item.cvalue_id,
           }));
           this.updateVehicleSelection({ make: this.selectedMake });
-          this.selectedModel = '';
           this.trims = [];
           this.engines = [];
+          this.selectedModel = '';
           this.selectedTrim = '';
           this.selectedEngine = '';
           this.cdr.detectChanges();

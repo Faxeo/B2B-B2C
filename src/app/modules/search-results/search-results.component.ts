@@ -39,6 +39,7 @@ import { CategoryNavbarSearchService } from '../../core/services/category-navbar
 import { CartSidebarComponent } from '../cart-sidebar/cart-sidebar.component';
 import { SearchByCategoryComponent } from '../search-by-category/search-by-category.component';
 import { CartSidebarService } from '../../core/services/cart-sidebar/cart-sidebar.service';
+import { FooterComponent } from '../../layout/footer/footer.component';
 
 @Component({
   selector: 'app-search-results',
@@ -963,7 +964,6 @@ export class SearchResultsComponent implements OnChanges {
       }
     );
   }
-  
 
   // Call emitPageChange for pagination controls
   searchByVehicle(page: number): void {

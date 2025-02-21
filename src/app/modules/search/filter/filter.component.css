@@ -30,6 +30,27 @@
   color: #2d3748;
 }
 
+.reset{
+  position: relative;
+  top: -40px;
+  /* right: 10%; */
+  left: 250px;
+  width: 55px;
+  /* font-size: 10px; */
+  /* color: #4a5568; */
+  padding: 0 10px;
+  margin: 0 0 15px 40px;
+  border-radius: none;
+  border: none;
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+
+.reset:hover {
+  scale: 1.1;
+  cursor: pointer;
+}
+
 /* Search Input */
 .filter-input {
   width: 100%;

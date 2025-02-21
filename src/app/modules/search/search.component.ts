@@ -7,11 +7,15 @@ import { CartSidebarComponent } from '../cart-sidebar/cart-sidebar.component';
 import { NavbarComponent } from "../../layout/navbar/navbar.component";
 import { SearchResultsComponent } from "../search-results/search-results.component";
 import { CartSidebarService } from '../../core/services/cart-sidebar/cart-sidebar.service';
+import { FooterComponent } from '../../layout/footer/footer.component';
 
 
 @Component({
   standalone: true,
-  imports: [RouterModule, CommonModule, FormsModule, FilterComponent, CartSidebarComponent, NavbarComponent, SearchResultsComponent,],
+  imports: [RouterModule, CommonModule, FormsModule, FilterComponent, CartSidebarComponent, NavbarComponent, 
+    SearchResultsComponent,
+    //  FooterComponent
+    ],
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css'],
