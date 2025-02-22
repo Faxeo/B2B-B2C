@@ -841,3 +841,14 @@
   .slider-container.active .inner-container {
     display: flex;
   }
+
+  .brand-logo {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    margin: 10px;
+  }
+  .carousel-item {
+    text-align: center;
+  }
+  

@@ -19,7 +19,7 @@ export class GetBrandsService {
     );
   }  
 
-  fetchAllBrands(requestData: any = {}): Observable<any[]> {
+  fetchAllBrands(requestData: any = {}): Observable<Brand[]> {
     return this.apiService.post<{ success: boolean; statusCode: number; statusReason: string; data: any[] }>(
       'Product/getAllBrands',
       requestData
@@ -29,4 +29,10 @@ export class GetBrandsService {
       )
     );
   }
+}
+
+
+export interface Brand {
+  brand_name: string;
+  brand_image: string;
 }
