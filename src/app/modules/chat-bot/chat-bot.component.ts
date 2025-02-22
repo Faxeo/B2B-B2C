@@ -37,7 +37,7 @@ export class ChatBotComponent {
   getBotResponse(input: string) {
     this.chatbotService.sendMessageToBot(input).subscribe(
       (response) => {
-        this.messages.push({ text: response.reply || 'No response', sender: 'bot' });
+        this.messages.push({ text: response.answer || 'No response', sender: 'bot' });
       },
       (error) => {
         this.messages.push({ text: 'Error contacting bot. Please try again.', sender: 'bot' });

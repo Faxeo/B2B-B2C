@@ -6,7 +6,7 @@
         <!-- <label for="mainCategory">Main Category</label> -->
         <select id="mainCategory" class="form-select" [(ngModel)]="selectedMainCategory"
           (change)="onMainCategoryChange()">
-          <option value="" disabled selected>Select Main Category</option>
+          <option value="" disabled selected>Main Category</option>
           <option *ngFor="let mainCategory of mainCategories" [value]="mainCategory.id">
             {{ mainCategory.name }}
           </option>
@@ -18,9 +18,9 @@
         <!-- <label for="firstSubCategory">First Sub-Category</label> -->
         <select id="firstSubCategory" class="form-select" [(ngModel)]="selectedFirstSubCategory"
           (change)="onFirstSubCategoryChange()" [disabled]="!selectedMainCategory">
-          <option value="" disabled selected>Select First Sub-Category</option>
+          <option value="" disabled selected>First Sub-Category</option>
           <option *ngFor="let firstSubCategory of firstSubCategories" [value]="firstSubCategory.id">
-            {{ firstSubCategory.name }}
+            {{ firstSubCategory.name }} 
           </option>
         </select>
       </div>
@@ -30,7 +30,7 @@
         <!-- <label for="secondSubCategory">Second Sub-Category</label> -->
         <select id="secondSubCategory" class="form-select" [(ngModel)]="selectedSecondSubCategory"
           [disabled]="!selectedFirstSubCategory">
-          <option value="" disabled selected>Select Second Sub-Category</option>
+          <option value="" disabled selected>Second Sub-Category</option>
           <option *ngFor="let secondSubCategory of secondSubCategories" [value]="secondSubCategory.id">
             {{ secondSubCategory.name }}
           </option>

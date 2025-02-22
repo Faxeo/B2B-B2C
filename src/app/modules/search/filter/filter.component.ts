@@ -71,7 +71,64 @@ export class FilterComponent {
     this.getMainCategories();
     this.getBrands();
     this.fetchVehicles('2023');
+  
+    // Sync component state with service
+    this.filterSearchService.selectedCategories$.subscribe((categories) => {
+      this.selectedMainCategory = categories.m_id !== null ? categories.m_id.toString() : null;
+      this.selectedFirstSubCategory = categories.f_id !== null ? categories.f_id.toString() : null;
+      this.selectedSecondSubCategory = categories.s_id !== null ? categories.s_id.toString() : null;
+    });
+  
+    this.filterSearchService.selectedBrand$.subscribe((brand) => {
+      this.selectedBrand = brand;
+    });
+  
+    this.filterSearchService.selectedMake$.subscribe((make) => {
+      this.selectedVehicle = make;
+    });
   }
+  
+  resetFilters(): void {
+    // Reset all main category checkboxes and their values
+    this.mainCategories.forEach((category) => {
+      category.selected = false;
+  
+      if (category.firstSubCategories) {
+        category.firstSubCategories.forEach((subCategory: any) => {
+          subCategory.selected = false;
+  
+          if (subCategory.secondSubCategories) {
+            subCategory.secondSubCategories.forEach(
+              (secondSubCategory: any) => (secondSubCategory.selected = false)
+            );
+          }
+        });
+      }
+    });
+
+    // Reset local component state
+    this.selectedMainCategory = null;
+    this.selectedFirstSubCategory = null;
+    this.selectedSecondSubCategory = null;
+    this.selectedVehicle = null;
+    this.searchVehicleTerm = '';
+    
+    // Reset brands
+    this.brands.forEach((brand) => {
+      brand.selected = false;
+    });
+    this.selectedBrand = null;
+    this.selectedBrandName = null;
+  
+    // Reset all services
+    this.filterSearchService.clearAllFilters();
+    this.categoryNavbarSearchService.clearCategoryData();
+    this.filterSearchService.clearSelectedMake();
+    
+    // Manually trigger change detection
+    this.cdr.detectChanges();
+  }
+  
 
   // filter.component.ts
   fetchVehicles(year: string): void {
