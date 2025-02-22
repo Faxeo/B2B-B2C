@@ -35,7 +35,7 @@ import { MainCategoryService } from '../../../../core/services/main-category/mai
 import { SubCategoryService } from '../../../../core/services/sub-category/sub-category.service';
 import { CategoryIdService } from '../../../../core/services/category-id/category-id.service';
 import { B2cSearchComponent } from '../b2c-search/b2c-search.component';
-import { GetBrandsService } from '../../../../core/services/get-brands/get-brands.service';
+import { Brand, GetBrandsService } from '../../../../core/services/get-brands/get-brands.service';
 
 
 @Component({
@@ -105,8 +105,10 @@ export class B2CHomeComponent implements OnInit {
   showCategoryForm: boolean = false;
   isBrowser: boolean = false;
   showDropdown: boolean = false;
-  brands: any[] = [];
-
+  brands: Brand[] = [];
+  paginatedBrands: Brand[][] = [];
+  currentBrandsPage = 0;
+  brandsPerPage = 6;
 
   constructor(
     private apiService: ApiService,
@@ -271,11 +273,21 @@ export class B2CHomeComponent implements OnInit {
     this.brandsService.fetchAllBrands().subscribe({
       next: (data) => {
         this.brands = data;
+
+        this.updatePagination();
       },
       error: (err) => {
         console.error('Error fetching brands:', err);
       },
     });
+  }
+
+  updatePagination() {
+    this.paginatedBrands = [];
+    for (let i = 0; i < this.brands.length; i += this.brandsPerPage) {
+      this.paginatedBrands.push(this.brands.slice(i, i + this.brandsPerPage));
+    }
+    this.currentBrandsPage = 0;
   }
   
   onMainCategoryChange(): void {
