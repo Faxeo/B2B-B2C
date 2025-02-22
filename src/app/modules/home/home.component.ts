@@ -74,7 +74,7 @@ export class HomeComponent implements OnInit {
   isPaginationLoading: boolean = false;
   totalPages: number = 0;
   currentPage: number = 1;
-  searchEnabled: boolean = false; 
+  searchEnabled: boolean = false;
   searchPlaceholder: string = '';
   showVehicleForm: boolean = false;
   selectedYear: string = '';
@@ -120,7 +120,7 @@ export class HomeComponent implements OnInit {
     private router: Router,
     private categoryIdService: CategoryIdService,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getMainCategories();
@@ -164,10 +164,11 @@ export class HomeComponent implements OnInit {
     this.cartService.cartItemCount$.subscribe((count) => {
       this.cartItemCount = count;
     });
-
-    setTimeout(() => {
-      this.openLoginModal();
-    }, 5000);
+    if (!this.loginType) {
+      setTimeout(() => {
+        this.openLoginModal();
+      }, 5000);
+    }
   }
 
   @HostListener('document:click', ['$event'])
@@ -347,7 +348,7 @@ export class HomeComponent implements OnInit {
   }
 
   onSearchOptionClick(option: string): void {
-    if(!this.loginType){
+    if (!this.loginType) {
       this.openLoginModal();
       return;
     }
@@ -584,7 +585,7 @@ export class HomeComponent implements OnInit {
   }
 
   onSearch(page: number = 1): void {
-    if(!this.loginType){
+    if (!this.loginType) {
       this.openLoginModal();
       return;
     }
@@ -789,7 +790,7 @@ export class HomeComponent implements OnInit {
   }
 
   onCategoryClick(categoryId: number): void {
-    if(!this.loginType){
+    if (!this.loginType) {
       this.openLoginModal();
       return;
     }
