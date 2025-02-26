@@ -15,7 +15,7 @@ import { CartService } from '../../core/services/cart/cart.service';
 export class WishlistComponent implements OnInit {
   wishlistItems: Array<{
     product_id: number;
-    product_name: string;
+    product_name: string; 
     product_price: number;
     product_quantity: number;
     product_image: string;
@@ -51,6 +51,17 @@ export class WishlistComponent implements OnInit {
       console.error('Business ID (userID) is not set.');
     }
   }
+
+  askForQuery(product: any): void {
+    // Example: Open a contact support page or trigger an inquiry form
+    console.log('User wants to inquire about:', product.product_name);
+  
+    // Show a temporary pop-up
+    // this.showTemporaryPopup('Inquiry sent for ' + product.product_name, '#f39c12');
+  
+    // You can redirect the user to an inquiry page or open a modal here
+  }
+  
 
   loadWishlistData(): void {
     if (!this.businessId) {

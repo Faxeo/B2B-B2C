@@ -1027,6 +1027,12 @@ export class B2cGeneralSearchComponent {
       });
   }
 
+  
+  buyNow(product: any) {
+    this.addToCart(product); // Call the existing Add to Cart function
+    this.router.navigate(['/B2C/cart']); // Navigate to the cart page
+  }
+
   displayMessage(msg: string): void {
     this.message = msg;
     this.showMessage = true;

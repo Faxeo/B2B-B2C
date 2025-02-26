@@ -34,9 +34,10 @@
               <td class="text-center font-weight-semibold align-middle p-4">${{ item.price.toFixed(2) }}</td>
               <td class="text-center align-middle p-4">
                 <input type="number" class="form-control text-center" [(ngModel)]="item.quantity"
-                       (change)="onQuantityInput(item.productId, $event)" min="1" />
+                  (change)="onQuantityInput(item.productId, $event)" min="1" />
               </td>
-              <td class="text-center font-weight-semibold align-middle p-4">${{ (item.price * item.quantity).toFixed(2) }}</td>
+              <td class="text-center font-weight-semibold align-middle p-4">${{ (item.price * item.quantity).toFixed(2)
+                }}</td>
               <td class="text-center font-weight-semibold align-middle p-4">
                 <span *ngIf="item.discountedPrice && item.discountedPrice < item.price * item.quantity">
                   ${{ item.discountedPrice.toFixed(2) }}
@@ -50,12 +51,11 @@
         </table>
       </div>
 
-      <div class="d-flex flex-wrap justify-content-between align-items-center pb-4">
-        <div class="text-right mt-4">
-          <label class="text-muted font-weight-normal m-0">Subtotal</label>
-          <div class="text-large"><strong>${{ calculateSubtotal().toFixed(2) }}</strong></div>
-        </div>
+      <div class="d-flex justify-content-between align-items-center pb-4 subtotal-container">
+        <label class="text-muted font-weight-normal m-0">Subtotal</label>
+        <div class="text-large"><strong>${{ calculateSubtotal().toFixed(2) }}</strong></div>
       </div>
+
 
       <!-- Billing Information Section -->
       <div class="billing-information">
@@ -65,37 +65,51 @@
             <label for="fullName">Full Name:</label>
             <input type="text" id="fullName" [(ngModel)]="billing.fullName" name="fullName" required>
           </div>
-          <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" [(ngModel)]="billing.email" name="email" required>
-          </div>
-          <div class="form-group">
-            <label for="contact">Contact:</label>
-            <input type="text" id="contact" [(ngModel)]="billing.contact" name="contact" required>
+          <!-- Email & Contact in one row -->
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="email">Email:</label>
+              <input type="email" id="email" [(ngModel)]="billing.email" name="email" required>
+            </div>
+            <div class="form-group">
+              <label for="contact">Contact:</label>
+              <input type="text" id="contact" [(ngModel)]="billing.contact" name="contact" required>
+            </div>
           </div>
           <div class="form-group">
             <label for="billingAddress">Billing Address:</label>
-            <textarea id="billingAddress" [(ngModel)]="billing.billingAddress" name="billingAddress" required></textarea>
+            <textarea id="billingAddress" [(ngModel)]="billing.billingAddress" name="billingAddress" required
+              (paste)="handleAddressPaste($event)"></textarea>
           </div>
-          <div class="form-group">
-            <label for="country">Country:</label> 
-            <input type="text" id="country" [(ngModel)]="billing.country" name="country" readonly>
+
+          <!-- Country & State in one row -->
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="city">City:</label>
+              <input type="text" id="city" [(ngModel)]="billing.city" name="city" required>
+            </div>
+            <div class="form-group">
+              <label for="state">State:</label>
+              <input type="text" id="state" [(ngModel)]="billing.state" name="state" required>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="state">State:</label>
-            <input type="text" id="state" [(ngModel)]="billing.state" name="state" required>
+
+          <!-- City & Zipcode in one row -->
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="zipcode">Zipcode:</label>
+              <input type="text" id="zipcode" [(ngModel)]="billing.zipcode" name="zipcode" required>
+            </div>
+            <div class="form-group">
+              <label for="country">Country:</label>
+              <input type="text" id="country" [(ngModel)]="billing.country" name="country" readonly>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="city">City:</label>
-            <input type="text" id="city" [(ngModel)]="billing.city" name="city" required>
-          </div>
-          <div class="form-group">
-            <label for="zipcode">Zipcode:</label>
-            <input type="text" id="zipcode" [(ngModel)]="billing.zipcode" name="zipcode" required>
-          </div>
+
           <button type="submit" class="checkout">CHECKOUT</button>
         </form>
       </div>
+
     </div>
   </div>
 </div>

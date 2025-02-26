@@ -7,8 +7,8 @@
   </div>
 
   <button class="toggle-btn" (click)="toggleSidebar()">
-    {{ isCollapsed ? '>>' : '<<' }} </button>
-
+    <span class="toggle-icon">{{ isCollapsed ? '→' : '←' }}</span>
+  </button>
 
       <!-- General Search Component -->
       <div class="general-search" [class.expanded-left]="isCollapsed" [class.expanded-right]="isCartCollapsed">
