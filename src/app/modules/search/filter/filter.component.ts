@@ -71,32 +71,35 @@ export class FilterComponent {
     this.getMainCategories();
     this.getBrands();
     this.fetchVehicles('2023');
-  
+
     // Sync component state with service
     this.filterSearchService.selectedCategories$.subscribe((categories) => {
-      this.selectedMainCategory = categories.m_id !== null ? categories.m_id.toString() : null;
-      this.selectedFirstSubCategory = categories.f_id !== null ? categories.f_id.toString() : null;
-      this.selectedSecondSubCategory = categories.s_id !== null ? categories.s_id.toString() : null;
+      this.selectedMainCategory =
+        categories.m_id !== null ? categories.m_id.toString() : null;
+      this.selectedFirstSubCategory =
+        categories.f_id !== null ? categories.f_id.toString() : null;
+      this.selectedSecondSubCategory =
+        categories.s_id !== null ? categories.s_id.toString() : null;
     });
-  
+
     this.filterSearchService.selectedBrand$.subscribe((brand) => {
       this.selectedBrand = brand;
     });
-  
+
     this.filterSearchService.selectedMake$.subscribe((make) => {
       this.selectedVehicle = make;
     });
   }
-  
+
   resetFilters(): void {
     // Reset all main category checkboxes and their values
     this.mainCategories.forEach((category) => {
       category.selected = false;
-  
+
       if (category.firstSubCategories) {
         category.firstSubCategories.forEach((subCategory: any) => {
           subCategory.selected = false;
-  
+
           if (subCategory.secondSubCategories) {
             subCategory.secondSubCategories.forEach(
               (secondSubCategory: any) => (secondSubCategory.selected = false)
@@ -112,23 +115,22 @@ export class FilterComponent {
     this.selectedSecondSubCategory = null;
     this.selectedVehicle = null;
     this.searchVehicleTerm = '';
-    
+
     // Reset brands
     this.brands.forEach((brand) => {
       brand.selected = false;
     });
     this.selectedBrand = null;
     this.selectedBrandName = null;
-  
+
     // Reset all services
     this.filterSearchService.clearAllFilters();
     this.categoryNavbarSearchService.clearCategoryData();
     this.filterSearchService.clearSelectedMake();
-    
+
     // Manually trigger change detection
     this.cdr.detectChanges();
   }
-  
 
   // filter.component.ts
   fetchVehicles(year: string): void {
@@ -167,7 +169,6 @@ export class FilterComponent {
       console.log('Vehicle selected:', vehicleName);
     }
   }
-  
 
   onMakeChange(make: string | null): void {
     this.selectedVehicle = make;
@@ -355,6 +356,19 @@ export class FilterComponent {
   // Disable main categories if any subcategories or second subcategories are selected
 
   onMainCategoryChange(selectedCategory: any): void {
+    // If category is unchecked, deselect all its children
+    if (!selectedCategory.selected) {
+      if (selectedCategory.firstSubCategories) {
+        selectedCategory.firstSubCategories.forEach((sub: any) => {
+          sub.selected = false;
+          if (sub.secondSubCategories) {
+            sub.secondSubCategories.forEach(
+              (secSub: any) => (secSub.selected = false)
+            );
+          }
+        });
+      }
+    }
     // Deselect all other main categories and their subcategories
     this.mainCategories.forEach((category) => {
       if (category !== selectedCategory) {
@@ -428,6 +442,7 @@ export class FilterComponent {
   }
 
   onFirstSubCategoryChange(subCategory: any): void {
+
     // Find the parent main category
     const parentCategory = this.mainCategories.find((category) =>
       category.firstSubCategories?.some((sub: any) => sub === subCategory)
@@ -448,6 +463,21 @@ export class FilterComponent {
         }
       }
     });
+
+    // Prevent selection if parent category is not checked
+  if (!parentCategory?.selected) {
+    subCategory.selected = false;
+    return;
+  }
+
+  // If first subcategory is unchecked, uncheck second subcategories
+  if (!subCategory.selected) {
+    if (subCategory.secondSubCategories) {
+      subCategory.secondSubCategories.forEach(
+        (secSub: any) => (secSub.selected = false)
+      );
+    }
+  }
 
     // Clear second subcategories when switching first subcategories
     if (!subCategory.selected) {
@@ -504,6 +534,12 @@ export class FilterComponent {
     subCategory: any,
     selectedSecondSubCategory: any
   ): void {
+
+     // Prevent selection if first subcategory is not checked
+  if (!subCategory.selected) {
+    selectedSecondSubCategory.selected = false;
+    return;
+  }
     // Deselect other second subcategories of the same parent subcategory
     if (selectedSecondSubCategory.selected) {
       subCategory.secondSubCategories.forEach(

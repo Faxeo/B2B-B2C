@@ -174,3 +174,29 @@ th, td {
   color: #333;
   font-weight: bold;
 }
+
+/* Style for two-column row layout */
+.form-group-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* Ensure equal width for both fields */
+.form-group-row .form-group {
+  flex: 1;
+}
+
+/* Ensure Subtotal and Price are in the same row */
+.subtotal-container {
+  display: flex;
+  margin-top: 10px;
+  padding: 5px;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-size: 1.4rem;
+  color: #333;
+  font-weight: bold;
+}
+

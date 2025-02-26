@@ -10,7 +10,7 @@
 
   <div class="new-section">
 
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg fixed-top">
       <div class="container-fluid">
         <a class="navbar-brand logo" href="/">
           <img src="assets/logo.png" alt="US Auto Parts" height="70" width="100%">
@@ -22,7 +22,7 @@
 
             <div class="form-control inner-search d-flex align-items-center justify-content-between"
               style="padding: 8px 12px; border-radius: 26px; background-color: #fff;">
-
+ 
               <input id="search-input" class="form-control border-0" type="search" placeholder="Search keyword"
                 aria-label="Search" (keydown.enter)="onSearch()"
                 style="flex: 1; outline: none; box-shadow: none; color:black">
@@ -40,9 +40,9 @@
           <!-- Show Sign in and Sign up when loginType is not 'customer' -->
           <ng-container *ngIf="loginType !== 'customer'; else customerSection">
             <a class="Login d-flex align-items-center text-decoration-none" routerLink="/B2C/login">
-              <img src="assets/user.png" alt="User Icon" height="30" width="30" class="me-2">
+              <i class="fa fa-user me-2 user-icon"></i>
               <strong>Sign in</strong>
-            </a>
+            </a>            
 
             <a class="signup-button ms-3 d-flex align-items-center" routerLink="/sidebar/signup">
               Sign up
@@ -67,12 +67,12 @@
           </ng-template>
 
           <button class="heart-btn ms-3">
-            <i class="far fa-heart wishlist"></i>
+            <i class="far fa-heart wishlist nav-icon-color"></i>
           </button>
 
           <button *ngIf="loginType !== 'admin'" class="btn btn-outline-light ms-2 red-button" id="shopping_cart"
             routerLink="/B2C/cart">
-            <i class="fa-solid fa-cart-shopping fa-2xl large-icon"></i>
+            <i class="fa-solid fa-cart-shopping fa-2xl large-icon nav-icon-color"></i>
             <span *ngIf="cartItemCount > 0" class="cart-count-badge">{{ cartItemCount }}</span>
           </button>
         </div>
@@ -637,6 +637,8 @@
     </div>
   </footer>
 </div>
+
+<app-chat-bot></app-chat-bot>
 
 
 <router-outlet />

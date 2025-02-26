@@ -36,6 +36,7 @@ import { SubCategoryService } from '../../../../core/services/sub-category/sub-c
 import { CategoryIdService } from '../../../../core/services/category-id/category-id.service';
 import { B2cSearchComponent } from '../b2c-search/b2c-search.component';
 import { Brand, GetBrandsService } from '../../../../core/services/get-brands/get-brands.service';
+import { ChatBotComponent } from '../../../../modules/chat-bot/chat-bot.component';
 
 
 @Component({
@@ -49,8 +50,8 @@ import { Brand, GetBrandsService } from '../../../../core/services/get-brands/ge
     // FooterComponent,
     FormsModule,
     // SearchComponent,
-    // B2cSearchComponent
-    
+    // B2cSearchComponent,
+    ChatBotComponent    
   ],
   providers: [ApiService, SidebarToggleService],
   templateUrl: './b2c-home.component.html',
@@ -140,7 +141,7 @@ export class B2CHomeComponent implements OnInit {
         // this.showSearchComponent = true;
         this.isLoading = false;
       }
-    });
+    }); 
     this.isBrowser = isPlatformBrowser(this.platformId);
     this.getMainCategories();
     this.getYears();

@@ -1,4 +1,4 @@
-<app-navbar></app-navbar>
+<app-navbar ></app-navbar>
 
 <div class="container">
   <!-- Left Sidebar -->
@@ -7,7 +7,9 @@
   </div>
 
   <button class="toggle-btn" (click)="toggleSidebar()">
-    {{ isCollapsed ? '>>' : '<<' }} </button>
+    <span class="toggle-icon">{{ isCollapsed ? '→' : '←' }}</span>
+  </button>
+  
 
       <!-- General Search Component -->
       <div class="general-search" [class.expanded-left]="isCollapsed" [class.expanded-right]="isCartCollapsed">
@@ -20,7 +22,6 @@
           &times; <!-- "×" Close Icon -->
         </button>
         <app-cart-sidebar></app-cart-sidebar>
-
       </div>
 </div>
 

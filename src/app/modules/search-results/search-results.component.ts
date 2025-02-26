@@ -380,7 +380,7 @@ export class SearchResultsComponent implements OnChanges {
       .subscribe({
         next: () => {
           product.isInWishlist = true;
-          this.displayNotification('Product added to wishlist successfully!');
+          this.showTemporaryPopup('Product added to wishlist!');
         },
         error: (error) => {
           console.error('Error adding to wishlist:', error);
@@ -390,6 +390,22 @@ export class SearchResultsComponent implements OnChanges {
         },
       });
   }
+
+  showTemporaryPopup(message: string, color: string = '#4caf50'): void {
+    const popup = document.getElementById('popup-container');
+    const popupMessage = document.getElementById('popup-message');
+  
+    if (popup && popupMessage) {
+      popupMessage.innerText = message;
+      popup.style.backgroundColor = color; // Set dynamic color
+      popup.classList.remove('hidden'); // Show popup
+  
+      setTimeout(() => {
+        popup.classList.add('hidden'); // Hide popup after 3 seconds
+      }, 3000);
+    }
+  }
+  
 
   removeFromWishlist(product: any): void {
     if (!this.userID) {
@@ -406,9 +422,7 @@ export class SearchResultsComponent implements OnChanges {
       .subscribe({
         next: () => {
           product.isInWishlist = false;
-          this.displayNotification(
-            'Product removed from wishlist successfully!'
-          );
+          this.showTemporaryPopup('Product removed from wishlist!', '#e74c3c'); 
         },
         error: (error) => {
           console.error('Error removing from wishlist:', error);
@@ -1054,6 +1068,11 @@ export class SearchResultsComponent implements OnChanges {
           this.displayMessage('Error adding item to cart: ' + error.message);
         },
       });
+  }
+
+  buyNow(product: any) {
+    this.addToCart(product); // Call the existing Add to Cart function
+    this.router.navigate(['/B2B/cart']); // Navigate to the cart page
   }
 
   displayMessage(msg: string): void {

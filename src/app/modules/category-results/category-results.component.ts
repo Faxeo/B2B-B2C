@@ -13,7 +13,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CategoryIdService } from '../../core/services/category-id/category-id.service';
 import { AddToCartService } from '../../core/services/add-to-cart/add-to-cart.service';
-import { CartService } from '../../core/services/cart/cart.service'; 
+import { CartService } from '../../core/services/cart/cart.service';
 import { LoginService } from '../../core/services/login-service/login-service.service';
 import { NavbarComponent } from '../../layout/navbar/navbar.component';
 import { FooterComponent } from '../../layout/footer/footer.component';
@@ -33,14 +33,9 @@ import { CartSidebarService } from '../../core/services/cart-sidebar/cart-sideba
 @Component({
   selector: 'app-category-results',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    RecentlyViewedComponent,
-    RouterModule,
-  ],
+  imports: [CommonModule, FormsModule, RecentlyViewedComponent, RouterModule],
   templateUrl: './category-results.component.html',
-  styleUrl: './category-results.component.css'
+  styleUrl: './category-results.component.css',
 })
 export class CategoryResultsComponent implements OnInit {
   @Input() searchResults: any[] = [];
@@ -97,7 +92,7 @@ export class CategoryResultsComponent implements OnInit {
     private categoryNavbarSearchService: CategoryNavbarSearchService,
     private dynamicSearchService: DynamicSearchService,
     private cdr: ChangeDetectorRef,
-    private cartSidebarService: CartSidebarService,
+    private cartSidebarService: CartSidebarService
   ) {
     this.filterSearchService.selectedCategories$.subscribe((categories) => {
       this.m_id = categories.m_id;
@@ -113,17 +108,17 @@ export class CategoryResultsComponent implements OnInit {
     this.recentlyViewedService.recentlyViewed$.subscribe((products) => {
       this.showRecentlyViewed = products.length > 0;
     });
-  
+
     const categoryId = this.categoryIdService.getCategoryId();
     console.log('CategoryComponent received categoryId:', categoryId);
-  
+
     if (isPlatformBrowser(this.platformId)) {
       this.userID = localStorage.getItem('userID');
       this.loginService.getUserID().subscribe((userID) => {
         this.userID = userID;
         this.cartService.setUserDetails(this.userID, this.loginType);
       });
-  
+
       this.loginService.getLoginType().subscribe((loginType) => {
         this.loginType = loginType;
         if (this.loginType === 'business') {
@@ -133,7 +128,7 @@ export class CategoryResultsComponent implements OnInit {
         this.cartService.setUserDetails(this.userID, this.loginType);
       });
     }
-  
+
     if (categoryId !== null) {
       this.m_id = categoryId;
       console.log('Performing general search for category:', this.m_id);
@@ -142,93 +137,105 @@ export class CategoryResultsComponent implements OnInit {
       console.error('No valid category ID found');
       this.isLoading = false;
     }
-  
+
     this.loadWishlist();
-  
+
     const { m_id, f_id, s_id } =
-    this.categoryNavbarSearchService.getCategoryData();
-  console.log('Saved Category Data:', { m_id, f_id, s_id });
+      this.categoryNavbarSearchService.getCategoryData();
+    console.log('Saved Category Data:', { m_id, f_id, s_id });
 
-  this.filterSearchService.selectedCategories$.subscribe(() => {
-    this.updateFilters();
-  });
+    this.filterSearchService.selectedCategories$.subscribe(() => {
+      this.updateFilters();
+    });
 
-  this.filterSearchService.selectedBrand$.subscribe(() => {
-    this.updateFilters();
-  });
+    this.filterSearchService.selectedBrand$.subscribe(() => {
+      this.updateFilters();
+    });
 
-  this.filterSearchService.selectedMake$.subscribe((make) => {
-    console.log('CategoryResultsComponent: Received new make from service:', make);
-    this.selectedMake = make;
-    console.log('CategoryResultsComponent: Updated local selectedMake:', this.selectedMake);
-    this.updateFilters(); // Trigger backend request
-  });
-  
+    this.filterSearchService.selectedMake$.subscribe((make) => {
+      console.log(
+        'CategoryResultsComponent: Received new make from service:',
+        make
+      );
+      this.selectedMake = make;
+      console.log(
+        'CategoryResultsComponent: Updated local selectedMake:',
+        this.selectedMake
+      );
+      this.updateFilters(); // Trigger backend request
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-      if (isPlatformBrowser(this.platformId)) {
-        if (changes['isLoading'] || changes['isPaginationLoading']) {
-          const isLoadingNow =
-            changes['isLoading']?.currentValue === true ||
-            changes['isPaginationLoading']?.currentValue === true;
-  
-          this.isLocallyLoading = isLoadingNow;
-          this.cdr.detectChanges();
-        }
-  
-        if (changes['searchResults'] && changes['searchResults'].currentValue) {
-          this.isLocallyLoading = false;
-          this.cdr.detectChanges();
-        }
+    if (isPlatformBrowser(this.platformId)) {
+      if (changes['isLoading'] || changes['isPaginationLoading']) {
+        const isLoadingNow =
+          changes['isLoading']?.currentValue === true ||
+          changes['isPaginationLoading']?.currentValue === true;
+
+        this.isLocallyLoading = isLoadingNow;
+        this.cdr.detectChanges();
+      }
+
+      if (changes['searchResults'] && changes['searchResults'].currentValue) {
+        this.isLocallyLoading = false;
+        this.cdr.detectChanges();
       }
     }
-  
-    private updateFilters(m_id?: number, f_id?: number, s_id?: number): void {
-      const categoryData = this.categoryNavbarSearchService.getCategoryData();
-    
-      this.m_id = m_id ?? categoryData?.m_id ?? this.m_id ?? null;
-      this.f_id = f_id ?? categoryData?.f_id ?? this.f_id ?? null;
-      this.s_id = s_id ?? categoryData?.s_id ?? this.s_id ?? null;
-    
-      console.log('CategoryResultsComponent: Updated filters:', {
-        m_id: this.m_id,
-        f_id: this.f_id,
-        s_id: this.s_id,
-        make: this.selectedMake,
-      });
-    
-      this.performGeneralSearch(
-        '',
-        this.m_id ?? undefined,
-        this.f_id ?? undefined,
-        this.s_id ?? undefined
-      );
-    }
-    
-    
-  performGeneralSearch(query: string, m_id?: number, f_id?: number, s_id?: number): void {
+  }
+
+  private updateFilters(m_id?: number, f_id?: number, s_id?: number): void {
+    const categoryData = this.categoryNavbarSearchService.getCategoryData();
+
+    this.m_id = m_id ?? categoryData?.m_id ?? this.m_id ?? null;
+    this.f_id = f_id ?? categoryData?.f_id ?? this.f_id ?? null;
+    this.s_id = s_id ?? categoryData?.s_id ?? this.s_id ?? null;
+
+    console.log('CategoryResultsComponent: Updated filters:', {
+      m_id: this.m_id,
+      f_id: this.f_id,
+      s_id: this.s_id,
+      make: this.selectedMake,
+    });
+
+    this.performGeneralSearch(
+      '',
+      this.m_id ?? undefined,
+      this.f_id ?? undefined,
+      this.s_id ?? undefined
+    );
+  }
+
+  performGeneralSearch(
+    query: string,
+    m_id?: number,
+    f_id?: number,
+    s_id?: number
+  ): void {
     this.activeSearchType = 'general';
     this.lastQuery = query;
-  
-    console.log('Performing general search with query:', query || 'Empty Query');
-  
+
+    console.log(
+      'Performing general search with query:',
+      query || 'Empty Query'
+    );
+
     m_id = m_id ?? this.m_id ?? undefined;
     f_id = f_id ?? this.f_id ?? undefined;
     s_id = s_id ?? this.s_id ?? undefined;
-  
+
     if (!m_id) {
       console.warn('Invalid m_id: No products to fetch');
       this.searchResults = [];
       this.isLocallyLoading = false;
       return;
     }
-  
+
     this.filterSearchService.selectedBrand$
       .pipe(take(1))
       .subscribe((selectedBrandId) => {
         console.log('Resolved filters:', { m_id, f_id, s_id, selectedBrandId });
-  
+
         this.currentRequestData = {
           productName: '',
           manufacturer: '',
@@ -267,32 +274,38 @@ export class CategoryResultsComponent implements OnInit {
           attributeSearch: false,
           page: this.currentPage,
         };
-  
+
         console.log('Request Data Sent to Backend:', this.currentRequestData);
-  
+
         this.isLocallyLoading = true;
-  
-        this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
-          (response: any) => {
-            console.log('Response from Backend:', response);
-  
-            if (response?.products) {
-              this.searchResults = response.products;
-              this.totalPages = response.totalPages || 1;
-            } else {
-              console.error('Unexpected response format:', response);
-              this.displayMessage('Unexpected response format from the server.');
+
+        this.dynamicSearchService
+          .searchProducts(this.currentRequestData)
+          .subscribe(
+            (response: any) => {
+              console.log('Response from Backend:', response);
+
+              if (response?.products) {
+                this.searchResults = response.products;
+                this.totalPages = response.totalPages || 1;
+              } else {
+                console.error('Unexpected response format:', response);
+                this.displayMessage(
+                  'Unexpected response format from the server.'
+                );
+              }
+
+              this.isLocallyLoading = false;
+              this.cdr.detectChanges();
+            },
+            (error: any) => {
+              console.error('Error performing general search:', error);
+              this.isLocallyLoading = false;
+              this.displayMessage(
+                'An error occurred while fetching search results.'
+              );
             }
-  
-            this.isLocallyLoading = false;
-            this.cdr.detectChanges();
-          },
-          (error: any) => {
-            console.error('Error performing general search:', error);
-            this.isLocallyLoading = false;
-            this.displayMessage('An error occurred while fetching search results.');
-          }
-        );
+          );
       });
   }
 
@@ -378,7 +391,7 @@ export class CategoryResultsComponent implements OnInit {
       .subscribe({
         next: () => {
           product.isInWishlist = true;
-          this.displayNotification('Product added to wishlist successfully!');
+          this.showTemporaryPopup('Product added to wishlist!');
         },
         error: (error) => {
           console.error('Error adding to wishlist:', error);
@@ -387,6 +400,22 @@ export class CategoryResultsComponent implements OnInit {
           );
         },
       });
+  }
+
+  // Function to create a temporary popup notification
+  showTemporaryPopup(message: string, color: string = '#4caf50'): void {
+    const popup = document.getElementById('popup-container');
+    const popupMessage = document.getElementById('popup-message');
+
+    if (popup && popupMessage) {
+      popupMessage.innerText = message;
+      popup.style.backgroundColor = color; // Set dynamic color
+      popup.classList.remove('hidden'); // Show popup
+
+      setTimeout(() => {
+        popup.classList.add('hidden'); // Hide popup after 3 seconds
+      }, 3000);
+    }
   }
 
   removeFromWishlist(product: any): void {
@@ -404,9 +433,7 @@ export class CategoryResultsComponent implements OnInit {
       .subscribe({
         next: () => {
           product.isInWishlist = false;
-          this.displayNotification(
-            'Product removed from wishlist successfully!'
-          );
+          this.showTemporaryPopup('Product removed from wishlist!', '#e74c3c');
         },
         error: (error) => {
           console.error('Error removing from wishlist:', error);
@@ -563,5 +590,10 @@ export class CategoryResultsComponent implements OnInit {
           this.displayMessage('Error adding item to cart: ' + error.message);
         },
       });
+  }
+
+  buyNow(product: any) {
+    this.addToCart(product); // Call the existing Add to Cart function
+    this.router.navigate(['/B2B/cart']); // Navigate to the cart page
   }
 }
