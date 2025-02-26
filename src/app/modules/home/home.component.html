@@ -255,6 +255,15 @@
 
 <!------------ Product categories -------------------->
 
+<div class="container-fluid py-5"
+     style="background: url('../../../assets/banner2-2.jpg') no-repeat center center/cover; cursor: pointer;"
+     (click)="onSearch()" role="button">
+  <div class="container text-center text-white">
+    <h2 class="fw-bold mb-3">Your Auto Parts, Smarter and Faster</h2>
+    <p class="lead mb-4">Discover the right parts for your vehicle with ease. Quality, precision, and speed — all in one place.</p>
+  </div>
+</div>
+
 <div *ngIf="!showSearchComponent" class="product-categories container-fluid my-5 px-5">
   <div class="row">
     <div class="col-md-3 col-sm-6 mb-4" *ngFor="let category of categories$ | async">

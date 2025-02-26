@@ -244,65 +244,44 @@
     </div>
   </div>
 
-  <!------------ Product categories -------------------->
+  <hr class="my-4">
 
-  <div *ngIf="showSearchBar" class="container my-5">
+  <div class="container-fluid py-5"
+    style="background: url('../../../../../assets/banner2-1.jpg') no-repeat center center/cover; cursor: pointer;"
+    (click)="onSearch()" role="button">
+    <div class="container text-center text-white">
+      <h2 class="fw-bold mb-3">Find the Perfect Auto Part</h2>
+      <p class="lead mb-4">Explore our wide range of high-quality auto parts — just a click away.</p>
+    </div>
+  </div>
+
+  <hr class="my-4">
+
+  <!------------ Product categories -------------------->
+  <div class="container my-5">
+    <h3 class="text-center fw-bold mb-4">Shop by Category</h3>
     <div class="row g-4">
-      <div class="col-lg-2 col-md-3 col-sm-4" *ngFor="let category of categories$ | async">
-        <div 
-          class="card h-100 text-center shadow-sm border-0" 
-          (click)="onCategoryClick(category.id)" 
-          style="cursor: pointer; border-radius: 10px;"
-        >
-          <!-- Card Image -->
-          <div class="position-relative">
-            <img 
-              [src]="category.image" 
-              [alt]="category.name" 
-              class="card-img-top rounded-top"
-              style="height: 150px; object-fit: cover; border-radius: 10px 10px 0 0;"
-            />
-          </div>
-          <!-- Card Body -->
+      <div class="col-lg-3 col-md-4 col-sm-6" *ngFor="let category of categories$ | async">
+        <div class="card h-100 text-center shadow-sm border-0"
+          style="cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" (click)="onCategoryClick(category.id)">
           <div class="card-body d-flex flex-column justify-content-center p-3">
-            <h5 class="card-title text-dark fw-bold text-truncate">{{ category.name }}</h5>
-            <p class="card-text text-secondary mb-0">{{ category.productCount }} products</p>
+            <h6 class="card-title text-dark fw-bold">{{ category.name | titlecase }}</h6>
+            <small class="card-text text-secondary">{{ category.productCount }} products</small>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <div class="d-flex align-items-center justify-content-center my-4">
-    <div class="flex-grow-1 bg-secondary" style="height: 2px;"></div>
-    <h2 class="mx-3 text-uppercase fs-1 fw-bolder" style="letter-spacing: 3px; color: grey">Best Sellers</h2>
-    <div class="flex-grow-1 bg-secondary" style="height: 2px;"></div>
-  </div>
-
-  <div class="container">
-    <div class="row text-center">
-      <div class="col-md-4">
-        <h3 style="color:red">Tires & Wheels</h3>
-      </div>
-      <div class="col-md-4">
-        <h3>Headlights</h3>
-      </div>
-      <div class="col-md-4">
-        <h3>Automotive Rims</h3>
-      </div>
-    </div>
-  </div>
-  <br>
-  <div class="mx-5">
-    <div class="row g-3 justify-content-center align-items-center" *ngIf="products$ | async as products; else loadingProducts">
+  <hr class="my-4">
+  <div class="mx-5 my-5">
+    <h3 class="text-center fw-bold mb-4">Our Top Products</h3>
+    <div class="row g-3 justify-content-center align-items-center"
+      *ngIf="products$ | async as products; else loadingProducts">
       <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6" *ngFor="let product of products">
         <div class="card">
           <div class="d-flex rounded justify-content-center align-items-center img-container">
-            <img 
-              [src]="'https://usaperp.com:5001/Images/Products/' + product.image" 
-              class="img-fluid p-3 product-image h-500" 
-              [alt]="product.product_name"
-            >
+            <img [src]="'https://usaperp.com:5001/Images/Products/' + product.image"
+              class="img-fluid p-3 product-image h-500" [alt]="product.product_name">
           </div>
           <div class="card-body">
             <!-- Product Name and Price -->
@@ -311,50 +290,39 @@
                 {{ product.product_name }}
               </h5>
               <h5 class="col mb-0 text-center">
-                <span *ngIf="product.product_price === 0 || product.availableQuantity === 0; else showPrice" class="text-info">
+                <span *ngIf="product.product_price === 0 || product.availableQuantity === 0; else showPrice"
+                  class="text-info">
                   Sold Out
                 </span>
                 <ng-template #showPrice>
-                  <span class="text-secondary"><i class="fa-solid fa-dollar-sign"></i> {{ product.product_price }}</span>
+                  <span class="text-secondary"><i class="fa-solid fa-dollar-sign"></i> {{ product.product_price
+                    }}</span>
                 </ng-template>
               </h5>
             </div>
-             <div class="row my-1 justify-content-center align-items-center">
+            <div class="row my-1 justify-content-center align-items-center">
               <div class="col-xxl-6 col-xl-4 col-lg-0 col-md-0 col-sm-0"></div>
               <div class="col-xxl-6 col-xl-8 col-lg-12 col-md-12 col-sm-12 d-flex justify-content-between">
                 <div class="col-auto">
                   <!-- Decrease Button -->
-                  <button 
-                    class="btn btn-danger" 
-                    (click)="decreaseQuantity(product)" 
-                    [disabled]="product.product_quantity === 0"
-                    title="Decrease quantity"
-                  >
+                  <button class="btn btn-danger" (click)="decreaseQuantity(product)"
+                    [disabled]="product.product_quantity === 0" title="Decrease quantity">
                     <i class="fa fa-minus"></i>
                   </button>
                 </div>
                 <div class="col-auto">
                   <!-- Quantity Input -->
-                  <input 
-                    type="number" 
-                    class="form-control text-center" 
-                    [(ngModel)]="product.product_quantity" 
-                    style="max-width: 80px;" 
-                    min="1"
-                  />
+                  <input type="number" class="form-control text-center" [(ngModel)]="product.product_quantity"
+                    style="max-width: 80px;" min="1" />
                 </div>
                 <div class="col-auto">
                   <!-- Increase Button -->
-                  <button 
-                    class="btn btn-success" 
-                    (click)="increaseQuantity(product)"
-                    title="Increase quantity"
-                  >
+                  <button class="btn btn-success" (click)="increaseQuantity(product)" title="Increase quantity">
                     <i class="fa fa-plus"></i>
                   </button>
                 </div>
+              </div>
             </div>
-          </div>
             <div class="row">
               <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12">
                 <button class="btn btn-secondary w-100" 
@@ -364,19 +332,14 @@
               </button>
               </div>
               <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 mt-xl-0 mt-lg-1 mt-md-1 mt-sm-2">
-                <button 
-                  *ngIf="product.product_price > 0 || product.availableQuantity > 0; else wishlistButton"
-                  class="btn btn-outline-success w-100" 
-                  (click)="addToCart(product)"
-                >
+                <button *ngIf="product.product_price > 0 || product.availableQuantity > 0; else wishlistButton"
+                  class="btn btn-outline-success w-100" (click)="addToCart(product)">
                   <i class="fa-solid fa-cart-shopping"></i>
                   <span class="ms-2">Add to Cart</span>
                 </button>
 
                 <ng-template #wishlistButton>
-                  <button 
-                    class="btn btn-outline-warning w-100"
-                  >
+                  <button class="btn btn-outline-warning w-100">
                     <i class="fa-solid fa-heart"></i>
                     <span class="ms-2">Add to Wishlist</span>
                   </button>
@@ -393,7 +356,7 @@
       </div>
     </div>
   </div>
-  
+
   <ng-template #loadingProducts>
     <div class="d-flex justify-content-center">
       <div class="spinner-border" role="status">
@@ -401,9 +364,12 @@
       </div>
     </div>
   </ng-template>
+
+  <hr class="mt-2">
+  
   <div class="best-seller-container">
 
-    <h2 class="flash-seller-title">FLASH SALE</h2>
+    <h3 class="text-center fw-bold mb-4">Flash Sale</h3>
 
   </div>
   <div class="container">
@@ -607,7 +573,7 @@
       <!-- Center Section: Help & Support Links -->
       <div class="footer-left">
         <h3 class="help">HELP & SUPPORT</h3>
-        <ul  class="footer-center">
+        <ul class="footer-center">
           <li><a href="#">Shipping Info</a></li>
           <li><a href="#">Returns</a></li>
           <li><a href="#">How To Order</a></li>
@@ -619,7 +585,7 @@
       <!-- Right Section: Company Info Links -->
       <div class="footer-left">
         <h3>COMPANY INFO</h3>
-        <ul  class="footer-center">
+        <ul class="footer-center">
           <li><a href="#">About Us</a></li>
           <li><a href="#">Our Blog</a></li>
           <li><a href="#">Careers</a></li>
@@ -631,7 +597,7 @@
       <!-- Additional Section: Customer Care Links -->
       <div class="footer-left">
         <h3>Customer Care</h3>
-        <ul  class="footer-center">
+        <ul class="footer-center">
           <li><a href="#">FAQs</a></li>
           <li><a href="#">Terms of Service</a></li>
           <li><a href="#">Privacy Policy</a></li>
