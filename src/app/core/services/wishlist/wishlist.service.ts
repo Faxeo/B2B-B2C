@@ -61,6 +61,10 @@ export class WishlistService {
   }
 
   getUserID(): string | null {
-    return localStorage.getItem('userID');
+    if (typeof window !== 'undefined' && localStorage) {
+      return localStorage.getItem('userID');
+    }
+    return null; // Return null if localStorage is not available
   }
+  
 }

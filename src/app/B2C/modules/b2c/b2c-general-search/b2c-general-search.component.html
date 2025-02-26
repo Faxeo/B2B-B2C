@@ -93,6 +93,10 @@
                         Add to Cart
                       </button>
                     </div>
+                    <button class="btn btn-gradient btn-outline-dark w-100 mt-3 buy-now-btn" (click)="buyNow(product)"
+                      [disabled]="loginType === 'admin' || product.availableQuantity === 0 || product.price === 0 || loginType == null">
+                      Buy Now
+                    </button>
                     <button class="btn btn-outline-dark mt-3 view-btn w-100"
                       (click)="viewProductDetails(product.product_id); addToRecentlyViewed(product)">
                       VIEW DETAILS
@@ -201,6 +205,10 @@
                         Add to Cart
                       </button>
                     </div>
+                    <button class="btn btn-gradient btn-outline-dark w-100 mt-3 buy-now-btn" (click)="buyNow(product)"
+                      [disabled]="loginType === 'admin' || product.availableQuantity === 0 || product.price === 0 || loginType == null">
+                      Buy Now
+                    </button>
                     <button class="btn btn-outline-dark mt-3 view-btn w-100"
                       (click)="viewProductDetails(product.product_id); addToRecentlyViewed(product)">
                       VIEW DETAILS
@@ -311,6 +319,10 @@
                         Add to Cart
                       </button>
                     </div>
+                    <button class="btn btn-gradient btn-outline-dark w-100 mt-3 buy-now-btn" (click)="buyNow(product)"
+                      [disabled]="loginType === 'admin' || product.availableQuantity === 0 || product.price === 0 || loginType == null">
+                      Buy Now
+                    </button>
                     <button class="btn btn-outline-dark mt-3 view-btn w-100"
                       (click)="viewProductDetails(product.product_id); addToRecentlyViewed(product)">
                       VIEW DETAILS

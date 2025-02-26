@@ -28,7 +28,7 @@ import { CartService } from '../../core/services/cart/cart.service';
 import { FormsModule } from '@angular/forms';
 import { DynamicSearchService } from '../../core/services/dynamic-search/dynamic-search.service';
 import { SearchComponent } from '../search/search.component';
-import { FetchChildService } from '../../core/services/fetch-child/fetch-child.service';
+import { FetchChildService } from '../../core/services/fetch-child/fetch-child.service'; 
 import { FetchMakeService } from '../../core/services/fetch-make/fetch-make.service';
 import { FetchYearService } from '../../core/services/fetch-year/fetch-year.service';
 import { VehicleSearchService } from '../../core/services/search-vehicle/search-vehicle.service';

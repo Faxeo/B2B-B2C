@@ -6,7 +6,8 @@ import {
   PLATFORM_ID,
   SimpleChanges,
 } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
   ProductDetailsService,
   ProductDetails,
@@ -19,6 +20,7 @@ import { NavigationService } from '../../core/services/navigation-service/naviga
 import { SubCategoryService } from '../../core/services/sub-category/sub-category.service';
 import { MainCategoryService } from '../../core/services/main-category/main-category.service';
 import { FetchChildService } from '../../core/services/fetch-child/fetch-child.service';
+import { FormsModule } from '@angular/forms';
 
 interface Testimonial {
   customerName: string;
@@ -27,7 +29,7 @@ interface Testimonial {
 
 @Component({
   standalone: true,
-  imports: [RouterModule, CommonModule, FooterComponent],
+  imports: [RouterModule, CommonModule, FooterComponent, FormsModule],
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.css'],
 })
@@ -103,6 +105,7 @@ export class ProductDetailsComponent {
     @Inject(PLATFORM_ID) private platformId: Object,
     private productDetailsService: ProductDetailsService,
     private route: ActivatedRoute,
+    private router: Router,
     private addToCartService: AddToCartService,
     private cartService: CartService,
     private loginService: LoginService,
@@ -308,6 +311,7 @@ closeFullScreen(): void {
       });
   }
 
+
   // Quantity management methods
   increaseQuantity(): void {
     this.quantity += 1;
@@ -371,13 +375,8 @@ closeFullScreen(): void {
     this.selectedVariant = variant;
   }
 
-  buyNow(): void {
-    console.log('Buy Now clicked for:', {
-      productId: this.product?.product_id,
-      quantity: this.quantity,
-      company: this.selectedCompany,
-      variant: this.selectedVariant,
-    });
-    alert('Proceeding to checkout...');
+  buyNow(product: any) {
+    this.addToCart(product); // Call the existing Add to Cart function
+    this.router.navigate(['/B2B/cart']); // Navigate to the cart page
   }
 }

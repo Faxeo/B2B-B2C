@@ -26,7 +26,7 @@
   }
   
   .sidebar.collapsed + .toggle-btn {
-    left: 0;
+    left: 1px;
   }
 
   /* Container Styling */
@@ -145,28 +145,31 @@
 
 
 
-  /* Toggle Button Styling */
-  .toggle-btn {
-    position: absolute;
-    top: 57%;
-    left: 350px;
-    transform: translateY(-50%); /* Center the button vertically */
-    background-color: #b71c1c;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    height: 50px;
-    width: 50px;
-    z-index: 10;
-    transition: left 0.5s ease;
-  }
-  
-  .sidebar.collapsed + .toggle-btn {
-    left: 0;
-  }
+.toggle-btn {
+  position: absolute;
+  top: 50%;
+  left: 350px;
+  transform: translateY(-50%);
+  background-color: #d32f2f; /* Modern Red */
+  color: white;
+  border: none;
+  border-radius: 10px; /* Slightly rounded edges */
+  cursor: pointer; 
+  height: 100px; /* Taller */
+  width: 35px; /* Slimmer */
+  z-index: 10;
+  transition: all 0.4s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow */
+}
 
 .toggle-btn:hover {
+  background-color: #b71c1c; /* Darker red on hover */
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
   transform: translateY(-50%) scale(1.1);
 }
@@ -176,8 +179,6 @@
 }
 
 .toggle-icon {
-  font-size: 1.5rem;
-  font-weight: 500;
   transition: transform 0.3s ease;
 }
 
