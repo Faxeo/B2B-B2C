@@ -1,0 +1,60 @@
+<div class="home-icon" (click)="navigateToHome()">
+    <i class="fas fa-home"></i>
+</div>
+
+<div class="bill-container" id="bill-container">
+    <!-- Invoice Title - Centered -->
+    <h2 class="bill-title">Invoice</h2>
+
+    <!-- Header Section: Logo on Left, Date & Invoice No on Right -->
+    <div class="bill-header">
+        <img class="logo" src="assets/logo.png" alt="Company Logo">
+        <div class="bill-info">
+            <p><strong>Date:</strong> {{ billData.date }}</p>
+            <p><strong>Invoice No:</strong> {{ billData.transactionID }}</p>
+        </div>
+    </div>
+
+    <div class="customer-details">
+        <p><strong>Customer:</strong> {{ billData.billingAddress.shippingName }}</p>
+        <p><strong>Email:</strong> {{ billData.billingAddress.shippingEmail }}</p>
+        <p><strong>Address:</strong> {{ billData.billingAddress.address }}, 
+            {{ billData.billingAddress.city }}, 
+            {{ billData.billingAddress.state }}, 
+            {{ billData.billingAddress.zipCode }}</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price ($)</th>
+                <th>Total ($)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of billData.orderItems">
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>${{ item.price.toFixed(2) }}</td>
+                <td>${{ (item.price * item.quantity).toFixed(2) }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="bill-summary">
+        <p class="quantity"><strong>Total Quantity:</strong> {{ billData.totalQuantity }}</p>
+        <p><strong>Total Amount:</strong> ${{ billData.totalAmount.toFixed(2) }}</p>
+    </div>
+
+    <div class="bill-actions">
+        <button (click)="downloadPDF()">Download PDF</button>
+        <button (click)="downloadImage()">Download Image</button>
+    </div>
+</div>
+
+
+<div class="shop-more">
+    <button (click)="navigateToHome()">Shop More</button>
+</div>

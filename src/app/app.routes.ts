@@ -7,12 +7,13 @@ import { SearchComponent } from './modules/search/search.component';
 import { authGuard } from './auth.guard';
 import { B2cCartComponent } from './B2C/modules/b2c/b2c-cart/b2c-cart.component';
 import { B2cLoginComponent } from './B2C/modules/b2c/b2c-login/b2c-login.component';
+import { BillingComponent } from './modules/billing/billing.component';
 
 export const routes: Routes = [
   {
     path: '',
-    canActivate: [HomeGuard], 
-    
+    canActivate: [HomeGuard],
+
     loadChildren: () =>
       import('./B2C/modules/b2c/b2c.module').then((m) => m.B2CModule),
   },
@@ -44,6 +45,10 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadChildren: () =>
       import('./B2C/modules/b2c/b2c.module').then((m) => m.B2CModule),
+  },
+  {
+    path: 'bill',
+    component: BillingComponent,
   },
   {
     path: 'B2B',
