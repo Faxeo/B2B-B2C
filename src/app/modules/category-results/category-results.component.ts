@@ -37,6 +37,7 @@ import { CartSidebarService } from '../../core/services/cart-sidebar/cart-sideba
   templateUrl: './category-results.component.html',
   styleUrl: './category-results.component.css',
 })
+
 export class CategoryResultsComponent implements OnInit {
   @Input() searchResults: any[] = [];
   m_id: number | null = null;

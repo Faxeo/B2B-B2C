@@ -5,6 +5,7 @@ import { CheckoutService } from '../../../core/services/checkout/checkout.servic
 import { ChangeDetectorRef } from '@angular/core';
 import { NgZone } from '@angular/core';
 import { CartService } from '../../../core/services/cart/cart.service';
+import { Router } from '@angular/router';
 
 @Component({
   standalone: true,
@@ -27,6 +28,7 @@ export class CheckoutComponent implements OnInit {
     private checkoutService: CheckoutService,
     @Inject(PLATFORM_ID) private platformId: any,
     private cdr: ChangeDetectorRef,
+    private router: Router,
     private cartService: CartService,
     private ngZone: NgZone
   ) {
@@ -201,13 +203,26 @@ export class CheckoutComponent implements OnInit {
   
     console.log('Updated Checkout DTO:', checkoutDTO);
   
-    // Process the checkout using CheckoutService
+    
     this.checkoutService.processCheckout(checkoutDTO).subscribe({
       next: (response: any) => {
         console.log('Checkout successful, response received:', response);
   
         if (response && response.success && response.statusCode === 200) {
           alert('Thanks for buying from us.');
+           
+      const billData = {
+        transactionID: response.data.transactionID,
+        date: new Date().toLocaleDateString(),
+        orderItems: checkoutDTO.orderItems,
+        totalAmount: checkoutDTO.totalAmount,
+        totalQuantity: checkoutDTO.totalQuantity,
+        billingAddress: checkoutDTO.billingAddress,
+      };
+
+      
+      this.router.navigate(['/bill'], { state: { billData } });
+
           this.clearCart(); 
         } else if (response && response.statusCode === 400) {
           alert('There was an issue processing your payment: ' + (response.statusReason || 'Unknown error'));
