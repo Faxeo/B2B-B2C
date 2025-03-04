@@ -24,6 +24,12 @@ const routes: Routes = [
             (m) => m.B2cCartModule),  
       },
       {
+        path: 'checkout',
+        loadChildren: () =>
+          import('./b2c-checkout/b2c-checkout.module').then(
+            (m) => m.B2CCheckoutModule),  
+      },
+      {
         path: 'login',
         loadChildren: () =>
           import('./b2c-login/b2c-login.module').then(

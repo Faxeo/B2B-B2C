@@ -1,39 +1,96 @@
-<div class="cart-container" *ngIf="cartItems.length > 0; else emptyCart">
-    <h2>Your Cart</h2>
-    <div class="cart-item" *ngFor="let item of cartItems">
-      <div class="item-image">
-        <img *ngIf="!item.imageError" [src]="'https://usaperp.com:5001/Images/Products/' + item.image"
-                    class="d-block ui-w-40 ui-bordered mr-4" alt="Product Image" (error)="handleImageError(item)">
+<div class="container py-5" *ngIf="cartItems.length > 0; else emptyCart">
+  <h2 class="mb-4 text-center">Your Cart</h2>
+  
+  <div>
+    <div class="row mb-4" *ngFor="let item of cartItems">
+      <div class="col-md-3">
+        <img *ngIf="!item.imageError" 
+             [src]="'https://usaperp.com:5001/Images/Products/' + item.image" 
+             class="img-fluid rounded" 
+             alt="Product Image" 
+             (error)="handleImageError(item)" style="width: 150px; height: 150px;">
       </div>
-      <div class="item-details">
-        <h3>{{ item.name }}</h3>
-        <p>Origin: {{ item.product_origin || 'Unknown' }}</p>
-        <p>Quantity: {{ item.quantity || 0 }}</p> 
-        <div class="price-quantity">
-          <span>
-            Price: ${{ item.price }}
-            <span *ngIf="item.discounts_Seller && item.discounts_Seller.length > 0">
-                (Discount Applied: ${{ item.discounts_Seller[0].amount || 0 }} Off)
-              </span>              
-          </span>
-        </div>
+      <div class="col-md-6">
+        <h5>{{ item.name }}</h5>
+        <p class="text-muted">Origin: {{ item.product_origin || 'Unknown' }}</p>
+        <p>Quantity: {{ item.prod_qty || 0 }}</p>
+        <p>
+          <strong>Price: ${{ item.price }}</strong>
+          <span *ngIf="item.discounts_Seller && item.discounts_Seller.length > 0">
+            (Discount Applied: ${{ item.discounts_Seller[0].amount || 0 }} Off)
+          </span>   
+        </p>
       </div>
-      <div class="remove-item">
-        <button (click)="removeFromCart(item.productId)">Remove</button>
+      <div class="col-md-3 d-flex align-items-center">
+        <button class="btn btn-danger" (click)="removeFromCart(item.productId)">Remove</button>
       </div>
     </div>
-    <div class="cart-footer">
-      <h3>Total: ${{ calculateSubtotal() }}</h3>
-      <button class="checkout-btn" (click)="goToCheckout()">Proceed to Checkout</button>
+
+    <div class="text-end">
+      <h3>Total: {{ calculateSubtotal() | currency:'USD':'symbol' }}</h3>
     </div>
   </div>
+
+  <!-- Billing Information Section -->
+  <div class="mt-5">
+    <h3>Billing Information</h3>
+    <form (submit)="goToCheckout()" class="row g-3">
+      
+      <!-- Personal Info -->
+      <div class="col-md-4">
+        <label for="fullName" class="form-label">Full Name</label>
+        <input type="text" id="fullName" class="form-control" [(ngModel)]="billing.fullName" name="fullName" required>
+      </div>
+      <div class="col-md-4">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" id="email" class="form-control" [(ngModel)]="billing.email" name="email" required>
+      </div>
+      <div class="col-md-4">
+        <label for="contact" class="form-label">Contact</label>
+        <input type="tel" id="contact" class="form-control" [(ngModel)]="billing.contact" name="contact" pattern="^(\+1[-.\s]?)?(\(?\d{3}\)?[-.\s]?)?\d{3}[-.\s]?\d{4}$" required>
+      </div>
   
-  <ng-template #emptyCart>
-    <div class="empty-cart">
-      <img src="assets/empty-cart.png" alt="Empty Cart" />
-      <h2>Your Cart is Empty</h2>
-      <p>Start adding items to your cart now!</p>
-      <button class="shop-btn" routerLink="/B2C">Go to Shop</button>
-    </div>
-  </ng-template>
+      <!-- Address Info -->
+      <div class="col-md-6">
+        <label for="billingAddress" class="form-label">Billing Address</label>
+        <textarea id="billingAddress" class="form-control" [(ngModel)]="billing.billingAddress" name="billingAddress" rows="2" required></textarea>
+      </div>
+      <div class="col-md-6">
+        <label for="country" class="form-label">Country</label>
+        <input type="text" id="country" class="form-control" [(ngModel)]="billing.country" name="country" required>
+      </div>
   
+      <!-- City/State/Zip -->
+      <div class="col-md-4">
+        <label for="city" class="form-label">City</label>
+        <input type="text" id="city" class="form-control" [(ngModel)]="billing.city" name="city" required>
+      </div>
+      <div class="col-md-4">
+        <label for="state" class="form-label">State</label>
+        <input type="text" id="state" class="form-control" [(ngModel)]="billing.state" name="state" required>
+      </div>
+      <div class="col-md-4">
+        <label for="zipcode" class="form-label">Zipcode</label>
+        <input type="text" id="zipcode" class="form-control" [(ngModel)]="billing.zipcode" name="zipcode" pattern="[0-9]{5}" required>
+      </div>
+  
+      <!-- Submit Button -->
+      <div class="col-12 text-center mt-4">
+        <button type="submit" class="btn btn-success btn-lg">
+          Checkout <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+  
+    </form>
+  </div>
+  
+</div>
+
+<ng-template #emptyCart>
+  <div class="text-center py-5">
+    <img src="assets/empty-cart.png" alt="Empty Cart" class="img-fluid" style="max-width: 300px;">
+    <h2>Your Cart is Empty</h2>
+    <p>Start adding items to your cart now!</p>
+    <a class="btn btn-outline-primary" routerLink="/B2C">Go to Shop</a>
+  </div>
+</ng-template>

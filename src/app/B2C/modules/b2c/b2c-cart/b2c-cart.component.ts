@@ -114,9 +114,9 @@ calculateSubtotal(): number {
   return this.cartItems.reduce((sum, item) => sum + this.getItemTotal(item), 0);
 }
 
-getItemTotal(item: { productId: string; price: number; quantity: number; discountedPrice?: number; discounts_Seller?: any[] }): number {
+getItemTotal(item: { productId: string; price: number; prod_qty?: number; discountedPrice?: number; discounts_Seller?: any[] }): number {
   const customerType = 'Bronze'; // Adjust customer type as needed
-  const discountedPrice = this.applyDiscount(item, item.quantity, customerType);
+  const discountedPrice = this.applyDiscount(item, item.prod_qty ?? 0, customerType);
   item.discountedPrice = discountedPrice; // Store discounted price in item
   return discountedPrice;
 }
@@ -224,6 +224,9 @@ saveBillingDetails(): void {
 }
 
 goToCheckout(): void {
+  if(this.billing.fullName == '' || this.billing.email == '' || this.billing.contact == '' || this.billing.billingAddress == '' || this.billing.state == '' || this.billing.city == '' || this.billing.zipcode == '') {
+    return;
+  }
   // Save billing details before navigating to checkout
   this.saveBillingDetails(); 
 
@@ -245,7 +248,63 @@ goToCheckout(): void {
   localStorage.setItem('cartItems', JSON.stringify(cartItemsToSave));
 
   // Navigate to the CheckoutComponent
-  // this.router.navigate(['/cart/checkout']);
+  this.router.navigate(['B2C/checkout']);
 }
 
+handleAddressPaste(event: ClipboardEvent): void {
+  event.preventDefault(); // Prevent default paste action
+
+  const clipboardData = event.clipboardData || (window as any).clipboardData;
+  const pastedText = clipboardData.getData('text');
+
+  // Set the pasted text to the billing address field
+  this.billing.billingAddress = pastedText;
+
+  // Extract address details using a regex or keywords
+  const addressParts = this.extractAddressDetails(pastedText);
+
+  // Auto-fill city, state, and zip code if found
+  if (addressParts.city) {
+    this.billing.city = addressParts.city;
+  }
+  if (addressParts.state) {
+    this.billing.state = addressParts.state;
+  }
+  if (addressParts.zipcode) {
+    this.billing.zipcode = addressParts.zipcode;
+  }
+}
+
+extractAddressDetails(address: string): { city?: string; state?: string; zipcode?: string } {
+  const result: { city?: string; state?: string; zipcode?: string } = {};
+
+  // Regex patterns to detect ZIP code, state abbreviations, and city names
+  const zipRegex = /\b\d{5}(-\d{4})?\b/; // Matches US ZIP codes (12345 or 12345-6789)
+  const stateRegex = /\b(AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY)\b/;
+  const addressParts = address.split(',');
+
+  // Extract ZIP code
+  const zipMatch = address.match(zipRegex);
+  if (zipMatch) {
+    result.zipcode = zipMatch[0];
+  }
+
+  // Extract state
+  const stateMatch = address.match(stateRegex);
+  if (stateMatch) {
+    result.state = stateMatch[0];
+  }
+
+  // Extract city (assuming it appears **before** the state)
+  if (stateMatch) {
+    const stateIndex = addressParts.findIndex((part) => part.includes(stateMatch[0]));
+    
+    if (stateIndex > 0) {
+      // The city is usually the part **right before the state**
+      result.city = addressParts[stateIndex - 1].trim();
+    }
+  }
+
+  return result;
+}
 }
