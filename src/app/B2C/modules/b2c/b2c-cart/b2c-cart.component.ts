@@ -74,6 +74,7 @@ loadGuestCartData(): void {
   // Get the cart items and add the missing properties to match the expected type
   this.cartItems = this.cartService.getCartItems().map(item => ({
     ...item,
+    prod_qty: item.quantity,
     imageError: false,
   }));
 
@@ -122,12 +123,6 @@ getItemTotal(item: { productId: string; price: number; prod_qty?: number; discou
 }
 
 applyDiscount(product: any, prod_qty: number, customerType: string): number {
-  // Log the initial request data
-  console.log('applyDiscount called with:');
-  console.log('Product:', product);
-  console.log('Quantity:', prod_qty);
-  console.log('Customer Type:', customerType);
-
   // Check if discounts_Seller array is present and not empty
   if (!product.discounts_Seller || product.discounts_Seller.length === 0) {
     console.log('No discounts available for this product.');
@@ -136,16 +131,13 @@ applyDiscount(product: any, prod_qty: number, customerType: string): number {
 
   // Filter discounts based on the customer type
   const discounts = product.discounts_Seller.filter((d: any) => d.customer_type === customerType);
-  console.log('Filtered Discounts for Customer Type:', discounts);
 
   if (discounts.length === 0) {
-    console.log(`No discounts applicable for customer type: ${customerType}`);
     return product.price * prod_qty; // No discount applicable for this customer type
   }
 
   // Sort the discounts by quantity in ascending order to apply the "up to" logic
   discounts.sort((a: any, b: any) => a.quantity - b.quantity);
-  console.log('Sorted Discounts by Quantity:', discounts);
 
   let applicableDiscountAmount = 0;
 
@@ -154,20 +146,15 @@ applyDiscount(product: any, prod_qty: number, customerType: string): number {
     const discount = discounts[i];
     const nextDiscountTier = i + 1 < discounts.length ? discounts[i + 1].quantity : Infinity;
 
-    console.log(`Checking Discount Tier: ${discount.quantity} - Amount: ${discount.amount}`);
-    console.log(`Next Discount Tier Quantity: ${nextDiscountTier}`);
-
     // Apply discount if the quantity is within the current range
     if (prod_qty <= discount.quantity) {
       applicableDiscountAmount = discount.amount;
-      console.log(`Applicable Discount Found for Quantity: ${prod_qty} - Discount Amount: ${discount.amount}`);
       break; // Break as we found the applicable discount tier
     }
 
     // If quantity is in the next tier range, apply the discount of the current tier
     if (prod_qty > discount.quantity && prod_qty < nextDiscountTier) {
       applicableDiscountAmount = discount.amount;
-      console.log(`Applicable Discount for Quantity in Range: ${discount.quantity} to ${nextDiscountTier} - Discount Amount: ${discount.amount}`);
     }
   }
 
@@ -175,18 +162,12 @@ applyDiscount(product: any, prod_qty: number, customerType: string): number {
   const originalTotal = product.price * prod_qty;
   const discountedTotal = originalTotal - applicableDiscountAmount * prod_qty;
 
-  // Log final calculation details
-  console.log('Original Total Price:', originalTotal);
-  console.log('Discount Amount per Unit:', applicableDiscountAmount);
-  console.log('Discounted Total Price:', discountedTotal);
-
   return discountedTotal;
 }
 
 
 
 handleImageError(item: any): void {
-  console.log('Image failed to load:', item.image);
   item.imageError = true;
   item.image = '/assets/images/placeholder.png';
 }
