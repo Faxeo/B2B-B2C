@@ -1,0 +1,36 @@
+<div class="container mt-4 d-flex justify-content-center">
+  <div class="card shadow-sm p-4" style="max-width: 600px; width: 100%;">
+    <!-- Logo Section -->
+    <div class="text-center mb-4">
+      <img 
+        src="../../../../../assets/logo.png" 
+        alt="Website Logo" 
+        class="img-fluid" 
+        style="max-height: 80px;"
+      />
+    </div>
+
+    <h2 class="mb-3 text-center">Payment Method</h2>
+
+    <!-- Card Payment Section -->
+    <form (ngSubmit)="onSubmit()" [formGroup]="checkoutForm" class="payment-form">
+      <div *ngIf="!selectedWallet">
+        <div id="card-container" class="border p-3 rounded bg-light"></div>
+
+        <!-- Submit Button -->
+        <div class="text-center mt-3">
+          <button 
+            type="button" 
+            id="card-button" 
+            class="btn btn-primary px-4" 
+            [disabled]="isLoading" 
+            style="min-width: 200px;"
+          >
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+            {{ isLoading ? 'Processing...' : 'Submit Payment' }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
