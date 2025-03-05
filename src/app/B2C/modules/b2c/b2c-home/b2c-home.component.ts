@@ -1,6 +1,7 @@
 import {
   ChangeDetectorRef,
   Component,
+  HostListener,
   Inject,
   OnInit,
   PLATFORM_ID,
@@ -198,6 +199,29 @@ export class B2CHomeComponent implements OnInit {
 
     this.loadBrands();
   }
+
+@HostListener('window:scroll', [])
+onWindowScroll() {
+  const stickyDiv = document.getElementById('stickyButtons');
+  const navbar = document.querySelector('.navbar'); // Get the navbar element
+
+  if (stickyDiv && navbar) {
+    const navbarHeight = navbar.clientHeight; // Get navbar height dynamically
+    const scrollY = window.scrollY || window.pageYOffset;
+    const offsetTop = stickyDiv.offsetTop - navbarHeight; // Adjust based on navbar height
+
+    if (scrollY > offsetTop) {
+      stickyDiv.classList.add('sticky', 'sticky-visible');
+      stickyDiv.style.top = `${navbarHeight}px`; // Dynamically set the position below navbar
+    } else {
+      stickyDiv.classList.remove('sticky-visible');
+      setTimeout(() => {
+        stickyDiv.classList.remove('sticky');
+      }, 100); // Delay for smooth animation
+    }
+  }
+}
+
 
   openSidebar(): void {
     this.sidebarToggleService.toggleSidebar();
