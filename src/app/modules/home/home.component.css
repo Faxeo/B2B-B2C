@@ -184,7 +184,7 @@
   position: relative;
   height: 80vh; /* Adjust height as needed */
   color: white; /* Text color */
-  overflow: hidden; /* Ensure the blurred background doesn't overflow */
+  overflow: hidden; 
   margin-top: 80px;
 }
 
@@ -255,6 +255,19 @@
   padding: 0;
   margin: 5px;
 }
+
+
+.sticky {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  width: 100%;
+  background: transparent; 
+  z-index: 1000;
+  /* box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);  */
+  /* padding: 10px 0; */
+}
+
 
 .btn-row{
   flex-wrap: nowrap;
