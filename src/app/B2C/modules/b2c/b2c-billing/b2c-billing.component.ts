@@ -33,13 +33,13 @@ export class B2cBillingComponent implements OnInit {
         this.billData = JSON.parse(storedBillData);
       } else {
         console.warn("⚠️ No billData found! Redirecting to checkout...");
-        this.router.navigate(['/checkout']);
+        this.router.navigate(['B2C/checkout']);
       }
     }
   }
 
   navigateToHome() {
-    this.router.navigate(['/B2B']);
+    this.router.navigate(['/B2C']);
   }
 
   // Download Bill as PDF

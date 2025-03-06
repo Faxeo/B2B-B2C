@@ -9,6 +9,7 @@ import { B2cCartComponent } from './B2C/modules/b2c/b2c-cart/b2c-cart.component'
 import { B2cLoginComponent } from './B2C/modules/b2c/b2c-login/b2c-login.component';
 import { BillingComponent } from './modules/billing/billing.component';
 import { B2cCheckoutComponent } from './B2C/modules/b2c/b2c-checkout/b2c-checkout.component';
+import { B2cBillingComponent } from './B2C/modules/b2c/b2c-billing/b2c-billing.component';
 
 export const routes: Routes = [
   {
@@ -43,6 +44,13 @@ export const routes: Routes = [
   {
     path: 'B2C/checkout',
     component: B2cCheckoutComponent,
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./B2C/modules/b2c/b2c.module').then((m) => m.B2CModule),
+  },
+  {
+    path: 'B2C/bill',
+    component: B2cBillingComponent,
     canActivate: [authGuard],
     loadChildren: () =>
       import('./B2C/modules/b2c/b2c.module').then((m) => m.B2CModule),

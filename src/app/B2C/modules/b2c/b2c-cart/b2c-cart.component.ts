@@ -17,6 +17,7 @@ import { CustomerCartService } from '../../../../core/services/customer-cart/cus
 export class B2cCartComponent {
   cartItems: Array<{
     productId: string;
+    upc: string;
     name: string;
     quantity: number;
     price: number;
@@ -76,6 +77,7 @@ loadGuestCartData(): void {
     ...item,
     prod_qty: item.quantity,
     imageError: false,
+    upc: item.upc ?? ''
   }));
 
   console.log('Loaded guest cart items:', this.cartItems);
@@ -100,6 +102,7 @@ loadCartData(): void {
         prod_qty: item.prod_qty,                      // Flatten prod_qty
         imageError: false,
         discounts_Seller: item.product.discount || [], // Flatten discount array
+        upc: item.product.product_identifier2
       }));
       this.cartItems.forEach(item => this.getItemTotal(item));  // Apply discounts after loading
     },
@@ -202,6 +205,7 @@ updateQuantity(productId: string, newQuantity: number): void {
 saveBillingDetails(): void {
   console.log('Billing details saved:', this.billing);
   this.cartService.saveBillingDetails(this.billing);
+  localStorage.setItem('billingDetails', JSON.stringify(this.billing));
 }
 
 goToCheckout(): void {
@@ -217,10 +221,11 @@ goToCheckout(): void {
   const cartItemsToSave = this.cartItems.map(item => ({
     productId: item.productId,
     name: item.name,
-    quantity: item.quantity,
+    quantity: item.prod_qty,
     price: item.price,
-    discountedPrice: item.discountedPrice || item.price, // Include discounted price or original if no discount
+    discountedPrice: item.discountedPrice, // Include discounted price or original if no discount
     image: item.image,
+    upc: item.upc
   }));
 
   // Log cart items to be saved
