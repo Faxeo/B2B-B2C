@@ -221,7 +221,7 @@ export class CheckoutComponent implements OnInit {
       };
 
       
-      this.router.navigate(['/bill'], { state: { billData } });
+      this.router.navigate(['/B2B/bill'], { state: { billData } });
 
           this.clearCart(); 
         } else if (response && response.statusCode === 400) {

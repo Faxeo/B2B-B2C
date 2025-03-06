@@ -5,13 +5,13 @@ import html2canvas from 'html2canvas';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-billing',
+  selector: 'app-b2c-billing',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './billing.component.html',
-  styleUrl: './billing.component.css'
+  templateUrl: './b2c-billing.component.html',
+  styleUrl: './b2c-billing.component.css'
 })
-export class BillingComponent implements OnInit {
+export class B2cBillingComponent implements OnInit {
   billData: any = null;
 
   constructor(private route: ActivatedRoute, private router: Router) {}

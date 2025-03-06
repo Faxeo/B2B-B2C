@@ -55,7 +55,7 @@ export const routes: Routes = [
       import('./B2C/modules/b2c/b2c.module').then((m) => m.B2CModule),
   },
   {
-    path: 'bill',
+    path: 'B2B/bill',
     component: BillingComponent,
   },
   {

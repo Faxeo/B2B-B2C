@@ -1,0 +1,151 @@
+/* Modernized Invoice Styling */
+.bill-container {
+    max-width: 650px;
+    margin: 30px auto;
+    padding: 25px;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: "Arial", sans-serif;
+    color: #333;
+    text-align: center;
+  }
+
+  .home-icon {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+}
+
+.home-icon:hover {
+    color: #007bff;
+}
+
+  
+  /* Centered Invoice Title */
+  .bill-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 600;
+    color: black;
+    margin-bottom: 15px;
+  }
+  
+  /* Header Section: Logo on Left, Date & Invoice No on Right */
+  .bill-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid black;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  
+  /* Logo Styling */
+  .logo {
+    width: 140px;
+  }
+
+  .bill-info p {
+    margin: 3px 0;
+    font-size: 14px;
+  }
+  
+  /* Customer Details */
+  .customer-details {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  
+  .customer-details p {
+    margin: 5px 0;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  /* Table Styling */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  th, td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+  }
+  
+  th {
+    background: #c23535;
+    color: white;
+    font-size: 14px;
+  }
+  
+  td {
+    font-size: 14px;
+  }
+  
+  /* Summary */
+  .bill-summary {
+    text-align: right;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+  
+  .quantity {
+    margin-right: 34px;
+  }
+  
+  /* Buttons */
+  .bill-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  button {
+    background-color: #c23535;
+    color: white;
+    border: none;
+    padding: 12px 15px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: 0.3s ease-in-out;
+  }
+  
+  button:hover {
+    background-color: #9b2828;
+  }
+  
+  .shop-more {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.shop-more button {
+    padding: 12px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    background-color: #FFBF00;
+    color: white;
+}
+
+.shop-more button:hover {
+    scale: 1.05;
+}
+
