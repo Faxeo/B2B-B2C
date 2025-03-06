@@ -20,6 +20,7 @@ checkoutForm: FormGroup = this.fb.group({});
   selectedWallet: string | null = null;
   isBrowser: boolean; // To track whether code is running in the browser
   isLoading: boolean = false; // Loading state
+  // paymentAmount: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -33,7 +34,7 @@ checkoutForm: FormGroup = this.fb.group({});
 
   ngOnInit(): void {
     if (this.isBrowser) {
-
+debugger;
       const userID = this.cartService.getUserID();
       // Retrieve cart items and billing details from localStorage
       const savedCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
@@ -41,6 +42,7 @@ checkoutForm: FormGroup = this.fb.group({});
 
       // Use the saved cart items and billing details in the component
       this.checkoutPayload = savedCartItems;
+      // this.paymentAmount = savedCartItems.reduce((sum: number, item: any) => sum + (item.discountedPrice || item.price) * item.quantity, 0);
 
       // Initialize form with billing details
       this.checkoutForm = this.fb.group({
@@ -137,6 +139,7 @@ checkoutForm: FormGroup = this.fb.group({});
   }
 
   createPaymentOrder(token: string) {
+    debugger;
     // Retrieve billing details from the form
     const billingDetails = this.checkoutForm.value;
   
@@ -203,17 +206,17 @@ checkoutForm: FormGroup = this.fb.group({});
         if (response && response.success && response.statusCode === 200) {
           alert('Thanks for buying from us.');
            
-      const billData = {
-        transactionID: response.data.transactionID,
-        date: new Date().toLocaleDateString(),
-        orderItems: checkoutDTO.orderItems,
-        totalAmount: checkoutDTO.totalAmount,
-        totalQuantity: checkoutDTO.totalQuantity,
-        billingAddress: checkoutDTO.billingAddress,
-      };
+        const billData = {
+          transactionID: response.data.transactionID,
+          date: new Date().toLocaleDateString(),
+          orderItems: checkoutDTO.orderItems,
+          totalAmount: checkoutDTO.totalAmount,
+          totalQuantity: checkoutDTO.totalQuantity,
+          billingAddress: checkoutDTO.billingAddress,
+        };
 
       
-      this.router.navigate(['/bill'], { state: { billData } });
+        this.router.navigate(['B2C/bill'], { state: { billData } });
 
           this.clearCart(); 
         } else if (response && response.statusCode === 400) {

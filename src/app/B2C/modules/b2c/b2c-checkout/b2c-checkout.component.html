@@ -10,7 +10,17 @@
       />
     </div>
 
-    <h2 class="mb-3 text-center">Payment Method</h2>
+    <!-- <div class="text-center mb-4">
+      <h4 class="fw-bold text-success" style="font-size: 1.75rem;">
+        Amount to Pay: {{ paymentAmount | currency:'USD':'symbol' }}
+      </h4>
+    </div>
+
+    <h4 class="mb-3 text-start" style="font-size: 1.5rem; border-bottom: 2px solid #e0e0e0; padding-bottom: 0.5rem;">
+      Payment Method
+    </h4>
+     -->
+     <h2 class="mb-3 text-center">Payment Method</h2>
 
     <!-- Card Payment Section -->
     <form (ngSubmit)="onSubmit()" [formGroup]="checkoutForm" class="payment-form">

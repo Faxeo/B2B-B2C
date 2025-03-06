@@ -30,6 +30,12 @@ const routes: Routes = [
             (m) => m.B2CCheckoutModule),  
       },
       {
+        path: 'bill',
+        loadChildren: () =>
+          import('./b2c-billing/b2c-billing.module').then(
+            (m) => m.B2cBillingModule),  
+      },
+      {
         path: 'login',
         loadChildren: () =>
           import('./b2c-login/b2c-login.module').then(
