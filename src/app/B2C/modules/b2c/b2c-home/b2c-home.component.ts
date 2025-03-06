@@ -1,6 +1,7 @@
 import {
   ChangeDetectorRef,
   Component,
+  HostListener,
   Inject,
   OnInit,
   PLATFORM_ID,
@@ -170,11 +171,11 @@ export class B2CHomeComponent implements OnInit {
     // Initialize categories
     this.categories$ = this.apiService.getMainCategory().pipe(
       map((categories) =>
-        categories.map((category: { id: number, name: string, productCount: number }) => ({
-          ...category,
-          image: `assets/suspension.jpg`,
-          productCount: category.productCount || 0  // Ensure productCount is used
-        }))
+        categories.map((category: { id: number; name: string; productCount: number }) => ({
+            ...category,
+            productCount: category.productCount || 0
+          }))
+          .sort((a: { productCount: number }, b: { productCount: number }) => b.productCount - a.productCount) // Sort in descending order
       )
     );
 
@@ -198,6 +199,29 @@ export class B2CHomeComponent implements OnInit {
 
     this.loadBrands();
   }
+
+@HostListener('window:scroll', [])
+onWindowScroll() {
+  const stickyDiv = document.getElementById('stickyButtons');
+  const navbar = document.querySelector('.navbar'); // Get the navbar element
+
+  if (stickyDiv && navbar) {
+    const navbarHeight = navbar.clientHeight; // Get navbar height dynamically
+    const scrollY = window.scrollY || window.pageYOffset;
+    const offsetTop = stickyDiv.offsetTop - navbarHeight; // Adjust based on navbar height
+
+    if (scrollY > offsetTop) {
+      stickyDiv.classList.add('sticky', 'sticky-visible');
+      stickyDiv.style.top = `${navbarHeight}px`; // Dynamically set the position below navbar
+    } else {
+      stickyDiv.classList.remove('sticky-visible');
+      setTimeout(() => {
+        stickyDiv.classList.remove('sticky');
+      }, 100); // Delay for smooth animation
+    }
+  }
+}
+
 
   openSidebar(): void {
     this.sidebarToggleService.toggleSidebar();
@@ -240,13 +264,8 @@ export class B2CHomeComponent implements OnInit {
   }
 
   onCategoryClick(categoryId: number): void {
-    console.log('Setting categoryId in service:', categoryId);
-  
-    // Set the categoryId in the service
-    this.categoryIdService.setCategoryId(categoryId);
-  
-    // Navigate to the category route
-    this.router.navigate(['/category']);
+    this.selectedMainCategory = categoryId.toString();
+    this.searchByCategory();
   }
 
   getMainCategories(): void {
@@ -388,18 +407,20 @@ export class B2CHomeComponent implements OnInit {
       page: page,
     };
 
-    if (
-      this.selectedMainCategory ||
-      this.selectedFirstSubCategory ||
-      this.selectedSecondSubCategory
-    ) {
-      this.router.navigate(['/B2C/search'], {
-        queryParams: {
-          mainCategory: this.selectedMainCategory || '',
-          firstSubCategory: this.selectedFirstSubCategory || '',
-          secondSubCategory: this.selectedSecondSubCategory || '',
-        },
-      });
+    const queryParams: any = {};
+
+    if (this.selectedMainCategory) {
+      queryParams.mainCategory = this.selectedMainCategory;
+    }
+    if (this.selectedFirstSubCategory) {
+      queryParams.firstSubCategory = this.selectedFirstSubCategory;
+    }
+    if (this.selectedSecondSubCategory) {
+      queryParams.secondSubCategory = this.selectedSecondSubCategory;
+    }
+    
+    if (Object.keys(queryParams).length > 0) {
+      this.router.navigate(['/B2C/search'], { queryParams });
     }
 
     this.dynamicSearchService.searchProducts(requestData).subscribe(
@@ -899,4 +920,8 @@ addToCart(product: {
       console.error('Product ID is undefined');
     }
   }
+
+  onBrandClick(brandId: number) {
+      this.router.navigate(['/B2C/search'], { queryParams:{ selectedBrand : brandId }});
+    }
 }

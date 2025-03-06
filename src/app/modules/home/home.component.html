@@ -106,18 +106,24 @@
         <h2 class="welcome-message"><span>&#8226;</span> Welcome to USAP B2B Platform <span>&#8226;</span></h2>
       </div>
       <div class="mt-auto w-100">
-        <div class="row btn-row justify-content-center">
+        <div class="row btn-row justify-content-center" id="stickyButtons">
           <div class="col-md-4 text-center mb-2 btn-div">
-            <button class="btn btn-danger w-100" (click)="onSearchOptionClick('Vehicle')">Search By Vehicle</button>
+            <button class="btn btn-danger w-100" (click)="onSearchOptionClick('Vehicle')">
+              Search By Vehicle
+            </button>
           </div>
           <div class="col-md-4 text-center mb-2 btn-div">
-            <button class="btn btn-danger w-100" (click)="onSearchOptionClick('Category')">Search By Category</button>
+            <button class="btn btn-danger w-100" (click)="onSearchOptionClick('Category')">
+              Search By Category
+            </button>
           </div>
           <div class="col-md-4 text-center mb-2 btn-div">
-            <button class="btn btn-danger w-100" (click)="onSearchOptionClick('Attributes')">Search By
-              Attributes</button>
+            <button class="btn btn-danger w-100" (click)="onSearchOptionClick('Attributes')">
+              Search By Attributes
+            </button>
           </div>
         </div>
+        
       </div>
     </div>
   </div>
@@ -254,6 +260,15 @@
 </div>
 
 <!------------ Product categories -------------------->
+
+<div class="container-fluid py-5"
+     style="background: url('../../../assets/banner2-2.jpg') no-repeat center center/cover; cursor: pointer;"
+     (click)="onSearch()" role="button">
+  <div class="container text-center text-white">
+    <h2 class="fw-bold mb-3">Your Auto Parts, Smarter and Faster</h2>
+    <p class="lead mb-4">Discover the right parts for your vehicle with ease. Quality, precision, and speed — all in one place.</p>
+  </div>
+</div>
 
 <div *ngIf="!showSearchComponent" class="product-categories container-fluid my-5 px-5">
   <div class="row">

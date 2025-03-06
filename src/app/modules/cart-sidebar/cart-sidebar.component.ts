@@ -233,7 +233,7 @@ goToCheckout(): void {
   localStorage.setItem('cartItems', JSON.stringify(cartItemsToSave));
 
   // Navigate to the CheckoutComponent
-  this.router.navigate(['/cart/checkout']);
+  this.router.navigate(['/B2B/cart/checkout']);
 }
 
 }

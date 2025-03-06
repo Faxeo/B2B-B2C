@@ -364,7 +364,7 @@
 
 .btn-danger-button {
   border: none;
-  background-color: rgba(238, 236, 231, 0.2); /* 20% opacity background */
+  background-color: rgba(39, 38, 38, 0.633); /* 20% opacity background */
   box-shadow: none;
   border-radius: 0%;
   color: white !important;
@@ -376,7 +376,7 @@
 }
 
 .btn-dangerAttribute {
-  background-color: rgba(238, 236, 231, 0.2); /* 20% opacity background */
+  background-color: rgba(39, 38, 38, 0.633); /* 20% opacity background */
   box-shadow: none;
   border-radius: 0%;
   color: white !important;

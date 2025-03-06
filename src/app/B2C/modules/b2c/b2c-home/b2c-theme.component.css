@@ -9,6 +9,46 @@
     align-items: center;
     z-index: 9999; /* Ensure it's above other content */
   }
+
+.sticky {
+  position: fixed;
+  top: 0px; /* Ensure it's right below the navbar */
+  left: 0;
+  width: 100%;
+  /* background: rgba(255, 255, 255, 0.9);  */
+  /* backdrop-filter: blur(5px); */
+  z-index: 1000;
+  /* box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); */
+  padding: 10px 0; /* Ensure padding is controlled */
+  transition: all 0.3s ease-in-out;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sticky-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Fix button positioning */
+.sticky .btn-row {
+  margin: 0 !important; /* Remove extra margins */
+  padding: 10px 0 !important; /* Add padding instead of margin */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sticky .btn-div {
+  margin: 0 !important; /* Remove additional spacing */
+  padding: 5px !important; /* Ensure spacing is handled */
+}
+
+.sticky .btn-danger-button {
+  margin: 0 auto !important;
+  display: block;
+}
+
   
   /* Modal background overlay */
   .modal-overlay {

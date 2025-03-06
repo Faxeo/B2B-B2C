@@ -28,7 +28,7 @@ import { CartService } from '../../core/services/cart/cart.service';
 import { FormsModule } from '@angular/forms';
 import { DynamicSearchService } from '../../core/services/dynamic-search/dynamic-search.service';
 import { SearchComponent } from '../search/search.component';
-import { FetchChildService } from '../../core/services/fetch-child/fetch-child.service'; 
+import { FetchChildService } from '../../core/services/fetch-child/fetch-child.service';
 import { FetchMakeService } from '../../core/services/fetch-make/fetch-make.service';
 import { FetchYearService } from '../../core/services/fetch-year/fetch-year.service';
 import { VehicleSearchService } from '../../core/services/search-vehicle/search-vehicle.service';
@@ -49,13 +49,12 @@ import { ChatBotComponent } from '../chat-bot/chat-bot.component';
     FooterComponent,
     FormsModule,
     // SearchComponent,
-    ChatBotComponent
+    ChatBotComponent,
   ],
   providers: [ApiService, SidebarToggleService],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
-
 export class HomeComponent implements OnInit {
   categories$: Observable<any[]> | undefined;
   products$: Observable<any[]> | undefined;
@@ -120,7 +119,7 @@ export class HomeComponent implements OnInit {
     private router: Router,
     private categoryIdService: CategoryIdService,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.getMainCategories();
@@ -181,11 +180,46 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    const stickyDiv = document.getElementById('stickyButtons');
+    if (stickyDiv) {
+      const scrollY = window.scrollY || window.pageYOffset;
+      const offsetTop = stickyDiv.offsetTop;
+
+      if (scrollY > offsetTop) {
+        stickyDiv.classList.add('sticky');
+      } else {
+        stickyDiv.classList.remove('sticky');
+      }
+    }
+  }
+
+  // @HostListener('window:scroll', [])
+  // onWindowScroll() {
+  //   window.requestAnimationFrame(() => {
+  //     const stickyDiv = document.getElementById('stickyButtons');
+  //     if (stickyDiv) {
+  //       const scrollY = window.scrollY || window.pageYOffset;
+  //       const offsetTop = stickyDiv.offsetTop;
+  
+  //       if (scrollY > offsetTop) {
+  //         stickyDiv.classList.add('sticky', 'sticky-visible');
+  //       } else {
+  //         stickyDiv.classList.remove('sticky-visible');
+  //         setTimeout(() => {
+  //           stickyDiv.classList.remove('sticky');
+  //         }, 300); // Delay to allow smooth transition
+  //       }
+  //     }
+  //   });
+  // }
+
+
   viewProductDetails(productId: number): void {
     if (!this.loginType) {
       this.openLoginModal();
-    }
-    else {
+    } else {
       if (productId) {
         this.router.navigate(['/product-details', productId]);
       } else {
@@ -193,7 +227,6 @@ export class HomeComponent implements OnInit {
       }
     }
   }
-
 
   getMainCategories(): void {
     this.mainCategoryService.getMainCategories().subscribe(
@@ -597,7 +630,9 @@ export class HomeComponent implements OnInit {
     ) as HTMLInputElement;
 
     // Initialize the search query (can be empty string)
-    this.searchQuery = searchInputElement ? searchInputElement.value.trim() : '';
+    this.searchQuery = searchInputElement
+      ? searchInputElement.value.trim()
+      : '';
 
     // Initialize loading states
     this.isPaginationLoading = page !== 1;
@@ -609,14 +644,14 @@ export class HomeComponent implements OnInit {
 
     // Create request data - all fields empty by default
     const requestData = {
-      productName: "",
-      manufacturer: "",
-      compatibility: "",
-      brand: "",
-      description: "",
-      upc: "",
-      partNumber: "",
-      attribute: "",
+      productName: '',
+      manufacturer: '',
+      compatibility: '',
+      brand: '',
+      description: '',
+      upc: '',
+      partNumber: '',
+      attribute: '',
       includeCompatibility: false,
       includeManufacturer: false,
       includeAttribute: false,
@@ -627,37 +662,38 @@ export class HomeComponent implements OnInit {
       m_id: null,
       f_id: null,
       s_id: null,
-      keyFeature: "",
+      keyFeature: '',
       vendor: null,
-      search_description: "",
+      search_description: '',
       compatiblityValues: {
         compatibilityID: 0,
         productID: 0,
         sno: null,
-        year: "",
-        make: "",
-        model: "",
-        trim: "",
-        engine: "",
-        notes: "",
-        isDeleted: null
+        year: '',
+        make: '',
+        model: '',
+        trim: '',
+        engine: '',
+        notes: '',
+        isDeleted: null,
       },
-      product_Attributes: "SELECT product_id FROM product_attributes_view WHERE concatenated_attributes LIKE '%%' order by product_id",
+      product_Attributes:
+        "SELECT product_id FROM product_attributes_view WHERE concatenated_attributes LIKE '%%' order by product_id",
       attributeSearch: false,
-      page: page
+      page: page,
     };
 
     // Update URL state
     if (this.searchQuery) {
       this.router.navigate(['/B2B/search'], {
-        queryParams: { query: this.searchQuery }
+        queryParams: { query: this.searchQuery },
       });
       requestData.search_description = this.searchQuery;
     } else {
       // Clear query params but still navigate to search page
       this.router.navigate(['/B2B/search'], {
         queryParams: {},
-        replaceUrl: true
+        replaceUrl: true,
       });
     }
 
@@ -689,7 +725,7 @@ export class HomeComponent implements OnInit {
           this.isLoading = false;
           this.isPaginationLoading = false;
           this.cdr.detectChanges();
-        }
+        },
       });
   }
 
@@ -807,7 +843,9 @@ export class HomeComponent implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       import('bootstrap').then((bootstrap) => {
         // Use Bootstrap here if needed
-        const loginModal = new bootstrap.Modal(document.getElementById('loginModal') as HTMLElement);
+        const loginModal = new bootstrap.Modal(
+          document.getElementById('loginModal') as HTMLElement
+        );
         loginModal.show();
       });
     }
@@ -819,7 +857,9 @@ export class HomeComponent implements OnInit {
       import('bootstrap').then((bootstrap) => {
         const modalElement = document.getElementById('loginModal');
         if (modalElement) {
-          const loginModal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+          const loginModal =
+            bootstrap.Modal.getInstance(modalElement) ||
+            new bootstrap.Modal(modalElement);
           loginModal.hide();
         } else {
           console.error('Modal element with ID "loginModal" not found.');

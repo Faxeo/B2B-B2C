@@ -74,6 +74,7 @@ loadGuestCartData(): void {
   // Get the cart items and add the missing properties to match the expected type
   this.cartItems = this.cartService.getCartItems().map(item => ({
     ...item,
+    prod_qty: item.quantity,
     imageError: false,
   }));
 
@@ -114,20 +115,14 @@ calculateSubtotal(): number {
   return this.cartItems.reduce((sum, item) => sum + this.getItemTotal(item), 0);
 }
 
-getItemTotal(item: { productId: string; price: number; quantity: number; discountedPrice?: number; discounts_Seller?: any[] }): number {
+getItemTotal(item: { productId: string; price: number; prod_qty?: number; discountedPrice?: number; discounts_Seller?: any[] }): number {
   const customerType = 'Bronze'; // Adjust customer type as needed
-  const discountedPrice = this.applyDiscount(item, item.quantity, customerType);
+  const discountedPrice = this.applyDiscount(item, item.prod_qty ?? 0, customerType);
   item.discountedPrice = discountedPrice; // Store discounted price in item
   return discountedPrice;
 }
 
 applyDiscount(product: any, prod_qty: number, customerType: string): number {
-  // Log the initial request data
-  console.log('applyDiscount called with:');
-  console.log('Product:', product);
-  console.log('Quantity:', prod_qty);
-  console.log('Customer Type:', customerType);
-
   // Check if discounts_Seller array is present and not empty
   if (!product.discounts_Seller || product.discounts_Seller.length === 0) {
     console.log('No discounts available for this product.');
@@ -136,16 +131,13 @@ applyDiscount(product: any, prod_qty: number, customerType: string): number {
 
   // Filter discounts based on the customer type
   const discounts = product.discounts_Seller.filter((d: any) => d.customer_type === customerType);
-  console.log('Filtered Discounts for Customer Type:', discounts);
 
   if (discounts.length === 0) {
-    console.log(`No discounts applicable for customer type: ${customerType}`);
     return product.price * prod_qty; // No discount applicable for this customer type
   }
 
   // Sort the discounts by quantity in ascending order to apply the "up to" logic
   discounts.sort((a: any, b: any) => a.quantity - b.quantity);
-  console.log('Sorted Discounts by Quantity:', discounts);
 
   let applicableDiscountAmount = 0;
 
@@ -154,20 +146,15 @@ applyDiscount(product: any, prod_qty: number, customerType: string): number {
     const discount = discounts[i];
     const nextDiscountTier = i + 1 < discounts.length ? discounts[i + 1].quantity : Infinity;
 
-    console.log(`Checking Discount Tier: ${discount.quantity} - Amount: ${discount.amount}`);
-    console.log(`Next Discount Tier Quantity: ${nextDiscountTier}`);
-
     // Apply discount if the quantity is within the current range
     if (prod_qty <= discount.quantity) {
       applicableDiscountAmount = discount.amount;
-      console.log(`Applicable Discount Found for Quantity: ${prod_qty} - Discount Amount: ${discount.amount}`);
       break; // Break as we found the applicable discount tier
     }
 
     // If quantity is in the next tier range, apply the discount of the current tier
     if (prod_qty > discount.quantity && prod_qty < nextDiscountTier) {
       applicableDiscountAmount = discount.amount;
-      console.log(`Applicable Discount for Quantity in Range: ${discount.quantity} to ${nextDiscountTier} - Discount Amount: ${discount.amount}`);
     }
   }
 
@@ -175,18 +162,12 @@ applyDiscount(product: any, prod_qty: number, customerType: string): number {
   const originalTotal = product.price * prod_qty;
   const discountedTotal = originalTotal - applicableDiscountAmount * prod_qty;
 
-  // Log final calculation details
-  console.log('Original Total Price:', originalTotal);
-  console.log('Discount Amount per Unit:', applicableDiscountAmount);
-  console.log('Discounted Total Price:', discountedTotal);
-
   return discountedTotal;
 }
 
 
 
 handleImageError(item: any): void {
-  console.log('Image failed to load:', item.image);
   item.imageError = true;
   item.image = '/assets/images/placeholder.png';
 }
@@ -224,6 +205,9 @@ saveBillingDetails(): void {
 }
 
 goToCheckout(): void {
+  if(this.billing.fullName == '' || this.billing.email == '' || this.billing.contact == '' || this.billing.billingAddress == '' || this.billing.state == '' || this.billing.city == '' || this.billing.zipcode == '') {
+    return;
+  }
   // Save billing details before navigating to checkout
   this.saveBillingDetails(); 
 
@@ -245,7 +229,63 @@ goToCheckout(): void {
   localStorage.setItem('cartItems', JSON.stringify(cartItemsToSave));
 
   // Navigate to the CheckoutComponent
-  // this.router.navigate(['/cart/checkout']);
+  this.router.navigate(['B2C/checkout']);
 }
 
+handleAddressPaste(event: ClipboardEvent): void {
+  event.preventDefault(); // Prevent default paste action
+
+  const clipboardData = event.clipboardData || (window as any).clipboardData;
+  const pastedText = clipboardData.getData('text');
+
+  // Set the pasted text to the billing address field
+  this.billing.billingAddress = pastedText;
+
+  // Extract address details using a regex or keywords
+  const addressParts = this.extractAddressDetails(pastedText);
+
+  // Auto-fill city, state, and zip code if found
+  if (addressParts.city) {
+    this.billing.city = addressParts.city;
+  }
+  if (addressParts.state) {
+    this.billing.state = addressParts.state;
+  }
+  if (addressParts.zipcode) {
+    this.billing.zipcode = addressParts.zipcode;
+  }
+}
+
+extractAddressDetails(address: string): { city?: string; state?: string; zipcode?: string } {
+  const result: { city?: string; state?: string; zipcode?: string } = {};
+
+  // Regex patterns to detect ZIP code, state abbreviations, and city names
+  const zipRegex = /\b\d{5}(-\d{4})?\b/; // Matches US ZIP codes (12345 or 12345-6789)
+  const stateRegex = /\b(AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY)\b/;
+  const addressParts = address.split(',');
+
+  // Extract ZIP code
+  const zipMatch = address.match(zipRegex);
+  if (zipMatch) {
+    result.zipcode = zipMatch[0];
+  }
+
+  // Extract state
+  const stateMatch = address.match(stateRegex);
+  if (stateMatch) {
+    result.state = stateMatch[0];
+  }
+
+  // Extract city (assuming it appears **before** the state)
+  if (stateMatch) {
+    const stateIndex = addressParts.findIndex((part) => part.includes(stateMatch[0]));
+    
+    if (stateIndex > 0) {
+      // The city is usually the part **right before the state**
+      result.city = addressParts[stateIndex - 1].trim();
+    }
+  }
+
+  return result;
+}
 }

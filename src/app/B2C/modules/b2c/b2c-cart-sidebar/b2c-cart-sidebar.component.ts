@@ -213,6 +213,9 @@ saveBillingDetails(): void {
 
 goToCheckout(): void {
   // Save billing details before navigating to checkout
+  if(this.billing.fullName == '' || this.billing.email == '' || this.billing.contact == '' || this.billing.billingAddress == '' || this.billing.state == '' || this.billing.city == '' || this.billing.zipcode == '') {
+    return;
+  }
   this.saveBillingDetails(); 
   console.log('Billing details saved before going to checkout:', this.billing);
 
@@ -233,7 +236,7 @@ goToCheckout(): void {
   localStorage.setItem('cartItems', JSON.stringify(cartItemsToSave));
 
   // Navigate to the CheckoutComponent
-  this.router.navigate(['/cart/checkout']);
+  this.router.navigate(['B2C/checkout']);
 }
 
 }
