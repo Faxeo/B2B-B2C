@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CheckoutService } from '../../../../core/services/checkout/checkout.service';
 import { CartService } from '../../../../core/services/cart/cart.service';
 import { Router } from '@angular/router';
+import { DeleteCartService } from '../../../../core/services/delete-cart/delete-cart.service';
 
 @Component({
   selector: 'app-b2c-checkout',
@@ -20,6 +21,7 @@ checkoutForm: FormGroup = this.fb.group({});
   selectedWallet: string | null = null;
   isBrowser: boolean; // To track whether code is running in the browser
   isLoading: boolean = false; // Loading state
+  customerId: number | null = null;
   // paymentAmount: number = 0;
 
   constructor(
@@ -28,20 +30,21 @@ checkoutForm: FormGroup = this.fb.group({});
     @Inject(PLATFORM_ID) private platformId: any,
     private router: Router,
     private cartService: CartService,
+    private deleteCartService: DeleteCartService
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
   ngOnInit(): void {
+    this.customerId = this.cartService.getUserID() ? +this.cartService.getUserID()! : null;
     if (this.isBrowser) {
-debugger;
       const userID = this.cartService.getUserID();
       // Retrieve cart items and billing details from localStorage
       const savedCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
       const savedBillingDetails = JSON.parse(localStorage.getItem('billingDetails') || '{}');
 
       // Use the saved cart items and billing details in the component
-      this.checkoutPayload = savedCartItems;
+      this.checkoutPayload = savedCartItems as CartItemCheckout[];
       // this.paymentAmount = savedCartItems.reduce((sum: number, item: any) => sum + (item.discountedPrice || item.price) * item.quantity, 0);
 
       // Initialize form with billing details
@@ -240,10 +243,46 @@ debugger;
     });
   }
   
-  clearCart() {
-    localStorage.removeItem('cartItems'); // Clear cart items from localStorage
-    console.log('Cart cleared from localStorage');
+  clearCart(): void {
+    if (this.checkoutPayload && this.checkoutPayload.length > 0) {
+      const cartIds = this.checkoutPayload.map((item: CartItemCheckout) => item.cartId);
+  
+      if (this.customerId !== null) {
+        // For logged-in customers
+        console.log('Clearing cart for logged-in customer...');
+  
+        cartIds.forEach((cartId: number) => {
+          if (cartId) { // Double-check cartId is valid
+            this.deleteCartService.deleteCart(+cartId).subscribe(
+              (response) => {
+                console.log(`Delete response for Cart ID ${cartId}:`, response);
+                if (response.success) {
+                  console.log(`Item with Cart ID ${cartId} removed successfully.`);
+                } else {
+                  console.error(`Failed to remove item with Cart ID ${cartId}:`, response.statusReason);
+                }
+              },
+              (error) => {
+                console.error(`Error while deleting Cart ID ${cartId}:`, error);
+              }
+            );
+          } else {
+            console.warn(`Skipping invalid cart ID: ${cartId}`);
+          }
+        });
+  
+        // Optionally clear the local payload after deletion
+        this.checkoutPayload = [];
+      } else {
+        // For guest users
+        localStorage.removeItem('cartItems'); 
+        console.log('Cart cleared from localStorage for guest user');
+      }
+    } else {
+      console.log('No items found in the cart.');
+    }
   }
+  
 
   onSubmit() {
     if (this.checkoutForm.valid) {
@@ -252,4 +291,15 @@ debugger;
       console.log('Form is invalid');
     }
   }
+}
+
+interface CartItemCheckout {
+  productId: string;
+  name: string;
+  quantity: number;
+  price: number;
+  discountedPrice?: number;
+  image: string;
+  upc: string;
+  cartId?: string;
 }
