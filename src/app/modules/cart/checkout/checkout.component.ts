@@ -6,6 +6,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { NgZone } from '@angular/core';
 import { CartService } from '../../../core/services/cart/cart.service';
 import { Router } from '@angular/router';
+import { DeleteCartService } from '../../../core/services/delete-cart/delete-cart.service';
 
 @Component({
   standalone: true,
@@ -16,12 +17,13 @@ import { Router } from '@angular/router';
 })
 export class CheckoutComponent implements OnInit {
   checkoutForm: FormGroup = this.fb.group({});
-  checkoutPayload: any;
+  checkoutPayload: CartItemCheckout[] = [];
   sandboxAppID = 'sandbox-sq0idb-d65sQ2oY6m31SyMvrxc6eg'; // Sandbox App ID
   sandBoxLocationID = 'L0HH4QHVKNCHR'; // Sandbox Location ID
   selectedWallet: string | null = null;
   isBrowser: boolean; // To track whether code is running in the browser
   isLoading: boolean = false; // Loading state
+  customerId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -30,12 +32,15 @@ export class CheckoutComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private cartService: CartService,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private deleteCartService: DeleteCartService
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
   ngOnInit(): void {
+    this.customerId = this.cartService.getUserID() ? +this.cartService.getUserID()! : null;
+
     if (this.isBrowser) {
 
       const userID = this.cartService.getUserID();
@@ -48,7 +53,7 @@ export class CheckoutComponent implements OnInit {
       console.log('Retrieved Billing Details from Storage:', savedBillingDetails);
 
       // Use the saved cart items and billing details in the component
-      this.checkoutPayload = savedCartItems;
+      this.checkoutPayload = savedCartItems as CartItemCheckout[];
 
       // Initialize form with billing details
       this.checkoutForm = this.fb.group({
@@ -243,10 +248,45 @@ export class CheckoutComponent implements OnInit {
       },
     });
   }
+
+  clearCart(): void {
+    if (this.checkoutPayload && this.checkoutPayload.length > 0) {
+      const cartIds = this.checkoutPayload.map((item: CartItemCheckout) => item.cartId);
   
-  clearCart() {
-    localStorage.removeItem('cartItems'); // Clear cart items from localStorage
-    console.log('Cart cleared from localStorage');
+      if (this.customerId !== null) {
+        // For logged-in customers
+        console.log('Clearing cart for logged-in customer...');
+  
+        cartIds.forEach((cartId) => {
+          if (cartId) { // Double-check cartId is valid
+            this.deleteCartService.deleteCart(+cartId).subscribe(
+              (response) => {
+                console.log(`Delete response for Cart ID ${cartId}:`, response);
+                if (response.success) {
+                  console.log(`Item with Cart ID ${cartId} removed successfully.`);
+                } else {
+                  console.error(`Failed to remove item with Cart ID ${cartId}:`, response.statusReason);
+                }
+              },
+              (error) => {
+                console.error(`Error while deleting Cart ID ${cartId}:`, error);
+              }
+            );
+          } else {
+            console.warn(`Skipping invalid cart ID: ${cartId}`);
+          }
+        });
+  
+        // Optionally clear the local payload after deletion
+        this.checkoutPayload = [];
+      } else {
+        // For guest users
+        localStorage.removeItem('cartItems'); 
+        console.log('Cart cleared from localStorage for guest user');
+      }
+    } else {
+      console.log('No items found in the cart.');
+    }
   }
 
   onSubmit() {
@@ -256,4 +296,15 @@ export class CheckoutComponent implements OnInit {
       console.log('Form is invalid');
     }
   }
+}
+
+interface CartItemCheckout {
+  productId: string;
+  name: string;
+  quantity: number;
+  price: number;
+  discountedPrice?: number;
+  image: string;
+  upc: string;
+  cartId?: string;
 }

@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CustomerCartService } from '../../../../core/services/customer-cart/customer-cart.service';
+import { DeleteCartService } from '../../../../core/services/delete-cart/delete-cart.service';
 
 @Component({
   selector: 'app-b2c-cart',
@@ -16,6 +17,7 @@ import { CustomerCartService } from '../../../../core/services/customer-cart/cus
 
 export class B2cCartComponent {
   cartItems: Array<{
+    cartId?: string,
     productId: string;
     upc: string;
     name: string;
@@ -54,7 +56,8 @@ constructor(
   private cartService: CartService,
   private customerCartService: CustomerCartService,
   private router: Router,
-  private cdr: ChangeDetectorRef
+  private cdr: ChangeDetectorRef,
+  private deleteCartService: DeleteCartService
 ) {}
 
 ngOnInit(): void {
@@ -94,6 +97,7 @@ loadCartData(): void {
     (data) => {
       console.log('Fetched cart details:', data);
       this.cartItems = data.map((item: any) => ({
+        cartId: item.cart_id,
         productId: item.product.product_id.toString(),
         name: item.product.product_name,
         price: item.product.product_price,
@@ -175,10 +179,32 @@ handleImageError(item: any): void {
   item.image = '/assets/images/placeholder.png';
 }
 
-removeFromCart(productId: string): void {
-  this.cartService.removeItem(productId);
-  this.cartItems = this.cartItems.filter((item) => item.productId !== productId);
-  // this.loadCartData();
+removeFromCart(productId: string, cartId?: string): void {
+  if (this.customerId !== null) {
+    
+  console.log('Attempting to remove item with Cart ID:', cartId); // Log the cartId
+    // Confirm before removing
+    if (confirm('Are you sure you want to remove this item from your cart?')) {
+      this.deleteCartService.deleteCart(+cartId!).subscribe(
+        (response) => {
+          console.log('Delete response:', response); // Log the delete response
+          if (response.success) {
+            // Remove the item from the cart locally
+            this.cartItems = this.cartItems.filter((item) => item.cartId !== cartId);
+            console.log('Item removed successfully.');
+          } else {
+            console.error('Failed to remove the item:', response.statusReason);
+          }
+        },
+        (error) => {
+          console.error('Error occurred while deleting the cart item:', error);
+        }
+      );
+    }
+  } else {
+    this.cartService.removeItem(productId);
+    this.cartItems = this.cartItems.filter((item) => item.productId !== productId);
+  }
 }
 
 onQuantityInput(productId: string, event: any): void {
@@ -225,7 +251,8 @@ goToCheckout(): void {
     price: item.price,
     discountedPrice: item.discountedPrice, // Include discounted price or original if no discount
     image: item.image,
-    upc: item.upc
+    upc: item.upc,
+    cartId: item.cartId
   }));
 
   // Log cart items to be saved
