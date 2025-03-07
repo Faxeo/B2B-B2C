@@ -43,5 +43,8 @@ export class ApiService {
     return this.post<any[]>('Product/getSubCategories', requestData);
   }
 
-  // Add other methods (put, delete) as needed
+  // Get Top Selling Products
+  getTopSellingProducts(): Observable<any[]> {
+    return this.post<any[]>('Product/getTopSellingProducts', {});
+  }
 }

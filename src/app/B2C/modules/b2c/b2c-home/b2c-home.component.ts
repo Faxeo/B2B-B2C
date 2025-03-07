@@ -181,7 +181,7 @@ export class B2CHomeComponent implements OnInit {
 
 
     // Trending products observable (default state)
-    this.products$ = this.apiService.getProducts().pipe(
+    this.products$ = this.apiService.getTopSellingProducts().pipe(
       map((products) =>
         products.map((product: { product_image: string }) => ({
           ...product,

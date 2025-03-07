@@ -150,7 +150,7 @@ export class HomeComponent implements OnInit {
       )
     );
 
-    this.products$ = this.apiService.getProducts().pipe(
+    this.products$ = this.apiService.getTopSellingProducts().pipe(
       map((products) =>
         products.map((product: { product_image: string }) => ({
           ...product,
