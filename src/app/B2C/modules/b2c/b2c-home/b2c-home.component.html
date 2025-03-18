@@ -246,14 +246,16 @@
 
   <hr class="my-4">
 
-  <div class="container-fluid py-5"
-    style="background: url('../../../../../assets/banner2-1.jpg') no-repeat center center/cover; cursor: pointer;"
-    (click)="onSearch()" role="button">
-    <div class="container text-center text-white">
-      <h2 class="fw-bold mb-3">Find the Perfect Auto Part</h2>
-      <p class="lead mb-4">Explore our wide range of high-quality auto parts — just a click away.</p>
-    </div>
+  <div class="container-fluid py-5 text-center text-white" 
+  style="background: url('../../../../../assets/banner2-1.jpg') no-repeat center center/cover;">
+  <div class="container">
+  <h2 class="fw-bold mb-3">Find the Perfect Auto Part</h2>
+  <p class="lead mb-4">Explore our wide range of high-quality auto parts — just a click away.</p>
+  <button class="btn btn-light fw-bold px-4 py-2 mt-3" (click)="onSearch()">
+    View More
+  </button>
   </div>
+</div>
 
   <hr class="my-4">
 
