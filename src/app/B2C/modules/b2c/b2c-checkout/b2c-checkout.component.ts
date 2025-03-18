@@ -207,7 +207,7 @@ checkoutForm: FormGroup = this.fb.group({});
         console.log('Checkout successful, response received:', response);
   
         if (response && response.success && response.statusCode === 200) {
-          alert('Thanks for buying from us.');
+          alert('Thanks for shopping with us.');
            
         const billData = {
           transactionID: response.data.transactionID,

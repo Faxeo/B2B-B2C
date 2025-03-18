@@ -512,7 +512,7 @@ export class SearchResultsComponent implements OnChanges {
 
   viewProductDetails(productId: number): void {
     if (productId) {
-      this.router.navigate(['/product-details', productId]);
+      this.router.navigate(['/B2B/product-details', productId]);
     } else {
       console.error('Product ID is undefined');
     }

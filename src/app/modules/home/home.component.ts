@@ -221,7 +221,7 @@ export class HomeComponent implements OnInit {
       this.openLoginModal();
     } else {
       if (productId) {
-        this.router.navigate(['/product-details', productId]);
+        this.router.navigate(['/B2B/product-details', productId]);
       } else {
         console.error('Product ID is undefined');
       }

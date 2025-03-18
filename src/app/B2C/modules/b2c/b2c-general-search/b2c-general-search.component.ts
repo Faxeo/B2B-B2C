@@ -466,7 +466,7 @@ export class B2cGeneralSearchComponent {
 
   viewProductDetails(productId: number): void {
     if (productId) {
-      this.router.navigate(['/product-details', productId]);
+      this.router.navigate(['/B2C/product-details', productId]); 
     } else {
       console.error('Product ID is undefined');
     }

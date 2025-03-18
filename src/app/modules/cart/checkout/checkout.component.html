@@ -1,4 +1,13 @@
 <div class="checkout-container">
+  <!-- Logo Section -->
+  <div class="text-center mb-4">
+    <img 
+      src="../../../../../assets/logo.png" 
+      alt="Website Logo" 
+      class="img-fluid" 
+      style="max-height: 80px;"
+    />
+  </div>
   <h2>Payment Method</h2>
   <!-- Card Payment Section -->
   <form (ngSubmit)="onSubmit()" [formGroup]="checkoutForm" class="payment-form">
