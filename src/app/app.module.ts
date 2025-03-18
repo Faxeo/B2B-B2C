@@ -39,7 +39,8 @@ import { B2cCartComponent } from './B2C/modules/b2c/b2c-cart/b2c-cart.component'
     AdminDashboardComponent,
     CartComponent,
     B2cSearchComponent,
-    B2cCartComponent
+    B2cCartComponent,
+    BrowserAnimationsModule,
     // B2cSearchModule
   ],
   providers: [

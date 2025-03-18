@@ -118,7 +118,7 @@
         <button class="action-button">Become a B2B User</button>
       </div>
     </div>
-    <button class="slider-button" id="sliderButton" (click)="becomeB2BUser()">
+    <button *ngIf="loginType !== 'customer'" class="slider-button" id="sliderButton" (click)="becomeB2BUser()">
       <span><strong>B2B</strong></span>
     </button>
   </div>

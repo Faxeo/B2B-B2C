@@ -14,6 +14,10 @@ export const authGuard: CanActivateFn = (route, state): Observable<boolean> => {
         router.navigate(['/B2B']);
         return false;
       }
+      if (userType === 'customer' && state.url.includes('/B2B')) {
+        router.navigate(['/B2C']);
+        return false;
+      }
       if (userType === 'admin' && !state.url.includes('/admin')) {
         router.navigate(['/B2B']);
         return false;

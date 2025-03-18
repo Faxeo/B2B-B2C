@@ -69,6 +69,7 @@ export const routes: Routes = [
   {
     path: 'B2B',
     component: HomeComponent, // B2B Home Component
+    canActivate: [authGuard],
   },
   {
     path: 'users',
@@ -144,10 +145,17 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'product-details/:id',
+    path: 'B2B/product-details/:id',
     loadChildren: () =>
       import('./modules/product-details/product-details.module').then(
         (m) => m.ProductDetailsModule
+      ),
+  },
+  {
+    path: 'B2C/product-details/:id',
+    loadChildren: () =>
+      import('./B2C/modules/b2c/b2c-product-details/b2c-product-details.module').then(
+        (m) => m.B2cProductDetailsModule
       ),
   },
   {

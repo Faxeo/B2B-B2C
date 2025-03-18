@@ -8,18 +8,20 @@ import {
 } from '@angular/core';
 
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import {
-  ProductDetailsService,
-  ProductDetails,
-} from '../../core/services/product-details/product-details.service';
-import { FooterComponent } from '../../layout/footer/footer.component';
-import { LoginService } from '../../core/services/login-service/login-service.service';
-import { CartService } from '../../core/services/cart/cart.service';
-import { AddToCartService } from '../../core/services/add-to-cart/add-to-cart.service';
-import { NavigationService } from '../../core/services/navigation-service/navigation-service.service';
-import { SubCategoryService } from '../../core/services/sub-category/sub-category.service';
-import { MainCategoryService } from '../../core/services/main-category/main-category.service';
-import { FetchChildService } from '../../core/services/fetch-child/fetch-child.service';
+// import {
+//   ProductDetailsService,
+//   ProductDetails,
+// } from '../../core/services/product-details/product-details.service';
+import { ProductDetails } from '../../../../core/services/product-details/product-details.service';
+import { ProductDetailsService } from '../../../../core/services/product-details/product-details.service';
+import { FooterComponent } from '../../../../layout/footer/footer.component';
+import { LoginService } from '../../../../core/services/login-service/login-service.service';
+import { CartService } from '../../../../core/services/cart/cart.service';
+import { AddToCartService } from '../../../../core/services/add-to-cart/add-to-cart.service';
+import { NavigationService } from '../../../../core/services/navigation-service/navigation-service.service';
+import { SubCategoryService } from '../../../../core/services/sub-category/sub-category.service';
+import { MainCategoryService } from '../../../../core/services/main-category/main-category.service';
+import { FetchChildService } from '../../../../core/services/fetch-child/fetch-child.service';
 import { FormsModule } from '@angular/forms';
 import { trigger, state, style, animate, transition, keyframes } from '@angular/animations';
 
@@ -29,10 +31,11 @@ interface Testimonial {
 }
 
 @Component({
+  selector: 'app-b2c-product-details',
   standalone: true,
-  imports: [RouterModule, CommonModule, FooterComponent, FormsModule],
-  templateUrl: './product-details.component.html',
-  styleUrls: ['./product-details.component.css'],
+  imports: [CommonModule, FormsModule, RouterModule, FooterComponent],
+  templateUrl: './b2c-product-details.component.html',
+  styleUrl: './b2c-product-details.component.css',
   animations: [
     trigger('shakeButton', [
       transition('* => *', [
@@ -52,7 +55,7 @@ interface Testimonial {
   ]
 })
 
-export class ProductDetailsComponent {
+export class B2cProductDetailsComponent {
   testimonials: Testimonial[] = [
     {
       customerName: 'Gavin',
@@ -118,7 +121,7 @@ export class ProductDetailsComponent {
   mainImage: string = '';
   private zoomScale: number = 2.5;
   private debounceTimer: any;
-
+  
   shakeTrigger = false;
 
   constructor(
@@ -137,7 +140,7 @@ export class ProductDetailsComponent {
     setInterval(() => {
       this.shakeTrigger = !this.shakeTrigger;
     }, 5000); // Trigger shake every 5 seconds
-  }
+    }
 
   ngOnInit(): void {
     this.getMainCategories();
