@@ -87,6 +87,8 @@ export class MyGarageComponent implements OnInit {
       return;
     }
 
+    this.isLoading = true; 
+
     this.getVehicleService.getCustomerVehicles(customerId).subscribe(
       (response) => {
         if (response && response.data && Array.isArray(response.data)) {
@@ -99,10 +101,13 @@ export class MyGarageComponent implements OnInit {
         } else {
           console.error('Invalid response format:', response);
         }
+        this.isLoading = false; // Hide loader after fetching data
+            this.changeDetectorRef.detectChanges(); // Ensure UI updates
       },
       (error) => {
         console.error('Error fetching vehicles:', error);
         alert('Failed to fetch vehicles. Please try again later.');
+        this.isLoading = false;
       }
     );
   }

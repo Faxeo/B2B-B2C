@@ -2,10 +2,15 @@
 <div *ngIf="showNotification" class="notification">
     {{ notificationMessage }}
 </div>
+<!-- Loader Overlay -->
+<div *ngIf="isLoading" class="loading-overlay">
+    <img src="assets/Images/loader.gif" alt="Loading..." class="loading-gif" />
+</div>
+
 
 <!-- Existing HTML structure for the form or other components -->
 
-<div class="my-garage-container" [class.blurred]="showVehicleForm">
+<div class="my-garage-container" [class.blurred]="showVehicleForm"> 
     <h1 class="garage-title">Welcome to My Garage</h1>
     <div class="garage-content">
         <!-- Left Section: Vehicle List and Forms -->
