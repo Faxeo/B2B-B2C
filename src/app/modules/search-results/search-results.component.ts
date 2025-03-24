@@ -949,7 +949,7 @@ export class SearchResultsComponent implements OnChanges {
         productID: 0,
         sno: null,
         year: vehicleData.year,
-        make: vehicleData.make && this.selectedMake || '',
+        make: this.selectedMake || vehicleData.make || '',
         model: vehicleData.model,
         trim: vehicleData.trim,
         engine: vehicleData.engine,
@@ -967,6 +967,7 @@ export class SearchResultsComponent implements OnChanges {
     this.isLocallyLoading = true;
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
+        console.log('Vehicle Search Response:', response);
         this.searchResults = response.products || [];
         this.totalPages = response.totalPages || 1;
         this.isLocallyLoading = false;

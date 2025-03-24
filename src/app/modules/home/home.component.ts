@@ -598,6 +598,7 @@ export class HomeComponent implements OnInit {
 
     this.dynamicSearchService.searchProducts(requestData).subscribe(
       (data: any) => {
+        console.log('Vehicle search data:', data);
         this.searchProducts$ = of(data.products || []);
         this.showVehicleForm = false;
         this.showSearchComponent = true;

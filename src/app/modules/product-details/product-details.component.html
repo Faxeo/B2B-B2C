@@ -169,9 +169,10 @@
         </div>
       </div>
 
+      <!-- [@shakeButton]="shakeTrigger" -->
       <!-- Action Buttons -->
       <div class="action-buttons">
-        <button class="buy-now-btn" (click)="addToCart(product)"  [@shakeButton]="shakeTrigger">Add to Cart</button>
+        <button class="buy-now-btn" (click)="addToCart(product)" >Add to Cart</button>
         <button class="buy-now-btn" class="btn btn-danger w-100 ms-1 buy-now-btn" (click)="buyNow(product)">Buy Now</button>
         <button class="wishlist-btn btn btn-outline-danger w-100 ms-1 view-btn">
           <i style="font-size:16px; margin-right: 10px;" class="fa">&#xf08a;</i>Add to Wishlist
