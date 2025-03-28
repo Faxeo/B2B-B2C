@@ -46,7 +46,7 @@ export class FilterComponent {
   filteredBrands: { id: number; name: string; selected: boolean }[] = [];
 
   searchTerm: string = '';
-
+ 
   selectedBrandName: string | null = null; // Holds the name of the selected brand
   vehicles: { value_name: string }[] = []; // API response data
   filteredVehicles: { value_name: string }[] = []; // Filtered vehicle list
@@ -89,6 +89,17 @@ export class FilterComponent {
     this.filterSearchService.selectedMake$.subscribe((make) => {
       this.selectedVehicle = make;
     });
+
+    this.filterSearchService.selectedBrand$.subscribe((brand) => {
+      this.selectedBrand = brand;
+    
+      // ✅ Restore the brand name using the fetched brand list
+      if (brand !== null && this.brands.length > 0) {
+        const selected = this.brands.find((b) => b.id === brand);
+        this.selectedBrandName = selected ? selected.name : null;
+      }
+    });
+    
   }
 
   resetFilters(): void {
@@ -186,13 +197,24 @@ export class FilterComponent {
           ...brand,
           selected: false,
         }));
-        this.filteredBrands = [...this.brands]; // Initialize filtered list
+        this.filteredBrands = [...this.brands];
+  
+        // ✅ Restore selected brand name after brands are loaded
+        const savedBrandId = this.filterSearchService.selectedBrandValue;
+        if (savedBrandId !== null) {
+          const selected = this.brands.find(b => b.id === savedBrandId);
+          if (selected) {
+            this.selectedBrand = savedBrandId;
+            this.selectedBrandName = selected.name;
+          }
+        }
       },
       (error) => {
         console.error('Error fetching brands:', error);
       }
     );
   }
+  
 
   onBrandChange(brandId: number | null): void {
     if (brandId === null) {
@@ -237,25 +259,28 @@ export class FilterComponent {
     );
   }
 
-  onCheckboxChange(brandId: number): void {
+  onCheckboxChange(brandId: number, brandName: string): void {
     // If the selected brand is the same, deselect it
     if (this.selectedBrand === brandId) {
       this.selectedBrand = null;
+      this.selectedBrandName = null; // <-- Add this to clear name
       this.filterSearchService.clearSelectedBrand();
       console.log('Brand deselected:', brandId);
     } else {
       // Deselect all brands and select the new one
       this.brands.forEach((brand) => (brand.selected = false));
-
+  
       const selectedBrand = this.brands.find((brand) => brand.id === brandId);
       if (selectedBrand) {
         selectedBrand.selected = true;
         this.selectedBrand = brandId;
+        this.selectedBrandName = brandName; // <-- Add this to show the name
         this.filterSearchService.updateSelectedBrand(brandId);
         console.log('Brand selected:', brandId);
       }
     }
   }
+  
 
   toggleSection(section: string): void {
     switch (section) {
