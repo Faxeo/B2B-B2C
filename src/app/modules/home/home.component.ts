@@ -128,7 +128,6 @@ export class HomeComponent implements OnInit {
       this.userID = localStorage.getItem('userID');
       this.loginService.getUserID().subscribe((userID) => {
         this.userID = userID;
-        this.cartService.setUserDetails(this.userID, this.loginType);
       });
 
       this.loginService.getLoginType().subscribe((loginType) => {
@@ -137,8 +136,8 @@ export class HomeComponent implements OnInit {
           const username = localStorage.getItem('username');
           this.loginType = username || this.loginType;
         }
-        this.cartService.setUserDetails(this.userID, this.loginType);
       });
+      this.cartService.setUserDetails(this.userID, this.loginType);
     }
 
     this.categories$ = this.apiService.getMainCategory().pipe(

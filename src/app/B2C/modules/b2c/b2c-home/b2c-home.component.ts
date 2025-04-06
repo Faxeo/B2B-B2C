@@ -38,6 +38,7 @@ import { CategoryIdService } from '../../../../core/services/category-id/categor
 import { B2cSearchComponent } from '../b2c-search/b2c-search.component';
 import { Brand, GetBrandsService } from '../../../../core/services/get-brands/get-brands.service';
 import { ChatBotComponent } from '../../../../modules/chat-bot/chat-bot.component';
+import { AddToWishlistService } from '../../../../core/services/add-to-wishlist/add-to-wishlist.service';
 
 
 @Component({
@@ -133,6 +134,7 @@ export class B2CHomeComponent implements OnInit {
     private categoryIdService: CategoryIdService,
     private brandsService: GetBrandsService,
     @Inject(PLATFORM_ID) private platformId: Object,
+    private addToWishlistService: AddToWishlistService
   ) {}
   
   
@@ -151,7 +153,6 @@ export class B2CHomeComponent implements OnInit {
       // console.log('User ID from localStorage:', this.userID);
       this.loginService.getUserID().subscribe((userID) => {
         this.userID = userID;
-        this.cartService.setUserDetails(this.userID, this.loginType);
       });
 
       this.loginService.getLoginType().subscribe((loginType) => {
@@ -162,8 +163,8 @@ export class B2CHomeComponent implements OnInit {
           this.loginType = username || this.loginType;
         }
         console.log('Login type updated:', this.loginType);
-        this.cartService.setUserDetails(this.userID, this.loginType);
       });
+      this.cartService.setUserDetails(this.userID, this.loginType);
     } else {
       // console.log('Running in a non-browser environment');
     }
@@ -924,4 +925,30 @@ addToCart(product: {
   onBrandClick(brandId: number) {
       this.router.navigate(['/B2C/search'], { queryParams:{ selectedBrand : brandId }});
     }
+
+    // addToWishlist(product: any): void {
+    //   if (!this.userID) {
+    //     this.displayNotification('Please log in to add items to wishlist.');
+    //     return;
+    //   }
+  
+    //   this.addToWishlistService
+    //     .addToWishlist(
+    //       product.product_id,
+    //       this.userID,
+    //       Number(this.userID) // Convert to number for businessId
+    //     )
+    //     .subscribe({
+    //       next: () => {
+    //         product.isInWishlist = true;
+    //         this.showTemporaryPopup('Product added to wishlist!');
+    //       },
+    //       error: (error) => {
+    //         console.error('Error adding to wishlist:', error);
+    //         this.displayNotification(
+    //           'Error adding item to wishlist: ' + error.message
+    //         );
+    //       },
+    //     });
+    // }
 }

@@ -30,6 +30,12 @@ const routes: Routes = [
             (m) => m.B2CCheckoutModule),  
       },
       {
+        path: 'wishlist',
+        loadChildren: () =>
+          import('./b2c-wishlist/b2c-wishlist.module').then(
+            (m) => m.B2CWishlistModule),  
+      },
+      {
         path: 'bill',
         loadChildren: () =>
           import('./b2c-billing/b2c-billing.module').then(

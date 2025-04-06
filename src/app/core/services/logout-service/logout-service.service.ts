@@ -12,12 +12,12 @@ export class LogoutService {
     private loginService: LoginService,
     private apiService: ApiService,
     private router: Router
-  ) {}
+  ) { }
 
   logout() {
     const userID = localStorage.getItem('userID') || localStorage.getItem('businessID') || localStorage.getItem('merchantID');
     const loginType = localStorage.getItem('loginType') || '';  // Fetch loginType from local storage
-    
+
     this.loginService.getCategory().pipe(take(1)).subscribe(category => {
       const logoutData = {
         customerID: userID ? +userID : 0,
@@ -32,8 +32,12 @@ export class LogoutService {
           // Conditional redirection based on loginType
           if (loginType === 'customer') {
             this.router.navigate(['/B2C']);  // Redirect to B2C for customers
-          } else {
+          } 
+          else if (loginType === 'business') {
             this.router.navigate(['/B2B']);  // Redirect to B2B for other users
+          } 
+          else {
+            this.router.navigate(['/B2C']);
           }
         },
         error: (error) => {
