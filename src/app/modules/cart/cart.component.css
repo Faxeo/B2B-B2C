@@ -38,6 +38,47 @@ th, td {
   color: white;
 }
 
+.scrollbar{
+max-height: 400px;
+overflow-y: auto;
+}
+
+/* Search box styling */
+.search-container {
+  margin-bottom: 15px;
+  max-width: 300px;
+}
+
+.search-box {
+  border-radius: 25px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  transition: 0.3s ease;
+}
+
+.search-box:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  outline: none;
+}
+
+/* Scrollable table body */
+.scroll-container {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.scroll-container table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.scroll-container td {
+  border: 1px solid #ddd;
+}
+
+
 .media {
   display: flex;
   align-items: center;

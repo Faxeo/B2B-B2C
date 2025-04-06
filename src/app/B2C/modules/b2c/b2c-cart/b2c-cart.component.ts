@@ -197,6 +197,15 @@ export class B2cCartComponent {
     this.loadSavedAddresses();
   }
 
+  searchTerm: string = '';
+
+filteredCartItems() {
+  if (!this.searchTerm) return this.cartItems;
+  return this.cartItems.filter(item =>
+    item.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+  );
+}
+
   
   isBillingFormValid(): boolean {
     return !!(

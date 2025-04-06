@@ -87,6 +87,8 @@ export class CartComponent implements OnInit {
 
   businessId: number | null = null;
 
+  searchTerm: string = '';
+
   billing = {
     fullName: '',
     email: '',
@@ -120,7 +122,6 @@ set selectedAddress(address: Address | null) {
   }
 }
 
-
   constructor(
     private cartService: CartService,
     private businessCartService: BusinessCartService,
@@ -146,6 +147,13 @@ set selectedAddress(address: Address | null) {
     this.loadSavedAddresses();
   }
 
+filteredCartItems() {
+  if (!this.searchTerm) return this.cartItems;
+  return this.cartItems.filter(item =>
+    item.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+  );
+}
+
   isBillingFormValid(): boolean {
     return !!(
       this.billing.fullName?.trim() &&
@@ -158,7 +166,6 @@ set selectedAddress(address: Address | null) {
       this.billing.country?.trim()
     );
   }
-  
 
   handleNewAddressPaste(event: ClipboardEvent): void {
     event.preventDefault(); // Prevent default paste action
