@@ -39,6 +39,8 @@ import { B2cSearchComponent } from '../b2c-search/b2c-search.component';
 import { Brand, GetBrandsService } from '../../../../core/services/get-brands/get-brands.service';
 import { ChatBotComponent } from '../../../../modules/chat-bot/chat-bot.component';
 import { AddToWishlistService } from '../../../../core/services/add-to-wishlist/add-to-wishlist.service';
+import { ToastrService } from 'ngx-toastr';
+import { CookieService } from 'ngx-cookie-service';
 
 
 @Component({
@@ -112,6 +114,7 @@ export class B2CHomeComponent implements OnInit {
   paginatedBrands: Brand[][] = [];
   currentBrandsPage = 0;
   brandsPerPage = 6;
+  customer_name: string = '';
 
   constructor(
     private apiService: ApiService,
@@ -131,10 +134,11 @@ export class B2CHomeComponent implements OnInit {
     private subCategoryService: SubCategoryService,
     private router: Router,
     private route: ActivatedRoute,
-    private categoryIdService: CategoryIdService,
+    private cookieService: CookieService,
     private brandsService: GetBrandsService,
     @Inject(PLATFORM_ID) private platformId: Object,
-    private addToWishlistService: AddToWishlistService
+    private addToWishlistService: AddToWishlistService,
+    private toastr: ToastrService
   ) {}
   
   
@@ -165,6 +169,7 @@ export class B2CHomeComponent implements OnInit {
         console.log('Login type updated:', this.loginType);
       });
       this.cartService.setUserDetails(this.userID, this.loginType);
+      this.customer_name = this.cookieService.get("customerName");
     } else {
       // console.log('Running in a non-browser environment');
     }
@@ -896,7 +901,7 @@ addToCart(product: {
         });
 
         // Show success message for this product
-        product.showMessage = true;
+        this.toastr.success("Item added to cart successfully", 'Success');
 
         // Hide the message after 1 second
         setTimeout(() => {
@@ -926,29 +931,27 @@ addToCart(product: {
       this.router.navigate(['/B2C/search'], { queryParams:{ selectedBrand : brandId }});
     }
 
-    // addToWishlist(product: any): void {
-    //   if (!this.userID) {
-    //     this.displayNotification('Please log in to add items to wishlist.');
-    //     return;
-    //   }
+    addToWishlist(product: any): void {
+      if (!this.userID) {
+        this.toastr.info('Please log in for wishlist.', 'Login Required');
+        return;
+      }
   
-    //   this.addToWishlistService
-    //     .addToWishlist(
-    //       product.product_id,
-    //       this.userID,
-    //       Number(this.userID) // Convert to number for businessId
-    //     )
-    //     .subscribe({
-    //       next: () => {
-    //         product.isInWishlist = true;
-    //         this.showTemporaryPopup('Product added to wishlist!');
-    //       },
-    //       error: (error) => {
-    //         console.error('Error adding to wishlist:', error);
-    //         this.displayNotification(
-    //           'Error adding item to wishlist: ' + error.message
-    //         );
-    //       },
-    //     });
-    // }
+      this.addToWishlistService
+        .addToWishlist(
+          product.product_id,
+          this.userID,
+          Number(this.userID)
+        )
+        .subscribe({
+          next: () => {
+            product.isInWishlist = true;
+            this.toastr.success('Product added to wishlist!', 'Success');
+          },
+          error: (error) => {
+            console.error('Error adding to wishlist:', error);
+            this.toastr.error('Error adding item to wishlist!', 'Error');
+          },
+        });
+    }
 }

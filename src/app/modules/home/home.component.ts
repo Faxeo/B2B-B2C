@@ -162,11 +162,11 @@ export class HomeComponent implements OnInit {
     this.cartService.cartItemCount$.subscribe((count) => {
       this.cartItemCount = count;
     });
-    if (!this.loginType) {
-      setTimeout(() => {
-        this.openLoginModal();
-      }, 5000);
-    }
+    // if (!this.loginType) {
+    //   setTimeout(() => {
+    //     this.openLoginModal();
+    //   }, 5000);
+    // }
   }
 
   @HostListener('document:click', ['$event'])
