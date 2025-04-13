@@ -38,7 +38,7 @@
         <div class="Login d-flex align-items-center">
 
           <!-- Show Sign in and Sign up when loginType is not 'customer' -->
-          <ng-container *ngIf="loginType !== 'customer'; else customerSection">
+          <ng-container *ngIf="loginType == null; else customerSection">
             <a class="Login d-flex align-items-center text-decoration-none" routerLink="/B2C/login">
               <i class="fa fa-user me-2 user-icon"></i>
               <strong>Sign in</strong>
@@ -51,22 +51,25 @@
 
           <!-- Customer Section (Visible only when loginType is 'customer') -->
           <ng-template #customerSection>
-            <div class="position-relative customer-dropdown">
-              <button class="signup-button ms-3 d-flex align-items-center" (click)="toggleDropdown()">
-                Customer
-                <i class="fa fa-caret-down ms-2"></i>
-              </button>
-
-              <!-- Animated Dropdown Menu -->
-              <div *ngIf="showDropdown" class="dropdown-menu-custom">
-                <a class="dropdown-item-custom" (click)="logout()">
-                  <i class="fa fa-sign-out-alt me-2"></i> Log Out
-                </a>
+            <div class="d-flex customer-dropdown position-relative">
+              <span class="me-2 mt-2">Welcome</span>
+              
+              <div class="dropdown">
+                <button class="signup-button align-items-center"  (click)="toggleDropdown()"
+                >
+                  {{ customer_name }}
+                  <i class="fa fa-caret-down ms-2"></i>
+                </button>
+                <div *ngIf="showDropdown" class="dropdown-menu-custom">
+                  <a class="dropdown-item-custom" (click)="logout()">
+                    <i class="fa fa-sign-out-alt me-2"></i> Log Out
+                  </a>
+                </div>
               </div>
             </div>
           </ng-template>
 
-          <button class="heart-btn ms-3" routerLink="/B2C/wishlist">
+          <button *ngIf="userID !== null" class="heart-btn ms-3" routerLink="/B2C/wishlist">
             <i class="far fa-heart wishlist nav-icon-color"></i>
           </button>
 
@@ -341,17 +344,13 @@
                 </button>
 
                 <ng-template #wishlistButton>
-                  <button class="btn btn-outline-warning w-100">
+                  <button class="btn btn-outline-warning w-100" (click)="addToWishlist(product)">
                     <i class="fa-solid fa-heart"></i>
                     <span class="ms-2">Add to Wishlist</span>
                   </button>
                 </ng-template>
 
               </div>
-            </div>
-            <!-- Cart Confirmation Message -->
-            <div *ngIf="product.showMessage" class="alert alert-success mt-2">
-              Item added to cart successfully!
             </div>
           </div>
         </div>
@@ -574,7 +573,7 @@
 
       <!-- Center Section: Help & Support Links -->
       <div class="footer-left">
-        <h3 class="help">HELP & SUPPORT</h3>
+        <h3 class="help">Help & Support</h3>
         <ul class="footer-center">
           <li><a href="#">Shipping Info</a></li>
           <li><a href="#">Returns</a></li>
@@ -586,7 +585,7 @@
 
       <!-- Right Section: Company Info Links -->
       <div class="footer-left">
-        <h3>COMPANY INFO</h3>
+        <h3>Company Info</h3>
         <ul class="footer-center">
           <li><a href="#">About Us</a></li>
           <li><a href="#">Our Blog</a></li>

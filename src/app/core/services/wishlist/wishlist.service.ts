@@ -27,6 +27,17 @@ export class WishlistService {
     );
   }
 
+  getWishlistDetailsByCustomerId(customerId: number): Observable<any> {
+    console.log('Sending payload to API:', customerId);
+
+    return this.apiService.post<any>(`Wishlist/GetWishlistDetailsByCustomerId?customerId=${customerId}`, {}).pipe(
+      catchError(error => {
+        console.error('API error:', error);
+        return throwError(() => new Error(this.getErrorMessage(error)));
+      })
+    );
+  }
+
   /**
    * Remove a product from the wishlist
    * @param productId - Product ID
