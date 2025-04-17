@@ -7,7 +7,7 @@ import {
   EventEmitter,
   Inject,
   PLATFORM_ID,
-  ChangeDetectorRef, 
+  ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -53,7 +53,7 @@ import { FooterComponent } from '../../layout/footer/footer.component';
     SearchByCategoryComponent,
   ],
   templateUrl: './search-results.component.html',
-  styleUrl: './search-results.component.css'
+  styleUrl: './search-results.component.css',
 })
 export class SearchResultsComponent implements OnChanges {
   @Input() searchResults: any[] = [];
@@ -121,8 +121,6 @@ export class SearchResultsComponent implements OnChanges {
 
   activeSearchType: 'general' | 'category' | 'vehicle' = 'general'; // Default to 'general'
 
-  
-
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private cdr: ChangeDetectorRef,
@@ -148,8 +146,8 @@ export class SearchResultsComponent implements OnChanges {
     private removeFromWishlistService: RemoveFromWishlistService,
     private wishlistService: WishlistService,
     private categoryNavbarSearchService: CategoryNavbarSearchService,
-    private cartSidebarService: CartSidebarService,
-  ) { 
+    private cartSidebarService: CartSidebarService
+  ) {
     this.filterSearchService.selectedCategories$.subscribe((categories) => {
       this.m_id = categories.m_id;
       this.f_id = categories.f_id;
@@ -169,7 +167,7 @@ export class SearchResultsComponent implements OnChanges {
 
       // Reset the search results when filter changes
       this.searchResults = [];
-      this.currentPage = 1; 
+      this.currentPage = 1;
 
       // Only fetch if we have valid category ID
       if (this.m_id) {
@@ -266,14 +264,13 @@ export class SearchResultsComponent implements OnChanges {
         };
         this.searchType = 'vehicleSearch';
         this.performVehicleSearch(vehicleData);
-      }
-      else{
+      } else {
         this.currentSearchState = {
           type: 'generalSearch',
-          data: "",
+          data: '',
         };
         this.searchType = 'generalSearch';
-        this.performGeneralSearch("");
+        this.performGeneralSearch('');
       }
     });
     this.loadWishlist();
@@ -290,11 +287,29 @@ export class SearchResultsComponent implements OnChanges {
     });
 
     this.filterSearchService.selectedMake$.subscribe((make) => {
-      console.log('CategoryResultsComponent: Received new make from service:', make);
+      console.log(
+        'CategoryResultsComponent: Received new make from service:',
+        make
+      );
       this.selectedMake = make;
-      console.log('CategoryResultsComponent: Updated local selectedMake:', this.selectedMake);
-      this.updateSearchWithFilters(); 
+      console.log(
+        'CategoryResultsComponent: Updated local selectedMake:',
+        this.selectedMake
+      );
+      this.updateSearchWithFilters();
     });
+
+    this.filterSearchService.selectedModel$.subscribe(
+      (model: string | null) => {
+        console.log(
+          'SearchResultsComponent: Received new model from service:',
+          model
+        );
+        this.selectedModel = model;
+        // Optionally trigger a search update immediately if needed:
+        this.updateSearchWithFilters();
+      }
+    );
   }
 
   // Trigger a new search when filters are changed
@@ -394,18 +409,17 @@ export class SearchResultsComponent implements OnChanges {
   showTemporaryPopup(message: string, color: string = '#4caf50'): void {
     const popup = document.getElementById('popup-container');
     const popupMessage = document.getElementById('popup-message');
-  
+
     if (popup && popupMessage) {
       popupMessage.innerText = message;
       popup.style.backgroundColor = color; // Set dynamic color
       popup.classList.remove('hidden'); // Show popup
-  
+
       setTimeout(() => {
         popup.classList.add('hidden'); // Hide popup after 3 seconds
       }, 3000);
     }
   }
-  
 
   removeFromWishlist(product: any): void {
     if (!this.userID) {
@@ -422,7 +436,7 @@ export class SearchResultsComponent implements OnChanges {
       .subscribe({
         next: () => {
           product.isInWishlist = false;
-          this.showTemporaryPopup('Product removed from wishlist!', '#e74c3c'); 
+          this.showTemporaryPopup('Product removed from wishlist!', '#e74c3c');
         },
         error: (error) => {
           console.error('Error removing from wishlist:', error);
@@ -745,7 +759,7 @@ export class SearchResultsComponent implements OnChanges {
 
   // Ensure that `performGeneralSearch` respects the current page setting
   performGeneralSearch(query: string): void {
-    if (this.activeSearchType !== 'general' ) {
+    if (this.activeSearchType !== 'general') {
       this.filterSearchService.clearSelectedBrand();
     }
 
@@ -791,7 +805,7 @@ export class SearchResultsComponent implements OnChanges {
         sno: null,
         year: '',
         make: this.selectedMake || '',
-        model: '',
+        model: this.selectedModel || '',
         trim: '',
         engine: '',
         notes: '',
@@ -806,12 +820,16 @@ export class SearchResultsComponent implements OnChanges {
     console.log('Current request data:', this.currentRequestData);
     this.isLocallyLoading = true;
 
+    this.searchResults = [];
+
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
         if (response && response.products) {
-          this.searchResults = response.products;
+          this.searchResults = [...response.products];
           this.totalPages = response.totalPages || 1;
           this.isLocallyLoading = false;
+
+          this.cdr.markForCheck();
           this.cdr.detectChanges();
         } else {
           console.error('Unexpected response format:', response);
@@ -827,18 +845,21 @@ export class SearchResultsComponent implements OnChanges {
   }
 
   performCategorySearch(categoryData: any): void {
-    if (this.activeSearchType !== 'category' || this.lastCategoryData !== categoryData) {
+    if (
+      this.activeSearchType !== 'category' ||
+      this.lastCategoryData !== categoryData
+    ) {
       this.filterSearchService.clearSelectedBrand();
     }
-    
+
     this.activeSearchType = 'category';
     this.lastCategoryData = categoryData;
-  
+
     // Get updated category and brand filters
     const selectedBrandId = this.filterSearchService.selectedBrandValue;
-    const { m_id, f_id, s_id } = this.filterSearchService.selectedCategoriesValue;
+    const { m_id, f_id, s_id } =
+      this.filterSearchService.selectedCategoriesValue;
 
-  
     // Reset and apply the new filters to request data
     this.currentRequestData = {
       productName: '',
@@ -868,7 +889,7 @@ export class SearchResultsComponent implements OnChanges {
         sno: null,
         year: '',
         make: this.selectedMake || '',
-        model: '',
+        model: this.selectedModel || '',
         trim: '',
         engine: '',
         notes: '',
@@ -879,16 +900,29 @@ export class SearchResultsComponent implements OnChanges {
       attributeSearch: false,
       page: this.currentPage,
     };
-  
-    console.log('Updated Category Search Request Data:', this.currentRequestData);
-  
+
+    console.log(
+      'Updated Category Search Request Data:',
+      this.currentRequestData
+    );
+
     this.isLocallyLoading = true;
+
+    this.searchResults = [];
+
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
-        this.searchResults = response.products || [];
-        this.totalPages = response.totalPages || 1;
-        this.isLocallyLoading = false;
-        this.cdr.detectChanges();
+        if (response && response.products) {
+          this.searchResults = [...response.products];
+          this.totalPages = response.totalPages || 1;
+          this.isLocallyLoading = false;
+
+          this.cdr.markForCheck();
+          this.cdr.detectChanges();
+        } else {
+          console.error('Unexpected response format:', response);
+          this.displayMessage('Unexpected response format from the server.');
+        }
       },
       (error) => {
         console.error('Error performing category search:', error);
@@ -900,10 +934,9 @@ export class SearchResultsComponent implements OnChanges {
   searchByCategory(page: number): void {
     console.log('searchByCategory called with page:', page);
     this.currentPage = page;
-    this.emitPageChange(page);  // Triggers pagination and updates request data
+    this.emitPageChange(page); // Triggers pagination and updates request data
   }
-  
-  
+
   performVehicleSearch(vehicleData: any): void {
     debugger;
     if (
@@ -912,15 +945,15 @@ export class SearchResultsComponent implements OnChanges {
     ) {
       this.filterSearchService.clearSelectedBrand();
     }
-  
+
     this.activeSearchType = 'vehicle';
     this.lastVehicleData = vehicleData;
-  
+
     // Fetch updated brand and category filters
     const selectedBrandId = this.filterSearchService.selectedBrandValue;
-    const { m_id, f_id, s_id } = this.filterSearchService.selectedCategoriesValue;
+    const { m_id, f_id, s_id } =
+      this.filterSearchService.selectedCategoriesValue;
 
-  
     // Apply updated filter values to vehicle request data
     this.currentRequestData = {
       productName: '',
@@ -950,7 +983,7 @@ export class SearchResultsComponent implements OnChanges {
         sno: null,
         year: vehicleData.year,
         make: this.selectedMake || vehicleData.make || '',
-        model: vehicleData.model,
+        model: this.selectedModel || vehicleData.model || '',
         trim: vehicleData.trim,
         engine: vehicleData.engine,
         notes: '',
@@ -961,17 +994,28 @@ export class SearchResultsComponent implements OnChanges {
       attributeSearch: false,
       page: this.currentPage,
     };
-  
-    console.log('Updated Vehicle Search Request Data:', this.currentRequestData);
-  
+
+    console.log(
+      'Updated Vehicle Search Request Data:',
+      this.currentRequestData
+    );
+
     this.isLocallyLoading = true;
+   this.searchResults = [];
+
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
-        console.log('Vehicle Search Response:', response);
-        this.searchResults = response.products || [];
-        this.totalPages = response.totalPages || 1;
-        this.isLocallyLoading = false;
-        this.cdr.detectChanges();
+        if (response && response.products) {
+          this.searchResults = [...response.products];
+          this.totalPages = response.totalPages || 1;
+          this.isLocallyLoading = false;
+
+          this.cdr.markForCheck();
+          this.cdr.detectChanges();
+        } else {
+          console.error('Unexpected response format:', response);
+          this.displayMessage('Unexpected response format from the server.');
+        }
       },
       (error) => {
         console.error('Error performing vehicle search:', error);
