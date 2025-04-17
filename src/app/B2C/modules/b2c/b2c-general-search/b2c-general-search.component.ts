@@ -1,4 +1,14 @@
-import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output, PLATFORM_ID, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Inject,
+  Input,
+  OnInit,
+  Output,
+  PLATFORM_ID,
+  SimpleChanges,
+} from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AddToCartService } from '../../../../core/services/add-to-cart/add-to-cart.service';
 import { CartService } from '../../../../core/services/cart/cart.service';
@@ -21,19 +31,18 @@ import { RemoveFromWishlistService } from '../../../../core/services/remove-from
 import { WishlistService } from '../../../../core/services/wishlist/wishlist.service';
 import { CategoryNavbarSearchService } from '../../../../core/services/category-navbar-search/category-navbar-search.service';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { RecentlyViewedComponent } from "../../../../modules/recently-viewed/recently-viewed.component";
+import { RecentlyViewedComponent } from '../../../../modules/recently-viewed/recently-viewed.component';
 import { FormsModule } from '@angular/forms';
-import { FilterComponent } from "../../../../modules/search/filter/filter.component";
+import { FilterComponent } from '../../../../modules/search/filter/filter.component';
 import { CartSidebarComponent } from '../../../../modules/cart-sidebar/cart-sidebar.component';
 
 @Component({
   selector: 'app-b2c-general-search',
   standalone: true,
-  imports: [RouterModule, RecentlyViewedComponent, CommonModule, FormsModule,],
+  imports: [RouterModule, RecentlyViewedComponent, CommonModule, FormsModule],
   templateUrl: './b2c-general-search.component.html',
-  styleUrl: './b2c-general-search.component.css'
+  styleUrl: './b2c-general-search.component.css',
 })
-
 export class B2cGeneralSearchComponent {
   @Input() searchResults: any[] = [];
   @Input() currentPage: number = 1;
@@ -56,7 +65,7 @@ export class B2cGeneralSearchComponent {
   message: string = '';
   showMessage: boolean = false;
   showAlert: boolean = false;
-  cartItemCount: number = 0; 
+  cartItemCount: number = 0;
   isLocallyLoading: boolean = false;
   notificationMessage: string = '';
   notificationAlert: string = '';
@@ -99,7 +108,6 @@ export class B2cGeneralSearchComponent {
   lastVehicleData: string = '';
 
   activeSearchType: 'general' | 'category' | 'vehicle' = 'general'; // Default to 'general'
-
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -167,7 +175,7 @@ export class B2cGeneralSearchComponent {
         } else if (this.activeSearchType === 'vehicle') {
           this.performVehicleSearch(this.lastVehicleData || '');
         }
-      } 
+      }
     });
     this.getMainCategories();
     this.recentlyViewedService.recentlyViewed$.subscribe((products) => {
@@ -195,6 +203,17 @@ export class B2cGeneralSearchComponent {
     });
 
     this.activatedRoute.queryParams.subscribe((params) => {
+      this.searchResults = [];
+      this.currentPage = 1;
+
+      if (params['query']) {
+        this.currentSearchState = {
+          type: 'generalSearch',
+          data: params['query'],
+        };
+        this.searchType = 'generalSearch';
+        this.performGeneralSearch(params['query']);
+      }
       // Reset search results when params change
       debugger;
       this.searchResults = [];
@@ -243,23 +262,20 @@ export class B2cGeneralSearchComponent {
         };
         this.searchType = 'vehicleSearch';
         this.performVehicleSearch(vehicleData);
-      }
-      else{
+      } else {
         this.currentSearchState = {
           type: 'generalSearch',
-          data: "",
+          data: '',
         };
         this.searchType = 'generalSearch';
-        this.performGeneralSearch("");
+        this.performGeneralSearch('');
       }
-      
     });
     this.loadWishlist();
     const { m_id, f_id, s_id } =
       this.categoryNavbarSearchService.getCategoryData();
     console.log('Saved Category Data:', { m_id, f_id, s_id });
 
-    
     this.filterSearchService.selectedCategories$.subscribe((categories) => {
       this.updateSearchWithFilters();
     });
@@ -267,6 +283,20 @@ export class B2cGeneralSearchComponent {
     this.filterSearchService.selectedBrand$.subscribe((brandId) => {
       this.updateSearchWithFilters();
     });
+
+    this.filterSearchService.selectedMake$.subscribe((make) => {
+      console.log('Received new make:', make);
+      this.selectedMake = make;
+      this.updateSearchWithFilters();
+    });
+
+    this.filterSearchService.selectedModel$.subscribe(
+      (model: string | null) => {
+        console.log('Received new model:', model);
+        this.selectedModel = model;
+        this.updateSearchWithFilters();
+      }
+    );
   }
 
   updateSearchWithFilters(): void {
@@ -466,7 +496,7 @@ export class B2cGeneralSearchComponent {
 
   viewProductDetails(productId: number): void {
     if (productId) {
-      this.router.navigate(['/B2C/product-details', productId]); 
+      this.router.navigate(['/B2C/product-details', productId]);
     } else {
       console.error('Product ID is undefined');
     }
@@ -493,7 +523,6 @@ export class B2cGeneralSearchComponent {
     this.currentRequestData.page = this.currentPage;
 
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
-     
       (response: any) => {
         debugger;
         this.searchResults = response.products || [];
@@ -697,11 +726,11 @@ export class B2cGeneralSearchComponent {
         );
     }
   }
-  
+
   // Ensure that `performGeneralSearch` respects the current page setting
   performGeneralSearch(query: string): void {
     debugger;
-    if (this.activeSearchType !== 'general' ) {
+    if (this.activeSearchType !== 'general') {
       this.filterSearchService.clearSelectedBrand();
     }
 
@@ -746,8 +775,8 @@ export class B2cGeneralSearchComponent {
         productID: 0,
         sno: null,
         year: '',
-        make: '',
-        model: '',
+        make: this.selectedMake || '',
+        model: this.selectedModel || '',
         trim: '',
         engine: '',
         notes: '',
@@ -784,18 +813,21 @@ export class B2cGeneralSearchComponent {
   }
 
   performCategorySearch(categoryData: any): void {
-    if (this.activeSearchType !== 'category' || this.lastCategoryData !== categoryData) {
+    if (
+      this.activeSearchType !== 'category' ||
+      this.lastCategoryData !== categoryData
+    ) {
       this.filterSearchService.clearSelectedBrand();
     }
-    
+
     this.activeSearchType = 'category';
     this.lastCategoryData = categoryData;
-  
+
     // Get updated category and brand filters
     const selectedBrandId = this.filterSearchService.selectedBrandValue;
-    const { m_id, f_id, s_id } = this.filterSearchService.selectedCategoriesValue;
+    const { m_id, f_id, s_id } =
+      this.filterSearchService.selectedCategoriesValue;
 
-  
     // Reset and apply the new filters to request data
     this.currentRequestData = {
       productName: '',
@@ -824,8 +856,8 @@ export class B2cGeneralSearchComponent {
         productID: 0,
         sno: null,
         year: '',
-        make: '',
-        model: '',
+        make: this.selectedMake || '',
+        model: this.selectedModel || '',
         trim: '',
         engine: '',
         notes: '',
@@ -836,9 +868,12 @@ export class B2cGeneralSearchComponent {
       attributeSearch: false,
       page: this.currentPage,
     };
-  
-    console.log('Updated Category Search Request Data:', this.currentRequestData);
-  
+
+    console.log(
+      'Updated Category Search Request Data:',
+      this.currentRequestData
+    );
+
     this.isLocallyLoading = true;
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
@@ -858,10 +893,9 @@ export class B2cGeneralSearchComponent {
   searchByCategory(page: number): void {
     console.log('searchByCategory called with page:', page);
     this.currentPage = page;
-    this.emitPageChange(page);  // Triggers pagination and updates request data
+    this.emitPageChange(page); // Triggers pagination and updates request data
   }
-  
-  
+
   performVehicleSearch(vehicleData: any): void {
     if (
       this.activeSearchType !== 'vehicle' ||
@@ -869,15 +903,15 @@ export class B2cGeneralSearchComponent {
     ) {
       this.filterSearchService.clearSelectedBrand();
     }
-  
+
     this.activeSearchType = 'vehicle';
     this.lastVehicleData = vehicleData;
-  
+
     // Fetch updated brand and category filters
     const selectedBrandId = this.filterSearchService.selectedBrandValue;
-    const { m_id, f_id, s_id } = this.filterSearchService.selectedCategoriesValue;
+    const { m_id, f_id, s_id } =
+      this.filterSearchService.selectedCategoriesValue;
 
-  
     // Apply updated filter values to vehicle request data
     this.currentRequestData = {
       productName: '',
@@ -906,8 +940,8 @@ export class B2cGeneralSearchComponent {
         productID: 0,
         sno: null,
         year: vehicleData.year,
-        make: vehicleData.make,
-        model: vehicleData.model,
+        make: this.selectedMake || vehicleData.make || '',
+        model: this.selectedModel || vehicleData.model ||'',
         trim: vehicleData.trim,
         engine: vehicleData.engine,
         notes: '',
@@ -918,9 +952,12 @@ export class B2cGeneralSearchComponent {
       attributeSearch: false,
       page: this.currentPage,
     };
-  
-    console.log('Updated Vehicle Search Request Data:', this.currentRequestData);
-  
+
+    console.log(
+      'Updated Vehicle Search Request Data:',
+      this.currentRequestData
+    );
+
     this.isLocallyLoading = true;
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
@@ -1027,7 +1064,6 @@ export class B2cGeneralSearchComponent {
       });
   }
 
-  
   buyNow(product: any) {
     this.addToCart(product); // Call the existing Add to Cart function
     this.router.navigate(['/B2C/cart']); // Navigate to the cart page
@@ -1102,4 +1138,3 @@ export class B2cGeneralSearchComponent {
     });
   }
 }
-

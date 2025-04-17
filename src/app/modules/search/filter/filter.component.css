@@ -19,7 +19,7 @@
   margin-left: 10px;
 }
 
-
+ 
 /* Back Button */
 .back-button {
   position: relative;
@@ -292,6 +292,12 @@ input[type="checkbox"] {
 .filter-radio label:hover {
   color: #007bff; /* Highlight text on hover */
 }
+
+.sub-category-section {
+  max-height: 200px;  /* Adjust this value as needed */
+  overflow-y: auto;   /* Enables vertical scrolling when content exceeds max height */
+}
+
 
 input[type="radio"] {
   margin-right: 0.5rem;

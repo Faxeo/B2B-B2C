@@ -1,3 +1,5 @@
+// At the top of your filter.component.ts, add an interface:
+
 import {
   ChangeDetectorRef,
   Component,
@@ -10,19 +12,28 @@ import { MainCategoryService } from '../../../core/services/main-category/main-c
 import { FetchChildService } from '../../../core/services/fetch-child/fetch-child.service';
 import { DynamicSearchService } from '../../../core/services/dynamic-search/dynamic-search.service';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms'; 
 import { FilterSearchService } from '../../../core/services/filter-search/filter-search.service';
 import { CategoryNavbarSearchService } from '../../../core/services/category-navbar-search/category-navbar-search.service';
 import { GetBrandsService } from '../../../core/services/get-brands/get-brands.service';
 import { FetchMakeService } from '../../../core/services/fetch-make/fetch-make.service';
 
+interface Vehicle {
+  value_name: string;
+  cvalue_id: number; // adjust if your API returns this as a string
+  showModels: boolean;
+  models: { id: number; value_name: string }[];  // updated to use 'value_name'
+  selectedModel: string | null;  // stores the model’s name
+}
+
 @Component({
   selector: 'app-filter',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule], 
   templateUrl: './filter.component.html',
   styleUrl: './filter.component.css',
 })
+
 export class FilterComponent {
   mainCategories: any[] = [];
   firstSubCategories: any[] = [];
@@ -48,10 +59,13 @@ export class FilterComponent {
   searchTerm: string = '';
  
   selectedBrandName: string | null = null; // Holds the name of the selected brand
-  vehicles: { value_name: string }[] = []; // API response data
-  filteredVehicles: { value_name: string }[] = []; // Filtered vehicle list
+  // Replace the old declarations with:
+  vehicles: Vehicle[] = [];
+  filteredVehicles: Vehicle[] = [];
   searchVehicleTerm: string = ''; // Search input
   selectedVehicle: string | null = null; // Selected vehicle
+
+  selectedModel: string | null = null;
 
   constructor(
     private navigationService: NavigationService,
@@ -93,13 +107,21 @@ export class FilterComponent {
     this.filterSearchService.selectedBrand$.subscribe((brand) => {
       this.selectedBrand = brand;
     
-      // ✅ Restore the brand name using the fetched brand list
+      
       if (brand !== null && this.brands.length > 0) {
         const selected = this.brands.find((b) => b.id === brand);
         this.selectedBrandName = selected ? selected.name : null;
       }
     });
     
+    this.filterSearchService.selectedModel$.subscribe((model: string | null) => {
+      console.log('FilterSearchService: Selected model updated to:', model);
+    });
+
+    this.filterSearchService.selectedModel$.subscribe((model: string | null) => {
+      this.selectedModel = model;
+      console.log('Selected model updated to:', model);
+    });
   }
 
   resetFilters(): void {
@@ -139,8 +161,23 @@ export class FilterComponent {
     this.categoryNavbarSearchService.clearCategoryData();
     this.filterSearchService.clearSelectedMake();
 
+    this.selectedModel = null;
+    this.filterSearchService.clearSelectedModel();
+
     // Manually trigger change detection
     this.cdr.detectChanges();
+
+     // ① Clear every vehicle’s selectedModel and hide its models list
+  this.vehicles.forEach(v => {
+    v.selectedModel = null;
+    v.showModels = false;
+    // (optional) v.models = [];
+  });
+  // ② Refresh filteredVehicles so the UI re-renders
+  this.filteredVehicles = [...this.vehicles];
+
+  // Manually trigger change detection
+  this.cdr.detectChanges();
   }
 
   // filter.component.ts
@@ -148,9 +185,12 @@ export class FilterComponent {
     this.fetchMakeService.fetchMakes(year).subscribe(
       (data) => {
         console.log('Fetched vehicles:', data);
-        // Map each VehicleMake to only the part you need (value_name)
-        this.vehicles = data.map((vehicle) => ({
+        this.vehicles = data.map((vehicle: any) => ({
           value_name: vehicle.value_name,
+          cvalue_id: vehicle.cvalue_id,  // assuming this field is provided by your API
+          showModels: false,             // flag to toggle models dropdown
+          models: [],                    // to hold fetched models
+          selectedModel: null            // initially no model is selected
         }));
         this.filteredVehicles = [...this.vehicles];
       },
@@ -159,6 +199,55 @@ export class FilterComponent {
       }
     );
   }
+  
+
+  toggleVehicleModels(vehicle: any): void {
+    if (!vehicle.showModels) {
+      // Fetch vehicle models using the cvalue_id of the selected make
+      this.fetchChildService.fetchChildren(vehicle.cvalue_id).subscribe(
+        (models) => {
+          // Assuming the models are returned as an array of objects (e.g., [{id, name}])
+          vehicle.models = models;
+          vehicle.showModels = true;
+        },
+        (error) => {
+          console.error('Error fetching vehicle models:', error);
+        }
+      );
+    } else {
+      // If already showing, simply toggle the dropdown
+      vehicle.showModels = !vehicle.showModels;
+    }
+  }
+
+  onVehicleModelChange(vehicle: Vehicle, selectedModelName: string): void {
+    // If the vehicle is not already selected, automatically select it
+    if (this.selectedVehicle !== vehicle.value_name) {
+      // Deselect any previously selected vehicle and its model
+      if (this.selectedVehicle) {
+        const previous = this.vehicles.find(v => v.value_name === this.selectedVehicle);
+        if (previous) {
+          previous.selectedModel = null;
+        }
+      }
+      this.selectedVehicle = vehicle.value_name;
+      this.filterSearchService.updateSelectedMake(vehicle.value_name);
+    }
+    // Toggle the model selection:
+    if (vehicle.selectedModel === selectedModelName) {
+      // Allow deselection of the model
+      vehicle.selectedModel = null;
+      this.filterSearchService.clearSelectedModel();
+      console.log(`Model deselected: ${selectedModelName} for vehicle ${vehicle.value_name}`);
+    } else {
+      // Update the selected model (only one model can be selected per vehicle)
+      vehicle.selectedModel = selectedModelName;
+      this.filterSearchService.updateSelectedModel(selectedModelName);
+      console.log(`Model selected: ${selectedModelName} for vehicle ${vehicle.value_name}`);
+    }
+  }
+  
+  
 
   filterVehicles(): void {
     const searchTerm = this.searchVehicleTerm.toLowerCase();
@@ -167,28 +256,43 @@ export class FilterComponent {
     );
   }
 
-  onVehicleCheckboxChange(vehicleName: string): void {
-    if (this.selectedVehicle === vehicleName) {
-      // Deselect the vehicle if it's already selected
-      this.selectedVehicle = null;
-      this.filterSearchService.clearSelectedMake();
-      console.log('Vehicle deselected:', vehicleName);
+  onVehicleCheckboxChange(vehicle: Vehicle): void {
+    if (this.selectedVehicle === vehicle.value_name) {
+      // … your “deselect” logic …
     } else {
-      // Select the new vehicle
-      this.selectedVehicle = vehicleName;
-      this.filterSearchService.updateSelectedMake(vehicleName);
-      console.log('Vehicle selected:', vehicleName);
+      // clear previous vehicle
+      if (this.selectedVehicle) {
+        const previous = this.vehicles.find(v => v.value_name === this.selectedVehicle);
+        if (previous) {
+          previous.selectedModel = null;
+          previous.showModels     = false;
+        }
+      }
+
+      // select the new one
+      this.selectedVehicle = vehicle.value_name;
+
+      // <<< insert these two lines to reset the model state >>>
+      this.selectedModel = null;
+      this.filterSearchService.clearSelectedModel();
+
+      this.filterSearchService.updateSelectedMake(vehicle.value_name);
+      console.log('Vehicle selected:', vehicle.value_name);
     }
-  }
+  }  
+  
 
   onMakeChange(make: string | null): void {
     this.selectedVehicle = make;
-    console.log('FilterComponent: onMakeChange triggered with make:', make);
+
+    // <<< reset model state whenever the make changes >>>
+    this.selectedModel = null;
+    this.filterSearchService.clearSelectedModel();
+
     this.filterSearchService.updateSelectedMake(make);
-    console.log(
-      'FilterComponent: Updated selectedMake in FilterSearchService.'
-    );
+    console.log('FilterComponent: onMakeChange triggered with make:', make);
   }
+
 
   getBrands(): void {
     this.getBrandsService.fetchBrands().subscribe(
@@ -281,7 +385,6 @@ export class FilterComponent {
     }
   }
   
-
   toggleSection(section: string): void {
     switch (section) {
       case 'filters':

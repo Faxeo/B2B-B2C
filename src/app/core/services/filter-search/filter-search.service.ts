@@ -35,6 +35,10 @@ export class FilterSearchService {
   private selectedMakeSource = new BehaviorSubject<string | null>(null);
   selectedMake$ = this.selectedMakeSource.asObservable();
 
+   // **New: Model BehaviorSubject (string | null)**
+   private selectedModelSource = new BehaviorSubject<string | null>(null);
+   selectedModel$ = this.selectedModelSource.asObservable();
+
   updateSelectedMake(make: string | null): void {
     console.log('FilterSearchService: Received make:', make);
     this.selectedMakeSource.next(make);
@@ -49,7 +53,7 @@ export class FilterSearchService {
   // Update categories
   updateSelectedCategories(
     m_id: number | null,
-    f_id: number | null,
+    f_id: number | null, 
     s_id: number | null
   ): void {
     this.selectedCategoriesSource.next({ m_id, f_id, s_id });
@@ -76,6 +80,18 @@ export class FilterSearchService {
     console.log('Cleared selected brand in service.');
   }
 
+   // **New: Update Selected Model**
+   updateSelectedModel(model: string | null): void {
+    console.log('FilterSearchService: Received model:', model);
+    this.selectedModelSource.next(model);
+    console.log('FilterSearchService: Emitted new model value:', model);
+  }
+
+  clearSelectedModel(): void {
+    this.selectedModelSource.next(null);
+    console.log('Cleared selected model in service.');
+  }
+
   clearAllFilters(): void {
     // Clear categories
     this.selectedCategoriesSource.next({ m_id: null, f_id: null, s_id: null });
@@ -85,6 +101,8 @@ export class FilterSearchService {
     
     // Clear make
     this.selectedMakeSource.next(null);
+
+    this.selectedModelSource.next(null);
     
     console.log('All filters cleared, including categories, brand, and make.');
   }
