@@ -38,7 +38,7 @@
         <div class="Login d-flex align-items-center">
 
           <!-- Show Sign in and Sign up when loginType is not 'customer' -->
-          <ng-container *ngIf="loginType == null; else customerSection">
+          <ng-container *ngIf="!this.userID; else customerSection">
             <a class="Login d-flex align-items-center text-decoration-none" routerLink="/B2C/login">
               <i class="fa fa-user me-2 user-icon"></i>
               <strong>Sign in</strong>
@@ -69,7 +69,7 @@
             </div>
           </ng-template>
 
-          <button *ngIf="userID !== null" class="heart-btn ms-3" routerLink="/B2C/wishlist">
+          <button *ngIf="!this.userID" class="heart-btn ms-3" routerLink="/B2C/wishlist">
             <i class="far fa-heart wishlist nav-icon-color"></i>
           </button>
 
