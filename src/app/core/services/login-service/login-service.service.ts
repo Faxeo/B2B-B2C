@@ -31,6 +31,7 @@ export class LoginService {
       localStorage.setItem('loginType', loginType);
     }
     this.cookieService.set('loginType', loginType, {
+      expires: new Date().getHours() + 2,
       path: '/',
       secure: true,
       sameSite: 'Strict'
@@ -47,6 +48,7 @@ export class LoginService {
       localStorage.setItem('userID', userID);
     }
     this.cookieService.set('userID', userID, {
+      expires: new Date().getHours() + 2,
       path: '/',
       secure: true,
       sameSite: 'Strict'
