@@ -311,3 +311,5 @@ input[type="radio"] {
 input[type="radio"]:hover {
   transform: scale(1.1); /* Slightly enlarge on hover */
 }
+
+/* src\app\dashboard\admin-dashboard\admin-sidebar */

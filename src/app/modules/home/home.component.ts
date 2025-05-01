@@ -37,6 +37,7 @@ import { SubCategoryService } from '../../core/services/sub-category/sub-categor
 import { CategoryIdService } from '../../core/services/category-id/category-id.service';
 import { response } from 'express';
 import { ChatBotComponent } from '../chat-bot/chat-bot.component';
+import { SearchQueryService } from '../../core/services/search-query/search-query.service';
 
 @Component({
   selector: 'app-home',
@@ -118,6 +119,7 @@ export class HomeComponent implements OnInit {
     private subCategoryService: SubCategoryService,
     private router: Router,
     private categoryIdService: CategoryIdService,
+    private searchQueryService: SearchQueryService, 
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
@@ -618,6 +620,7 @@ export class HomeComponent implements OnInit {
   }
 
   onSearch(page: number = 1): void {
+    
     if (!this.loginType) {
       this.openLoginModal();
       return;
@@ -727,6 +730,12 @@ export class HomeComponent implements OnInit {
           this.cdr.detectChanges();
         },
       });
+
+      // … your existing code to read the input …
+    this.searchQuery = searchInputElement.value.trim();
+
+    // **broadcast** to the service
+    this.searchQueryService.setQuery(this.searchQuery);
   }
 
   onPageChange(page: number): void {

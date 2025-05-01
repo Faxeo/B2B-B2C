@@ -1,0 +1,44 @@
+<div class="container">
+    <nav class="sidebar">
+        <button class="back-button" (click)="onBackClick()"><i class="fa fa-arrow-left back-button"
+                aria-hidden="true"></i></button>
+        <div class="logo">
+            <img src="/assets/logo.png" alt="Logo">
+            <span>Sanwa Systems</span>
+        </div>
+
+        <ul>
+            <li [class.active]="selectedComponent === 'profile'">
+                <a (click)="selectComponent('profile')"><i class="icon"></i>Profile</a>
+            </li>
+            <li [class.active]="selectedComponent === 'My Products'">
+                <a (click)="selectComponent('My Products')"><i class="icon"></i>My Products</a>
+            </li>
+            <li [class.active]="selectedComponent === 'Inventory Levels'">
+                <a (click)="selectComponent('Inventory Levels')"><i class="icon"></i>Inventory Levels</a>
+            </li>
+            <li [class.active]="selectedComponent === 'Pending Orders'">
+                <a (click)="selectComponent('Pending Orders')"><i class="icon"></i>Pending Orders</a>
+            </li>
+            <li [class.active]="selectedComponent === 'Shipped Orders'">
+                <a (click)="selectComponent('Shipped Orders')"><i class="icon"></i>Shipped Orders</a>
+            </li>
+            <li [class.active]="selectedComponent === 'Sales History'">
+                <a (click)="selectComponent('Sales History')"><i class="icon"></i>Sales History</a>
+            </li>
+            <li [class.active]="selectedComponent === 'Product Performance'">
+                <a (click)="selectComponent('Product Performance')"><i class="icon"></i>Product Performance</a>
+            </li>
+            <li [class.active]="selectedComponent === 'Customer Insights'">
+                <a (click)="selectComponent('Customer Insights')"><i class="icon"></i>Customer Insights</a>
+            </li>
+        </ul>
+        <div class="profile">
+            <img src="/assets/profile.png" alt="Profile">
+            <div>
+                <span>Merchant User</span>
+                <p>user&#64;mail.com</p>
+            </div>
+        </div>
+    </nav>
+</div>

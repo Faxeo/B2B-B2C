@@ -35,6 +35,7 @@ import { MainCategoryService } from '../../../core/services/main-category/main-c
 import { SubCategoryService } from '../../../core/services/sub-category/sub-category.service';
 import { CategoryIdService } from '../../../core/services/category-id/category-id.service';
 import { B2cSearchComponent } from '../../modules/b2c/b2c-search/b2c-search.component';
+import { SearchQueryService } from '../../../core/services/search-query/search-query.service';
 
 
 @Component({
@@ -111,7 +112,36 @@ export class B2cNavbarComponent {
         private categoryIdService: CategoryIdService,
         @Inject(PLATFORM_ID) private platformId: Object,
         private sidebarToggleService: SidebarToggleService,
+        private searchQueryService: SearchQueryService,
       ) {}
+
+      ngOnInit(): void {
+        this.route.queryParams.subscribe(params => {
+          if (params['query']) {
+            const queryFromUrl = params['query'];
+            this.searchQuery = queryFromUrl;
+            
+            // Update the service (only need to do this in one component)
+            this.searchQueryService.setQuery(queryFromUrl);
+            
+            // Update the input field directly if needed
+            const searchInput = document.getElementById('search-input') as HTMLInputElement;
+            if (searchInput) {
+              searchInput.value = queryFromUrl;
+            }
+          }
+        });
+        
+        // Subscribe to the search query service
+        this.searchQueryService.query$.subscribe(query => {
+          this.searchQuery = query;
+          // Update the input field when the query changes
+          const searchInput = document.getElementById('search-input') as HTMLInputElement;
+          if (searchInput) {
+            searchInput.value = query;
+          }
+        });
+      }
 
    onSearch(page: number = 1): void {
     debugger;
@@ -130,6 +160,7 @@ export class B2cNavbarComponent {
       // Update search query if it has changed
       if (newSearchQuery !== this.searchQuery) {
         this.searchQuery = newSearchQuery;
+        this.searchQueryService.setQuery(this.searchQuery);
       }
   
       // this.showSearchComponent = true;

@@ -5,11 +5,13 @@ import { CheckoutService } from '../../../../core/services/checkout/checkout.ser
 import { CartService } from '../../../../core/services/cart/cart.service';
 import { Router } from '@angular/router';
 import { DeleteCartService } from '../../../../core/services/delete-cart/delete-cart.service';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-b2c-checkout',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, 
+    ToastrModule],
   templateUrl: './b2c-checkout.component.html',
   styleUrl: './b2c-checkout.component.css'
 })
@@ -30,7 +32,8 @@ checkoutForm: FormGroup = this.fb.group({});
     @Inject(PLATFORM_ID) private platformId: any,
     private router: Router,
     private cartService: CartService,
-    private deleteCartService: DeleteCartService
+    private deleteCartService: DeleteCartService,
+    private toastr: ToastrService,
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
@@ -203,43 +206,39 @@ checkoutForm: FormGroup = this.fb.group({});
   
     
     this.checkoutService.processCheckout(checkoutDTO).subscribe({
-      next: (response: any) => {
-        console.log('Checkout successful, response received:', response);
-  
-        if (response && response.success && response.statusCode === 200) {
-          alert('Thanks for shopping with us.');
-           
-        const billData = {
-          transactionID: response.data.transactionID,
-          date: new Date().toLocaleDateString(),
-          orderItems: checkoutDTO.orderItems,
-          totalAmount: checkoutDTO.totalAmount,
-          totalQuantity: checkoutDTO.totalQuantity,
-          billingAddress: checkoutDTO.billingAddress,
-        };
+      next: (resp: any) => {
+        this.isLoading = false;
 
-      
-        this.router.navigate(['B2C/bill'], { state: { billData } });
+        if (resp.success && resp.statusCode === 200) {
+          this.toastr.success('Thanks for shopping with us.', 'Payment Successful');
 
-          this.clearCart(); 
-        } else if (response && response.statusCode === 400) {
-          alert('There was an issue processing your payment: ' + (response.statusReason || 'Unknown error'));
-        } else {
-          alert('Unexpected response received. Please try again.');
+          const billData = {
+            transactionID: resp.data.transactionID,
+            date: new Date().toLocaleDateString(),
+            orderItems: checkoutDTO.orderItems,
+            totalAmount: checkoutDTO.totalAmount,
+            totalQuantity: checkoutDTO.totalQuantity,
+            billingAddress: checkoutDTO.billingAddress,
+          };
+
+          this.clearCart();
+          this.router.navigate(['B2C/bill'], { state: { billData } });
+        }
+        else if (resp.statusCode === 400) {
+          this.toastr.error(resp.statusReason || 'Unknown error', 'Payment Failed');
+        }
+        else {
+          this.toastr.warning('Unexpected response. Please try again.', 'Oops…');
         }
       },
-      error: (error) => {
-        console.error('Checkout error:', error);
-        if (error.error) {
-          console.error('API Error Response:', error.error);
-        }
-        alert('An error occurred during checkout. Please try again.');
+      error: (err: any) => {
         this.isLoading = false;
+        console.error('Checkout error:', err);
+        this.toastr.error('An error occurred during checkout.', 'Error');
       },
       complete: () => {
-        console.log('Checkout process complete.');
-        this.isLoading = false; // Reset the loading state
-      },
+        this.isLoading = false;
+      }
     });
   }
   

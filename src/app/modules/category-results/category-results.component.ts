@@ -68,6 +68,8 @@ export class CategoryResultsComponent implements OnInit {
   lastQuery: string = '';
   currentRequestData: any = {};
   selectedMake: string | null = null;
+  
+  selectedModel: string | null = null;
 
   @Input() searchType:
     | 'generalSearch'
@@ -165,6 +167,24 @@ export class CategoryResultsComponent implements OnInit {
       );
       this.updateFilters(); // Trigger backend request
     });
+
+    this.filterSearchService.selectedModel$.subscribe(
+      (model: string | null) => {
+        console.log(
+          'SearchResultsComponent: Received new model from service:',
+          model
+        );
+        this.selectedModel = model;
+        // Optionally trigger a search update immediately if needed:
+        this.updateSearchWithFilters();
+      }
+    );
+  }
+
+  updateSearchWithFilters(): void {
+    if (this.activeSearchType === 'general') {
+      this.performGeneralSearch(this.lastQuery);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -264,7 +284,7 @@ export class CategoryResultsComponent implements OnInit {
             sno: null,
             year: '',
             make: this.selectedMake || '',
-            model: '',
+        model: this.selectedModel || '',
             trim: '',
             engine: '',
             notes: '',

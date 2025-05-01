@@ -19,6 +19,8 @@ import { B2cSearchComponent } from './B2C/modules/b2c/b2c-search/b2c-search.comp
 import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { CookieService } from 'ngx-cookie-service';
 import { B2cCartComponent } from './B2C/modules/b2c/b2c-cart/b2c-cart.component';
+import { ToastrModule } from 'ngx-toastr';
+import { MerchantProfileComponent } from './dashboard/merchant-dashboard/merchant-profile/merchant-profile.component';
 // import { B2cSearchModule } from './B2C/modules/b2c/b2c-search/b2c-search.module';
 
 
@@ -40,7 +42,15 @@ import { B2cCartComponent } from './B2C/modules/b2c/b2c-cart/b2c-cart.component'
     CartComponent,
     B2cSearchComponent,
     B2cCartComponent,
-    BrowserAnimationsModule,
+    BrowserAnimationsModule,        
+    MerchantProfileComponent,      
+    ToastrModule.forRoot({                 
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      closeButton: true,
+      preventDuplicates: true,
+    }),
+    
     // B2cSearchModule
   ],
   providers: [

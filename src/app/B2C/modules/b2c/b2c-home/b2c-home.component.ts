@@ -41,6 +41,7 @@ import { ChatBotComponent } from '../../../../modules/chat-bot/chat-bot.componen
 import { AddToWishlistService } from '../../../../core/services/add-to-wishlist/add-to-wishlist.service';
 import { ToastrService } from 'ngx-toastr';
 import { CookieService } from 'ngx-cookie-service';
+import { SearchQueryService } from '../../../../core/services/search-query/search-query.service';
 
 
 @Component({
@@ -138,7 +139,8 @@ export class B2CHomeComponent implements OnInit {
     private brandsService: GetBrandsService,
     @Inject(PLATFORM_ID) private platformId: Object,
     private addToWishlistService: AddToWishlistService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private searchQueryService: SearchQueryService,
   ) {}
   
   
@@ -204,6 +206,22 @@ export class B2CHomeComponent implements OnInit {
     });
 
     this.loadBrands();
+
+    this.route.queryParams.subscribe(params => {
+      if (params['query']) {
+        const queryFromUrl = params['query'];
+        this.searchQuery = queryFromUrl;
+        
+        // Update the service (only need to do this in one component)
+        this.searchQueryService.setQuery(queryFromUrl);
+        
+        // Update the input field directly if needed
+        const searchInput = document.getElementById('search-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.value = queryFromUrl;
+        }
+      }
+    });
   }
 
 @HostListener('window:scroll', [])
@@ -738,6 +756,7 @@ onWindowScroll() {
     // Update search query if it has changed
     if (newSearchQuery !== this.searchQuery) {
       this.searchQuery = newSearchQuery;
+      this.searchQueryService.setQuery(this.searchQuery);
     }
 
     // this.showSearchComponent = true;
@@ -806,6 +825,10 @@ onWindowScroll() {
         this.isLoading = false;
         this.isPaginationLoading = false;
         this.cdr.detectChanges(); // Ensure the UI is updated
+      });
+
+      this.router.navigate(['/B2C/search'], {
+        queryParams: { query: this.searchQuery },
       });
   }
 

@@ -17,14 +17,22 @@ import { FilterSearchService } from '../../../core/services/filter-search/filter
 import { CategoryNavbarSearchService } from '../../../core/services/category-navbar-search/category-navbar-search.service';
 import { GetBrandsService } from '../../../core/services/get-brands/get-brands.service';
 import { FetchMakeService } from '../../../core/services/fetch-make/fetch-make.service';
+import {
+  YearMakeModelService,
+  YearMakeModelResponse
+} from '../../../core/services/Year-Make-Model/year-make-model.service';
+
+
 
 interface Vehicle {
-  value_name: string;
-  cvalue_id: number; // adjust if your API returns this as a string
-  showModels: boolean;
-  models: { id: number; value_name: string }[];  // updated to use 'value_name'
-  selectedModel: string | null;  // stores the model’s name
+  value_name: string;             // the make
+  showModels: boolean;            // toggle for the nested list
+  models: { value_name: string }[]; // just the model name
+  selectedModel: string | null;
 }
+
+type MakeItem = YearMakeModelResponse['data']['makes'][number];
+
 
 @Component({
   selector: 'app-filter',
@@ -67,6 +75,8 @@ export class FilterComponent {
 
   selectedModel: string | null = null;
 
+  
+
   constructor(
     private navigationService: NavigationService,
     private fetchChildService: FetchChildService,
@@ -78,7 +88,8 @@ export class FilterComponent {
     private filterSearchService: FilterSearchService,
     private categoryNavbarSearchService: CategoryNavbarSearchService,
     private getBrandsService: GetBrandsService,
-    private fetchMakeService: FetchMakeService
+    private fetchMakeService: FetchMakeService,
+    private yearMakeModelService: YearMakeModelService,
   ) {}
 
   ngOnInit(): void {
@@ -181,58 +192,47 @@ export class FilterComponent {
   }
 
   // filter.component.ts
-  fetchVehicles(year: string): void {
-    this.fetchMakeService.fetchMakes(year).subscribe(
-      (data) => {
-        console.log('Fetched vehicles:', data);
-        this.vehicles = data.map((vehicle: any) => ({
-          value_name: vehicle.value_name,
-          cvalue_id: vehicle.cvalue_id,  // assuming this field is provided by your API
-          showModels: false,             // flag to toggle models dropdown
-          models: [],                    // to hold fetched models
-          selectedModel: null            // initially no model is selected
+  fetchVehicles(_year: string): void {
+    this.yearMakeModelService.getHierarchy()
+      .subscribe((resp: YearMakeModelResponse) => {
+        if (!resp.success) {
+          console.error('Hierarchy error:', resp.statusReason);
+          return;
+        }
+  
+        this.vehicles = resp.data.makes.map((m: MakeItem) => ({
+          value_name: m.make,
+          showModels: false,
+          models: m.models.map((modelName: string) => ({
+            value_name: modelName
+          })),
+          selectedModel: null
         }));
+  
         this.filteredVehicles = [...this.vehicles];
-      },
-      (error) => {
-        console.error('Error fetching vehicles:', error);
-      }
-    );
+      }, err => {
+        console.error('API error fetching hierarchy', err);
+      });
+  }
+
+  toggleVehicleModels(vehicle: Vehicle): void {
+    vehicle.showModels = !vehicle.showModels;
   }
   
 
-  toggleVehicleModels(vehicle: any): void {
-    if (!vehicle.showModels) {
-      // Fetch vehicle models using the cvalue_id of the selected make
-      this.fetchChildService.fetchChildren(vehicle.cvalue_id).subscribe(
-        (models) => {
-          // Assuming the models are returned as an array of objects (e.g., [{id, name}])
-          vehicle.models = models;
-          vehicle.showModels = true;
-        },
-        (error) => {
-          console.error('Error fetching vehicle models:', error);
-        }
-      );
-    } else {
-      // If already showing, simply toggle the dropdown
-      vehicle.showModels = !vehicle.showModels;
-    }
-  }
-
   onVehicleModelChange(vehicle: Vehicle, selectedModelName: string): void {
     // If the vehicle is not already selected, automatically select it
-    if (this.selectedVehicle !== vehicle.value_name) {
-      // Deselect any previously selected vehicle and its model
-      if (this.selectedVehicle) {
-        const previous = this.vehicles.find(v => v.value_name === this.selectedVehicle);
-        if (previous) {
-          previous.selectedModel = null;
-        }
-      }
-      this.selectedVehicle = vehicle.value_name;
-      this.filterSearchService.updateSelectedMake(vehicle.value_name);
-    }
+    // if (this.selectedVehicle !== vehicle.value_name) {
+    //   // Deselect any previously selected vehicle and its model
+    //   if (this.selectedVehicle) {
+    //     const previous = this.vehicles.find(v => v.value_name === this.selectedVehicle);
+    //     if (previous) {
+    //       previous.selectedModel = null;
+    //     }
+    //   }
+    //   this.selectedVehicle = vehicle.value_name;
+    //   this.filterSearchService.updateSelectedMake(vehicle.value_name);
+    // }
     // Toggle the model selection:
     if (vehicle.selectedModel === selectedModelName) {
       // Allow deselection of the model
@@ -258,7 +258,9 @@ export class FilterComponent {
 
   onVehicleCheckboxChange(vehicle: Vehicle): void {
     if (this.selectedVehicle === vehicle.value_name) {
-      // … your “deselect” logic …
+      this.selectedVehicle = null;
+      this.filterSearchService.clearSelectedMake();
+      console.log('Vehicle deselected:', vehicle.value_name);
     } else {
       // clear previous vehicle
       if (this.selectedVehicle) {

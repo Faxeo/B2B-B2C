@@ -116,6 +116,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'merchant-dashboard',
+    loadChildren: () =>
+      import('./dashboard/merchant-dashboard/merchant-dashboard.module').then(
+        (m) => m.MerchantDashboardModule
+      ),
+  },
+  {
     path: 'sub-home',
     loadChildren: () =>
       import('./modules/home/sub-home/sub-home.module').then(

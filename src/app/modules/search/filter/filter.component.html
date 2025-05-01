@@ -3,12 +3,12 @@
   <button class="back-button" (click)="onBackClick()">
     <i class="fa fa-arrow-left back-button" aria-hidden="true"></i>
   </button>
-
+  
   <div>
     <img class="reset" (click)="resetFilters()" src="/assets/reset-1.png" alt="">
   </div>
-
-
+  
+  
   <!-- Filters Section -->
   <div class="filter-section">
     <h3 class="Options" (click)="toggleSection('filters')">
@@ -33,7 +33,7 @@
       </div>
     </div>
   </div>
-
+  
   <!-- Category Section -->
   <div class="filter-section">
     <h3 class="Options" (click)="toggleSection('categories')">
@@ -50,7 +50,7 @@
           <span (click)="toggleSubCategories(category)" class="toggle-icon">
             <i class="fa" [ngClass]="category.showSubCategories ? 'fa-minus' : 'fa-plus'"></i>
           </span>
-
+  
           <!-- First Subcategory Level -->
           <div *ngIf="category.showSubCategories" class="sub-category-section">
             <div *ngFor="let subCategory of category.firstSubCategories" class="filter-checkbox sub-category">
@@ -62,7 +62,7 @@
               <span (click)="toggleSecondSubCategories(subCategory)" class="toggle-icon">
                 <i class="fa" [ngClass]="subCategory.showSecondSubCategories ? 'fa-minus' : 'fa-plus'"></i>
               </span>
-
+  
               <!-- Second Subcategory Level -->
               <div *ngIf="subCategory.showSecondSubCategories" class="second-sub-category-section">
                 <div *ngFor="let secondSubCategory of subCategory.secondSubCategories"
@@ -81,50 +81,64 @@
       </div>
     </div>
   </div>
+  
+  
+ <!-- Vehicles Section -->
+<div class="filter-section">
+  <h3 class="Options" (click)="toggleSection('manufacturers')">
+    Vehicles
+    <span *ngIf="selectedVehicle" class="selected-label">
+      {{ selectedVehicle }}
+      ({{ selectedModel ? selectedModel : 'All' }})
+    </span>
+    <i class="fa" [ngClass]="showManufacturers ? 'fa-minus' : 'fa-plus'"></i>
+  </h3>
 
+  <div *ngIf="showManufacturers" class="brands-container">
+    <input
+      type="text"
+      class="manufacturer-search"
+      placeholder="Search vehicles..."
+      [(ngModel)]="searchVehicleTerm"
+      (input)="filterVehicles()"
+    />
 
-  <!-- Vehicles Section -->
-  <div class="filter-section">
-    <h3 class="Options" (click)="toggleSection('manufacturers')">
-      Vehicles
-      <span *ngIf="selectedVehicle" class="selected-label">
-        {{ selectedVehicle }} ({{ selectedModel ? selectedModel : 'All' }})
-      </span>
-      <i class="fa" [ngClass]="showManufacturers ? 'fa-minus' : 'fa-plus'"></i>
-    </h3>
-    <div *ngIf="showManufacturers" class="brands-container">
-      <input type="text" class="manufacturer-search" placeholder="Search vehicles..." [(ngModel)]="searchVehicleTerm"
-        (input)="filterVehicles()" />
+    <!-- For each make -->
+    <div *ngFor="let vehicle of filteredVehicles">
+      <!-- 1) the make itself -->
+      <div class="filter-checkbox">
+        <label>
+          <input
+            type="checkbox"
+            [checked]="selectedVehicle === vehicle.value_name && !selectedModel"
+            (change)="onVehicleCheckboxChange(vehicle)"
+          />
+          {{ vehicle.value_name }}
+        </label>
+      </div>
 
-      <!-- Iterate over each vehicle -->
-      <div *ngFor="let vehicle of filteredVehicles" class="filter-checkbox">
-        <div class="vehicle-item">
-          <label>
-            <input type="checkbox" [checked]="selectedVehicle === vehicle.value_name"
-              (change)="onVehicleCheckboxChange(vehicle)" />
-
-            {{ vehicle.value_name }}
-          </label>
-          <!-- Toggle Icon for Models List -->
-          <span (click)="toggleVehicleModels(vehicle)" class="toggle-icon">
-            <i class="fa" [ngClass]="vehicle.showModels ? 'fa-minus' : 'fa-plus'"></i>
-          </span>
-        </div>
-        <!-- Nested Models List (similar to sub-categories) -->
-        <div *ngIf="vehicle.showModels" class="sub-category-section">
-          <div *ngFor="let model of vehicle.models" class="filter-checkbox nested-sub-category">
-            <label>
-              <input type="checkbox" [checked]="vehicle.selectedModel === model.value_name"
-                (change)="onVehicleModelChange(vehicle, model.value_name)" />
-              {{ model.value_name }}
-            </label>
-          </div>
-        </div>
+      <!-- 2) each model prefixed by the make -->
+      <div
+        *ngFor="let model of vehicle.models"
+        class="filter-checkbox nested-sub-category"
+      >
+        <label>
+          <input
+            type="checkbox"
+            [checked]="
+              selectedVehicle === vehicle.value_name &&
+              selectedModel === model.value_name
+            "
+            (change)="onVehicleModelChange(vehicle, model.value_name)"
+          />
+          {{ vehicle.value_name }} {{ model.value_name }}
+        </label>
       </div>
     </div>
   </div>
+</div>
 
-
+  
   <!-- Brands Section -->
   <div class="filter-section">
     <h3 class="Options" (click)="toggleSection('brands')">
@@ -142,14 +156,14 @@
         <label>
           <input type="checkbox" [checked]="selectedBrand === brand.id"
             (change)="onCheckboxChange(brand.id, brand.name)" />
-
+  
           {{ brand.name }}
         </label>
       </div>
     </div>
   </div>
-
-
+  
+  
   <!-- Price Section -->
   <!-- <div class="filter-section">
     <h3 class="Options" (click)="toggleSection('prices')">
@@ -166,7 +180,7 @@
       </div>
     </div>
   </div> -->
-
+  
   <!-- Material Section -->
   <div class="filter-section">
     <h3 class="Options" (click)="toggleSection('materials')">
@@ -183,4 +197,4 @@
       </div>
     </div>
   </div>
-</div>
+  </div>

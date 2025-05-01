@@ -66,11 +66,11 @@
                   <div class="product-divider text-end">
                     <div class="product-price-info mb-3">
                       <h3 class="out-of-stock"
-                        *ngIf="product.product_price === 0 || product.availableQuantity === 0">
+                        *ngIf="product.price  === 0 || product.availableQuantity === 0">
                         Out of Stock
                       </h3>
-                      <h3 class="product-price" *ngIf="product.product_price > 0 && product.availableQuantity > 0">
-                        ${{ product.product_price }} <span class="text-muted">/ each</span>
+                      <h3 class="product-price" *ngIf="product.price> 0 && product.availableQuantity > 0">
+                        ${{ product.price }} <span class="text-muted">/ each</span>
                       </h3>
                       <!-- Wishlist Button -->
                       <i class="bi wishlist-btn fs-4" [class.bi-heart-fill]="product.isInWishlist"
@@ -178,11 +178,11 @@
                   <div class="product-divider text-end">
                     <div class="product-price-info mb-3">
                       <h3 class="out-of-stock"
-                        *ngIf="product.product_price === 0 || product.availableQuantity === 0">
+                        *ngIf="product.price === 0 || product.availableQuantity === 0">
                         Out of Stock
                       </h3>
-                      <h3 class="product-price" *ngIf="product.product_price > 0 && product.availableQuantity > 0">
-                        ${{ product.product_price }} <span class="text-muted">/ each</span>
+                      <h3 class="product-price" *ngIf="product.price> 0 && product.availableQuantity > 0">
+                        ${{ product.price }} <span class="text-muted">/ each</span>
                       </h3>
                       <!-- Wishlist Button -->
                       <i class="bi wishlist-btn fs-4" [class.bi-heart-fill]="product.isInWishlist"
@@ -292,11 +292,11 @@
                   <div class="product-divider text-end">
                     <div class="product-price-info mb-3">
                       <h3 class="out-of-stock"
-                        *ngIf="product.product_price === 0 || product.availableQuantity === 0">
+                        *ngIf="product.price=== 0 || product.availableQuantity === 0">
                         Out of Stock
                       </h3>
-                      <h3 class="product-price" *ngIf="product.product_price > 0 && product.availableQuantity > 0">
-                        ${{ product.product_price }} <span class="text-muted">/ each</span>
+                      <h3 class="product-price" *ngIf="product.price> 0 && product.availableQuantity > 0">
+                        ${{ product.price }} <span class="text-muted">/ each</span>
                       </h3>
                       <!-- Wishlist Button -->
                       <i class="bi wishlist-btn fs-4" [class.bi-heart-fill]="product.isInWishlist"
@@ -420,12 +420,12 @@
                       <!-- Display 'Out of Stock' or Price based on conditions if logged in -->
                       <ng-template #loggedInPrice>
                         <h3 class="product-price"
-                          *ngIf="product.product_price === 0 || product.product_quantity === 0; else showPrice">
+                          *ngIf="product.price=== 0 || product.product_quantity === 0; else showPrice">
                           Out of Stock
                         </h3>
                         <ng-template #showPrice>
                           <h3 class="product-price">
-                            ${{ product.product_price }} / each
+                            ${{ product.price }} / each
                           </h3>
                         </ng-template>
                       </ng-template>
@@ -453,9 +453,9 @@
                       <label for="quantity">Qty:</label>
                       <input type="number" id="quantity" [(ngModel)]="product.product_quantity" class="form-control"
                         min="1" max="99"
-                        [disabled]="loginType === 'admin' || product.product_quantity === 0 || product.product_price === 0 || loginType == null" />
+                        [disabled]="loginType === 'admin' || product.product_quantity === 0 || product.price === 0 || loginType == null" />
                       <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product)"
-                        [disabled]="loginType === 'admin' || product.product_quantity === 0 || product.product_price === 0 || loginType == null">
+                        [disabled]="loginType === 'admin' || product.product_quantity === 0 || product.price === 0 || loginType == null">
                         Add to Cart
                       </button>
                     </div>

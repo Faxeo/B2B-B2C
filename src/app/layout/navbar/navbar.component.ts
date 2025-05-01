@@ -20,6 +20,7 @@ import { DynamicSearchService } from '../../core/services/dynamic-search/dynamic
 import { SidebarComponent } from '../sidebar/sidebar/sidebar.component';
 import { CategoryNavbarSearchService } from '../../core/services/category-navbar-search/category-navbar-search.service';
 import { FilterSearchService } from '../../core/services/filter-search/filter-search.service';
+import { SearchQueryService } from '../../core/services/search-query/search-query.service';
 
 @Component({
   selector: 'app-navbar',
@@ -64,6 +65,8 @@ export class NavbarComponent {
   showCategoryForm: boolean = false;
   searchResults: any[] = [];
 
+  navbarSearchTerm = '';
+
 
   constructor(
     private router: Router,
@@ -77,7 +80,8 @@ export class NavbarComponent {
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object,
     private categoryNavbarSearchService: CategoryNavbarSearchService, 
-    private filterSearchService: FilterSearchService
+    private filterSearchService: FilterSearchService,
+    private searchQueryService: SearchQueryService,
   ) {}
 
   ngOnInit(): void {
@@ -97,6 +101,12 @@ export class NavbarComponent {
         this.cartService.setUserDetails(this.userID, this.loginType);
       });
     }
+
+    this.searchQueryService.query$.subscribe(term => {
+      this.navbarSearchTerm = term;
+      this.cdr.markForCheck();
+    });
+
 
     this.categories$ = this.apiService.getMainCategory().pipe(
       map((categories) =>
@@ -189,6 +199,8 @@ export class NavbarComponent {
     this.filterSearchService.selectedBrand$.subscribe((brandId) => {
       selectedBrandId = brandId;
     });
+
+    this.searchQueryService.setQuery(this.navbarSearchTerm);
 
     const requestData = { 
       productName: '',

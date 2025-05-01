@@ -2,7 +2,7 @@
   <app-admin-sidebar (componentSelected)="selectComponent($event)"></app-admin-sidebar>
   <div class="main-content">
     <div *ngIf="showDefaultView()" class="content-area">
-      <app-profile></app-profile>
+      <app-merchant-profile></app-merchant-profile>
       <app-order-summary></app-order-summary>
     </div>
     <div *ngIf="showDefaultView()" class="below-content">

@@ -6,7 +6,7 @@
     
     <div class="d-flex flex-grow-1 align-items-center justify-content-between">
       <div class="search-bar">
-        <input id="search-input" type="search" placeholder="Search for products" (keydown.enter)="onSearch()">
+        <input id="search-input" type="search" placeholder="Search for products"  [value]="searchQuery" (keydown.enter)="onSearch()">
         <button class="search-icon" (click)="onSearch()">
           <i class="fa fa-search"></i>
         </button>
