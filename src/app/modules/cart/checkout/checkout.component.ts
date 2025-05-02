@@ -6,14 +6,16 @@ import { ChangeDetectorRef } from '@angular/core';
 import { NgZone } from '@angular/core';
 import { CartService } from '../../../core/services/cart/cart.service';
 import { Router } from '@angular/router';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 
 @Component({
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule ],
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.css'],
 })
+
 export class CheckoutComponent implements OnInit {
   checkoutForm: FormGroup = this.fb.group({});
   checkoutPayload: any;
@@ -30,7 +32,8 @@ export class CheckoutComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private cartService: CartService,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private toastr: ToastrService, 
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
@@ -144,103 +147,72 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
-  createPaymentOrder(token: string) {
-    // Retrieve billing details from the form
-    const billingDetails = this.checkoutForm.value;
-  
-    if (!billingDetails) {
-      console.error('Billing details not found');
-      this.isLoading = false; // Reset loading state if there's an error
-      return;
-    }
-  
-    // Retrieve cart items directly from localStorage
-    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-    
-    console.log('Cart Items used for Checkout:', cartItems);
-  
-    // Calculate totalAmount and totalQuantity based on cart items
-    const totalAmount = cartItems.reduce((sum: number, item: any) => sum + (item.discountedPrice || item.price) * item.quantity, 0);
-    const totalQuantity = cartItems.reduce((sum: number, item: any) => sum + item.quantity, 0);
-  
-    // Retrieve userID and loginType directly from localStorage
-    const userID = localStorage.getItem('userID');
-    const loginType = localStorage.getItem('loginType') || 'customer'; // Default to 'customer' if loginType is not available
-  
-    console.log('User ID:', userID);
-    console.log('Login Type:', loginType);
-  
-    // Determine customerID or businessID based on loginType
-    const customerID = loginType === 'customer' ? (userID ? parseInt(userID, 10) : 0) : 0;
-    const businessID = loginType === 'business' ? (userID ? parseInt(userID, 10) : 0) : 0;
-  
-    // Create checkout DTO with the retrieved details
-    const checkoutDTO = {
-      orderItems: cartItems.map((item: any) => ({
-        productId: item.productId,
-        name: item.name,
-        upc: item.upc,
-        price: item.price,
-        image: item.image,
-        quantity: item.quantity,
+  createPaymentOrder(token: string): void {
+    this.isLoading = true;
+
+    const billing = this.checkoutForm.value;
+    const cartItems: any[] = JSON.parse(localStorage.getItem('cartItems') || '[]');
+
+    const dto = {
+      orderItems: cartItems.map(i => ({
+        productId: i.productId,
+        name: i.name,
+        upc: i.upc,
+        price: i.price,
+        image: i.image,
+        quantity: i.quantity,
       })),
-      totalAmount: totalAmount,
-      totalQuantity: totalQuantity,
-      nonce: token, // Payment token
+      totalAmount: cartItems.reduce((sum, i) => sum + (i.discountedPrice || i.price) * i.quantity, 0),
+      totalQuantity: cartItems.reduce((sum, i) => sum + i.quantity, 0),
+      nonce: token,
       billingAddress: {
-        shippingName: billingDetails.fullName,
-        shippingEmail: billingDetails.email,
-        address: billingDetails.billingAddress,
-        city: billingDetails.city,
-        country: billingDetails.country,
-        state: billingDetails.state,
-        zipCode: billingDetails.zipcode,
-        contact: billingDetails.contact,
+        shippingName: billing.fullName,
+        shippingEmail: billing.email,
+        address: billing.billingAddress,
+        city: billing.city,
+        country: billing.country,
+        state: billing.state,
+        zipCode: billing.zipcode,
+        contact: billing.contact,
       },
-      customerID: customerID,
-      businessID: businessID,
+      customerID: +(localStorage.getItem('userID') || 0),
+      businessID: 0,
     };
-  
-    console.log('Updated Checkout DTO:', checkoutDTO);
-  
-    
-    this.checkoutService.processCheckout(checkoutDTO).subscribe({
-      next: (response: any) => {
-        console.log('Checkout successful, response received:', response);
-  
-        if (response && response.success && response.statusCode === 200) {
-          alert('Thanks for shopping with us.');
-           
-      const billData = {
-        transactionID: response.data.transactionID,
-        date: new Date().toLocaleDateString(),
-        orderItems: checkoutDTO.orderItems,
-        totalAmount: checkoutDTO.totalAmount,
-        totalQuantity: checkoutDTO.totalQuantity,
-        billingAddress: checkoutDTO.billingAddress,
-      };
 
-      
-      this.router.navigate(['/B2B/bill'], { state: { billData } });
+    this.checkoutService.processCheckout(dto).subscribe({
+      next: (res: any) => {
+        this.isLoading = false;
 
-          this.clearCart(); 
-        } else if (response && response.statusCode === 400) {
-          alert('There was an issue processing your payment: ' + (response.statusReason || 'Unknown error'));
-        } else {
-          alert('Unexpected response received. Please try again.');
+        if (res.success && res.statusCode === 200) {
+          this.toastr.success('Thanks for shopping with us.', 'Payment Successful');
+
+          const billData = {
+            transactionID: res.data.transactionID,
+            date: new Date().toLocaleDateString(),
+            orderItems: dto.orderItems,
+            totalAmount: dto.totalAmount,
+            totalQuantity: dto.totalQuantity,
+            billingAddress: dto.billingAddress,
+          };
+
+          this.clearCart();
+          this.router.navigate(['/B2B/bill'], { state: { billData } });
+        }
+        else if (res.statusCode === 400) {
+          this.toastr.error(res.statusReason || 'Unknown error', 'Payment Failed');
+        }
+        else {
+          this.toastr.warning('Unexpected response. Please try again.', 'Oops…');
         }
       },
-      error: (error) => {
-        console.error('Checkout error:', error);
-        if (error.error) {
-          console.error('API Error Response:', error.error);
-        }
-        alert('An error occurred during checkout. Please try again.');
+      error: (err: any) => {
+        this.isLoading = false;
+        console.error('Checkout error:', err);
+        this.toastr.error('An error occurred during checkout.', 'Error');
       },
       complete: () => {
-        console.log('Checkout process complete.');
-        this.isLoading = false; // Reset the loading state
-      },
+        this.isLoading = false;
+      }
     });
   }
   

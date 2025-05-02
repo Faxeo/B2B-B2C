@@ -1,6 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
 /* @import "~@angular/material/prebuilt-themes/indigo-pink.css"; */
 
+/* ensure toastr toasts float on top */
+.toast-top-right,
+.toast-bottom-right,
+.toast-top-full-width,
+.toast-bottom-full-width {
+  z-index: 999999 !important;
+}
+
+
 html,
 body {
   height: 100%;

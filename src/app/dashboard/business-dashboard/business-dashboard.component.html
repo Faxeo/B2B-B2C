@@ -2,7 +2,7 @@
   <app-business-sidebar (componentSelected)="selectComponent($event)"  [class.blurred]="showVehicleForm"></app-business-sidebar>
   <div class="main-content">
     <div *ngIf="showDefaultView()" class="content-area">
-      <app-profile></app-profile>
+      <app-merchant-profile></app-merchant-profile>
       <app-orders-to-receive></app-orders-to-receive>
       <!-- <app-orders-to-ship></app-orders-to-ship> -->
     </div>
@@ -13,7 +13,7 @@
       <app-orders-to-ship></app-orders-to-ship>
     </div>
     <div *ngIf="selectedComponent === 'profile'" class="below-content">
-      <app-profile></app-profile>
+      <app-merchant-profile></app-merchant-profile>
     </div>
 
     <div *ngIf="selectedComponent === 'track-order'" class="below-content">

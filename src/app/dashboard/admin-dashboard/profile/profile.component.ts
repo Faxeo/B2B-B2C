@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-profile',
+  selector: 'app-merchant-profile',
   standalone: true,
   imports: [CommonModule, NgIf, FormsModule],
   templateUrl: './profile.component.html',
