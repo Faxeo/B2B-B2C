@@ -284,22 +284,43 @@ export class B2cGeneralSearchComponent {
       this.updateSearchWithFilters();
     });
 
-    this.filterSearchService.selectedMake$.subscribe((make) => {
-      console.log('Received new make:', make);
-      this.selectedMake = make;
+      // Subscribe to the search trigger event
+    this.filterSearchService.searchRequested.subscribe(() => {
+      console.log('Search triggered by filter change');
       this.updateSearchWithFilters();
     });
 
-    this.filterSearchService.selectedModel$.subscribe(
-      (model: string | null) => {
-        console.log('Received new model:', model);
+      this.filterSearchService.selectedMake$.subscribe((make) => {
+        console.log('Updating local make state:', make);
+        this.selectedMake = make;
+        // Don't call updateSearchWithFilters() here
+      });
+      
+      this.filterSearchService.selectedModel$.subscribe((model) => {
+        console.log('Updating local model state:', model);
         this.selectedModel = model;
-        this.updateSearchWithFilters();
-      }
-    );
+        // Don't call updateSearchWithFilters() here
+      });
   }
 
-  updateSearchWithFilters(): void {
+  
+
+ // Modified updateSearchWithFilters method with debouncing
+private searchDebounceTimer: any;
+
+updateSearchWithFilters(): void {
+  // Clear any previous timer
+  if (this.searchDebounceTimer) {
+    clearTimeout(this.searchDebounceTimer);
+  }
+  
+  // Use a small debounce to ensure we're not triggering multiple searches in quick succession
+  this.searchDebounceTimer = setTimeout(() => {
+    // Get current filter state all at once
+    const filters = this.filterSearchService.getCurrentFilters();
+    console.log('Updating search with latest filters:', filters);
+    
+    // Perform search based on the active search type
     if (this.activeSearchType === 'general') {
       this.performGeneralSearch(this.lastQuery);
     } else if (this.activeSearchType === 'category') {
@@ -307,7 +328,8 @@ export class B2cGeneralSearchComponent {
     } else if (this.activeSearchType === 'vehicle') {
       this.performVehicleSearch(this.lastVehicleData);
     }
-  }
+  }, 50); // 50ms debounce time
+}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (isPlatformBrowser(this.platformId)) {

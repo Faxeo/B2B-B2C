@@ -155,36 +155,69 @@ export class CategoryResultsComponent implements OnInit {
       this.updateFilters();
     });
 
-    this.filterSearchService.selectedMake$.subscribe((make) => {
-      console.log(
-        'CategoryResultsComponent: Received new make from service:',
-        make
-      );
-      this.selectedMake = make;
-      console.log(
-        'CategoryResultsComponent: Updated local selectedMake:',
-        this.selectedMake
-      );
-      this.updateFilters(); // Trigger backend request
-    });
+    // this.filterSearchService.selectedMake$.subscribe((make) => {
+    //   console.log(
+    //     'CategoryResultsComponent: Received new make from service:',
+    //     make
+    //   );
+    //   this.selectedMake = make;
+    //   console.log(
+    //     'CategoryResultsComponent: Updated local selectedMake:',
+    //     this.selectedMake
+    //   );
+    //   this.updateFilters(); // Trigger backend request
+    // });
 
-    this.filterSearchService.selectedModel$.subscribe(
-      (model: string | null) => {
-        console.log(
-          'SearchResultsComponent: Received new model from service:',
-          model
-        );
-        this.selectedModel = model;
-        // Optionally trigger a search update immediately if needed:
-        this.updateSearchWithFilters();
-      }
-    );
+    // this.filterSearchService.selectedModel$.subscribe(
+    //   (model: string | null) => {
+    //     console.log(
+    //       'SearchResultsComponent: Received new model from service:',
+    //       model
+    //     );
+    //     this.selectedModel = model;
+    //     // Optionally trigger a search update immediately if needed:
+    //     this.updateSearchWithFilters();
+    //   }
+    // );
+
+           // Subscribe to the search trigger event
+  this.filterSearchService.searchRequested.subscribe(() => {
+    console.log('Search triggered by filter change');
+    this.updateSearchWithFilters();
+  });
+
+    this.filterSearchService.selectedMake$.subscribe((make) => {
+      console.log('Updating local make state:', make);
+      this.selectedMake = make;
+      // Don't call updateSearchWithFilters() here
+    });
+    
+    this.filterSearchService.selectedModel$.subscribe((model) => {
+      console.log('Updating local model state:', model);
+      this.selectedModel = model;
+      // Don't call updateSearchWithFilters() here
+    });
   }
 
+  private searchDebounceTimer: any;
+
   updateSearchWithFilters(): void {
-    if (this.activeSearchType === 'general') {
-      this.performGeneralSearch(this.lastQuery);
+    // Clear any previous timer
+    if (this.searchDebounceTimer) {
+      clearTimeout(this.searchDebounceTimer);
     }
+    
+    // Use a small debounce to ensure we're not triggering multiple searches in quick succession
+    this.searchDebounceTimer = setTimeout(() => {
+      // Get current filter state all at once
+      const filters = this.filterSearchService.getCurrentFilters();
+      console.log('Updating search with latest filters:', filters);
+      
+      // Perform search based on the active search type
+      if (this.activeSearchType === 'general') {
+        this.performGeneralSearch(this.lastQuery);
+      }
+    }, 50); // 50ms debounce time
   }
 
   ngOnChanges(changes: SimpleChanges): void {
