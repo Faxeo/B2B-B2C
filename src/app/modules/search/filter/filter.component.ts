@@ -1,5 +1,3 @@
-// At the top of your filter.component.ts, add an interface:
-
 import {
   ChangeDetectorRef,
   Component,
@@ -12,36 +10,32 @@ import { MainCategoryService } from '../../../core/services/main-category/main-c
 import { FetchChildService } from '../../../core/services/fetch-child/fetch-child.service';
 import { DynamicSearchService } from '../../../core/services/dynamic-search/dynamic-search.service';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
 import { FilterSearchService } from '../../../core/services/filter-search/filter-search.service';
 import { CategoryNavbarSearchService } from '../../../core/services/category-navbar-search/category-navbar-search.service';
 import { GetBrandsService } from '../../../core/services/get-brands/get-brands.service';
 import { FetchMakeService } from '../../../core/services/fetch-make/fetch-make.service';
 import {
   YearMakeModelService,
-  YearMakeModelResponse
+  YearMakeModelResponse,
 } from '../../../core/services/Year-Make-Model/year-make-model.service';
 
-
-
 interface Vehicle {
-  value_name: string;             // the make
-  showModels: boolean;            // toggle for the nested list
+  value_name: string; // the make
+  showModels: boolean; // toggle for the nested list
   models: { value_name: string }[]; // just the model name
   selectedModel: string | null;
 }
 
 type MakeItem = YearMakeModelResponse['data']['makes'][number];
 
-
 @Component({
   selector: 'app-filter',
   standalone: true,
-  imports: [CommonModule, FormsModule], 
+  imports: [CommonModule, FormsModule],
   templateUrl: './filter.component.html',
   styleUrl: './filter.component.css',
 })
-
 export class FilterComponent {
   mainCategories: any[] = [];
   firstSubCategories: any[] = [];
@@ -65,7 +59,7 @@ export class FilterComponent {
   filteredBrands: { id: number; name: string; selected: boolean }[] = [];
 
   searchTerm: string = '';
- 
+
   selectedBrandName: string | null = null; // Holds the name of the selected brand
   // Replace the old declarations with:
   vehicles: Vehicle[] = [];
@@ -74,8 +68,6 @@ export class FilterComponent {
   selectedVehicle: string | null = null; // Selected vehicle
 
   selectedModel: string | null = null;
-
-  
 
   constructor(
     private navigationService: NavigationService,
@@ -89,7 +81,7 @@ export class FilterComponent {
     private categoryNavbarSearchService: CategoryNavbarSearchService,
     private getBrandsService: GetBrandsService,
     private fetchMakeService: FetchMakeService,
-    private yearMakeModelService: YearMakeModelService,
+    private yearMakeModelService: YearMakeModelService
   ) {}
 
   ngOnInit(): void {
@@ -117,22 +109,28 @@ export class FilterComponent {
 
     this.filterSearchService.selectedBrand$.subscribe((brand) => {
       this.selectedBrand = brand;
-    
-      
+
       if (brand !== null && this.brands.length > 0) {
         const selected = this.brands.find((b) => b.id === brand);
         this.selectedBrandName = selected ? selected.name : null;
       }
     });
-    
-    this.filterSearchService.selectedModel$.subscribe((model: string | null) => {
-      console.log('FilterSearchService: Selected model updated to:', model);
-    });
 
-    this.filterSearchService.selectedModel$.subscribe((model: string | null) => {
-      this.selectedModel = model;
-      console.log('Selected model updated to:', model);
-    });
+    this.filterSearchService.selectedModel$.subscribe(
+      (model: string | null) => {
+        console.log('FilterSearchService: Selected model updated to:', model);
+      }
+    );
+
+    this.filterSearchService.selectedModel$.subscribe(
+      (model: string | null) => {
+        this.selectedModel = model;
+        console.log('Selected model updated to:', model);
+      }
+    );
+
+    // this.vehicles = fetchedData;
+    this.filteredVehicles = [...this.vehicles];
   }
 
   resetFilters(): void {
@@ -178,111 +176,233 @@ export class FilterComponent {
     // Manually trigger change detection
     this.cdr.detectChanges();
 
-     // ① Clear every vehicle’s selectedModel and hide its models list
-  this.vehicles.forEach(v => {
-    v.selectedModel = null;
-    v.showModels = false;
-    // (optional) v.models = [];
-  });
-  // ② Refresh filteredVehicles so the UI re-renders
-  this.filteredVehicles = [...this.vehicles];
+    // ① Clear every vehicle’s selectedModel and hide its models list
+    this.vehicles.forEach((v) => {
+      v.selectedModel = null;
+      v.showModels = false;
+      // (optional) v.models = [];
+    });
+    // ② Refresh filteredVehicles so the UI re-renders
+    this.filteredVehicles = [...this.vehicles];
 
-  // Manually trigger change detection
-  this.cdr.detectChanges();
+    // Manually trigger change detection
+    this.cdr.detectChanges();
   }
 
   // filter.component.ts
   fetchVehicles(_year: string): void {
-    this.yearMakeModelService.getHierarchy()
-      .subscribe((resp: YearMakeModelResponse) => {
+    this.yearMakeModelService.getHierarchy().subscribe(
+      (resp: YearMakeModelResponse) => {
         if (!resp.success) {
           console.error('Hierarchy error:', resp.statusReason);
           return;
         }
-  
+
         this.vehicles = resp.data.makes.map((m: MakeItem) => ({
           value_name: m.make,
           showModels: false,
           models: m.models.map((modelName: string) => ({
-            value_name: modelName
+            value_name: modelName,
           })),
-          selectedModel: null
+          selectedModel: null,
         }));
-  
+
         this.filteredVehicles = [...this.vehicles];
-      }, err => {
+      },
+      (err) => {
         console.error('API error fetching hierarchy', err);
-      });
-  }
-
-  toggleVehicleModels(vehicle: Vehicle): void {
-    vehicle.showModels = !vehicle.showModels;
-  }
-  
-
-  onVehicleModelChange(vehicle: Vehicle, selectedModelName: string): void {
-    // If the vehicle is not already selected, automatically select it
-    // if (this.selectedVehicle !== vehicle.value_name) {
-    //   // Deselect any previously selected vehicle and its model
-    //   if (this.selectedVehicle) {
-    //     const previous = this.vehicles.find(v => v.value_name === this.selectedVehicle);
-    //     if (previous) {
-    //       previous.selectedModel = null;
-    //     }
-    //   }
-    //   this.selectedVehicle = vehicle.value_name;
-    //   this.filterSearchService.updateSelectedMake(vehicle.value_name);
-    // }
-    // Toggle the model selection:
-    if (vehicle.selectedModel === selectedModelName) {
-      // Allow deselection of the model
-      vehicle.selectedModel = null;
-      this.filterSearchService.clearSelectedModel();
-      console.log(`Model deselected: ${selectedModelName} for vehicle ${vehicle.value_name}`);
-    } else {
-      // Update the selected model (only one model can be selected per vehicle)
-      vehicle.selectedModel = selectedModelName;
-      this.filterSearchService.updateSelectedModel(selectedModelName);
-      console.log(`Model selected: ${selectedModelName} for vehicle ${vehicle.value_name}`);
-    }
-  }
-  
-  
-
-  filterVehicles(): void {
-    const searchTerm = this.searchVehicleTerm.toLowerCase();
-    this.filteredVehicles = this.vehicles.filter((vehicle) =>
-      vehicle.value_name.toLowerCase().includes(searchTerm)
+      }
     );
   }
 
-  onVehicleCheckboxChange(vehicle: Vehicle): void {
-    if (this.selectedVehicle === vehicle.value_name) {
-      this.selectedVehicle = null;
-      this.filterSearchService.clearSelectedMake();
-      console.log('Vehicle deselected:', vehicle.value_name);
-    } else {
-      // clear previous vehicle
-      if (this.selectedVehicle) {
-        const previous = this.vehicles.find(v => v.value_name === this.selectedVehicle);
-        if (previous) {
-          previous.selectedModel = null;
-          previous.showModels     = false;
-        }
-      }
+  // toggleVehicleModels(vehicle: Vehicle): void {
+  //   vehicle.showModels = !vehicle.showModels;
+  // }
 
-      // select the new one
-      this.selectedVehicle = vehicle.value_name;
+  // onVehicleModelChange(vehicle: Vehicle, modelName: string): void {
+  //   // if you clicked the same make+model, clear everything
+  //   if (
+  //     this.selectedVehicle === vehicle.value_name &&
+  //     this.selectedModel === modelName
+  //   ) {
+  //     console.log('Model deselected, clearing selection');
+  //     this.clearAllSelections();
+  //     return;
+  //   }
 
-      // <<< insert these two lines to reset the model state >>>
-      this.selectedModel = null;
-      this.filterSearchService.clearSelectedModel();
+  //   // otherwise clear old, then select this one
+  //   this.clearAllSelections();
 
-      this.filterSearchService.updateSelectedMake(vehicle.value_name);
-      console.log('Vehicle selected:', vehicle.value_name);
+  //   this.selectedVehicle = vehicle.value_name;
+  //   this.selectedModel = modelName;
+
+  //   this.filterSearchService.updateSelectedMake(vehicle.value_name);
+  //   this.filterSearchService.updateSelectedModel(modelName);
+
+  //   console.log(
+  //     `Model selected: ${modelName} for vehicle ${vehicle.value_name}`
+  //   );
+  // }
+
+  filterVehicles(): void {
+    
+    const raw = this.searchVehicleTerm.trim().toLowerCase();
+    if (!raw) {
+      this.filteredVehicles = [...this.vehicles];
+      return;
     }
-  }  
+    const terms = raw.split(/\s+/); // e.g. "subaru legacy" → ["subaru","legacy"]
+
+    this.filteredVehicles = this.vehicles
+      .map((vehicle) => {
+        const makeLC = vehicle.value_name.toLowerCase();
+
+        
+        const makeMatchesAll = terms.every((t) => makeLC.includes(t));
+        if (makeMatchesAll) {
+          
+          return { ...vehicle };
+        }
+
+      
+        const matchingModels = vehicle.models.filter((model) => {
+          const composite = (
+            vehicle.value_name +
+            ' ' +
+            model.value_name
+          ).toLowerCase();
+          
+          return terms.every((t) => composite.includes(t));
+        });
+
+        if (matchingModels.length) {
+          
+          return {
+            ...vehicle,
+            models: matchingModels,
+          };
+        }
+
+        
+        return null;
+      })
+      
+      .filter((v): v is Vehicle => v !== null);
+  }
+
+  toggleModelVisibility(vehicle: Vehicle, event: Event): void {
+    // Prevent the click from triggering the make checkbox
+    event.stopPropagation();
+
+    // Toggle the model visibility
+    vehicle.showModels = !vehicle.showModels;
+  }
+
+  private clearAllSelections(): void {
+    this.selectedVehicle = null;
+    this.selectedModel = null;
+
+    this.vehicles.forEach((v) => {
+      v.selectedModel = null;
+      v.showModels = false;
+    });
+
+  }
+
+  onVehicleCheckboxChange(vehicle: Vehicle): void {
+    // If this vehicle is already selected (without a specific model)
+    const isDeselect = this.selectedVehicle === vehicle.value_name && !this.selectedModel;
+    
+    if (isDeselect) {
+      // Uncheck the make
+      this.deselectVehicle(vehicle);
+    } else {
+      // Select this make (and deselect any previously selected make/model)
+      this.selectVehicle(vehicle);
+    }
+  }
+
+  onVehicleModelChange(vehicle: Vehicle, modelName: string): void {
+    // If this exact make+model combo is already selected
+    const isDeselect = 
+      this.selectedVehicle === vehicle.value_name && 
+      this.selectedModel === modelName;
+    
+    if (isDeselect) {
+      // Uncheck the model but keep the make selected
+      this.deselectModel(vehicle);
+    } else {
+      // Select this model (and deselect any previously selected model)
+      this.selectModel(vehicle, modelName);
+    }
+  }
+
+  private deselectVehicle(vehicle: Vehicle) {
+    // Clear local state
+    this.selectedVehicle = null;
+    this.selectedModel = null;
+    
+    // Update service state
+    this.filterSearchService.clearSelectedMake();
+    // Note: clearSelectedMake already clears the model too
+    
+    // Collapse model list
+    vehicle.showModels = false;
+    
+    // Update UI
+    this.cdr.detectChanges();
+  }
   
+  private deselectModel(vehicle: Vehicle) {
+    // Clear model but keep make selected
+    this.selectedModel = null;
+    
+    // Update service state
+    this.filterSearchService.clearSelectedModel();
+    
+    // Keep models visible for convenience
+    vehicle.showModels = true;
+    
+    // Update UI
+    this.cdr.detectChanges();
+  }
+  
+  private selectVehicle(vehicle: Vehicle) {
+    // First clear any previous selections
+    this.clearAllSelections();
+    
+    // Set new selection
+    this.selectedVehicle = vehicle.value_name;
+    this.selectedModel = null;
+    
+    // Update service state
+    this.filterSearchService.updateSelectedMake(vehicle.value_name);
+    this.filterSearchService.clearSelectedModel();
+    
+    // Expand this vehicle's models
+    vehicle.showModels = true;
+    
+    // Update UI
+    this.cdr.detectChanges();
+  }
+  
+  private selectModel(vehicle: Vehicle, modelName: string) {
+    // First clear any previous selections
+    this.clearAllSelections();
+    
+    // Set new selection
+    this.selectedVehicle = vehicle.value_name;
+    this.selectedModel = modelName;
+    
+    // Update service state - this will trigger search only once
+    this.filterSearchService.updateMakeAndModel(vehicle.value_name, modelName);
+    
+    // Make sure models are visible
+    vehicle.showModels = true;
+    
+    // Update UI
+    this.cdr.detectChanges();
+  }
 
   onMakeChange(make: string | null): void {
     this.selectedVehicle = make;
@@ -295,7 +415,6 @@ export class FilterComponent {
     console.log('FilterComponent: onMakeChange triggered with make:', make);
   }
 
-
   getBrands(): void {
     this.getBrandsService.fetchBrands().subscribe(
       (data) => {
@@ -304,11 +423,11 @@ export class FilterComponent {
           selected: false,
         }));
         this.filteredBrands = [...this.brands];
-  
+
         // ✅ Restore selected brand name after brands are loaded
         const savedBrandId = this.filterSearchService.selectedBrandValue;
         if (savedBrandId !== null) {
-          const selected = this.brands.find(b => b.id === savedBrandId);
+          const selected = this.brands.find((b) => b.id === savedBrandId);
           if (selected) {
             this.selectedBrand = savedBrandId;
             this.selectedBrandName = selected.name;
@@ -320,7 +439,6 @@ export class FilterComponent {
       }
     );
   }
-  
 
   onBrandChange(brandId: number | null): void {
     if (brandId === null) {
@@ -375,7 +493,7 @@ export class FilterComponent {
     } else {
       // Deselect all brands and select the new one
       this.brands.forEach((brand) => (brand.selected = false));
-  
+
       const selectedBrand = this.brands.find((brand) => brand.id === brandId);
       if (selectedBrand) {
         selectedBrand.selected = true;
@@ -386,7 +504,7 @@ export class FilterComponent {
       }
     }
   }
-  
+
   toggleSection(section: string): void {
     switch (section) {
       case 'filters':
@@ -572,7 +690,6 @@ export class FilterComponent {
   }
 
   onFirstSubCategoryChange(subCategory: any): void {
-
     // Find the parent main category
     const parentCategory = this.mainCategories.find((category) =>
       category.firstSubCategories?.some((sub: any) => sub === subCategory)
@@ -595,19 +712,19 @@ export class FilterComponent {
     });
 
     // Prevent selection if parent category is not checked
-  if (!parentCategory?.selected) {
-    subCategory.selected = false;
-    return;
-  }
-
-  // If first subcategory is unchecked, uncheck second subcategories
-  if (!subCategory.selected) {
-    if (subCategory.secondSubCategories) {
-      subCategory.secondSubCategories.forEach(
-        (secSub: any) => (secSub.selected = false)
-      );
+    if (!parentCategory?.selected) {
+      subCategory.selected = false;
+      return;
     }
-  }
+
+    // If first subcategory is unchecked, uncheck second subcategories
+    if (!subCategory.selected) {
+      if (subCategory.secondSubCategories) {
+        subCategory.secondSubCategories.forEach(
+          (secSub: any) => (secSub.selected = false)
+        );
+      }
+    }
 
     // Clear second subcategories when switching first subcategories
     if (!subCategory.selected) {
@@ -664,12 +781,11 @@ export class FilterComponent {
     subCategory: any,
     selectedSecondSubCategory: any
   ): void {
-
-     // Prevent selection if first subcategory is not checked
-  if (!subCategory.selected) {
-    selectedSecondSubCategory.selected = false;
-    return;
-  }
+    // Prevent selection if first subcategory is not checked
+    if (!subCategory.selected) {
+      selectedSecondSubCategory.selected = false;
+      return;
+    }
     // Deselect other second subcategories of the same parent subcategory
     if (selectedSecondSubCategory.selected) {
       subCategory.secondSubCategories.forEach(
