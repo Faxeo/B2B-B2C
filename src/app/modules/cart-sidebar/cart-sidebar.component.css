@@ -235,3 +235,12 @@
 }
 
 
+/* disabled state for both buttons */
+.view-cart-btn:disabled,
+.checkout-btn:disabled {
+  background-color: #ccc;      /* light gray */
+  color: #888;                 /* medium gray */
+  opacity: 0.7;                /* slightly transparent */
+  cursor: not-allowed;         /* show the “no-go” cursor */
+  pointer-events: none;        /* prevent any hover/click effects */
+}

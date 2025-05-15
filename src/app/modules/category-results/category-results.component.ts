@@ -37,7 +37,6 @@ import { CartSidebarService } from '../../core/services/cart-sidebar/cart-sideba
   templateUrl: './category-results.component.html',
   styleUrl: './category-results.component.css',
 })
-
 export class CategoryResultsComponent implements OnInit {
   @Input() searchResults: any[] = [];
   m_id: number | null = null;
@@ -68,7 +67,7 @@ export class CategoryResultsComponent implements OnInit {
   lastQuery: string = '';
   currentRequestData: any = {};
   selectedMake: string | null = null;
-  
+
   selectedModel: string | null = null;
 
   @Input() searchType:
@@ -180,18 +179,18 @@ export class CategoryResultsComponent implements OnInit {
     //   }
     // );
 
-           // Subscribe to the search trigger event
-  this.filterSearchService.searchRequested.subscribe(() => {
-    console.log('Search triggered by filter change');
-    this.updateSearchWithFilters();
-  });
+    // Subscribe to the search trigger event
+    this.filterSearchService.searchRequested.subscribe(() => {
+      console.log('Search triggered by filter change');
+      this.updateSearchWithFilters();
+    });
 
     this.filterSearchService.selectedMake$.subscribe((make) => {
       console.log('Updating local make state:', make);
       this.selectedMake = make;
       // Don't call updateSearchWithFilters() here
     });
-    
+
     this.filterSearchService.selectedModel$.subscribe((model) => {
       console.log('Updating local model state:', model);
       this.selectedModel = model;
@@ -206,13 +205,13 @@ export class CategoryResultsComponent implements OnInit {
     if (this.searchDebounceTimer) {
       clearTimeout(this.searchDebounceTimer);
     }
-    
+
     // Use a small debounce to ensure we're not triggering multiple searches in quick succession
     this.searchDebounceTimer = setTimeout(() => {
       // Get current filter state all at once
       const filters = this.filterSearchService.getCurrentFilters();
       console.log('Updating search with latest filters:', filters);
-      
+
       // Perform search based on the active search type
       if (this.activeSearchType === 'general') {
         this.performGeneralSearch(this.lastQuery);
@@ -235,6 +234,14 @@ export class CategoryResultsComponent implements OnInit {
         this.isLocallyLoading = false;
         this.cdr.detectChanges();
       }
+    }
+
+    if (changes['searchResults'] && Array.isArray(this.searchResults)) {
+      this.searchResults.forEach((product) => {
+        if (product.product_quantity == null) {
+          product.product_quantity = 1;
+        }
+      });
     }
   }
 
@@ -317,7 +324,7 @@ export class CategoryResultsComponent implements OnInit {
             sno: null,
             year: '',
             make: this.selectedMake || '',
-        model: this.selectedModel || '',
+            model: this.selectedModel || '',
             trim: '',
             engine: '',
             notes: '',
@@ -340,7 +347,10 @@ export class CategoryResultsComponent implements OnInit {
               console.log('Response from Backend:', response);
 
               if (response?.products) {
-                this.searchResults = response.products;
+                this.searchResults = response.products.map((p: any) => ({
+                  ...p,
+                  product_quantity: 1,
+                }));
                 this.totalPages = response.totalPages || 1;
               } else {
                 console.error('Unexpected response format:', response);
@@ -403,29 +413,38 @@ export class CategoryResultsComponent implements OnInit {
   }
 
   emitPageChange(page: number): void {
-    // console.log(
-    //   `emitPageChange called with page: ${page} and searchType: ${this.searchType}`
-    // );
+    if (page < 1 || page > this.totalPages) return;
+
     this.currentPage = page;
+    // this.isPaginationLoading = true;
     this.isLocallyLoading = true;
 
-    // Update skip and page for pagination
-    this.currentRequestData.skip = (this.currentPage - 1) * 10;
-    this.currentRequestData.page = this.currentPage;
+    // update your paging params
+    this.currentRequestData.skip = (page - 1) * this.pageSize;
+    this.currentRequestData.page = page;
 
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
-        this.searchResults = response.products || [];
+        const prods = response.products || [];
+
+        // stamp in a default quantity of 1 on every product
+        this.searchResults = prods.map((p: any) => ({
+          ...p,
+          product_quantity: 1,
+        }));
+
         this.totalPages = response.totalPages || 1;
         this.isLocallyLoading = false;
+        // this.isPaginationLoading = false;
         this.cdr.detectChanges();
       },
       (error: any) => {
-        // console.error(
-        //   `Error fetching products for ${this.searchType} pagination:`,
-        //   error
-        // );
+        console.error(
+          `Error fetching products for ${this.searchType} pagination:`,
+          error
+        );
         this.isLocallyLoading = false;
+        // this.isPaginationLoading = false;
       }
     );
   }
@@ -570,6 +589,7 @@ export class CategoryResultsComponent implements OnInit {
     if (page < 1 || page > this.totalPages || page === this.currentPage) return;
     this.currentPage = page;
     this.isLocallyLoading = true;
+    this.emitPageChange(page);
   }
 
   nextPage(): void {

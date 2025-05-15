@@ -8,7 +8,7 @@ import {
   Output,
   PLATFORM_ID,
   SimpleChanges,
-} from '@angular/core';
+} from '@angular/core'; 
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AddToCartService } from '../../../../core/services/add-to-cart/add-to-cart.service';
 import { CartService } from '../../../../core/services/cart/cart.service';
@@ -347,6 +347,14 @@ updateSearchWithFilters(): void {
         this.cdr.detectChanges();
       }
     }
+
+    if (changes['searchResults'] && Array.isArray(this.searchResults)) {
+      this.searchResults.forEach((product) => {
+        if (product.product_quantity == null) {
+          product.product_quantity = 1;
+        }
+      });
+    }
   }
 
   // Fetch wishlist details
@@ -508,6 +516,7 @@ updateSearchWithFilters(): void {
     this.isLocallyLoading = true;
 
     this.currentPage = page;
+    this.emitPageChange(page);
     // this.fetchProducts(
     //   this.m_id ?? 0,
     //   this.f_id ?? 0,
@@ -533,23 +542,30 @@ updateSearchWithFilters(): void {
     this.showRecentlyViewed = false;
   }
 
-  emitPageChange(page: number): void {
-    console.log(
-      `emitPageChange called with page: ${page} and searchType: ${this.searchType}`
-    );
+ emitPageChange(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
+
     this.currentPage = page;
+    this.isPaginationLoading = true;
     this.isLocallyLoading = true;
 
-    // Update skip and page for pagination
-    this.currentRequestData.skip = (this.currentPage - 1) * 10;
-    this.currentRequestData.page = this.currentPage;
+    // update your paging params
+    this.currentRequestData.skip = (page - 1) * this.pageSize;
+    this.currentRequestData.page = page;
 
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
-        debugger;
-        this.searchResults = response.products || [];
+        const prods = response.products || [];
+
+        // stamp in a default quantity of 1 on every product
+        this.searchResults = prods.map((p: any) => ({
+          ...p,
+          product_quantity: 1,
+        }));
+
         this.totalPages = response.totalPages || 1;
         this.isLocallyLoading = false;
+        this.isPaginationLoading = false;
         this.cdr.detectChanges();
       },
       (error: any) => {
@@ -558,6 +574,7 @@ updateSearchWithFilters(): void {
           error
         );
         this.isLocallyLoading = false;
+        this.isPaginationLoading = false;
       }
     );
   }
@@ -817,7 +834,10 @@ updateSearchWithFilters(): void {
       (response: any) => {
         debugger;
         if (response && response.products) {
-          this.searchResults = response.products;
+          this.searchResults = response.products.map((p: any) => ({
+            ...p,
+            product_quantity: 1,
+          }));
           this.totalPages = response.totalPages || 1;
           this.isLocallyLoading = false;
           this.cdr.detectChanges();
@@ -900,7 +920,10 @@ updateSearchWithFilters(): void {
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
         debugger;
-        this.searchResults = response.products || [];
+        this.searchResults = response.products.map((p: any) => ({
+            ...p,
+            product_quantity: 1,
+          }));
         this.totalPages = response.totalPages || 1;
         this.isLocallyLoading = false;
         this.cdr.detectChanges();
@@ -984,7 +1007,10 @@ updateSearchWithFilters(): void {
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
         debugger;
-        this.searchResults = response.products || [];
+        this.searchResults = response.products.map((p: any) => ({
+            ...p,
+            product_quantity: 1,
+          }));
         this.totalPages = response.totalPages || 1;
         this.isLocallyLoading = false;
         this.cdr.detectChanges();

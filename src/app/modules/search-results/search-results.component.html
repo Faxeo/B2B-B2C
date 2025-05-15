@@ -92,13 +92,17 @@
                       </div>
                     </ng-template>
                   </div>
- 
+
                   <!-- Add to Cart -->
                   <div class="cart-action">
                     <label for="quantity">Qty:</label>
-                    <input type="number" id="quantity" [(ngModel)]="product.availableQuantity" class="form-control"
-                      min="1" max="99"
-                      [disabled]="loginType === 'admin' || product.availableQuantity === 0 || product.price === 0 || loginType == null" />
+                    <input type="number" id="quantity-{{product.product_id}}" class="form-control" min="1" max="99"
+                      [(ngModel)]="product.product_quantity" [disabled]="
+                                 loginType === 'admin'
+                                 || product.availableQuantity === 0
+                                 || product.product_price === 0
+                                 || !loginType
+                                                " />
                     <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product)"
                       [disabled]="loginType === 'admin' || product.availableQuantity === 0 || product.price === 0 || loginType == null">
                       Add to Cart
@@ -120,8 +124,7 @@
 
         <!-- Spinner for both initial loading and pagination -->
         <div *ngIf="isLocallyLoading" class="loading-overlay">
-          <img src="assets/Images/loader.gif" alt="Loading..."
-            class="loading-gif" />
+          <img src="assets/Images/loader.gif" alt="Loading..." class="loading-gif" />
         </div>
 
 
@@ -237,9 +240,13 @@
                   <!-- Add to Cart -->
                   <div class="cart-action">
                     <label for="quantity">Qty:</label>
-                    <input type="number" id="quantity" [(ngModel)]="product.availableQuantity" class="form-control"
-                      min="1" max="99"
-                      [disabled]="loginType === 'admin' || product.availableQuantity === 0  || product.price === 0 || loginType == null" />
+                    <input type="number" id="quantity-{{product.product_id}}" class="form-control" min="1" max="99"
+                      [(ngModel)]="product.product_quantity" [disabled]="
+                                 loginType === 'admin'
+                                 || product.availableQuantity === 0
+                                 || product.product_price === 0
+                                 || !loginType
+                                                " />
                     <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product)"
                       (click)="addVehicle(product)"
                       [disabled]="loginType === 'admin' || product.availableQuantity === 0 || product.price === 0 || loginType == null">
@@ -262,11 +269,10 @@
 
         <!-- Spinner for both initial loading and pagination -->
         <div *ngIf="isLocallyLoading" class="loading-overlay">
-          <img src="assets/Images/loader.gif" alt="Loading..."
-            class="loading-gif" />
+          <img src="assets/Images/loader.gif" alt="Loading..." class="loading-gif" />
         </div>
 
-        <!-- Vehicle Search Pagination Controls --> 
+        <!-- Vehicle Search Pagination Controls -->
         <div *ngIf="totalPages > 1" class="pagination-container">
           <button (click)="searchByVehicle(currentPage - 1)" [disabled]="currentPage === 1" class="pagination-arrow">
             &laquo;
@@ -376,9 +382,13 @@
                   <!-- Add to Cart -->
                   <div class="cart-action">
                     <label for="quantity">Qty:</label>
-                    <input type="number" id="quantity" [(ngModel)]="product.availableQuantity" class="form-control"
-                      min="1" max="99"
-                      [disabled]="loginType === 'admin' || product.availableQuantity === 0 || product.price === 0 || loginType == null" />
+                    <input type="number" id="quantity-{{product.product_id}}" class="form-control" min="1" max="99"
+                      [(ngModel)]="product.product_quantity" [disabled]="
+                                 loginType === 'admin'
+                                 || product.availableQuantity === 0
+                                 || product.product_price === 0
+                                 || !loginType
+                                                " />
                     <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product)"
                       [disabled]="loginType === 'admin' || product.availableQuantity === 0 || product.price === 0 || loginType == null">
                       Add to Cart
@@ -400,8 +410,7 @@
 
         <!-- Spinner for both initial loading and pagination -->
         <div *ngIf="isLocallyLoading" class="loading-overlay">
-          <img src="assets/Images/loader.gif" alt="Loading..."
-            class="loading-gif" />
+          <img src="assets/Images/loader.gif" alt="Loading..." class="loading-gif" />
         </div>
 
         <!-- Category Search Pagination Controls -->
@@ -443,8 +452,7 @@
         <div class="product-list container-fluid" *ngIf="!isLoading && products.length > 0">
           <!-- Spinner for both initial loading and pagination -->
           <div *ngIf="isLocallyLoading" class="loading-overlay">
-            <img src="assets/Images/loader.gif" alt="Loading..."
-              class="loading-gif" />
+            <img src="assets/Images/loader.gif" alt="Loading..." class="loading-gif" />
           </div>
           <div class="row">
             <div *ngFor="let product of products">

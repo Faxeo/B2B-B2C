@@ -6,6 +6,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BusinessCartService } from '../../core/services/business-cart/business-cart.service';
 import { DeleteCartService } from '../../core/services/delete-cart/delete-cart.service';
+import { Subscription } from 'rxjs';
+import { OnDestroy } from '@angular/core';
+
 
 @Component({
   standalone: true, 
@@ -14,9 +17,11 @@ import { DeleteCartService } from '../../core/services/delete-cart/delete-cart.s
   templateUrl: './cart-sidebar.component.html',
   styleUrls: ['./cart-sidebar.component.css']
 })
-
-export class CartSidebarComponent implements OnInit {
+ 
+export class CartSidebarComponent implements OnInit, OnDestroy  {
  // Define the type for cartItems, adding cartId and discountedPrice as optional fields
+ private cartSub!: Subscription;
+
  cartItems: Array<{
   cartId: string; // Add cartId for deletion
   productId: string;
@@ -65,17 +70,24 @@ ngOnInit(): void {
 
   if (this.businessId !== null) {
     this.loadCartData(); // Fetch cart data if businessId is available
+     this.cartSub = this.cartService.cartItems$.subscribe(_ => {
+        this.loadCartData();
+      });
   } else {
     console.error('Business ID (userID) is not set.');
   }
 }
+
+ngOnDestroy(): void {
+    this.cartSub?.unsubscribe();
+  }
 
 calculateSubtotal(): number {
   return this.cartItems.reduce((sum, item) => sum + this.getItemTotal(item), 0);
 }
 
 goToCart(): void {
-  this.router.navigate(['/cart']);
+  this.router.navigate(['/B2B/cart']);
 }
 
   closeCartSidebar(): void {
@@ -204,6 +216,19 @@ if (newQuantity > 0) {
   this.cdr.detectChanges(); // Trigger change detection manually if needed
 }
 }
+
+get isBillingValid(): boolean {
+    const b = this.billing;
+    return !!(
+      b.fullName.trim() &&
+      b.email.trim() &&
+      b.contact.trim() &&
+      b.billingAddress.trim() &&
+      b.state.trim() &&
+      b.city.trim() &&
+      b.zipcode.trim()
+    );
+  }
 
 saveBillingDetails(): void {
   console.log('Billing details saved:', this.billing);
