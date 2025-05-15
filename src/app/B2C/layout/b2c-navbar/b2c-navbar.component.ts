@@ -13,7 +13,7 @@ import {
   distinctUntilChanged,
   map,
   switchMap,
-  catchError,
+  catchError, 
 } from 'rxjs/operators';
 import { HttpClientModule } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -41,7 +41,7 @@ import { SearchQueryService } from '../../../core/services/search-query/search-q
 @Component({
   selector: 'app-b2c-navbar',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './b2c-navbar.component.html',
   styleUrl: './b2c-navbar.component.css'
 })

@@ -11,13 +11,13 @@
           <i class="fa fa-search"></i>
         </button>
       </div>
-    </div>
+    </div> 
 
     <div class="nav-icons">
-      <button class="btn heart-btn">
+      <button class="btn heart-btn" routerLink="/B2C/wishlist">
         <i class="far fa-heart"></i>
       </button>
-      <button class="btn cart-btn" routerLink="/cart">
+      <button class="btn cart-btn" routerLink="/B2C/cart">
         <i class="fa-solid fa-cart-shopping"></i>
         <span *ngIf="cartItemCount > 0" class="cart-count-badge">{{ cartItemCount }}</span>
       </button>

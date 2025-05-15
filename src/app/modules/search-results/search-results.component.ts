@@ -311,18 +311,18 @@ export class SearchResultsComponent implements OnChanges {
     //   }
     // );
 
-        // Subscribe to the search trigger event
-  this.filterSearchService.searchRequested.subscribe(() => {
-    console.log('Search triggered by filter change');
-    this.updateSearchWithFilters();
-  });
+    // Subscribe to the search trigger event
+    this.filterSearchService.searchRequested.subscribe(() => {
+      console.log('Search triggered by filter change');
+      this.updateSearchWithFilters();
+    });
 
     this.filterSearchService.selectedMake$.subscribe((make) => {
       console.log('Updating local make state:', make);
       this.selectedMake = make;
       // Don't call updateSearchWithFilters() here
     });
-    
+
     this.filterSearchService.selectedModel$.subscribe((model) => {
       console.log('Updating local model state:', model);
       this.selectedModel = model;
@@ -337,13 +337,13 @@ export class SearchResultsComponent implements OnChanges {
     if (this.searchDebounceTimer) {
       clearTimeout(this.searchDebounceTimer);
     }
-    
+
     // Use a small debounce to ensure we're not triggering multiple searches in quick succession
     this.searchDebounceTimer = setTimeout(() => {
       // Get current filter state all at once
       const filters = this.filterSearchService.getCurrentFilters();
       console.log('Updating search with latest filters:', filters);
-      
+
       // Perform search based on the active search type
       if (this.activeSearchType === 'general') {
         this.performGeneralSearch(this.lastQuery);
@@ -370,6 +370,14 @@ export class SearchResultsComponent implements OnChanges {
         this.isLocallyLoading = false;
         this.cdr.detectChanges();
       }
+    }
+
+    if (changes['searchResults'] && Array.isArray(this.searchResults)) {
+      this.searchResults.forEach((product) => {
+        if (product.product_quantity == null) {
+          product.product_quantity = 1;
+        }
+      });
     }
   }
 
@@ -548,6 +556,7 @@ export class SearchResultsComponent implements OnChanges {
     this.isLocallyLoading = true;
 
     this.currentPage = page;
+    this.emitPageChange(page);
     // this.fetchProducts(
     //   this.m_id ?? 0,
     //   this.f_id ?? 0,
@@ -574,21 +583,29 @@ export class SearchResultsComponent implements OnChanges {
   }
 
   emitPageChange(page: number): void {
-    console.log(
-      `emitPageChange called with page: ${page} and searchType: ${this.searchType}`
-    );
+    if (page < 1 || page > this.totalPages) return;
+
     this.currentPage = page;
+    this.isPaginationLoading = true;
     this.isLocallyLoading = true;
 
-    // Update skip and page for pagination
-    this.currentRequestData.skip = (this.currentPage - 1) * 10;
-    this.currentRequestData.page = this.currentPage;
+    // update your paging params
+    this.currentRequestData.skip = (page - 1) * this.pageSize;
+    this.currentRequestData.page = page;
 
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
-        this.searchResults = response.products || [];
+        const prods = response.products || [];
+
+        // stamp in a default quantity of 1 on every product
+        this.searchResults = prods.map((p: any) => ({
+          ...p,
+          product_quantity: 1,
+        }));
+
         this.totalPages = response.totalPages || 1;
         this.isLocallyLoading = false;
+        this.isPaginationLoading = false;
         this.cdr.detectChanges();
       },
       (error: any) => {
@@ -597,6 +614,7 @@ export class SearchResultsComponent implements OnChanges {
           error
         );
         this.isLocallyLoading = false;
+        this.isPaginationLoading = false;
       }
     );
   }
@@ -857,7 +875,10 @@ export class SearchResultsComponent implements OnChanges {
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
         if (response && response.products) {
-          this.searchResults = [...response.products];
+          this.searchResults = response.products.map((p: any) => ({
+            ...p,
+            product_quantity: 1,
+          }));
           this.totalPages = response.totalPages || 1;
           this.isLocallyLoading = false;
 
@@ -945,7 +966,10 @@ export class SearchResultsComponent implements OnChanges {
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
         if (response && response.products) {
-          this.searchResults = [...response.products];
+          this.searchResults = response.products.map((p: any) => ({
+            ...p,
+            product_quantity: 1,
+          }));
           this.totalPages = response.totalPages || 1;
           this.isLocallyLoading = false;
 
@@ -1033,12 +1057,15 @@ export class SearchResultsComponent implements OnChanges {
     );
 
     this.isLocallyLoading = true;
-   this.searchResults = [];
+    this.searchResults = [];
 
     this.dynamicSearchService.searchProducts(this.currentRequestData).subscribe(
       (response: any) => {
         if (response && response.products) {
-          this.searchResults = [...response.products];
+          this.searchResults = response.products.map((p: any) => ({
+            ...p,
+            product_quantity: 1,
+          }));
           this.totalPages = response.totalPages || 1;
           this.isLocallyLoading = false;
 

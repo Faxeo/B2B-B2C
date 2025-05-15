@@ -6,6 +6,8 @@ import { DeleteCartService } from '../../../../core/services/delete-cart/delete-
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { OnDestroy } from '@angular/core';
 
 @Component({
   selector: 'app-b2c-cart-sidebar',
@@ -14,9 +16,10 @@ import { RouterModule } from '@angular/router';
   templateUrl: './b2c-cart-sidebar.component.html',
   styleUrl: './b2c-cart-sidebar.component.css'
 })
-export class B2cCartSidebarComponent implements OnInit {
-
+export class B2cCartSidebarComponent implements OnInit, OnDestroy  {
  // Define the type for cartItems, adding cartId and discountedPrice as optional fields
+ private cartSub!: Subscription;
+
  cartItems: Array<{
   cartId: string; // Add cartId for deletion
   productId: string;
@@ -65,10 +68,18 @@ ngOnInit(): void {
 
   if (this.businessId !== null) {
     this.loadCartData(); // Fetch cart data if businessId is available
+    this.cartSub = this.cartService.cartItems$.subscribe(_ => {
+        this.loadCartData();
+      });
   } else {
     console.error('Business ID (userID) is not set.');
   }
 }
+
+
+ngOnDestroy(): void {
+    this.cartSub?.unsubscribe();
+  }
 
 calculateSubtotal(): number {
   return this.cartItems.reduce((sum, item) => sum + this.getItemTotal(item), 0);
@@ -204,6 +215,19 @@ if (newQuantity > 0) {
   this.cdr.detectChanges(); // Trigger change detection manually if needed
 }
 }
+
+get isBillingValid(): boolean {
+    const b = this.billing;
+    return !!(
+      b.fullName.trim() &&
+      b.email.trim() &&
+      b.contact.trim() &&
+      b.billingAddress.trim() &&
+      b.state.trim() &&
+      b.city.trim() &&
+      b.zipcode.trim()
+    );
+  }
 
 saveBillingDetails(): void {
   console.log('Billing details saved:', this.billing);

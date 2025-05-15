@@ -1,77 +1,82 @@
 <ng-container *ngIf="isSidebarVisible; else sidebarHidden">
-    <div class="cart-sidebar"> 
-      <div class="cart-header">
-        <span class="cart-count">{{ cartItems.length }}</span>
-        <h2 class="cart-title">Your Cart</h2>
-        <!-- <button class="close-btn" (click)="closeCartSidebar()">&times;</button> -->
-      </div>
-  
-      <!-- Scrollable Content Area -->
-      <div class="cart-content">
-        <div class="cart-items">
-          <div class="cart-item" *ngFor="let item of cartItems">
-            <img *ngIf="!item.imageError" [src]="'https://usaperp.com:5001/Images/Products/' + item.image"
-              alt="Product Image" (error)="handleImageError(item)" />
-            <div class="item-details">
-              <h3>{{ item.name }}</h3>
-              <p>{{ item.quantity }} x ${{ item.price.toFixed(2) }} = ${{ (item.price * item.quantity).toFixed(2) }}</p>
-              <p *ngIf="item.discountedPrice && item.discountedPrice < item.price * item.quantity">
-                Discount: ${{ item.discountedPrice.toFixed(2) }}
-              </p>
-            </div>
-            <input type="number" class="quantity-input" [(ngModel)]="item.quantity"
-              (change)="onQuantityInput(item.productId, $event)" min="1" />
-            <button class="delete-btn" (click)="removeFromCart(item.cartId)">&times;</button>
+  <div class="cart-sidebar">
+    <div class="cart-header">
+      <span class="cart-count">{{ cartItems.length }}</span>
+      <h2 class="cart-title">Your Cart</h2>
+      <!-- <button class="close-btn" (click)="closeCartSidebar()">&times;</button> -->
+    </div>
+
+    <!-- Scrollable Content Area -->
+    <div class="cart-content">
+      <div class="cart-items">
+        <div class="cart-item" *ngFor="let item of cartItems">
+          <img *ngIf="!item.imageError" [src]="'https://usaperp.com:5001/Images/Products/' + item.image"
+            alt="Product Image" (error)="handleImageError(item)" />
+          <div class="item-details">
+            <h3>{{ item.name }}</h3>
+            <p>{{ item.quantity }} x ${{ item.price.toFixed(2) }} = ${{ (item.price * item.quantity).toFixed(2) }}</p>
+            <p *ngIf="item.discountedPrice && item.discountedPrice < item.price * item.quantity">
+              Discount: ${{ item.discountedPrice.toFixed(2) }}
+            </p>
           </div>
-        </div>
-  
-        <!-- Billing Information Section -->
-        <div class="billing-information">
-          <h3>Billing Information</h3>
-          <form (submit)="goToCheckout()">
-            <div class="form-group">
-              <label for="fullName">Full Name:</label>
-              <input type="text" id="fullName" [(ngModel)]="billing.fullName" name="fullName" required>
-            </div>
-            <div class="form-group">
-              <label for="email">Email:</label>
-              <input type="email" id="email" [(ngModel)]="billing.email" name="email" required>
-            </div>
-            <div class="form-group">
-              <label for="contact">Contact:</label>
-              <input type="text" id="contact" [(ngModel)]="billing.contact" name="contact" required>
-            </div>
-            <div class="form-group">
-              <label for="billingAddress">Billing Address:</label>
-              <textarea id="billingAddress" [(ngModel)]="billing.billingAddress" name="billingAddress" required></textarea>
-            </div>
-            <div class="form-group">
-              <label for="country">Country:</label>
-              <input type="text" id="country" [(ngModel)]="billing.country" name="country" readonly>
-            </div>
-            <div class="form-group">
-              <label for="state">State:</label>
-              <input type="text" id="state" [(ngModel)]="billing.state" name="state" required>
-            </div>
-            <div class="form-group">
-              <label for="city">City:</label>
-              <input type="text" id="city" [(ngModel)]="billing.city" name="city" required>
-            </div>
-            <div class="form-group">
-              <label for="zipcode">Zipcode:</label>
-              <input type="text" id="zipcode" [(ngModel)]="billing.zipcode" name="zipcode" required>
-            </div>
-            <!-- <button type="submit" class="checkout">CHECKOUT</button> -->
-          </form>
+          <input type="number" class="quantity-input" [(ngModel)]="item.quantity"
+            (change)="onQuantityInput(item.productId, $event)" min="1" />
+          <button class="delete-btn" (click)="removeFromCart(item.cartId)">&times;</button>
         </div>
       </div>
-  
-      <div class="cart-footer">
-        <p class="subtotal">Subtotal: ${{ calculateSubtotal().toFixed(2) }}</p>
-        <button class="view-cart-btn" (click)="goToCart()">View Cart</button>
-        <button class="checkout-btn" (click)="goToCheckout()">Checkout</button>
+
+      <!-- Billing Information Section -->
+      <div class="billing-information">
+        <h3>Billing Information</h3>
+        <form (submit)="goToCheckout()">
+          <div class="form-group">
+            <label for="fullName">Full Name:</label>
+            <input type="text" id="fullName" [(ngModel)]="billing.fullName" name="fullName" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" [(ngModel)]="billing.email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="contact">Contact:</label>
+            <input type="text" id="contact" [(ngModel)]="billing.contact" name="contact" required>
+          </div>
+          <div class="form-group">
+            <label for="billingAddress">Billing Address:</label>
+            <textarea id="billingAddress" [(ngModel)]="billing.billingAddress" name="billingAddress"
+              required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="country">Country:</label>
+            <input type="text" id="country" [(ngModel)]="billing.country" name="country" readonly>
+          </div>
+          <div class="form-group">
+            <label for="state">State:</label>
+            <input type="text" id="state" [(ngModel)]="billing.state" name="state" required>
+          </div>
+          <div class="form-group">
+            <label for="city">City:</label>
+            <input type="text" id="city" [(ngModel)]="billing.city" name="city" required>
+          </div>
+          <div class="form-group">
+            <label for="zipcode">Zipcode:</label>
+            <input type="text" id="zipcode" [(ngModel)]="billing.zipcode" name="zipcode" required>
+          </div>
+          <!-- <button type="submit" class="checkout">CHECKOUT</button> -->
+        </form>
       </div>
     </div>
-  </ng-container>
-  <ng-template #sidebarHidden></ng-template>
-  
+
+    <div class="cart-footer">
+      <p class="subtotal">Subtotal: ${{ calculateSubtotal().toFixed(2) }}</p>
+      <!-- disable unless billing is complete -->
+      <button class="view-cart-btn" (click)="goToCart()" [disabled]="!isBillingValid">
+        View Cart
+      </button>
+      <button class="checkout-btn" (click)="goToCheckout()" [disabled]="!isBillingValid">
+        Checkout
+      </button>
+    </div>
+  </div>
+</ng-container>
+<ng-template #sidebarHidden></ng-template>
