@@ -11,6 +11,7 @@ import { BillingComponent } from './modules/billing/billing.component';
 import { B2cCheckoutComponent } from './B2C/modules/b2c/b2c-checkout/b2c-checkout.component';
 import { B2cBillingComponent } from './B2C/modules/b2c/b2c-billing/b2c-billing.component';
 import { B2cWishlistComponent } from './B2C/modules/b2c/b2c-wishlist/b2c-wishlist.component';
+import { B2CHomeV2Component } from './B2C/modules/b2c/b2c-homev2/b2c-homev2.component';
 
 export const routes: Routes = [
   {
@@ -27,6 +28,13 @@ export const routes: Routes = [
     // children: [
     //   { path: 'search', component: B2cSearchComponent }
     // ]
+  },
+  {
+    path: 'B2C/v2',
+    component: B2CHomeV2Component,
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./B2C/modules/b2c/b2c-homev2/b2c-homev2.module').then((m) => m.B2cHomeV2Module),
   },
   {
     path: 'B2C/search',
