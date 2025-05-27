@@ -12,6 +12,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { GetAddressService } from '../../../../core/services/get-address/get-address.service';
 import { AddAddressService } from '../../../../core/services/add-address/add-address.service';
 import { DeleteAddressService } from '../../../../core/services/delete-address/delete-address.service';
+import Swal from 'sweetalert2';
 
 export interface Address {
   add_id: number; // ✅ Add this property to match API response
@@ -199,14 +200,13 @@ export class B2cCartComponent {
 
   searchTerm: string = '';
 
-filteredCartItems() {
-  if (!this.searchTerm) return this.cartItems;
-  return this.cartItems.filter(item =>
-    item.name.toLowerCase().includes(this.searchTerm.toLowerCase())
-  );
-}
+  filteredCartItems() {
+    if (!this.searchTerm) return this.cartItems;
+    return this.cartItems.filter((item) =>
+      item.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+  }
 
-  
   isBillingFormValid(): boolean {
     return !!(
       this.billing.fullName?.trim() &&
@@ -219,52 +219,60 @@ filteredCartItems() {
       this.billing.country?.trim()
     );
   }
-  
 
-  
-    handleNewAddressPaste(event: ClipboardEvent): void {
-      event.preventDefault(); // Prevent default paste action
-    
-      const clipboardData = event.clipboardData || (window as any).clipboardData;
-      const pastedText = clipboardData.getData('text');
-    
-      // Extract structured data
-      const addressParts = this.extractBillingDetails(pastedText);
-    
-      // Auto-fill fields in New Address Form if found
-      if (addressParts.fullName) this.newAddress.fullName = addressParts.fullName;
-      if (addressParts.billingAddress) this.newAddress.billingAddress = addressParts.billingAddress;
-      if (addressParts.city) this.newAddress.city = addressParts.city;
-      if (addressParts.state) this.newAddress.state = addressParts.state;
-      if (addressParts.zipcode) this.newAddress.zipcode = addressParts.zipcode;
-      if (addressParts.country) this.newAddress.country = addressParts.country;
-      if (addressParts.contact) this.newAddress.contact = addressParts.contact;
-      if (addressParts.email) this.newAddress.email = addressParts.email;
-    }
-    
-  
-    handleBillingPaste(event: ClipboardEvent): void {
-      event.preventDefault(); // Prevent default paste action
-    
-      const clipboardData = event.clipboardData || (window as any).clipboardData;
-      const pastedText = clipboardData.getData('text');
-    
-      // Extract structured data
-      const addressParts = this.extractBillingDetails(pastedText);
-    
-      // Auto-fill fields if found
-      if (addressParts.fullName) this.billing.fullName = addressParts.fullName;
-      if (addressParts.billingAddress) this.billing.billingAddress = addressParts.billingAddress;
-      if (addressParts.city) this.billing.city = addressParts.city;
-      if (addressParts.state) this.billing.state = addressParts.state;
-      if (addressParts.zipcode) this.billing.zipcode = addressParts.zipcode;
-      if (addressParts.country) this.billing.country = addressParts.country;
-      if (addressParts.contact) this.billing.contact = addressParts.contact;
-      if (addressParts.email) this.billing.email = addressParts.email;
-    }
-    
-    
-    extractBillingDetails(addressText: string): {
+  handleNewAddressPaste(event: ClipboardEvent): void {
+    event.preventDefault(); // Prevent default paste action
+
+    const clipboardData = event.clipboardData || (window as any).clipboardData;
+    const pastedText = clipboardData.getData('text');
+
+    // Extract structured data
+    const addressParts = this.extractBillingDetails(pastedText);
+
+    // Auto-fill fields in New Address Form if found
+    if (addressParts.fullName) this.newAddress.fullName = addressParts.fullName;
+    if (addressParts.billingAddress)
+      this.newAddress.billingAddress = addressParts.billingAddress;
+    if (addressParts.city) this.newAddress.city = addressParts.city;
+    if (addressParts.state) this.newAddress.state = addressParts.state;
+    if (addressParts.zipcode) this.newAddress.zipcode = addressParts.zipcode;
+    if (addressParts.country) this.newAddress.country = addressParts.country;
+    if (addressParts.contact) this.newAddress.contact = addressParts.contact;
+    if (addressParts.email) this.newAddress.email = addressParts.email;
+  }
+
+  handleBillingPaste(event: ClipboardEvent): void {
+    event.preventDefault(); // Prevent default paste action
+
+    const clipboardData = event.clipboardData || (window as any).clipboardData;
+    const pastedText = clipboardData.getData('text');
+
+    // Extract structured data
+    const addressParts = this.extractBillingDetails(pastedText);
+
+    // Auto-fill fields if found
+    if (addressParts.fullName) this.billing.fullName = addressParts.fullName;
+    if (addressParts.billingAddress)
+      this.billing.billingAddress = addressParts.billingAddress;
+    if (addressParts.city) this.billing.city = addressParts.city;
+    if (addressParts.state) this.billing.state = addressParts.state;
+    if (addressParts.zipcode) this.billing.zipcode = addressParts.zipcode;
+    if (addressParts.country) this.billing.country = addressParts.country;
+    if (addressParts.contact) this.billing.contact = addressParts.contact;
+    if (addressParts.email) this.billing.email = addressParts.email;
+  }
+
+  extractBillingDetails(addressText: string): {
+    fullName?: string;
+    billingAddress?: string;
+    city?: string;
+    state?: string;
+    zipcode?: string;
+    country?: string;
+    contact?: string;
+    email?: string;
+  } {
+    const result: {
       fullName?: string;
       billingAddress?: string;
       city?: string;
@@ -273,289 +281,295 @@ filteredCartItems() {
       country?: string;
       contact?: string;
       email?: string;
-    } {
-      const result: {
-        fullName?: string;
-        billingAddress?: string;
-        city?: string;
-        state?: string;
-        zipcode?: string;
-        country?: string;
-        contact?: string;
-        email?: string;
-      } = {};
-    
-      let lines = addressText.split('\n').map(line => line.trim()).filter(line => line);
-    
-      // Extract full name (first line)
-      if (lines.length > 0) {
-        result.fullName = lines[0];
-      }
-    
-      // Extract phone number
-      const phoneRegex = /\+?\d{1,2}[\s-]?\(?\d{3}\)?[\s-]?\d{3}[\s-]?\d{4}/;
-      const phoneMatch = lines.find(line => phoneRegex.test(line));
-      if (phoneMatch) {
-        result.contact = phoneMatch.match(phoneRegex)?.[0] ?? '';
-        lines = lines.filter(line => line !== phoneMatch); // Remove phone number
-      }
-    
-      // Extract email address
-      const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
-      const emailMatch = lines.find(line => emailRegex.test(line));
-      if (emailMatch) {
-        result.email = emailMatch.match(emailRegex)?.[0] ?? '';
-        lines = lines.filter(line => line !== emailMatch); // Remove email
-      }
-    
-      // Extract ZIP code, state, and city
-      const zipStateCityRegex = /^(.*)\s([A-Z]{2})\s(\d{5}(-\d{4})?)$/;
-      const stateZipLineIndex = lines.findIndex(line => zipStateCityRegex.test(line));
-    
-      if (stateZipLineIndex !== -1) {
-        const match = lines[stateZipLineIndex].match(zipStateCityRegex);
-        if (match) {
-          result.city = match[1].trim();
-          result.state = match[2].trim();
-          result.zipcode = match[3].trim();
-        }
-        lines.splice(stateZipLineIndex, 1); // Remove extracted line
-      }
-    
-      // Remove "United States" (or any case variation)
-      lines = lines.filter(line => !line.toLowerCase().includes("united states"));
-    
-      // Remove empty lines after filtering
-      lines = lines.filter(line => line.trim() !== '');
-    
-      // Extract billing address (remaining lines after removing extracted fields)
-      result.billingAddress = lines.slice(1).join(', ');
-    
-      // Set default country
-      result.country = 'United States';
-    
-      return result;
+    } = {};
+
+    let lines = addressText
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line);
+
+    // Extract full name (first line)
+    if (lines.length > 0) {
+      result.fullName = lines[0];
     }
-    
-  
-    deleteAddress(address: Address): void {
-      if (confirm(`Are you sure you want to delete this address: ${address.fullName}?`)) {
-        console.log(`Deleting address with ID: ${address.add_id}`);
-        
-        this.deleteAddressService.deleteAddress(address.add_id).subscribe({
-          next: () => {
-            this.savedAddresses = this.savedAddresses.filter(a => a.add_id !== address.add_id);
-            console.log("Address deleted successfully.");
-          },
-          error: (err) => console.error("Error deleting address:", err)
-        });
-      }
+
+    // Extract phone number
+    const phoneRegex = /\+?\d{1,2}[\s-]?\(?\d{3}\)?[\s-]?\d{3}[\s-]?\d{4}/;
+    const phoneMatch = lines.find((line) => phoneRegex.test(line));
+    if (phoneMatch) {
+      result.contact = phoneMatch.match(phoneRegex)?.[0] ?? '';
+      lines = lines.filter((line) => line !== phoneMatch); // Remove phone number
     }
-    
-  
-    loadSavedAddresses(): void {
-      const customerId = this.cartService.getUserID();
-      
-      if (customerId) {
-        this.getAddressService.getAddresses(+customerId).subscribe({
-          next: (response) => {
-            console.log("Full API Response:", response);
-    
-            if (response.success && Array.isArray(response.data)) {
-              this.savedAddresses = response.data.map((addr: any) => ({
-                add_id: addr.add_id, 
-                fullName: addr.fullName,
-                email: addr.email,
-                contact: addr.phoneNumber,
-                billingAddress: addr.streetAddressLine1,
-                city: addr.city,
-                state: addr.state,
-                zipcode: addr.zipCode,
-                country: addr.country,
-                addressType: addr.addressType ?? 'Unknown'  // ✅ Ensures `addressType` never becomes undefined
-              }));
-    
-              console.log("Mapped Addresses After API Call:", this.savedAddresses);
-    
-              setTimeout(() => {
-                this.cdr.detectChanges(); // ✅ Force UI update
-              }, 0);
-            } else {
-              console.error("API returned unexpected format:", response);
-              this.savedAddresses = [];
-            }
-          },
-          error: (error) => {
-            console.error('Error fetching addresses:', error);
-            this.savedAddresses = [];
-          }
-        });
-      }
+
+    // Extract email address
+    const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
+    const emailMatch = lines.find((line) => emailRegex.test(line));
+    if (emailMatch) {
+      result.email = emailMatch.match(emailRegex)?.[0] ?? '';
+      lines = lines.filter((line) => line !== emailMatch); // Remove email
     }
-    
-    
-  
-    // Toggle form visibility
-    toggleAddressForm(): void {
-      this.showAddressForm = !this.showAddressForm;
-    
-      // Reset form when opening
-      if (this.showAddressForm) {
-        this.newAddress = {
-          add_id: 0, 
-          fullName: '',
-          email: '',
-          contact: '',
-          billingAddress: '',
-          city: '',
-          state: '',
-          zipcode: '',
-          country: 'United States',
-          addressType: ''  // ✅ Include addressType
-        };
+
+    // Extract ZIP code, state, and city
+    const zipStateCityRegex = /^(.*)\s([A-Z]{2})\s(\d{5}(-\d{4})?)$/;
+    const stateZipLineIndex = lines.findIndex((line) =>
+      zipStateCityRegex.test(line)
+    );
+
+    if (stateZipLineIndex !== -1) {
+      const match = lines[stateZipLineIndex].match(zipStateCityRegex);
+      if (match) {
+        result.city = match[1].trim();
+        result.state = match[2].trim();
+        result.zipcode = match[3].trim();
       }
+      lines.splice(stateZipLineIndex, 1); // Remove extracted line
     }
-  
-    saveNewAddress(): void {
-      this.formSubmitted = true;
-      if (!this.newAddress.fullName ||
-          !this.newAddress.email ||
-          !this.newAddress.contact ||
-          !this.newAddress.billingAddress ||
-          !this.newAddress.city ||
-          !this.newAddress.state ||
-          !this.newAddress.zipcode ||
-          !this.newAddress.country) {
-        console.error("Missing required fields.");
-        return;
-      }
-  
-      const customerId = this.cartService.getUserID();
-      if (!customerId) {
-        console.error("No customer ID found.");
-        return;
-      }
-  
-      const addressData = {
-        customerId: +customerId,
-        fullName: this.newAddress.fullName,
-        streetAddressLine1: this.newAddress.billingAddress,
-        streetAddressLine2: "",
-        city: this.newAddress.city,
-        state: this.newAddress.state,
-        zipCode: this.newAddress.zipcode,
-        country: this.newAddress.country,
-        phoneNumber: this.newAddress.contact,
-        email: this.newAddress.email,
-        latitude: 0,
-        longitude: 0,
-        addressType: this.newAddress.addressType,
-        isPrimary: true
-      };
-  
-      this.addAddressService.addAddress(addressData).subscribe({
+
+    // Remove "United States" (or any case variation)
+    lines = lines.filter(
+      (line) => !line.toLowerCase().includes('united states')
+    );
+
+    // Remove empty lines after filtering
+    lines = lines.filter((line) => line.trim() !== '');
+
+    // Extract billing address (remaining lines after removing extracted fields)
+    result.billingAddress = lines.slice(1).join(', ');
+
+    // Set default country
+    result.country = 'United States';
+
+    return result;
+  }
+
+  deleteAddress(address: Address): void {
+    if (
+      confirm(
+        `Are you sure you want to delete this address: ${address.fullName}?`
+      )
+    ) {
+      console.log(`Deleting address with ID: ${address.add_id}`);
+
+      this.deleteAddressService.deleteAddress(address.add_id).subscribe({
+        next: () => {
+          this.savedAddresses = this.savedAddresses.filter(
+            (a) => a.add_id !== address.add_id
+          );
+          console.log('Address deleted successfully.');
+        },
+        error: (err) => console.error('Error deleting address:', err),
+      });
+    }
+  }
+
+  loadSavedAddresses(): void {
+    const customerId = this.cartService.getUserID();
+
+    if (customerId) {
+      this.getAddressService.getAddresses(+customerId).subscribe({
         next: (response) => {
-          if (response.success) {
-            if (!Array.isArray(this.savedAddresses)) {
-              console.error("savedAddresses is not an array. Resetting...");
-              this.savedAddresses = [];
-            }
-            this.savedAddresses.push({ ...this.newAddress });
-            this.showSuccessPopup = true; // ✅ Show success pop-up
-            this.toggleAddressForm();
+          console.log('Full API Response:', response);
+
+          if (response.success && Array.isArray(response.data)) {
+            this.savedAddresses = response.data.map((addr: any) => ({
+              add_id: addr.add_id,
+              fullName: addr.fullName,
+              email: addr.email,
+              contact: addr.phoneNumber,
+              billingAddress: addr.streetAddressLine1,
+              city: addr.city,
+              state: addr.state,
+              zipcode: addr.zipCode,
+              country: addr.country,
+              addressType: addr.addressType ?? 'Unknown', // ✅ Ensures `addressType` never becomes undefined
+            }));
+
+            console.log(
+              'Mapped Addresses After API Call:',
+              this.savedAddresses
+            );
+
+            setTimeout(() => {
+              this.cdr.detectChanges(); // ✅ Force UI update
+            }, 0);
           } else {
-            console.error("API Error: ", response);
-            alert("Failed to add address. Please try again.");
+            console.error('API returned unexpected format:', response);
+            this.savedAddresses = [];
           }
         },
         error: (error) => {
-          console.error('Server error while adding address:', error);
-          alert("Server error while adding address. Please try later.");
-        }
+          console.error('Error fetching addresses:', error);
+          this.savedAddresses = [];
+        },
       });
+    }
   }
-  
-  
-    closeSuccessPopup(): void {
-      this.showSuccessPopup = false;
+
+  // Toggle form visibility
+  toggleAddressForm(): void {
+    this.showAddressForm = !this.showAddressForm;
+
+    // Reset form when opening
+    if (this.showAddressForm) {
+      this.newAddress = {
+        add_id: 0,
+        fullName: '',
+        email: '',
+        contact: '',
+        billingAddress: '',
+        city: '',
+        state: '',
+        zipcode: '',
+        country: 'United States',
+        addressType: '', // ✅ Include addressType
+      };
     }
-  
-    searchStates = (text$: Observable<string>): Observable<string[]> =>
-      text$.pipe(
-        debounceTime(200),
-        distinctUntilChanged(),
-        map((term: string) =>
-          term.length < 1
-            ? []
-            : this.usStates.filter(state => state.toLowerCase().startsWith(term.toLowerCase())).slice(0, 10)
-        )
-      );
-    
-  
-    handleAddressPaste(event: ClipboardEvent): void {
-      event.preventDefault(); // Prevent default paste action
-  
-      const clipboardData = event.clipboardData || (window as any).clipboardData;
-      const pastedText = clipboardData.getData('text');
-  
-      // Set the pasted text to the billing address field
-      this.billing.billingAddress = pastedText;
-  
-      // Extract address details using a regex or keywords
-      const addressParts = this.extractAddressDetails(pastedText);
-  
-      // Auto-fill city, state, and zip code if found
-      if (addressParts.city) {
-        this.billing.city = addressParts.city;
-      }
-      if (addressParts.state) {
-        this.billing.state = addressParts.state;
-      }
-      if (addressParts.zipcode) {
-        this.billing.zipcode = addressParts.zipcode;
-      }
+  }
+
+  saveNewAddress(): void {
+    this.formSubmitted = true;
+    if (
+      !this.newAddress.fullName ||
+      !this.newAddress.email ||
+      !this.newAddress.contact ||
+      !this.newAddress.billingAddress ||
+      !this.newAddress.city ||
+      !this.newAddress.state ||
+      !this.newAddress.zipcode ||
+      !this.newAddress.country
+    ) {
+      console.error('Missing required fields.');
+      return;
     }
-  
-    // Function to extract city, state, and zip code from pasted text
-    extractAddressDetails(address: string): {
-      city?: string;
-      state?: string;
-      zipcode?: string;
-    } {
-      const result: { city?: string; state?: string; zipcode?: string } = {};
-  
-      // Regex patterns to detect ZIP code, state abbreviations, and city names
-      const zipRegex = /\b\d{5}(-\d{4})?\b/; // Matches US ZIP codes (12345 or 12345-6789)
-      const stateRegex =
-        /\b(AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY)\b/;
-      const addressParts = address.split(',');
-  
-      // Extract ZIP code
-      const zipMatch = address.match(zipRegex);
-      if (zipMatch) {
-        result.zipcode = zipMatch[0];
-      }
-  
-      // Extract state
-      const stateMatch = address.match(stateRegex);
-      if (stateMatch) {
-        result.state = stateMatch[0];
-      }
-  
-      // Extract city (assuming it appears **before** the state)
-      if (stateMatch) {
-        const stateIndex = addressParts.findIndex((part) =>
-          part.includes(stateMatch[0])
-        );
-  
-        if (stateIndex > 0) {
-          // The city is usually the part **right before the state**
-          result.city = addressParts[stateIndex - 1].trim();
+
+    const customerId = this.cartService.getUserID();
+    if (!customerId) {
+      console.error('No customer ID found.');
+      return;
+    }
+
+    const addressData = {
+      customerId: +customerId,
+      fullName: this.newAddress.fullName,
+      streetAddressLine1: this.newAddress.billingAddress,
+      streetAddressLine2: '',
+      city: this.newAddress.city,
+      state: this.newAddress.state,
+      zipCode: this.newAddress.zipcode,
+      country: this.newAddress.country,
+      phoneNumber: this.newAddress.contact,
+      email: this.newAddress.email,
+      latitude: 0,
+      longitude: 0,
+      addressType: this.newAddress.addressType,
+      isPrimary: true,
+    };
+
+    this.addAddressService.addAddress(addressData).subscribe({
+      next: (response) => {
+        if (response.success) {
+          if (!Array.isArray(this.savedAddresses)) {
+            console.error('savedAddresses is not an array. Resetting...');
+            this.savedAddresses = [];
+          }
+          this.savedAddresses.push({ ...this.newAddress });
+          this.showSuccessPopup = true; // ✅ Show success pop-up
+          this.toggleAddressForm();
+        } else {
+          console.error('API Error: ', response);
+          alert('Failed to add address. Please try again.');
         }
-      }
-  
-      return result;
+      },
+      error: (error) => {
+        console.error('Server error while adding address:', error);
+        alert('Server error while adding address. Please try later.');
+      },
+    });
+  }
+
+  closeSuccessPopup(): void {
+    this.showSuccessPopup = false;
+  }
+
+  searchStates = (text$: Observable<string>): Observable<string[]> =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map((term: string) =>
+        term.length < 1
+          ? []
+          : this.usStates
+              .filter((state) =>
+                state.toLowerCase().startsWith(term.toLowerCase())
+              )
+              .slice(0, 10)
+      )
+    );
+
+  handleAddressPaste(event: ClipboardEvent): void {
+    event.preventDefault(); // Prevent default paste action
+
+    const clipboardData = event.clipboardData || (window as any).clipboardData;
+    const pastedText = clipboardData.getData('text');
+
+    // Set the pasted text to the billing address field
+    this.billing.billingAddress = pastedText;
+
+    // Extract address details using a regex or keywords
+    const addressParts = this.extractAddressDetails(pastedText);
+
+    // Auto-fill city, state, and zip code if found
+    if (addressParts.city) {
+      this.billing.city = addressParts.city;
     }
+    if (addressParts.state) {
+      this.billing.state = addressParts.state;
+    }
+    if (addressParts.zipcode) {
+      this.billing.zipcode = addressParts.zipcode;
+    }
+  }
+
+  // Function to extract city, state, and zip code from pasted text
+  extractAddressDetails(address: string): {
+    city?: string;
+    state?: string;
+    zipcode?: string;
+  } {
+    const result: { city?: string; state?: string; zipcode?: string } = {};
+
+    // Regex patterns to detect ZIP code, state abbreviations, and city names
+    const zipRegex = /\b\d{5}(-\d{4})?\b/; // Matches US ZIP codes (12345 or 12345-6789)
+    const stateRegex =
+      /\b(AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY)\b/;
+    const addressParts = address.split(',');
+
+    // Extract ZIP code
+    const zipMatch = address.match(zipRegex);
+    if (zipMatch) {
+      result.zipcode = zipMatch[0];
+    }
+
+    // Extract state
+    const stateMatch = address.match(stateRegex);
+    if (stateMatch) {
+      result.state = stateMatch[0];
+    }
+
+    // Extract city (assuming it appears **before** the state)
+    if (stateMatch) {
+      const stateIndex = addressParts.findIndex((part) =>
+        part.includes(stateMatch[0])
+      );
+
+      if (stateIndex > 0) {
+        // The city is usually the part **right before the state**
+        result.city = addressParts[stateIndex - 1].trim();
+      }
+    }
+
+    return result;
+  }
 
   loadGuestCartData(): void {
     // Get the cart items and add the missing properties to match the expected type
@@ -677,42 +691,69 @@ filteredCartItems() {
   }
 
   removeFromCart(productId: string, cartId?: string): void {
-    if (this.customerId !== null) {
-      console.log('Attempting to remove item with Cart ID:', cartId); // Log the cartId
-      // Confirm before removing
-      if (
-        confirm('Are you sure you want to remove this item from your cart?')
-      ) {
-        this.deleteCartService.deleteCart(+cartId!).subscribe(
-          (response) => {
-            console.log('Delete response:', response); // Log the delete response
-            if (response.success) {
-              // Remove the item from the cart locally
-              this.cartItems = this.cartItems.filter(
-                (item) => item.cartId !== cartId
-              );
-              console.log('Item removed successfully.');
-            } else {
-              console.error(
-                'Failed to remove the item:',
-                response.statusReason
-              );
+    Swal.fire({
+      title: 'Remove item from cart',
+      text: 'This product will no longer appear in your cart.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Remove',
+      cancelButtonText: 'Keep it',
+      reverseButtons: true,
+      backdrop: true,
+      focusCancel: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (this.customerId !== null && cartId) {
+          console.log('Attempting to remove item with Cart ID:', cartId);
+          this.deleteCartService.deleteCart(+cartId).subscribe(
+            (response) => {
+              console.log('Delete response:', response);
+              if (response.success) {
+                this.cartItems = this.cartItems.filter(
+                  (item) => item.cartId !== cartId
+                );
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Item removed',
+                  text: 'The product was removed from your cart.',
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+              } else {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Removal failed',
+                  text: response.statusReason || 'Could not remove the item.',
+                });
+              }
+            },
+            (error) => {
+              console.error('Delete error:', error);
+              Swal.fire({
+                icon: 'error',
+                title: 'Something went wrong',
+                text: 'Unable to remove the item. Please try again.',
+              });
             }
-          },
-          (error) => {
-            console.error(
-              'Error occurred while deleting the cart item:',
-              error
-            );
-          }
-        );
+          );
+        } else {
+          // Guest user logic
+          this.cartService.removeItem(productId);
+          this.cartItems = this.cartItems.filter(
+            (item) => item.productId !== productId
+          );
+          Swal.fire({
+            icon: 'success',
+            title: 'Item removed',
+            text: 'The product was removed from your cart.',
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
       }
-    } else {
-      this.cartService.removeItem(productId);
-      this.cartItems = this.cartItems.filter(
-        (item) => item.productId !== productId
-      );
-    }
+    });
   }
 
   onQuantityInput(productId: string, event: any): void {

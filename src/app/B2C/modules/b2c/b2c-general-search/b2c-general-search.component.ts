@@ -8,7 +8,7 @@ import {
   Output,
   PLATFORM_ID,
   SimpleChanges,
-} from '@angular/core'; 
+} from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AddToCartService } from '../../../../core/services/add-to-cart/add-to-cart.service';
 import { CartService } from '../../../../core/services/cart/cart.service';
@@ -35,6 +35,7 @@ import { RecentlyViewedComponent } from '../../../../modules/recently-viewed/rec
 import { FormsModule } from '@angular/forms';
 import { FilterComponent } from '../../../../modules/search/filter/filter.component';
 import { CartSidebarComponent } from '../../../../modules/cart-sidebar/cart-sidebar.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-b2c-general-search',
@@ -133,7 +134,8 @@ export class B2cGeneralSearchComponent {
     private addToWishlistService: AddToWishlistService,
     private removeFromWishlistService: RemoveFromWishlistService,
     private wishlistService: WishlistService,
-    private categoryNavbarSearchService: CategoryNavbarSearchService
+    private categoryNavbarSearchService: CategoryNavbarSearchService,
+    private toastr: ToastrService
   ) {
     this.filterSearchService.selectedCategories$.subscribe((categories) => {
       this.m_id = categories.m_id;
@@ -284,52 +286,50 @@ export class B2cGeneralSearchComponent {
       this.updateSearchWithFilters();
     });
 
-      // Subscribe to the search trigger event
+    // Subscribe to the search trigger event
     this.filterSearchService.searchRequested.subscribe(() => {
       console.log('Search triggered by filter change');
       this.updateSearchWithFilters();
     });
 
-      this.filterSearchService.selectedMake$.subscribe((make) => {
-        console.log('Updating local make state:', make);
-        this.selectedMake = make;
-        // Don't call updateSearchWithFilters() here
-      });
-      
-      this.filterSearchService.selectedModel$.subscribe((model) => {
-        console.log('Updating local model state:', model);
-        this.selectedModel = model;
-        // Don't call updateSearchWithFilters() here
-      });
+    this.filterSearchService.selectedMake$.subscribe((make) => {
+      console.log('Updating local make state:', make);
+      this.selectedMake = make;
+      // Don't call updateSearchWithFilters() here
+    });
+
+    this.filterSearchService.selectedModel$.subscribe((model) => {
+      console.log('Updating local model state:', model);
+      this.selectedModel = model;
+      // Don't call updateSearchWithFilters() here
+    });
   }
 
-  
+  // Modified updateSearchWithFilters method with debouncing
+  private searchDebounceTimer: any;
 
- // Modified updateSearchWithFilters method with debouncing
-private searchDebounceTimer: any;
-
-updateSearchWithFilters(): void {
-  // Clear any previous timer
-  if (this.searchDebounceTimer) {
-    clearTimeout(this.searchDebounceTimer);
-  }
-  
-  // Use a small debounce to ensure we're not triggering multiple searches in quick succession
-  this.searchDebounceTimer = setTimeout(() => {
-    // Get current filter state all at once
-    const filters = this.filterSearchService.getCurrentFilters();
-    console.log('Updating search with latest filters:', filters);
-    
-    // Perform search based on the active search type
-    if (this.activeSearchType === 'general') {
-      this.performGeneralSearch(this.lastQuery);
-    } else if (this.activeSearchType === 'category') {
-      this.performCategorySearch(this.lastCategoryData);
-    } else if (this.activeSearchType === 'vehicle') {
-      this.performVehicleSearch(this.lastVehicleData);
+  updateSearchWithFilters(): void {
+    // Clear any previous timer
+    if (this.searchDebounceTimer) {
+      clearTimeout(this.searchDebounceTimer);
     }
-  }, 50); // 50ms debounce time
-}
+
+    // Use a small debounce to ensure we're not triggering multiple searches in quick succession
+    this.searchDebounceTimer = setTimeout(() => {
+      // Get current filter state all at once
+      const filters = this.filterSearchService.getCurrentFilters();
+      console.log('Updating search with latest filters:', filters);
+
+      // Perform search based on the active search type
+      if (this.activeSearchType === 'general') {
+        this.performGeneralSearch(this.lastQuery);
+      } else if (this.activeSearchType === 'category') {
+        this.performCategorySearch(this.lastCategoryData);
+      } else if (this.activeSearchType === 'vehicle') {
+        this.performVehicleSearch(this.lastVehicleData);
+      }
+    }, 50); // 50ms debounce time
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -411,12 +411,17 @@ updateSearchWithFilters(): void {
       .subscribe({
         next: () => {
           product.isInWishlist = true;
-          this.displayNotification('Product added to wishlist successfully!');
+          this.toastr.success(
+            'Product added to wishlist successfully!',
+            'Added'
+          );
         },
         error: (error) => {
           console.error('Error adding to wishlist:', error);
-          this.displayNotification(
-            'Error adding item to wishlist: ' + error.message
+          // inside removeFromWishlist().next():
+          this.toastr.error(
+            'Product removed from wishlist successfully!',
+            'Removed'
           );
         },
       });
@@ -437,8 +442,12 @@ updateSearchWithFilters(): void {
       .subscribe({
         next: () => {
           product.isInWishlist = false;
-          this.displayNotification(
-            'Product removed from wishlist successfully!'
+          this.toastr.show(
+            'Product removed from wishlist successfully!',
+            'Removed',
+            {
+              toastClass: 'ngx-toastr toast-light-red', // ngx-toastr core class + yours
+            }
           );
         },
         error: (error) => {
@@ -542,7 +551,7 @@ updateSearchWithFilters(): void {
     this.showRecentlyViewed = false;
   }
 
- emitPageChange(page: number): void {
+  emitPageChange(page: number): void {
     if (page < 1 || page > this.totalPages) return;
 
     this.currentPage = page;
@@ -921,9 +930,9 @@ updateSearchWithFilters(): void {
       (response: any) => {
         debugger;
         this.searchResults = response.products.map((p: any) => ({
-            ...p,
-            product_quantity: 1,
-          }));
+          ...p,
+          product_quantity: 1,
+        }));
         this.totalPages = response.totalPages || 1;
         this.isLocallyLoading = false;
         this.cdr.detectChanges();
@@ -986,7 +995,7 @@ updateSearchWithFilters(): void {
         sno: null,
         year: vehicleData.year,
         make: this.selectedMake || vehicleData.make || '',
-        model: this.selectedModel || vehicleData.model ||'',
+        model: this.selectedModel || vehicleData.model || '',
         trim: vehicleData.trim,
         engine: vehicleData.engine,
         notes: '',
@@ -1008,9 +1017,9 @@ updateSearchWithFilters(): void {
       (response: any) => {
         debugger;
         this.searchResults = response.products.map((p: any) => ({
-            ...p,
-            product_quantity: 1,
-          }));
+          ...p,
+          product_quantity: 1,
+        }));
         this.totalPages = response.totalPages || 1;
         this.isLocallyLoading = false;
         this.cdr.detectChanges();
@@ -1103,18 +1112,54 @@ updateSearchWithFilters(): void {
             quantity: product.product_quantity,
             upc: upc,
           });
-          this.displayMessage('Item added to cart successfully!');
+          this.toastr.success('Item added to cart successfully!', 'Success');
         },
         error: (error) => {
           console.error('Error adding to cart:', error);
-          this.displayMessage('Error adding item to cart: ' + error.message);
+          this.toastr.error(
+            'Error adding item to cart: ' + error.message,
+            'Error'
+          );
         },
       });
   }
 
   buyNow(product: any) {
-    this.addToCart(product); // Call the existing Add to Cart function
-    this.router.navigate(['/B2C/cart']); // Navigate to the cart page
+    const userID = this.userID || '';
+    const businessId = this.userID ? +this.userID : 0;
+    const upc = product.product_identifier2;
+
+    this.addToCartService
+      .addToCart(
+        product.product_id,
+        userID,
+        businessId,
+        product.product_quantity
+      )
+      .subscribe({
+        next: () => {
+          this.cartService.addToCart({
+            productId: product.product_id.toString(),
+            name: product.product_name,
+            price: product.product_price,
+            image: product.product_image,
+            quantity: product.product_quantity,
+            upc: upc,
+          });
+
+          this.toastr.success('Item added to cart successfully!', 'Success');
+
+          // ✅ Navigate only after product is added to cart
+          this.router.navigate(['/B2B/cart']);
+        },
+        error: (error) => {
+          console.error('Error adding to cart:', error);
+          this.toastr.error(
+            'Error adding item to cart: ' + error.message,
+            'Error'
+          );
+        },
+      });
   }
 
   displayMessage(msg: string): void {

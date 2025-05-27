@@ -18,6 +18,9 @@
       <li [class.active]="selectedComponent === 'pending-orders'">
         <a (click)="selectComponent('pending-orders')"><i class="icon"></i>Pending Orders</a>
       </li>
+      <li [class.active]="selectedComponent === 'lost-sales'">
+        <a (click)="selectComponent('lost-sales')"><i class="icon"></i>Lost Sales</a>
+      </li>
     </ul>  
     <div class="profile">
       <img src="/assets/profile.png" alt="Profile">

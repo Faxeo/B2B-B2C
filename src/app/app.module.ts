@@ -20,12 +20,14 @@ import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { CookieService } from 'ngx-cookie-service';
 import { B2cCartComponent } from './B2C/modules/b2c/b2c-cart/b2c-cart.component';
 import { ToastrModule } from 'ngx-toastr';
+import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { MerchantProfileComponent } from './dashboard/merchant-dashboard/merchant-profile/merchant-profile.component';
 // import { B2cSearchModule } from './B2C/modules/b2c/b2c-search/b2c-search.module';
 
 
 @NgModule({
   imports: [
+    SweetAlert2Module.forRoot(),
     BrowserModule,
     BrowserAnimationsModule,
     ProductModule, 
@@ -50,7 +52,6 @@ import { MerchantProfileComponent } from './dashboard/merchant-dashboard/merchan
       closeButton: true,
       preventDuplicates: true,
     }),
-    
     // B2cSearchModule
   ],
   providers: [

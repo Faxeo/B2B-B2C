@@ -9,6 +9,7 @@
     height: 100vh;
     gap: 100px;
     overflow-y:scroll;
+    overflow-x: hidden;
     background-color: #d9e1e3;
   }
   

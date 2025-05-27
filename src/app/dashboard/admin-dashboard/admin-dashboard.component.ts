@@ -8,6 +8,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { ShippedOrdersComponent } from './shipped-orders/shipped-orders.component';
 import { BusinessRequestsComponent } from './business-requests/business-requests.component';
 import { CommonModule, NgIf } from '@angular/common';
+import { LostSalesComponent } from './lost-sales/lost-sales.component';
 
 @Component({
   standalone: true,
@@ -23,6 +24,7 @@ import { CommonModule, NgIf } from '@angular/common';
     ProfileComponent,
     ShippedOrdersComponent,
     BusinessRequestsComponent,
+    LostSalesComponent,
     CommonModule,
     NgIf,
   ],

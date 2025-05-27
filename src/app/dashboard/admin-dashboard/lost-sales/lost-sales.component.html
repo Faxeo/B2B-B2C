@@ -1,0 +1,127 @@
+<div class="lost-sales-container">
+  <div class="header">
+    <h2>Lost Sales Analysis</h2>
+    <p class="subtitle">Track potential revenue from unavailable products</p>
+  </div>
+
+  <div class="filters">
+    <div class="date-range">
+      <label for="dateRange">Time Period:</label>
+      <select id="dateRange" [(ngModel)]="selectedDateRange" (change)="onDateRangeChange()">
+        <option value="today">Today</option>
+        <option value="week">Last 7 Days</option>
+        <option value="month">Last 30 Days</option>
+        <option value="quarter">Last 90 Days</option>
+        <option value="custom">Custom Range</option>
+      </select>
+
+
+      <div *ngIf="selectedDateRange === 'custom'" class="custom-date">
+        <input type="date" [(ngModel)]="startDate">
+        <span>to</span>
+        <input type="date" [(ngModel)]="endDate">
+        <button (click)="applyCustomDateFilter()">Apply</button>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <input type="text" placeholder="Search part numbers..." [(ngModel)]="searchQuery" (keyup)="filterResults()">
+      <button class="search-btn" (click)="filterResults()">
+        <i class="fa fa-search"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="stats-cards">
+    <div class="stat-card">
+      <div class="stat-value">{{totalLostSales}}</div>
+      <div class="stat-label">Total Lost Opportunities</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{estimatedRevenueLoss | currency}}</div>
+      <div class="stat-label">Est. Revenue Loss</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{mostRequestedCount}}</div>
+      <div class="stat-label">Top Requested Item</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{uniqueCustomersAffected}}</div>
+      <div class="stat-label">Customers Affected</div>
+    </div>
+  </div>
+
+  <div class="chart-section">
+    <div class="chart-container">
+      <h3>Lost Sales Trend</h3>
+      <canvas id="lostSalesTrend"></canvas>
+    </div>
+    <div class="chart-container">
+      <h3>Top Requested Categories</h3>
+      <canvas id="categoriesChart"></canvas>
+    </div>
+  </div>
+
+  <div class="table-section">
+    <h3>Lost Sales Details</h3>
+    <div class="table-actions">
+      <div class="entries-dropdown">
+        <span>Show</span>
+        <select [(ngModel)]="itemsPerPage" (change)="updatePagination()">
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+        <span>entries</span>
+      </div>
+      <button class="export-btn" (click)="exportData()">
+        <i class="fa fa-download"></i> Export Data
+      </button>
+    </div>
+
+    <table class="lost-sales-table">
+      <thead>
+        <tr>
+          <th (click)="sortBy('timestamp')">Date/Time <i class="fa fa-sort"></i></th>
+          <th (click)="sortBy('partNumber')">Part Number <i class="fa fa-sort"></i></th>
+          <th (click)="sortBy('partDescription')">Description <i class="fa fa-sort"></i></th>
+          <th (click)="sortBy('category')">Category <i class="fa fa-sort"></i></th>
+          <th (click)="sortBy('searchCount')">Search Count <i class="fa fa-sort"></i></th>
+          <th (click)="sortBy('estimatedPrice')">Est. Price <i class="fa fa-sort"></i></th>
+          <th (click)="sortBy('potentialRevenue')">Potential Revenue <i class="fa fa-sort"></i></th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of pagedLostSales">
+          <td>{{item.timestamp | date:'medium'}}</td>
+          <td>{{item.partNumber}}</td>
+          <td>{{item.partDescription}}</td>
+          <td>{{item.category}}</td>
+          <td>{{item.searchCount}}</td>
+          <td>{{item.estimatedPrice | currency}}</td>
+          <td>{{item.potentialRevenue | currency}}</td>
+          <td>
+            <button class="action-btn" (click)="addToInventory(item)">Add to Inventory</button>
+            <button class="action-btn" (click)="findAlternatives(item)">Find Alternatives</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">Previous</button>
+      <div class="page-numbers">
+        <button *ngFor="let page of getPageArray()" [class.active]="page === currentPage" (click)="goToPage(page)">
+          {{page}}
+        </button>
+      </div>
+      <button [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">Next</button>
+    </div>
+
+    <div class="no-results" *ngIf="pagedLostSales.length === 0">
+      <p>No lost sales data found for the selected criteria.</p>
+    </div>
+  </div>
+</div>
