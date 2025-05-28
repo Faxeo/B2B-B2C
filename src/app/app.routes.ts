@@ -37,6 +37,13 @@ export const routes: Routes = [
       import('./B2C/modules/b2c/b2c-homev2/b2c-homev2.module').then((m) => m.B2cHomeV2Module),
   },
   {
+  path: 'B2C/product-details/:id',
+  canActivate: [authGuard],
+  loadComponent: () =>
+    import('./B2C/modules/b2c/b2c-product-details/b2c-product-details.component')
+      .then(m => m.B2cProductDetailsComponent)
+},
+  {
     path: 'B2C/search',
     component: B2cSearchComponent,
     canActivate: [authGuard],
@@ -64,13 +71,14 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./B2C/modules/b2c/b2c.module').then((m) => m.B2CModule),
   },
-  {
-    path: 'B2C/bill',
-    component: B2cBillingComponent,
-    canActivate: [authGuard],
-    loadChildren: () =>
-      import('./B2C/modules/b2c/b2c.module').then((m) => m.B2CModule),
-  },
+//   {
+//   path: 'B2C/product-details/:id',
+//   canActivate: [authGuard],
+//   loadComponent: () =>
+//     import(
+//       './B2C/modules/b2c/b2c-product-details/b2c-product-details.component'
+//     ).then((m) => m.B2cProductDetailsComponent)
+// },
   {
     path: 'B2C/login',
     component: B2cLoginComponent,
@@ -174,13 +182,13 @@ export const routes: Routes = [
         (m) => m.ProductDetailsModule
       ),
   },
-  {
-    path: 'B2C/product-details/:id',
-    loadChildren: () =>
-      import('./B2C/modules/b2c/b2c-product-details/b2c-product-details.module').then(
-        (m) => m.B2cProductDetailsModule
-      ),
-  },
+  // {
+  //   path: 'B2C/product-details/:id',
+  //   loadChildren: () =>
+  //     import('./B2C/modules/b2c/b2c-product-details/b2c-product-details.module').then(
+  //       (m) => m.B2cProductDetailsModule
+  //     ),
+  // },
   {
     path: 'wishlist',
     loadChildren: () =>
