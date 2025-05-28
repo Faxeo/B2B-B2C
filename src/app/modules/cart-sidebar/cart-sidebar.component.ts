@@ -8,6 +8,7 @@ import { BusinessCartService } from '../../core/services/business-cart/business-
 import { DeleteCartService } from '../../core/services/delete-cart/delete-cart.service';
 import { Subscription } from 'rxjs';
 import { OnDestroy } from '@angular/core';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -135,26 +136,52 @@ loadCartData(): void {
 
 // Remove a product from the cart using the cartId
 removeFromCart(cartId: string): void {
-  console.log('Attempting to remove item with Cart ID:', cartId); // Log the cartId
-  // Confirm before removing
-  if (confirm('Are you sure you want to remove this item from your cart?')) {
-    this.deleteCartService.deleteCart(+cartId).subscribe(
-      (response) => {
-        console.log('Delete response:', response); // Log the delete response
-        if (response.success) {
-          // Remove the item from the cart locally
-          this.cartItems = this.cartItems.filter((item) => item.cartId !== cartId);
-          console.log('Item removed successfully.');
-        } else {
-          console.error('Failed to remove the item:', response.statusReason);
+  Swal.fire({
+    title: 'Remove item from cart',
+    text: 'This product will no longer appear in your cart.',
+    icon: 'warning', // You can also use 'question' or 'info' if preferred
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Remove',
+    cancelButtonText: 'Keep it',
+    reverseButtons: true,
+    backdrop: true,
+    focusCancel: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.deleteCartService.deleteCart(+cartId).subscribe(
+        (response) => {
+          if (response.success) {
+            this.cartItems = this.cartItems.filter(item => item.cartId !== cartId);
+            Swal.fire({
+              icon: 'success',
+              title: 'Item removed',
+              text: 'The product was removed from your cart.',
+              timer: 2000,
+              showConfirmButton: false
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Removal failed',
+              text: response.statusReason || 'Could not remove the item.',
+            });
+          }
+        },
+        (error) => {
+          console.error('Delete error:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Something went wrong',
+            text: 'Unable to remove the item. Please try again.',
+          });
         }
-      },
-      (error) => {
-        console.error('Error occurred while deleting the cart item:', error);
-      }
-    );
-  }
+      );
+    }
+  });
 }
+
 
 applyDiscount(product: any, prod_qty: number, customerType: string): number {
   // console.log('applyDiscount called with: Product:', product, 'Quantity:', prod_qty, 'Customer Type:', customerType);

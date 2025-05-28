@@ -29,6 +29,7 @@ import { CategoryNavbarSearchService } from '../../core/services/category-navbar
 import { DynamicSearchService } from '../../core/services/dynamic-search/dynamic-search.service';
 import { take } from 'rxjs/operators';
 import { CartSidebarService } from '../../core/services/cart-sidebar/cart-sidebar.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-category-results',
@@ -94,7 +95,8 @@ export class CategoryResultsComponent implements OnInit {
     private categoryNavbarSearchService: CategoryNavbarSearchService,
     private dynamicSearchService: DynamicSearchService,
     private cdr: ChangeDetectorRef,
-    private cartSidebarService: CartSidebarService
+    private cartSidebarService: CartSidebarService,
+    private toastr: ToastrService
   ) {
     this.filterSearchService.selectedCategories$.subscribe((categories) => {
       this.m_id = categories.m_id;
@@ -449,7 +451,7 @@ export class CategoryResultsComponent implements OnInit {
     );
   }
 
-  addToWishlist(product: any): void {
+   addToWishlist(product: any): void {
     if (!this.userID) {
       this.displayNotification('Please log in to add items to wishlist.');
       return;
@@ -464,12 +466,49 @@ export class CategoryResultsComponent implements OnInit {
       .subscribe({
         next: () => {
           product.isInWishlist = true;
-          this.showTemporaryPopup('Product added to wishlist!');
+          this.toastr.success(
+            'Product added to wishlist successfully!',
+            'Added'
+          );
         },
         error: (error) => {
           console.error('Error adding to wishlist:', error);
+          // inside removeFromWishlist().next():
+          this.toastr.error(
+            'Product removed from wishlist successfully!',
+            'Removed'
+          );
+        },
+      });
+  }
+
+  removeFromWishlist(product: any): void {
+    if (!this.userID) {
+      this.displayNotification('Please log in to remove items from wishlist.');
+      return;
+    }
+
+    this.removeFromWishlistService
+      .removeFromWishlist(
+        Number(this.userID),
+        Number(this.userID), // Convert to number for businessId
+        product.product_id
+      )
+      .subscribe({
+        next: () => {
+          product.isInWishlist = false;
+          this.toastr.show(
+            'Product removed from wishlist successfully!',
+            'Removed',
+            {
+              toastClass: 'ngx-toastr toast-light-red', // ngx-toastr core class + yours
+            }
+          );
+        },
+        error: (error) => {
+          console.error('Error removing from wishlist:', error);
           this.displayNotification(
-            'Error adding item to wishlist: ' + error.message
+            'Error removing item from wishlist: ' + error.message
           );
         },
       });
@@ -491,31 +530,6 @@ export class CategoryResultsComponent implements OnInit {
     }
   }
 
-  removeFromWishlist(product: any): void {
-    if (!this.userID) {
-      this.displayNotification('Please log in to remove items from wishlist.');
-      return;
-    }
-
-    this.removeFromWishlistService
-      .removeFromWishlist(
-        Number(this.userID),
-        Number(this.userID), // Convert to number for businessId
-        product.product_id
-      )
-      .subscribe({
-        next: () => {
-          product.isInWishlist = false;
-          this.showTemporaryPopup('Product removed from wishlist!', '#e74c3c');
-        },
-        error: (error) => {
-          console.error('Error removing from wishlist:', error);
-          this.displayNotification(
-            'Error removing item from wishlist: ' + error.message
-          );
-        },
-      });
-  }
 
   private displayNotification(message: string): void {
     // You can implement this using your preferred notification system
@@ -657,17 +671,53 @@ export class CategoryResultsComponent implements OnInit {
           });
 
           this.cartSidebarService.openCartSidebar();
-          this.displayMessage('Item added to cart successfully!');
+          this.toastr.success('Item added to cart successfully!', 'Success');
         },
         error: (error) => {
           console.error('Error adding to cart:', error);
-          this.displayMessage('Error adding item to cart: ' + error.message);
+          this.toastr.error(
+            'Error adding item to cart: ' + error.message,
+            'Error'
+          );
         },
       });
   }
 
-  buyNow(product: any) {
-    this.addToCart(product); // Call the existing Add to Cart function
-    this.router.navigate(['/B2B/cart']); // Navigate to the cart page
+   buyNow(product: any) {
+    const userID = this.userID || '';
+    const businessId = this.userID ? +this.userID : 0;
+    const upc = product.product_identifier2;
+
+    this.addToCartService
+      .addToCart(
+        product.product_id,
+        userID,
+        businessId,
+        product.product_quantity
+      )
+      .subscribe({
+        next: () => {
+          this.cartService.addToCart({
+            productId: product.product_id.toString(),
+            name: product.product_name,
+            price: product.product_price,
+            image: product.product_image,
+            quantity: product.product_quantity,
+            upc: upc,
+          });
+
+          this.toastr.success('Item added to cart successfully!', 'Success');
+
+          // ✅ Navigate only after product is added to cart
+          this.router.navigate(['/B2B/cart']);
+        },
+        error: (error) => {
+          console.error('Error adding to cart:', error);
+          this.toastr.error(
+            'Error adding item to cart: ' + error.message,
+            'Error'
+          );
+        },
+      });
   }
 }

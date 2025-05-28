@@ -40,6 +40,15 @@ import { CartSidebarComponent } from '../cart-sidebar/cart-sidebar.component';
 import { SearchByCategoryComponent } from '../search-by-category/search-by-category.component';
 import { CartSidebarService } from '../../core/services/cart-sidebar/cart-sidebar.service';
 import { FooterComponent } from '../../layout/footer/footer.component';
+import { ToastrService } from 'ngx-toastr';
+import {
+  trigger,
+  transition,
+  animate,
+  style,
+  keyframes
+} from '@angular/animations';
+
 
 @Component({
   selector: 'app-search-results',
@@ -54,7 +63,56 @@ import { FooterComponent } from '../../layout/footer/footer.component';
   ],
   templateUrl: './search-results.component.html',
   styleUrl: './search-results.component.css',
+  animations: [
+    trigger('thumbsUpAnim', [
+      transition(':enter', [
+        animate('3s cubic-bezier(0.25, 0.46, 0.45, 0.94)', keyframes([
+          // Start: Small scale, center position
+          style({ 
+            transform: 'scale(0) translateY(0) rotate(0deg)', 
+            opacity: 0, 
+            filter: 'blur(4px)',
+            offset: 0 
+          }),
+          // Initial pop with glow
+          style({ 
+            transform: 'scale(1.4) translateY(-15px) rotate(-20deg)', 
+            opacity: 1, 
+            filter: 'blur(0px) drop-shadow(0 0 20px rgba(40, 167, 69, 0.8))',
+            offset: 0.15 
+          }),
+          // Bounce effect
+          style({ 
+            transform: 'scale(1.0) translateY(-40px) rotate(15deg)', 
+            filter: 'blur(0px) drop-shadow(0 0 15px rgba(40, 167, 69, 0.6))',
+            offset: 0.3 
+          }),
+          // Second bounce
+          style({ 
+            transform: 'scale(1.2) translateY(-70px) rotate(-10deg)', 
+            filter: 'blur(0px) drop-shadow(0 0 10px rgba(40, 167, 69, 0.4))',
+            offset: 0.5 
+          }),
+          // Float phase
+          style({ 
+            transform: 'scale(1.05) translateY(-120px) rotate(5deg)', 
+            opacity: 0.9,
+            filter: 'blur(0px) drop-shadow(0 0 5px rgba(40, 167, 69, 0.2))',
+            offset: 0.75 
+          }),
+          // Final fade out
+          style({ 
+            transform: 'scale(0.8) translateY(-180px) rotate(0deg)', 
+            opacity: 0,
+            filter: 'blur(2px)',
+            offset: 1.0 
+          })
+        ]))
+      ])
+    ])
+  ]
 })
+
 export class SearchResultsComponent implements OnChanges {
   @Input() searchResults: any[] = [];
   @Input() currentPage: number = 1;
@@ -121,6 +179,8 @@ export class SearchResultsComponent implements OnChanges {
 
   activeSearchType: 'general' | 'category' | 'vehicle' = 'general'; // Default to 'general'
 
+  showThumbsUp = false;
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private cdr: ChangeDetectorRef,
@@ -146,7 +206,8 @@ export class SearchResultsComponent implements OnChanges {
     private removeFromWishlistService: RemoveFromWishlistService,
     private wishlistService: WishlistService,
     private categoryNavbarSearchService: CategoryNavbarSearchService,
-    private cartSidebarService: CartSidebarService
+    private cartSidebarService: CartSidebarService,
+    private toastr: ToastrService
   ) {
     this.filterSearchService.selectedCategories$.subscribe((categories) => {
       this.m_id = categories.m_id;
@@ -435,12 +496,49 @@ export class SearchResultsComponent implements OnChanges {
       .subscribe({
         next: () => {
           product.isInWishlist = true;
-          this.showTemporaryPopup('Product added to wishlist!');
+          this.toastr.success(
+            'Product added to wishlist successfully!',
+            'Added'
+          );
         },
         error: (error) => {
           console.error('Error adding to wishlist:', error);
+          // inside removeFromWishlist().next():
+          this.toastr.error(
+            'Product removed from wishlist successfully!',
+            'Removed'
+          );
+        },
+      });
+  }
+
+  removeFromWishlist(product: any): void {
+    if (!this.userID) {
+      this.displayNotification('Please log in to remove items from wishlist.');
+      return;
+    }
+
+    this.removeFromWishlistService
+      .removeFromWishlist(
+        Number(this.userID),
+        Number(this.userID), // Convert to number for businessId
+        product.product_id
+      )
+      .subscribe({
+        next: () => {
+          product.isInWishlist = false;
+          this.toastr.show(
+            'Product removed from wishlist successfully!',
+            'Removed',
+            {
+              toastClass: 'ngx-toastr toast-light-red', // ngx-toastr core class + yours
+            }
+          );
+        },
+        error: (error) => {
+          console.error('Error removing from wishlist:', error);
           this.displayNotification(
-            'Error adding item to wishlist: ' + error.message
+            'Error removing item from wishlist: ' + error.message
           );
         },
       });
@@ -459,32 +557,6 @@ export class SearchResultsComponent implements OnChanges {
         popup.classList.add('hidden'); // Hide popup after 3 seconds
       }, 3000);
     }
-  }
-
-  removeFromWishlist(product: any): void {
-    if (!this.userID) {
-      this.displayNotification('Please log in to remove items from wishlist.');
-      return;
-    }
-
-    this.removeFromWishlistService
-      .removeFromWishlist(
-        Number(this.userID),
-        Number(this.userID), // Convert to number for businessId
-        product.product_id
-      )
-      .subscribe({
-        next: () => {
-          product.isInWishlist = false;
-          this.showTemporaryPopup('Product removed from wishlist!', '#e74c3c');
-        },
-        error: (error) => {
-          console.error('Error removing from wishlist:', error);
-          this.displayNotification(
-            'Error removing item from wishlist: ' + error.message
-          );
-        },
-      });
   }
 
   private currentSearchState: {
@@ -1146,6 +1218,12 @@ export class SearchResultsComponent implements OnChanges {
     const userID = this.userID || '';
     const businessId = this.userID ? +this.userID : 0;
     const upc = product.product_identifier2;
+     this.showThumbsUp = true;
+
+    // Hide animation after 1.5s
+    setTimeout(() => {
+      this.showThumbsUp = false;
+    }, 2500);
 
     this.addToCartService
       .addToCart(
@@ -1165,18 +1243,54 @@ export class SearchResultsComponent implements OnChanges {
             upc: upc,
           });
           this.cartSidebarService.openCartSidebar();
-          this.displayMessage('Item added to cart successfully!');
+          this.toastr.success('Item added to cart successfully!', 'Success');
         },
         error: (error) => {
           console.error('Error adding to cart:', error);
-          this.displayMessage('Error adding item to cart: ' + error.message);
+          this.toastr.error(
+            'Error adding item to cart: ' + error.message,
+            'Error'
+          );
         },
       });
   }
 
   buyNow(product: any) {
-    this.addToCart(product); // Call the existing Add to Cart function
-    this.router.navigate(['/B2B/cart']); // Navigate to the cart page
+    const userID = this.userID || '';
+    const businessId = this.userID ? +this.userID : 0;
+    const upc = product.product_identifier2;
+
+    this.addToCartService
+      .addToCart(
+        product.product_id,
+        userID,
+        businessId,
+        product.product_quantity
+      )
+      .subscribe({
+        next: () => {
+          this.cartService.addToCart({
+            productId: product.product_id.toString(),
+            name: product.product_name,
+            price: product.product_price,
+            image: product.product_image,
+            quantity: product.product_quantity,
+            upc: upc,
+          });
+
+          this.toastr.success('Item added to cart successfully!', 'Success');
+
+          // ✅ Navigate only after product is added to cart
+          this.router.navigate(['/B2B/cart']);
+        },
+        error: (error) => {
+          console.error('Error adding to cart:', error);
+          this.toastr.error(
+            'Error adding item to cart: ' + error.message,
+            'Error'
+          );
+        },
+      });
   }
 
   displayMessage(msg: string): void {

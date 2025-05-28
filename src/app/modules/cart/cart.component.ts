@@ -12,9 +12,10 @@ import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 import { DeleteAddressService } from '../../core/services/delete-address/delete-address.service';
+import Swal from 'sweetalert2';
 
 export interface Address {
-  add_id: number;  // ✅ Add this property to match API response
+  add_id: number; // ✅ Add this property to match API response
   fullName: string;
   email: string;
   contact: string;
@@ -33,7 +34,6 @@ export interface Address {
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.css'],
 })
-
 export class CartComponent implements OnInit {
   // Define the type for cartItems, adding cartId and discountedPrice as optional fields
   cartItems: Array<{
@@ -58,20 +58,67 @@ export class CartComponent implements OnInit {
 
   // Then in your component, update the savedAddresses definition
   savedAddresses: Address[] = []; // Properly typed array
-  // selectedAddress: Address | null = null; 
+  // selectedAddress: Address | null = null;
   showAddressForm = false; // Controls visibility of the form
 
   showSuccessPopup = false;
 
   usStates: string[] = [
-    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
-    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+    'AL',
+    'AK',
+    'AZ',
+    'AR',
+    'CA',
+    'CO',
+    'CT',
+    'DE',
+    'FL',
+    'GA',
+    'HI',
+    'ID',
+    'IL',
+    'IN',
+    'IA',
+    'KS',
+    'KY',
+    'LA',
+    'ME',
+    'MD',
+    'MA',
+    'MI',
+    'MN',
+    'MS',
+    'MO',
+    'MT',
+    'NE',
+    'NV',
+    'NH',
+    'NJ',
+    'NM',
+    'NY',
+    'NC',
+    'ND',
+    'OH',
+    'OK',
+    'OR',
+    'PA',
+    'RI',
+    'SC',
+    'SD',
+    'TN',
+    'TX',
+    'UT',
+    'VT',
+    'VA',
+    'WA',
+    'WV',
+    'WI',
+    'WY',
   ];
 
   // Update newAddress to match the interface
   newAddress: Address = {
-    add_id: 0, 
+    add_id: 0,
     fullName: '',
     email: '',
     contact: '',
@@ -80,9 +127,9 @@ export class CartComponent implements OnInit {
     state: '',
     zipcode: '',
     country: 'United States',
-    addressType: 'Shipping' // ✅ Default value set here
+    addressType: 'Shipping', // ✅ Default value set here
   };
-  
+
   formSubmitted = false;
 
   businessId: number | null = null;
@@ -102,25 +149,25 @@ export class CartComponent implements OnInit {
 
   private _selectedAddress: Address | null = null;
 
-get selectedAddress(): Address | null {
-  return this._selectedAddress;
-}
-
-set selectedAddress(address: Address | null) {
-  this._selectedAddress = address;
-  if (address) {
-    this.billing = {
-      fullName: address.fullName,
-      email: address.email,
-      contact: address.contact,
-      billingAddress: address.billingAddress,
-      country: address.country,
-      state: address.state,
-      city: address.city,
-      zipcode: address.zipcode,
-    };
+  get selectedAddress(): Address | null {
+    return this._selectedAddress;
   }
-}
+
+  set selectedAddress(address: Address | null) {
+    this._selectedAddress = address;
+    if (address) {
+      this.billing = {
+        fullName: address.fullName,
+        email: address.email,
+        contact: address.contact,
+        billingAddress: address.billingAddress,
+        country: address.country,
+        state: address.state,
+        city: address.city,
+        zipcode: address.zipcode,
+      };
+    }
+  }
 
   constructor(
     private cartService: CartService,
@@ -147,12 +194,12 @@ set selectedAddress(address: Address | null) {
     this.loadSavedAddresses();
   }
 
-filteredCartItems() {
-  if (!this.searchTerm) return this.cartItems;
-  return this.cartItems.filter(item =>
-    item.name.toLowerCase().includes(this.searchTerm.toLowerCase())
-  );
-}
+  filteredCartItems() {
+    if (!this.searchTerm) return this.cartItems;
+    return this.cartItems.filter((item) =>
+      item.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+  }
 
   isBillingFormValid(): boolean {
     return !!(
@@ -169,16 +216,17 @@ filteredCartItems() {
 
   handleNewAddressPaste(event: ClipboardEvent): void {
     event.preventDefault(); // Prevent default paste action
-  
+
     const clipboardData = event.clipboardData || (window as any).clipboardData;
     const pastedText = clipboardData.getData('text');
-  
+
     // Extract structured data
     const addressParts = this.extractBillingDetails(pastedText);
-  
+
     // Auto-fill fields in New Address Form if found
     if (addressParts.fullName) this.newAddress.fullName = addressParts.fullName;
-    if (addressParts.billingAddress) this.newAddress.billingAddress = addressParts.billingAddress;
+    if (addressParts.billingAddress)
+      this.newAddress.billingAddress = addressParts.billingAddress;
     if (addressParts.city) this.newAddress.city = addressParts.city;
     if (addressParts.state) this.newAddress.state = addressParts.state;
     if (addressParts.zipcode) this.newAddress.zipcode = addressParts.zipcode;
@@ -186,20 +234,20 @@ filteredCartItems() {
     if (addressParts.contact) this.newAddress.contact = addressParts.contact;
     if (addressParts.email) this.newAddress.email = addressParts.email;
   }
-  
 
   handleBillingPaste(event: ClipboardEvent): void {
     event.preventDefault(); // Prevent default paste action
-  
+
     const clipboardData = event.clipboardData || (window as any).clipboardData;
     const pastedText = clipboardData.getData('text');
-  
+
     // Extract structured data
     const addressParts = this.extractBillingDetails(pastedText);
-  
+
     // Auto-fill fields if found
     if (addressParts.fullName) this.billing.fullName = addressParts.fullName;
-    if (addressParts.billingAddress) this.billing.billingAddress = addressParts.billingAddress;
+    if (addressParts.billingAddress)
+      this.billing.billingAddress = addressParts.billingAddress;
     if (addressParts.city) this.billing.city = addressParts.city;
     if (addressParts.state) this.billing.state = addressParts.state;
     if (addressParts.zipcode) this.billing.zipcode = addressParts.zipcode;
@@ -207,8 +255,7 @@ filteredCartItems() {
     if (addressParts.contact) this.billing.contact = addressParts.contact;
     if (addressParts.email) this.billing.email = addressParts.email;
   }
-  
-  
+
   extractBillingDetails(addressText: string): {
     fullName?: string;
     billingAddress?: string;
@@ -229,34 +276,39 @@ filteredCartItems() {
       contact?: string;
       email?: string;
     } = {};
-  
-    let lines = addressText.split('\n').map(line => line.trim()).filter(line => line);
-  
+
+    let lines = addressText
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line);
+
     // Extract full name (first line)
     if (lines.length > 0) {
       result.fullName = lines[0];
     }
-  
+
     // Extract phone number
     const phoneRegex = /\+?\d{1,2}[\s-]?\(?\d{3}\)?[\s-]?\d{3}[\s-]?\d{4}/;
-    const phoneMatch = lines.find(line => phoneRegex.test(line));
+    const phoneMatch = lines.find((line) => phoneRegex.test(line));
     if (phoneMatch) {
       result.contact = phoneMatch.match(phoneRegex)?.[0] ?? '';
-      lines = lines.filter(line => line !== phoneMatch); // Remove phone number
+      lines = lines.filter((line) => line !== phoneMatch); // Remove phone number
     }
-  
+
     // Extract email address
     const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
-    const emailMatch = lines.find(line => emailRegex.test(line));
+    const emailMatch = lines.find((line) => emailRegex.test(line));
     if (emailMatch) {
       result.email = emailMatch.match(emailRegex)?.[0] ?? '';
-      lines = lines.filter(line => line !== emailMatch); // Remove email
+      lines = lines.filter((line) => line !== emailMatch); // Remove email
     }
-  
+
     // Extract ZIP code, state, and city
     const zipStateCityRegex = /^(.*)\s([A-Z]{2})\s(\d{5}(-\d{4})?)$/;
-    const stateZipLineIndex = lines.findIndex(line => zipStateCityRegex.test(line));
-  
+    const stateZipLineIndex = lines.findIndex((line) =>
+      zipStateCityRegex.test(line)
+    );
+
     if (stateZipLineIndex !== -1) {
       const match = lines[stateZipLineIndex].match(zipStateCityRegex);
       if (match) {
@@ -266,49 +318,55 @@ filteredCartItems() {
       }
       lines.splice(stateZipLineIndex, 1); // Remove extracted line
     }
-  
+
     // Remove "United States" (or any case variation)
-    lines = lines.filter(line => !line.toLowerCase().includes("united states"));
-  
+    lines = lines.filter(
+      (line) => !line.toLowerCase().includes('united states')
+    );
+
     // Remove empty lines after filtering
-    lines = lines.filter(line => line.trim() !== '');
-  
+    lines = lines.filter((line) => line.trim() !== '');
+
     // Extract billing address (remaining lines after removing extracted fields)
     result.billingAddress = lines.slice(1).join(', ');
-  
+
     // Set default country
     result.country = 'United States';
-  
+
     return result;
   }
-  
 
   deleteAddress(address: Address): void {
-    if (confirm(`Are you sure you want to delete this address: ${address.fullName}?`)) {
+    if (
+      confirm(
+        `Are you sure you want to delete this address: ${address.fullName}?`
+      )
+    ) {
       console.log(`Deleting address with ID: ${address.add_id}`);
-      
+
       this.deleteAddressService.deleteAddress(address.add_id).subscribe({
         next: () => {
-          this.savedAddresses = this.savedAddresses.filter(a => a.add_id !== address.add_id);
-          console.log("Address deleted successfully.");
+          this.savedAddresses = this.savedAddresses.filter(
+            (a) => a.add_id !== address.add_id
+          );
+          console.log('Address deleted successfully.');
         },
-        error: (err) => console.error("Error deleting address:", err)
+        error: (err) => console.error('Error deleting address:', err),
       });
     }
   }
-  
 
   loadSavedAddresses(): void {
     const customerId = this.cartService.getUserID();
-    
+
     if (customerId) {
       this.getAddressService.getAddresses(+customerId).subscribe({
         next: (response) => {
-          console.log("Full API Response:", response);
-  
+          console.log('Full API Response:', response);
+
           if (response.success && Array.isArray(response.data)) {
             this.savedAddresses = response.data.map((addr: any) => ({
-              add_id: addr.add_id, 
+              add_id: addr.add_id,
               fullName: addr.fullName,
               email: addr.email,
               contact: addr.phoneNumber,
@@ -317,37 +375,38 @@ filteredCartItems() {
               state: addr.state,
               zipcode: addr.zipCode,
               country: addr.country,
-              addressType: addr.addressType ?? 'Unknown'  // ✅ Ensures `addressType` never becomes undefined
+              addressType: addr.addressType ?? 'Unknown', // ✅ Ensures `addressType` never becomes undefined
             }));
-  
-            console.log("Mapped Addresses After API Call:", this.savedAddresses);
-  
+
+            console.log(
+              'Mapped Addresses After API Call:',
+              this.savedAddresses
+            );
+
             setTimeout(() => {
               this.cdr.detectChanges(); // ✅ Force UI update
             }, 0);
           } else {
-            console.error("API returned unexpected format:", response);
+            console.error('API returned unexpected format:', response);
             this.savedAddresses = [];
           }
         },
         error: (error) => {
           console.error('Error fetching addresses:', error);
           this.savedAddresses = [];
-        }
+        },
       });
     }
   }
-  
-  
 
   // Toggle form visibility
   toggleAddressForm(): void {
     this.showAddressForm = !this.showAddressForm;
-  
+
     // Reset form when opening
     if (this.showAddressForm) {
       this.newAddress = {
-        add_id: 0, 
+        add_id: 0,
         fullName: '',
         email: '',
         contact: '',
@@ -356,28 +415,30 @@ filteredCartItems() {
         state: '',
         zipcode: '',
         country: 'United States',
-        addressType: ''  // ✅ Include addressType
+        addressType: '', // ✅ Include addressType
       };
     }
   }
 
   saveNewAddress(): void {
     this.formSubmitted = true;
-    if (!this.newAddress.fullName ||
-        !this.newAddress.email ||
-        !this.newAddress.contact ||
-        !this.newAddress.billingAddress ||
-        !this.newAddress.city ||
-        !this.newAddress.state ||
-        !this.newAddress.zipcode ||
-        !this.newAddress.country) {
-      console.error("Missing required fields.");
+    if (
+      !this.newAddress.fullName ||
+      !this.newAddress.email ||
+      !this.newAddress.contact ||
+      !this.newAddress.billingAddress ||
+      !this.newAddress.city ||
+      !this.newAddress.state ||
+      !this.newAddress.zipcode ||
+      !this.newAddress.country
+    ) {
+      console.error('Missing required fields.');
       return;
     }
 
     const customerId = this.cartService.getUserID();
     if (!customerId) {
-      console.error("No customer ID found.");
+      console.error('No customer ID found.');
       return;
     }
 
@@ -385,7 +446,7 @@ filteredCartItems() {
       customerId: +customerId,
       fullName: this.newAddress.fullName,
       streetAddressLine1: this.newAddress.billingAddress,
-      streetAddressLine2: "",
+      streetAddressLine2: '',
       city: this.newAddress.city,
       state: this.newAddress.state,
       zipCode: this.newAddress.zipcode,
@@ -395,31 +456,30 @@ filteredCartItems() {
       latitude: 0,
       longitude: 0,
       addressType: this.newAddress.addressType,
-      isPrimary: true
+      isPrimary: true,
     };
 
     this.addAddressService.addAddress(addressData).subscribe({
       next: (response) => {
         if (response.success) {
           if (!Array.isArray(this.savedAddresses)) {
-            console.error("savedAddresses is not an array. Resetting...");
+            console.error('savedAddresses is not an array. Resetting...');
             this.savedAddresses = [];
           }
           this.savedAddresses.push({ ...this.newAddress });
           this.showSuccessPopup = true; // ✅ Show success pop-up
           this.toggleAddressForm();
         } else {
-          console.error("API Error: ", response);
-          alert("Failed to add address. Please try again.");
+          console.error('API Error: ', response);
+          alert('Failed to add address. Please try again.');
         }
       },
       error: (error) => {
         console.error('Server error while adding address:', error);
-        alert("Server error while adding address. Please try later.");
-      }
+        alert('Server error while adding address. Please try later.');
+      },
     });
-}
-
+  }
 
   closeSuccessPopup(): void {
     this.showSuccessPopup = false;
@@ -432,10 +492,13 @@ filteredCartItems() {
       map((term: string) =>
         term.length < 1
           ? []
-          : this.usStates.filter(state => state.toLowerCase().startsWith(term.toLowerCase())).slice(0, 10)
+          : this.usStates
+              .filter((state) =>
+                state.toLowerCase().startsWith(term.toLowerCase())
+              )
+              .slice(0, 10)
       )
     );
-  
 
   handleAddressPaste(event: ClipboardEvent): void {
     event.preventDefault(); // Prevent default paste action
@@ -560,29 +623,53 @@ filteredCartItems() {
   }
 
   // Remove a product from the cart using the cartId
-  removeFromCart(cartId: string): void {
-    console.log('Attempting to remove item with Cart ID:', cartId); // Log the cartId
-    // Confirm before removing
-    if (confirm('Are you sure you want to remove this item from your cart?')) {
+removeFromCart(cartId: string): void {
+  Swal.fire({
+    title: 'Remove item from cart',
+    text: 'This product will no longer appear in your cart.',
+    icon: 'warning', // You can also use 'question' or 'info' if preferred
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Remove',
+    cancelButtonText: 'Keep it',
+    reverseButtons: true,
+    backdrop: true,
+    focusCancel: true
+  }).then((result) => {
+    if (result.isConfirmed) {
       this.deleteCartService.deleteCart(+cartId).subscribe(
         (response) => {
-          console.log('Delete response:', response); // Log the delete response
           if (response.success) {
-            // Remove the item from the cart locally
-            this.cartItems = this.cartItems.filter(
-              (item) => item.cartId !== cartId
-            );
-            console.log('Item removed successfully.');
+            this.cartItems = this.cartItems.filter(item => item.cartId !== cartId);
+            Swal.fire({
+              icon: 'success',
+              title: 'Item removed',
+              text: 'The product was removed from your cart.',
+              timer: 2000,
+              showConfirmButton: false
+            });
           } else {
-            console.error('Failed to remove the item:', response.statusReason);
+            Swal.fire({
+              icon: 'error',
+              title: 'Removal failed',
+              text: response.statusReason || 'Could not remove the item.',
+            });
           }
         },
         (error) => {
-          console.error('Error occurred while deleting the cart item:', error);
+          console.error('Delete error:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Something went wrong',
+            text: 'Unable to remove the item. Please try again.',
+          });
         }
       );
     }
-  }
+  });
+}
+
 
   applyDiscount(product: any, prod_qty: number, customerType: string): number {
     // console.log('applyDiscount called with: Product:', product, 'Quantity:', prod_qty, 'Customer Type:', customerType);
