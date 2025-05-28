@@ -4,14 +4,17 @@ import {
   Inject,
   Input,
   PLATFORM_ID,
-  SimpleChanges,
+  OnInit, // Import OnInit
+  OnDestroy, // Import OnDestroy
+  // SimpleChanges, // Remove if not used
 } from '@angular/core';
 
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-// import {
-//   ProductDetailsService,
-//   ProductDetails,
-// } from '../../core/services/product-details/product-details.service';
+import {
+  ActivatedRoute,
+  ParamMap,
+  Router,
+  RouterModule,
+} from '@angular/router'; // Import ParamMap
 import { ProductDetails } from '../../../../core/services/product-details/product-details.service';
 import { ProductDetailsService } from '../../../../core/services/product-details/product-details.service';
 import { FooterComponent } from '../../../../layout/footer/footer.component';
@@ -21,9 +24,22 @@ import { AddToCartService } from '../../../../core/services/add-to-cart/add-to-c
 import { NavigationService } from '../../../../core/services/navigation-service/navigation-service.service';
 import { SubCategoryService } from '../../../../core/services/sub-category/sub-category.service';
 import { MainCategoryService } from '../../../../core/services/main-category/main-category.service';
-import { FetchChildService } from '../../../../core/services/fetch-child/fetch-child.service';
+// import { FetchChildService } from '../../../../core/services/fetch-child/fetch-child.service'; // If not used
 import { FormsModule } from '@angular/forms';
-import { trigger, state, style, animate, transition, keyframes } from '@angular/animations';
+import {
+  trigger,
+  state,
+  style,
+  animate,
+  transition,
+  keyframes,
+} from '@angular/animations';
+
+import { filter, map, switchMap, takeUntil } from 'rxjs/operators'; // Added switchMap and takeUntil
+import { Subject, Observable } from 'rxjs'; // Import Observable for type hints if needed
+
+// Remove if environment is not used, or ensure it's correctly set up
+// import { environment} from '../../../../../environment';
 
 interface Testimonial {
   customerName: string;
@@ -35,27 +51,9 @@ interface Testimonial {
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, FooterComponent],
   templateUrl: './b2c-product-details.component.html',
-  styleUrl: './b2c-product-details.component.css',
-  animations: [
-    trigger('shakeButton', [
-      transition('* => *', [
-        animate('0.7s ease-in-out', keyframes([
-          style({ transform: 'translateX(-12px)', offset: 0.1 }),
-          style({ transform: 'translateX(12px)', offset: 0.2 }),
-          style({ transform: 'translateX(-10px)', offset: 0.3 }),
-          style({ transform: 'translateX(10px)', offset: 0.4 }),
-          style({ transform: 'translateX(-8px)', offset: 0.5 }),
-          style({ transform: 'translateX(8px)', offset: 0.6 }),
-          style({ transform: 'translateX(-5px)', offset: 0.7 }),
-          style({ transform: 'translateX(5px)', offset: 0.8 }),
-          style({ transform: 'translateX(0)', offset: 1.0 })
-        ]))
-      ])
-    ])
-  ]
+  styleUrls: ['./b2c-product-details.component.css'],
 })
-
-export class B2cProductDetailsComponent {
+export class B2cProductDetailsComponent implements OnInit, OnDestroy {
   testimonials: Testimonial[] = [
     {
       customerName: 'Gavin',
@@ -121,8 +119,11 @@ export class B2cProductDetailsComponent {
   mainImage: string = '';
   private zoomScale: number = 2.5;
   private debounceTimer: any;
-  
-  shakeTrigger = false;
+
+  // shakeTrigger = false;
+
+  readonly imageBaseUrl = 'https://usaperp.com:5001/';
+  private destroy$ = new Subject<void>();
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -133,50 +134,57 @@ export class B2cProductDetailsComponent {
     private cartService: CartService,
     private loginService: LoginService,
     private navigationService: NavigationService,
-    private fetchChildService: FetchChildService,
-    private mainCategoryService: MainCategoryService,
-    private subCategoryService: SubCategoryService
-  ) {
-    setInterval(() => {
-      this.shakeTrigger = !this.shakeTrigger;
-    }, 5000); // Trigger shake every 5 seconds
-    }
+    // private fetchChildService: FetchChildService,
+    private mainCategoryService: MainCategoryService
+  ) // private subCategoryService: SubCategoryService
+  {
+    // setInterval(() => {
+    //   this.shakeTrigger = !this.shakeTrigger;
+    // }, 5000); // Trigger shake every 5 seconds
+  }
 
   ngOnInit(): void {
-    this.getMainCategories();
-    if (isPlatformBrowser(this.platformId)) {
-      this.userID = localStorage.getItem('userID');
-      this.loginService.getUserID().subscribe((userID) => {
-        this.userID = userID;
-        this.cartService.setUserDetails(this.userID, this.loginType);
-      });
-
-      this.loginService.getLoginType().subscribe((loginType) => {
-        this.loginType = loginType;
-        if (this.loginType === 'business') {
-          const username = localStorage.getItem('username');
-          this.loginType = username || this.loginType;
-        }
-        this.cartService.setUserDetails(this.userID, this.loginType);
-      });
-    }
-
-    this.cartService.cartItemCount$.subscribe((count) => {
-      this.cartItemCount = count;
-    });
-
-    this.startTestimonialSlider();
-    const productId = Number(this.route.snapshot.params['id']);
-    console.log('Product ID from route:', productId);
-    if (!isNaN(productId)) {
-      this.fetchProductDetails(productId);
-    } else {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    if (isNaN(id)) {
       console.error('Invalid product ID');
+      return;
     }
-    if (this.product?.images?.length) {
-      this.mainImage = 'https://usaperp.com:5001/' + this.product.images[0].image_path;
+    this.fetchProductDetails(id);
+  }
+
+    ngAfterViewInit(): void {
+    // only start the slider once the view (and DOM) is fully initialized
+    if (isPlatformBrowser(this.platformId)) {
+      this.startTestimonialSlider();
     }
   }
+
+  fetchProductDetails(productId: number): void {
+    this.productDetailsService.getProductByID(productId).subscribe({
+      next: data => {
+        this.product = data;
+
+        // pick the first image from data.images[], or fall back to product_image
+        let filePath: string;
+        if (data.images?.length) {
+          this.currentImageIndex = 0;
+          filePath = data.images[0].image_path;
+        } else if (data.product_image) {
+          // if your API’s `product_image` is just the filename:
+          filePath = `Images/Products/${data.product_image}`;
+        } else {
+          // neither? leave the placeholder
+          return;
+        }
+
+        // **Critical:** use the _same_ imageBaseUrl
+        this.mainImage = this.imageBaseUrl + filePath;
+        console.log('🖼 loading:', this.mainImage);
+      },
+      error: err => console.error('Error fetching product details:', err)
+    });
+  }
+
 
   // Set the main image
   setMainImage(imageUrl: string, index: number): void {
@@ -218,12 +226,12 @@ export class B2cProductDetailsComponent {
   // Toggle zoom on image click
   toggleZoom(event: MouseEvent): void {
     this.zoomed = !this.zoomed;
-    
+
     if (this.zoomed) {
       const rect = (event.target as HTMLImageElement).getBoundingClientRect();
       const x = ((event.clientX - rect.left) / rect.width) * 100;
       const y = ((event.clientY - rect.top) / rect.height) * 100;
-      
+
       this.zoomTransform = `scale(${this.zoomScale})`;
       this.zoomOriginX = x;
       this.zoomOriginY = y;
@@ -232,28 +240,27 @@ export class B2cProductDetailsComponent {
     }
   }
 
-
   onImageMouseMove(event: MouseEvent): void {
     if (!this.zoomed) return;
-  
+
     if (this.debounceTimer) {
       clearTimeout(this.debounceTimer);
     }
-  
+
     this.debounceTimer = setTimeout(() => {
       const rect = (event.target as HTMLImageElement).getBoundingClientRect();
       const x = ((event.clientX - rect.left) / rect.width) * 100;
       const y = ((event.clientY - rect.top) / rect.height) * 100;
-      
+
       // Enhanced sensitivity calculation
       const sensitivity = 1; // Adjust this value to increase/decrease sensitivity
       const centerX = 50;
       const centerY = 50;
-      
+
       // Calculate offset from center with increased sensitivity
       const offsetX = (x - centerX) * sensitivity;
       const offsetY = (y - centerY) * sensitivity;
-      
+
       // Apply the offset to create more sensitive movement
       this.zoomOriginX = Math.min(Math.max(centerX + offsetX, 10), 90);
       this.zoomOriginY = Math.min(Math.max(centerY + offsetY, 10), 90);
@@ -268,18 +275,17 @@ export class B2cProductDetailsComponent {
   }
 
   // Open the image in fullscreen
-// Open the custom fullscreen overlay
-openFullScreen(): void {
-  this.isFullScreen = true;
-  this.resetZoom(); // Reset zoom when entering fullscreen
-}
+  // Open the custom fullscreen overlay
+  openFullScreen(): void {
+    this.isFullScreen = true;
+    this.resetZoom(); // Reset zoom when entering fullscreen
+  }
 
-// Close the custom fullscreen overlay
-closeFullScreen(): void {
-  this.isFullScreen = false;
-  this.resetZoom(); // Reset zoom when exiting fullscreen
-}
-
+  // Close the custom fullscreen overlay
+  closeFullScreen(): void {
+    this.isFullScreen = false;
+    this.resetZoom(); // Reset zoom when exiting fullscreen
+  }
 
   getMainCategories(): void {
     this.mainCategoryService.getMainCategories().subscribe(
@@ -338,7 +344,6 @@ closeFullScreen(): void {
       });
   }
 
-
   // Quantity management methods
   increaseQuantity(): void {
     this.quantity += 1;
@@ -370,28 +375,33 @@ closeFullScreen(): void {
     if (this.testimonialInterval) {
       clearInterval(this.testimonialInterval);
     }
+
+    // === ADD THESE LINES ===
+    this.destroy$.next();
+    this.destroy$.complete();
+    // =======================
   }
 
   get transformStyle(): string {
     return `translateX(-${this.currentTestimonialIndex * 100}%)`;
   }
 
-  fetchProductDetails(productId: number): void {
-    this.productDetailsService.getProductByID(productId).subscribe({
-      next: (data) => {
-        // console.log('Product data received:', data);
-        if (data) {
-          this.product = data;
-          this.mainImage = `https://usaperp.com:5001/Images/Products/${data.product_image}`;
-        } else {
-          console.error('No product data found');
-        }
-      },
-      error: (err) => {
-        console.error('Error fetching product details:', err);
-      },
-    });
-  }
+  // fetchProductDetails(productId: number): void {
+  //   this.productDetailsService.getProductByID(productId).subscribe({
+  //     next: (data) => {
+  //       // console.log('Product data received:', data);
+  //       if (data) {
+  //         this.product = data;
+  //         this.mainImage = `https://usaperp.com:5001/Images/Products/${data.product_image}`;
+  //       } else {
+  //         console.error('No product data found');
+  //       }
+  //     },
+  //     error: (err) => {
+  //       console.error('Error fetching product details:', err);
+  //     },
+  //   });
+  // }
 
   // Methods to handle company and variant selection
   selectCompany(company: string): void {
@@ -404,6 +414,6 @@ closeFullScreen(): void {
 
   buyNow(product: any) {
     this.addToCart(product); // Call the existing Add to Cart function
-    this.router.navigate(['/B2B/cart']); // Navigate to the cart page
+    this.router.navigate(['/B2C/cart']); // Navigate to the cart page
   }
 }

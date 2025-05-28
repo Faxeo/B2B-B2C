@@ -17,4 +17,6 @@ const routes: Routes = [
   ],
   exports: [RouterModule],
 })
+
 export class B2cProductDetailsModule { }
+ 
