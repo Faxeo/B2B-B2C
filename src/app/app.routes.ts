@@ -190,7 +190,7 @@ export const routes: Routes = [
   //     ),
   // },
   {
-    path: 'wishlist',
+    path: 'B2B/wishlist',
     loadChildren: () =>
       import('./modules/wishlist/wishlist.module').then(
         (m) => m.WishlistModule

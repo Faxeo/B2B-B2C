@@ -38,6 +38,7 @@ import { CategoryIdService } from '../../core/services/category-id/category-id.s
 import { response } from 'express';
 import { ChatBotComponent } from '../chat-bot/chat-bot.component';
 import { SearchQueryService } from '../../core/services/search-query/search-query.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-home',
@@ -54,7 +55,7 @@ import { SearchQueryService } from '../../core/services/search-query/search-quer
   ],
   providers: [ApiService, SidebarToggleService],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css'],
+  styleUrls: ['./home.component.css','home-mobile.component.css'],
 })
 export class HomeComponent implements OnInit {
   categories$: Observable<any[]> | undefined;
@@ -120,6 +121,7 @@ export class HomeComponent implements OnInit {
     private router: Router,
     private categoryIdService: CategoryIdService,
     private searchQueryService: SearchQueryService, 
+        private toastr: ToastrService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
@@ -193,6 +195,63 @@ export class HomeComponent implements OnInit {
       } else {
         stickyDiv.classList.remove('sticky');
       }
+    }
+  }
+
+  getMaterialIcon(categoryName: string): string | null {
+    switch (categoryName.toUpperCase()) {
+      case 'ENGINE & COMPONENTS':
+        return 'directions_car';       // car silhouette
+      case 'HEAT AND AIR CONDITIONING':
+      return 'car_fan_recirculate';             // A/C snowflake
+      case 'ELECTRICAL':
+        return 'electrical_services';  // lightning‐bolt icon
+      case 'BRAKE AND WHEEL':
+        return 'build_circle';         // gear inside circle
+        case 'SUSPENSION & STEERING':
+      return 'search_hands_free'; 
+    case 'TRANSMISSION & DRIVETRAIN':
+      return 'auto_transmission';  
+      case 'HYDRAULICS':
+        return 'valve';  
+      // Add more Material‐icon mappings here as you wish…
+      default:
+        return null;                   // fall back to Font Awesome
+    }
+  }
+
+   getIconClass(categoryName: string): string {
+    switch (categoryName.toUpperCase()) {
+      case 'CAR PARTS & ACCESSORIES':
+        return 'fa-solid fa-car'; 
+      case 'AUTOMOTIVE TOOLS & SUPPLIES':
+        return 'fa-solid fa-wrench';
+      case 'INTERIOR':
+        return 'fa-solid fa-chair';
+      case 'IGNITION SYSTEM':
+        return 'fa-solid fa-bolt';
+      case 'SUSPENSION & STEERING':
+        return 'fa-solid fa-truck-moving';
+      case 'TRANSMISSION & DRIVETRAIN':
+        return 'fa-solid fa-gears';
+      case 'CABIN & FRAME':
+        return 'fa-solid fa-truck-monster';
+      case 'BODY PARTS':
+        return 'fa-solid fa-car-side';
+      case 'AIR AND FUEL DELIVERY':
+        return 'fa-solid fa-gas-pump';
+      case 'HYDRAULICS':
+        return 'fa-solid fa-hammer';
+      case 'LUBRICANTS':
+        return 'fa-solid fa-oil-can';
+      case 'FILTER':
+        return 'fa-solid fa-filter';
+      case 'OIL SEAL':
+        return 'fa-solid fa-shield-alt';
+      case 'KITS':
+        return 'fa-solid fa-box-open';
+      default:
+        return 'fa-solid fa-box'; // fallback icon
     }
   }
 
@@ -813,10 +872,13 @@ export class HomeComponent implements OnInit {
             upc: upc,
           });
           console.log('Item added to cart:', product);
-          this.displayMessage('Item added to cart successfully!');
+          this.toastr.success('Item added to cart successfully!', 'Success');
         },
         error: (error) => {
-          this.displayMessage('Error adding item to cart: ' + error.message);
+          this.toastr.error(
+            'Error adding item to cart: ' + error.message,
+            'Error'
+          );
         },
       });
   }
