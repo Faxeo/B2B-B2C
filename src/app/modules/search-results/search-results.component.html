@@ -31,8 +31,11 @@
 
   <div class="main-content" [class.expanded]="!isCollapsed">
 
-    <app-search-by-vehicle></app-search-by-vehicle>
-    <app-search-by-category></app-search-by-category>
+    <!-- wherever you render them, e.g. in search.component.html -->
+    <div class="search-toggle-wrapper">
+      <app-search-by-vehicle class="search-toggle-item"></app-search-by-vehicle>
+      <app-search-by-category class="search-toggle-item"></app-search-by-category>
+    </div>
 
     <div class="main-content-cart" [class.expanded]="!isCollapsed">
 
@@ -43,26 +46,56 @@
           <div class="row">
             <div class="col-12 mb-4" *ngFor="let product of searchResults">
               <div class="product-item border p-3 d-flex justify-content-between align-items-start">
-                <!-- Product Image -->
+                <!-- Product Image with Mobile Wishlist -->
+                <!-- Mobile wishlist icon - positioned absolutely over the image -->
+                <i class="bi wushlist-btn mobile-wishlist" [class.bi-bag-heart-fill]="product.isInWishlist"
+                  [class.bi-bag-heart]="!product.isInWishlist" (click)="toggleWishlist(product)">
+                </i>
                 <div class="product-image">
-                  <img [src]="'https://usaperp.com:5001/Images/Products/' + product.product_image"
-                    [alt]="product.product_name" class="img-fluid mb-2">
+                  <div class="image-container">
+                    <img [src]="'https://usaperp.com:5001/Images/Products/' + product.product_image"
+                      [alt]="product.product_name" class="img-fluid mb-2">
+                  </div>
                 </div>
 
                 <!-- Product Details -->
                 <div class="product-info">
                   <h5 class="product-name">{{ product.product_name }}</h5>
+
+                  <!-- Mobile Price Position - Shows only on mobile -->
+                  <div class="mobile-price-section">
+                    <ng-container *ngIf="loginType === null; else mobileLoggedInPrice">
+                      <div class="mobile-price-display">
+                        Log in to see the prices
+                      </div>
+                    </ng-container>
+
+                    <ng-template #mobileLoggedInPrice>
+                      <h4 class="mobile-price-display"
+                        *ngIf="product.b2bPrice === 0 || product.availableQuantity === 0; else mobileShowPrice">
+                        Out of Stock
+                      </h4>
+                      <ng-template #mobileShowPrice>
+                        <h4 class="mobile-price-display">
+                          ${{ product.b2bPrice }} / each
+                        </h4>
+                      </ng-template>
+                    </ng-template>
+                  </div>
+
                   <p class="product-part-number"><span class="label">Brand:</span> {{ product.brand_name }}</p>
                   <p class="product-part-number"><span class="label">Part number:</span> {{ product.part_number }}</p>
                   <p class="product-part-number"><span class="label">Origin:</span> {{ product.origin }}</p>
-                  <p class="product-warning">⚠ Add a vehicle to guarantee fit</p>
-                  <p class="product-part-number"><span class="label">Interchange number:</span> {{
+
+                  <!-- Warning and Interchange - Hidden on mobile -->
+                  <p class="product-warning desktop-only">⚠ Add a vehicle to guarantee fit</p>
+                  <p class="product-part-number desktop-only"><span class="label">Interchange number:</span> {{
                     product.interchange_number }}</p>
                 </div>
 
                 <div class="product-divider">
-                  <!-- Price and Delivery Info -->
-                  <div class="product-price-info">
+                  <!-- Price and Delivery Info - Desktop version -->
+                  <div class="product-price-info desktop-price-section">
                     <div class="price-view">
                       <ng-container *ngIf="loginType === null; else loggedInPrice">
                         <div class="login-overlay">
@@ -82,8 +115,8 @@
                         </ng-template>
                       </ng-template>
 
-                      <!-- Updated wishlist icon with dynamic class binding -->
-                      <i class="bi wushlist-btn" [class.bi-bag-heart-fill]="product.isInWishlist"
+                      <!-- Desktop wishlist icon -->
+                      <i class="bi wushlist-btn desktop-wishlist" [class.bi-bag-heart-fill]="product.isInWishlist"
                         [class.bi-bag-heart]="!product.isInWishlist" (click)="toggleWishlist(product)">
                       </i>
                     </div>
@@ -111,11 +144,11 @@
                     <label for="quantity">Qty:</label>
                     <input type="number" id="quantity-{{product.product_id}}" class="form-control" min="1" max="99"
                       [(ngModel)]="product.product_quantity" [disabled]="
-                                 loginType === 'admin'
-                                 || product.availableQuantity === 0
-                                 || product.product_price === 0
-                                 || !loginType
-                                                " />
+                           loginType === 'admin'
+                           || product.availableQuantity === 0
+                           || product.product_price === 0
+                           || !loginType
+                                          " />
                     <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product)"
                       [disabled]="loginType === 'admin' || product.availableQuantity === 0 || product.price === 0 || loginType == null">
                       Add to Cart
@@ -139,7 +172,6 @@
         <div *ngIf="isLocallyLoading" class="loading-overlay">
           <img src="assets/Images/loader.gif" alt="Loading..." class="loading-gif" />
         </div>
-
 
         <!-- General Pagination Control -->
         <div *ngIf="totalPages > 1" class="pagination-container">
@@ -172,48 +204,73 @@
           </div>
           <app-recently-viewed></app-recently-viewed>
         </div>
-
       </div>
-
-
-
 
       <!-- Vehicle Search Section -->
       <div class="search-results container-fluid" *ngIf="searchType === 'vehicleSearch'">
-        <!-- <h2>Vehicle Search Results</h2> -->
-
         <!-- Vehicle Search Product Grid -->
         <div class="product-list container-fluid" *ngIf="!isLoading && searchResults.length > 0">
           <div class="row">
             <div class="col-12 mb-4" *ngFor="let product of searchResults">
               <div class="product-item border p-3 d-flex justify-content-between align-items-start">
+
+                <!-- Mobile wishlist icon -->
+                <i class="bi wushlist-btn mobile-wishlist" [class.bi-bag-heart-fill]="product.isInWishlist"
+                  [class.bi-bag-heart]="!product.isInWishlist" (click)="toggleWishlist(product)">
+                </i>
+
                 <!-- Product Image -->
                 <div class="product-image">
-                  <img [src]="'https://usaperp.com:5001/Images/Products/' + product.product_image"
-                    [alt]="product.product_name" class="img-fluid mb-2">
+                  <div class="image-container">
+                    <img [src]="'https://usaperp.com:5001/Images/Products/' + product.product_image"
+                      [alt]="product.product_name" class="img-fluid mb-2">
+                  </div>
                 </div>
 
                 <!-- Product Details -->
                 <div class="product-info">
                   <h5 class="product-name">{{ product.product_name }}</h5>
+
+                  <!-- Mobile Price Position -->
+                  <div class="mobile-price-section">
+                    <ng-container *ngIf="loginType === null; else mobileLoggedInPrice">
+                      <div class="mobile-price-display">
+                        Log in to see the prices
+                      </div>
+                    </ng-container>
+                    <ng-template #mobileLoggedInPrice>
+                      <h4 class="mobile-price-display"
+                        *ngIf="product.b2bPrice === 0 || product.availableQuantity === 0; else mobileShowPrice">
+                        Out of Stock
+                      </h4>
+                      <ng-template #mobileShowPrice>
+                        <h4 class="mobile-price-display">
+                          ${{ product.b2bPrice }} / each
+                        </h4>
+                      </ng-template>
+                    </ng-template>
+                  </div>
+
                   <p class="product-part-number"><span class="label">Brand:</span> {{ product.brand_name }}</p>
                   <p class="product-part-number"><span class="label">Part number:</span> {{ product.part_number }}</p>
                   <p class="product-part-number"><span class="label">Origin:</span> {{ product.origin }}</p>
-                  <p class="product-warning">⚠ Add a vehicle to guarantee fit</p>
-                  <p class="product-part-number"><span class="label">Interchange number:</span> {{
+
+                  <!-- Hidden on Mobile -->
+                  <p class="product-warning desktop-only">⚠ Add a vehicle to guarantee fit</p>
+                  <p class="product-part-number desktop-only"><span class="label">Interchange number:</span> {{
                     product.interchange_number }}</p>
                 </div>
 
+                <!-- Divider -->
                 <div class="product-divider">
-                  <!-- Price and Delivery Info -->
-                  <div class="product-price-info">
+                  <!-- Desktop Price and Wishlist -->
+                  <div class="product-price-info desktop-price-section">
                     <div class="price-view">
                       <ng-container *ngIf="loginType === null; else loggedInPrice">
                         <div class="login-overlay">
                           Log in to see the prices
                         </div>
                       </ng-container>
-
                       <ng-template #loggedInPrice>
                         <h3 class="product-price"
                           *ngIf="product.b2bPrice === 0 || product.availableQuantity === 0; else showPrice">
@@ -226,13 +283,13 @@
                         </ng-template>
                       </ng-template>
 
-                      <!-- Updated wishlist icon with dynamic class binding -->
-                      <i class="bi wushlist-btn" [class.bi-bag-heart-fill]="product.isInWishlist"
+                      <!-- Desktop Wishlist Icon -->
+                      <i class="bi wushlist-btn desktop-wishlist" [class.bi-bag-heart-fill]="product.isInWishlist"
                         [class.bi-bag-heart]="!product.isInWishlist" (click)="toggleWishlist(product)">
                       </i>
                     </div>
 
-                    <!-- Delivery and Shipping Information with Icons -->
+                    <!-- Delivery and Shipping -->
                     <p class="delivery-info">
                       <img src="assets/location.png" alt="Next-Day Delivery" class="info-icon">
                       Next-Day Delivery: <strong>Order now</strong>
@@ -241,35 +298,29 @@
                       <img src="assets/Delivery.png" alt="Free Shipping" class="info-icon">
                       Free Shipping: on orders over $35
                     </p>
-
-                    <!-- Prompt to log in if user is not logged in -->
-                    <ng-template #loginPrompt>
-                      <div class="login-overlay">
-                        Log-in to see the price
-                      </div>
-                    </ng-template>
                   </div>
 
-                  <!-- Add to Cart -->
+                  <!-- Cart Section -->
                   <div class="cart-action">
                     <label for="quantity">Qty:</label>
                     <input type="number" id="quantity-{{product.product_id}}" class="form-control" min="1" max="99"
                       [(ngModel)]="product.product_quantity" [disabled]="
-                                 loginType === 'admin'
-                                 || product.availableQuantity === 0
-                                 || product.product_price === 0
-                                 || !loginType
-                                                " />
-                    <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product)"
-                      (click)="addVehicle(product)"
+                       loginType === 'admin'
+                       || product.availableQuantity === 0
+                       || product.product_price === 0
+                       || !loginType
+                                      " />
+                    <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product); addVehicle(product)"
                       [disabled]="loginType === 'admin' || product.availableQuantity === 0 || product.price === 0 || loginType == null">
                       Add to Cart
                     </button>
                   </div>
+
                   <button class="btn btn-danger w-100 ms-1 buy-now-btn" (click)="buyNow(product)"
                     [disabled]="loginType === 'admin' || product.availableQuantity === 0 || product.price === 0 || loginType == null">
                     Buy Now
                   </button>
+
                   <button class="btn btn-outline-danger w-100 ms-1 view-btn"
                     (click)="viewProductDetails(product.product_id); addToRecentlyViewed(product)">
                     VIEW
@@ -280,12 +331,12 @@
           </div>
         </div>
 
-        <!-- Spinner for both initial loading and pagination -->
+        <!-- Spinner -->
         <div *ngIf="isLocallyLoading" class="loading-overlay">
           <img src="assets/Images/loader.gif" alt="Loading..." class="loading-gif" />
         </div>
 
-        <!-- Vehicle Search Pagination Controls -->
+        <!-- Pagination -->
         <div *ngIf="totalPages > 1" class="pagination-container">
           <button (click)="searchByVehicle(currentPage - 1)" [disabled]="currentPage === 1" class="pagination-arrow">
             &laquo;
@@ -300,8 +351,7 @@
           </span>
           <span *ngIf="shouldShowRightEllipsis()" class="pagination-ellipsis">...</span>
           <button (click)="searchByVehicle(totalPages)" [disabled]="currentPage === totalPages"
-            class="pagination-page">{{
-            totalPages }}</button>
+            class="pagination-page">{{ totalPages }}</button>
           <button (click)="searchByVehicle(currentPage + 1)" [disabled]="currentPage === totalPages"
             class="pagination-arrow">
             &raquo;
@@ -316,39 +366,71 @@
           </div>
           <app-recently-viewed></app-recently-viewed>
         </div>
-
       </div>
+
 
       <!-- Category Search Section -->
       <div class="search-results container-fluid" *ngIf="searchType === 'categorySearch'">
-        <!-- <h2>Category Search Results</h2> -->
-        <!-- <app-search-by-vehicle></app-search-by-vehicle> -->
 
         <!-- Category Search Product Grid -->
         <div class="product-list container-fluid" *ngIf="!isLoading && searchResults.length > 0">
           <div class="row">
             <div class="col-12 mb-4" *ngFor="let product of searchResults">
               <div class="product-item border p-3 d-flex justify-content-between align-items-start">
+
+                <!-- Mobile Wishlist Icon -->
+                <i class="bi wushlist-btn mobile-wishlist" [class.bi-bag-heart-fill]="product.isInWishlist"
+                  [class.bi-bag-heart]="!product.isInWishlist" (click)="toggleWishlist(product)">
+                </i>
+
                 <!-- Product Image -->
                 <div class="product-image">
-                  <img [src]="'https://usaperp.com:5001/Images/Products/' + product.product_image"
-                    [alt]="product.product_name" class="img-fluid mb-2">
+                  <div class="image-container">
+                    <img [src]="'https://usaperp.com:5001/Images/Products/' + product.product_image"
+                      [alt]="product.product_name" class="img-fluid mb-2">
+                  </div>
                 </div>
 
                 <!-- Product Details -->
                 <div class="product-info">
                   <h5 class="product-name">{{ product.product_name }}</h5>
+
+                  <!-- Mobile Price Display -->
+                  <div class="mobile-price-section">
+                    <ng-container *ngIf="loginType === null; else mobileLoggedInPrice">
+                      <div class="mobile-price-display">
+                        Log in to see the prices
+                      </div>
+                    </ng-container>
+                    <ng-template #mobileLoggedInPrice>
+                      <h4 class="mobile-price-display"
+                        *ngIf="product.b2bPrice === 0 || product.availableQuantity === 0; else mobileShowPrice">
+                        Out of Stock
+                      </h4>
+                      <ng-template #mobileShowPrice>
+                        <h4 class="mobile-price-display">
+                          ${{ product.b2bPrice }} / each
+                        </h4>
+                      </ng-template>
+                    </ng-template>
+                  </div>
+
                   <p class="product-part-number"><span class="label">Brand:</span> {{ product.brand_name }}</p>
                   <p class="product-part-number"><span class="label">Part number:</span> {{ product.part_number }}</p>
                   <p class="product-part-number"><span class="label">Origin:</span> {{ product.origin }}</p>
-                  <p class="product-warning">⚠ Add a vehicle to guarantee fit</p>
-                  <p class="product-part-number"><span class="label">Interchange number:</span> {{
-                    product.interchange_number }}</p>
+
+                  <!-- Hide on mobile -->
+                  <p class="product-warning desktop-only">⚠ Add a vehicle to guarantee fit</p>
+                  <p class="product-part-number desktop-only">
+                    <span class="label">Interchange number:</span> {{ product.interchange_number }}
+                  </p>
                 </div>
 
+                <!-- Divider for price/actions -->
                 <div class="product-divider">
-                  <!-- Price and Delivery Info -->
-                  <div class="product-price-info">
+
+                  <!-- Desktop Price Display -->
+                  <div class="product-price-info desktop-price-section">
                     <div class="price-view">
                       <ng-container *ngIf="loginType === null; else loggedInPrice">
                         <div class="login-overlay">
@@ -368,13 +450,13 @@
                         </ng-template>
                       </ng-template>
 
-                      <!-- Updated wishlist icon with dynamic class binding -->
-                      <i class="bi wushlist-btn" [class.bi-bag-heart-fill]="product.isInWishlist"
+                      <!-- Desktop Wishlist Icon -->
+                      <i class="bi wushlist-btn desktop-wishlist" [class.bi-bag-heart-fill]="product.isInWishlist"
                         [class.bi-bag-heart]="!product.isInWishlist" (click)="toggleWishlist(product)">
                       </i>
                     </div>
 
-                    <!-- Delivery and Shipping Information with Icons -->
+                    <!-- Delivery and Shipping Information -->
                     <p class="delivery-info">
                       <img src="assets/location.png" alt="Next-Day Delivery" class="info-icon">
                       Next-Day Delivery: <strong>Order now</strong>
@@ -383,45 +465,41 @@
                       <img src="assets/Delivery.png" alt="Free Shipping" class="info-icon">
                       Free Shipping: on orders over $35
                     </p>
-
-                    <!-- Prompt to log in if user is not logged in -->
-                    <ng-template #loginPrompt>
-                      <div class="login-overlay">
-                        Log-in to see the price
-                      </div>
-                    </ng-template>
                   </div>
 
-                  <!-- Add to Cart -->
+                  <!-- Cart Controls -->
                   <div class="cart-action">
                     <label for="quantity">Qty:</label>
                     <input type="number" id="quantity-{{product.product_id}}" class="form-control" min="1" max="99"
                       [(ngModel)]="product.product_quantity" [disabled]="
-                                 loginType === 'admin'
-                                 || product.availableQuantity === 0
-                                 || product.product_price === 0
-                                 || !loginType
-                                                " />
+                       loginType === 'admin'
+                       || product.availableQuantity === 0
+                       || product.product_price === 0
+                       || !loginType
+                                      " />
                     <button class="btn btn-danger add-to-cart-btn" (click)="addToCart(product)"
                       [disabled]="loginType === 'admin' || product.availableQuantity === 0 || product.price === 0 || loginType == null">
                       Add to Cart
                     </button>
                   </div>
+
                   <button class="btn btn-danger w-100 ms-1 buy-now-btn" (click)="buyNow(product)"
                     [disabled]="loginType === 'admin' || product.availableQuantity === 0 || product.price === 0 || loginType == null">
                     Buy Now
                   </button>
+
                   <button class="btn btn-outline-danger w-100 ms-1 view-btn"
                     (click)="viewProductDetails(product.product_id); addToRecentlyViewed(product)">
                     VIEW
                   </button>
                 </div>
+
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Spinner for both initial loading and pagination -->
+        <!-- Spinner -->
         <div *ngIf="isLocallyLoading" class="loading-overlay">
           <img src="assets/Images/loader.gif" alt="Loading..." class="loading-gif" />
         </div>
@@ -441,15 +519,14 @@
           </span>
           <span *ngIf="shouldShowRightEllipsis()" class="pagination-ellipsis">...</span>
           <button (click)="searchByCategory(totalPages)" [disabled]="currentPage === totalPages"
-            class="pagination-page">{{
-            totalPages }}</button>
+            class="pagination-page">{{ totalPages }}</button>
           <button (click)="searchByCategory(currentPage + 1)" [disabled]="currentPage === totalPages"
             class="pagination-arrow">
             &raquo;
           </button>
         </div>
 
-        <!-- Recently Viewed Section -->
+        <!-- Recently Viewed -->
         <div *ngIf="showRecentlyViewed">
           <div class="recently-viewed-header">
             <h3>Recently Viewed</h3>
@@ -457,8 +534,8 @@
           </div>
           <app-recently-viewed></app-recently-viewed>
         </div>
-
       </div>
+
 
       <div *ngIf="searchType === 'filterCategorySearch'">
         <!-- Display products when they are loaded -->

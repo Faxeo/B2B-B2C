@@ -69,6 +69,8 @@ export class SearchByCategoryComponent {
   
   lastCategoryData: string = '';
 
+  showMobileCategorySearch = false;
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private cdr: ChangeDetectorRef,
@@ -145,6 +147,19 @@ export class SearchByCategoryComponent {
         this.searchType = 'vehicleSearch';
       }
     });
+  }
+
+    toggleMobileCategorySearch() {
+    this.showMobileCategorySearch = !this.showMobileCategorySearch;
+  }
+
+  onMobileCategorySearch() {
+    this.performCategorySearch({
+      mainCategory: this.selectedMainCategory,
+      firstSubCategory: this.selectedFirstSubCategory,
+      secondSubCategory: this.selectedSecondSubCategory,
+    });
+    this.toggleMobileCategorySearch();
   }
   
   private currentSearchState: {

@@ -27,7 +27,9 @@ export class SearchComponent implements OnInit {
   isCollapsed: boolean = false;
   isCartSidebarCollapsed: boolean = false;
   isFilterCollapsed: boolean = false;
-  isCartCollapsed: boolean = false; // For Cart Sidebar
+  isCartCollapsed: boolean = true; // For Cart Sidebar
+
+  mobileFilterOpen = false;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -36,8 +38,9 @@ export class SearchComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.cartSidebarService.cartSidebarState$.subscribe((state: boolean) => {
-      this.isCartCollapsed = state; // Update the UI state
+    this.cartSidebarService.cartSidebarState$.subscribe((state) => {
+      this.isCartCollapsed = state;
+      this.cdr.detectChanges();
     });
   }
 
@@ -59,6 +62,10 @@ export class SearchComponent implements OnInit {
     }
   }
 
+   toggleMobileFilter(): void {
+    this.mobileFilterOpen = !this.mobileFilterOpen;
+  }
+
   toggleSidebar() {
     this.isCollapsed = !this.isCollapsed;
   } 
@@ -67,8 +74,12 @@ export class SearchComponent implements OnInit {
     this.isFilterCollapsed = !this.isFilterCollapsed;
   }
 
-  toggleCartSidebar(): void {
-    this.isCartSidebarCollapsed = !this.isCartSidebarCollapsed;
+ toggleCartSidebar(): void {
+    if (this.isCartCollapsed) {
+      this.openCartSidebar();
+    } else {
+      this.collapseCartSidebar();
+    }
   }
 
   collapseCartSidebar(): void {

@@ -2,6 +2,7 @@
 .filter-container {
   min-width: 250px;
   max-width: 350px;
+  position: fixed;
   width: 100%;
   background-color: #ffffff;
   border-radius: 12px;
@@ -312,4 +313,90 @@ input[type="radio"]:hover {
   transform: scale(1.1); /* Slightly enlarge on hover */
 }
 
-/* src\app\dashboard\admin-dashboard\admin-sidebar */
+/* Add this to your existing CSS */
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: block;
+  }
+
+  .reset{
+  position: relative;
+  top: -30px;
+  /* right: 10%; */
+  left: 210px;
+  width: 45px;
+  /* font-size: 10px; */
+  /* color: #4a5568; */
+  padding: 0 10px;
+  margin: 0 0 15px 40px;
+  border-radius: none;
+  border: none;
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+  
+  /* Your existing mobile overrides remain */
+  .sidebar,
+  .sidebar-cart,
+  .toggle-btn {
+    display: none !important;
+  }
+
+  /* Mobile Filter Styles */
+  .mobile-filter-button {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    font-size: 20px;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s ease;
+  }
+
+  .mobile-filter-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1500;
+  }
+
+  .mobile-filter-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .mobile-filter-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 85%;
+    max-width: 350px;
+    height: 100vh;
+    background: #ffffff;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    overflow-y: auto;
+    z-index: 1600;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .mobile-filter-panel.active {
+    transform: translateX(0);
+  }
+
+  /* Copy the rest of the mobile styles from the artifact */
+}

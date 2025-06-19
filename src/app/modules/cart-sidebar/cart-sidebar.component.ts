@@ -79,6 +79,11 @@ ngOnInit(): void {
   }
 }
 
+toggleSidebar() {
+  this.isSidebarVisible = !this.isSidebarVisible;
+}
+
+
 ngOnDestroy(): void {
     this.cartSub?.unsubscribe();
   }

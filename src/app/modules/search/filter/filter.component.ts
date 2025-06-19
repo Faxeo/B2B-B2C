@@ -69,6 +69,8 @@ export class FilterComponent {
 
   selectedModel: string | null = null;
 
+  isMobileFilterOpen = false;
+
   constructor(
     private navigationService: NavigationService,
     private fetchChildService: FetchChildService,
@@ -131,6 +133,21 @@ export class FilterComponent {
 
     // this.vehicles = fetchedData;
     this.filteredVehicles = [...this.vehicles];
+  }
+
+  openMobileFilter() {
+    this.isMobileFilterOpen = true;
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+  }
+
+  closeMobileFilter() {
+    this.isMobileFilterOpen = false;
+    document.body.style.overflow = 'auto'; // Re-enable background scrolling
+  }
+
+  applyMobileFilters() {
+    // Apply your filter logic here
+    this.closeMobileFilter();
   }
 
   resetFilters(): void {

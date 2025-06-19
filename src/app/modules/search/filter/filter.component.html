@@ -183,3 +183,239 @@
     </div>
   </div>
 </div>
+
+
+<!-- Mobile Filter Components - Only show on mobile -->
+<div class="mobile-only">
+
+  <!-- Mobile Filter Overlay -->
+  <div
+    class="mobile-filter-overlay"
+    [class.active]="isMobileFilterOpen"
+    (click)="closeMobileFilter()"
+  ></div>
+
+  <!-- Mobile Filter Panel -->
+  <div class="mobile-filter-panel" [class.active]="isMobileFilterOpen">
+    <!-- Panel Header -->
+    <div class="mobile-filter-header">
+      <h2>Filters</h2>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <img
+          class="reset-mobile"
+          src="/assets/reset-1.png"
+          alt="Reset"
+          (click)="resetFilters()"
+        />
+        <button class="close-button" (click)="closeMobileFilter()" aria-label="Close Filters">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter Content -->
+    <div class="mobile-filter-content">
+      <!-- ─── Filters Section ─── -->
+      <div class="mobile-filter-section">
+        <h3 (click)="toggleSection('filters')">
+          Filters
+          <i class="fa" [ngClass]="showFilters ? 'fa-minus' : 'fa-plus'"></i>
+        </h3>
+        <div *ngIf="showFilters">
+          <div class="mobile-filter-checkbox">
+            <label><input type="checkbox" /> In Stock</label>
+            <span class="mobile-count">1000+</span>
+          </div>
+          <div class="mobile-filter-checkbox">
+            <label><input type="checkbox" /> Top Seller</label>
+            <span class="mobile-count">1000+</span>
+          </div>
+          <div class="mobile-filter-checkbox">
+            <label><input type="checkbox" /> Top Rated</label>
+            <span class="mobile-count">1000+</span>
+          </div>
+          <div class="mobile-filter-checkbox">
+            <label><input type="checkbox" /> Free Shipping</label>
+            <span class="mobile-count">1000+</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Category Section ─── -->
+      <div class="mobile-filter-section">
+        <h3 (click)="toggleSection('categories')">
+          Category
+          <i class="fa" [ngClass]="showCategories ? 'fa-minus' : 'fa-plus'"></i>
+        </h3>
+        <div *ngIf="showCategories">
+          <div *ngFor="let category of mainCategories" class="mobile-filter-checkbox">
+            <div class="mobile-category-item">
+              <label>
+                <input
+                  type="checkbox"
+                  [(ngModel)]="category.selected"
+                  (change)="onMainCategoryChange(category)"
+                />
+                {{ category.name }}
+              </label>
+              <span
+                class="mobile-toggle-icon"
+                (click)="toggleSubCategories(category)"
+              >
+                <i class="fa" [ngClass]="category.showSubCategories ? 'fa-minus' : 'fa-plus'"></i>
+              </span>
+
+              <!-- First Subcategory Level -->
+              <div
+                *ngIf="category.showSubCategories"
+                class="mobile-sub-category-section"
+              >
+                <div
+                  *ngFor="let subCategory of category.firstSubCategories"
+                  class="mobile-filter-checkbox mobile-sub-category"
+                >
+                  <label>
+                    <input
+                      type="checkbox"
+                      [(ngModel)]="subCategory.selected"
+                      (change)="onFirstSubCategoryChange(subCategory)"
+                      [disabled]="!category.selected"
+                    />
+                    {{ subCategory.name }}
+                  </label>
+                  <span
+                    class="mobile-toggle-icon"
+                    (click)="toggleSecondSubCategories(subCategory)"
+                  >
+                    <i
+                      class="fa"
+                      [ngClass]="subCategory.showSecondSubCategories ? 'fa-minus' : 'fa-plus'"
+                    ></i>
+                  </span>
+
+                  <!-- Second Subcategory Level -->
+                  <div
+                    *ngIf="subCategory.showSecondSubCategories"
+                    class="mobile-second-sub-category-section"
+                  >
+                    <div
+                      *ngFor="let second of subCategory.secondSubCategories"
+                      class="mobile-filter-checkbox mobile-nested-sub-category"
+                    >
+                      <label>
+                        <input
+                          type="checkbox"
+                          [(ngModel)]="second.selected"
+                          (change)="onSecondSubCategoryChange(subCategory, second)"
+                          [disabled]="!subCategory.selected"
+                        />
+                        {{ second.name }}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Vehicles Section ─── -->
+      <div class="mobile-filter-section">
+        <h3 (click)="toggleSection('manufacturers')">
+          Vehicles
+          <span *ngIf="selectedVehicle" class="mobile-selected-label">
+            {{ selectedVehicle }}
+            ({{ selectedModel ? selectedModel : 'All' }})
+          </span>
+          <i class="fa" [ngClass]="showManufacturers ? 'fa-minus' : 'fa-plus'"></i>
+        </h3>
+        <div *ngIf="showManufacturers" class="mobile-brands-container">
+          <input
+            type="text"
+            class="mobile-manufacturer-search"
+            placeholder="Search vehicles..."
+            [(ngModel)]="searchVehicleTerm"
+            (input)="filterVehicles()"
+          />
+          <div *ngFor="let vehicle of filteredVehicles">
+            <div class="mobile-filter-checkbox">
+              <label>
+                <input
+                  type="checkbox"
+                  [checked]="selectedVehicle === vehicle.value_name && !selectedModel"
+                  (change)="onVehicleCheckboxChange(vehicle)"
+                />
+                {{ vehicle.value_name }}
+              </label>
+            </div>
+            <div
+              *ngFor="let model of vehicle.models"
+              class="mobile-filter-checkbox mobile-nested-sub-category"
+            >
+              <label>
+                <input
+                  type="checkbox"
+                  [checked]="
+                    selectedVehicle === vehicle.value_name &&
+                    selectedModel === model.value_name
+                  "
+                  (change)="onVehicleModelChange(vehicle, model.value_name)"
+                />
+                {{ vehicle.value_name }} {{ model.value_name }}
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Brands Section ─── -->
+      <div class="mobile-filter-section">
+        <h3 (click)="toggleSection('brands')">
+          Brands
+          <span *ngIf="selectedBrandName" class="mobile-selected-label">
+            {{ selectedBrandName }}
+          </span>
+          <i class="fa" [ngClass]="showBrands ? 'fa-minus' : 'fa-plus'"></i>
+        </h3>
+        <div *ngIf="showBrands" class="mobile-brands-container">
+          <input
+            type="text"
+            class="mobile-brand-search"
+            placeholder="Search brands..."
+            [(ngModel)]="searchTerm"
+            (input)="filterBrands()"
+          />
+          <div *ngFor="let brand of filteredBrands" class="mobile-filter-checkbox">
+            <label>
+              <input
+                type="checkbox"
+                [checked]="selectedBrand === brand.id"
+                (change)="onCheckboxChange(brand.id, brand.name)"
+              />
+              {{ brand.name }}
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Material Section ─── -->
+      <div class="mobile-filter-section">
+        <h3 (click)="toggleSection('materials')">
+          Material
+          <i class="fa" [ngClass]="showMaterials ? 'fa-minus' : 'fa-plus'"></i>
+        </h3>
+        <div *ngIf="showMaterials">
+          <div class="mobile-filter-checkbox">
+            <label><input type="checkbox" /> Steel</label>
+            <span class="mobile-count">1000+</span>
+          </div>
+          <div class="mobile-filter-checkbox">
+            <label><input type="checkbox" /> EPDM</label>
+            <span class="mobile-count">1000+</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
