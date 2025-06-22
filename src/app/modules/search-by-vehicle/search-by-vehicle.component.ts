@@ -82,6 +82,8 @@ export class SearchByVehicleComponent {
   currentRequestData: any = {};
 
   activeSearchType: 'general' | 'category' | 'vehicle' = 'general';
+// … your existing fields …
+  showMobileVehicleSearch = false;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -141,6 +143,21 @@ export class SearchByVehicleComponent {
         this.performVehicleSearch(vehicleData);
       }
     });
+  }
+  
+  toggleMobileVehicleSearch() {
+    this.showMobileVehicleSearch = !this.showMobileVehicleSearch;
+  }
+
+  onMobileSearch() {
+    this.performVehicleSearch({
+      year: this.selectedYear,
+      make: this.selectedMake,
+      model: this.selectedModel,
+      trim: this.selectedTrim,
+      engine: this.selectedEngine,
+    });
+    this.toggleMobileVehicleSearch();
   }
 
   onSearchClick(): void {

@@ -1,30 +1,73 @@
 <app-navbar class="fixed-top"></app-navbar>
 
 <div class="container">
-  <!-- Left Sidebar -->
+  <!-- ─── Desktop Left Sidebar ─── -->
   <div class="sidebar" [class.collapsed]="isCollapsed">
     <app-filter *ngIf="!isCollapsed"></app-filter>
   </div>
 
+  <!-- Desktop toggle -->
   <button class="toggle-btn" (click)="toggleSidebar()">
     <span class="toggle-icon">{{ isCollapsed ? '→' : '←' }}</span>
   </button>
-  
 
-      <!-- General Search Component -->
-      <div class="general-search" [class.expanded-left]="isCollapsed" [class.expanded-right]="isCartCollapsed">
-        <app-search-results></app-search-results>
-      </div>
+  <!-- ─── Mobile Filter Icon ─── -->
+  <!-- only visible on small screens; use your own utility class or d-md-none -->
+  <button
+    class="mobile-filter-button d-md-none"
+    (click)="toggleMobileFilter()"
+    aria-label="Open Filters"
+  >
+    <i class="fa fa-filter"></i>
+  </button>
 
-      <!-- Right Sidebar (Cart Sidebar) -->
-      <div class="sidebar-cart" [class.collapsed]="isCartCollapsed" *ngIf="!isCartCollapsed">
-        <button class="cancel-btn" (click)="collapseCartSidebar()" aria-label="Close Cart">
-          &times; <!-- "×" Close Icon -->
-        </button>
-        <app-cart-sidebar></app-cart-sidebar>
-      </div>
+  <!-- ─── Mobile Filter Overlay ─── -->
+  <div
+    class="mobile-filter-overlay d-md-none"
+    [class.active]="mobileFilterOpen"
+    (click)="toggleMobileFilter()"
+  ></div>
+
+  <!-- ─── Mobile Filter Panel ─── -->
+  <div
+    class="mobile-filter-panel d-md-none"
+    [class.active]="mobileFilterOpen"
+  >
+    <div class="mobile-filter-header">
+      <h2>Filters</h2>
+      <button
+        class="close-button"
+        (click)="toggleMobileFilter()"
+        aria-label="Close Filters"
+      >
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Reuse your existing desktop filter component -->
+    <app-filter></app-filter>
+  </div>
+
+  <!-- ─── Main Search Results ─── -->
+  <div
+    class="general-search"
+    [class.expanded-left]="isCollapsed"
+    [class.expanded-right]="isCartCollapsed"
+  >
+    <app-search-results></app-search-results>
+  </div>
+
+  <!-- ─── Cart Sidebar ─── -->
+  <div
+    class="sidebar-cart"
+    [class.collapsed]="isCartCollapsed"
+    *ngIf="!isCartCollapsed"
+  >
+    <button
+      class="cancel-btn"
+      (click)="collapseCartSidebar()"
+      aria-label="Close Cart"
+    >&times;</button>
+    <app-cart-sidebar></app-cart-sidebar>
+  </div>
 </div>
-
-<!-- <footer>
-  <app-footer></app-footer>
-</footer> -->

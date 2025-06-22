@@ -552,3 +552,203 @@
   justify-content: center;
 }
  
+
+/* Base styles for desktop and mobile elements */
+.mobile-wishlist,
+.mobile-price-section {
+  display: none;
+}
+
+.desktop-only {
+  display: block;
+}
+
+.image-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .thumbs-up-icon {
+    font-size: 64px;
+  }
+  
+  .particle {
+    font-size: 20px;
+  }
+  
+  /* Hide desktop-only elements on mobile */
+  .desktop-only {
+    display: none !important;
+  }
+  
+  /* Hide desktop wishlist and price section on mobile */
+  .desktop-wishlist,
+  .desktop-price-section {
+    display: none !important;
+  }
+  
+  /* Show mobile-specific elements */
+  .mobile-price-section {
+    display: block !important;
+    margin: 8px 0;
+  }
+  
+  .mobile-wishlist {
+    display: block !important;
+    position: absolute;
+    /* top: 8px; */
+    right: 10%;
+    background: transparent;
+    border-radius: 50%;
+    padding: 6px;
+    font-size: 30px;
+    color: #dc3545;
+    cursor: pointer;
+    z-index: 10;
+  }
+  
+  .mobile-price-display {
+    font-size: 18px;
+    font-weight: bold;
+    color: #dc3545;
+    margin: 0;
+  }
+
+  /* 1) Make each card a vertical stack with proper sizing */
+  .product-item {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 12px !important;
+    min-height: auto !important;
+    max-height: none !important;
+  }
+
+  /* 2) Center & shrink the image - reduced from 60% to 45% */
+  .product-image {
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  
+  .product-image img {
+    max-width: 65% !important; /* Reduced image size */
+    height: auto;
+    object-fit: contain;
+  }
+
+  /* 3) Tighten up the info block */
+  .product-info {
+    margin: 0 0 12px 0 !important;
+  }
+  
+  .product-name {
+    font-size: 18px !important; /* Slightly smaller font */
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  
+  .product-part-number {
+    font-size: 13px !important; /* Smaller font for details */
+    margin-bottom: 4px;
+  }
+
+  /* 4) Stack price + details + actions with better spacing */
+  .product-divider {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .product-price-info {
+    text-align: left !important;
+    margin: 0 0 12px 0 !important;
+  }
+  
+  .price-view {
+    justify-content: flex-start !important;
+    gap: 8px;
+  }
+  
+  .delivery-info,
+  .shipping-info {
+    font-size: 11px !important; /* Smaller delivery info */
+    margin: 3px 0;
+  }
+
+  /* 5) Full-width buttons & inputs with better proportions */
+  .cart-action,
+  .add-to-cart-btn,
+  .buy-now-btn,
+  .view-btn {
+    width: 100% !important;
+  }
+  
+  
+  .cart-action {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .cart-action input {
+    width: 60px;
+    margin-right: 8px;
+    height: 35px; /* Consistent button height */
+  }
+  
+  .cart-action label {
+    font-size: 14px;
+    margin-right: 8px;
+  }
+  
+  .add-to-cart-btn {
+    margin: 0 0 8px 0;
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  
+  .buy-now-btn,
+  .view-btn {
+    margin: 4px 0;
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .search-toggle-wrapper {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .search-toggle-wrapper .search-toggle-item {
+    flex: 1 1 0;
+    margin-bottom: 0;  /* kill the desktop bottom margin */
+    margin-top: -15px;
+  }
+}
+
+/* Additional mobile optimization for very small screens */
+@media (max-width: 480px) {
+  .product-image img {
+    max-width: 60% !important; /* Even smaller on very small screens */
+  }
+  
+  .product-name {
+    font-size: 18px !important;
+    font-weight: 600;
+  }
+  
+  .product-part-number {
+    font-size: 12px !important;
+  }
+  
+  .mobile-price-display {
+    font-size: 18px !important;
+  }
+  
+  .delivery-info,
+  .shipping-info {
+    font-size: 10px !important;
+  }
+}

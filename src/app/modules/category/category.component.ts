@@ -24,6 +24,8 @@ export class CategoryComponent implements OnInit {
   isFilterCollapsed: boolean = false;
   isCartCollapsed: boolean = false; // For Cart Sidebar
 
+    mobileFilterOpen = false;
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private cartSidebarService: CartSidebarService,
@@ -52,6 +54,11 @@ export class CategoryComponent implements OnInit {
         this.cdr.detectChanges();
       }
     }
+  }
+
+  
+   toggleMobileFilter(): void {
+    this.mobileFilterOpen = !this.mobileFilterOpen;
   }
 
   toggleSidebar() {
