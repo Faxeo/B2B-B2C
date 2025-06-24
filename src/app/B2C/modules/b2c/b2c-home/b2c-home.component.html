@@ -6,57 +6,81 @@
     </div>
   </div>
 
-  <!-- New Section with Background Image -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top py-2">
+    <div class="container-fluid">
+      <!-- Logo -->
+      <a class="navbar-brand me-lg-4" href="#">
+        <img src="assets/logo.png" alt="US Auto Parts" height="50" class="d-inline-block align-top">
+      </a>
 
-  <div class="new-section">
+      <!-- Mobile Toggle -->
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-    <nav class="navbar navbar-expand-lg fixed-top">
-      <div class="container-fluid">
-        <a class="navbar-brand logo" href="/">
-          <img src="assets/logo.png" alt="US Auto Parts" height="70" width="100%">
-        </a>
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <!-- Primary Navigation -->
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle fw-medium px-3" href="#" id="shopDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Shop
+            </a>
+            <ul class="dropdown-menu animate slideIn" aria-labelledby="shopDropdown">
+              <li>
+                <h6 class="dropdown-header">Shop By</h6>
+              </li>
+              <li><a class="dropdown-item py-2" href="#"><i class="bi bi-car-front me-2"></i>Vehicle</a></li>
+              <li><a class="dropdown-item py-2" href="#"><i class="bi bi-grid me-2"></i>Category</a></li>
+              <li><a class="dropdown-item py-2" href="#"><i class="bi bi-tag me-2"></i>Attributes</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item py-2" href="#" (click)="onSearch()"><i class="bi bi-collection me-2"></i>All
+                  Products</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-medium px-3" href="#"><i class="bi bi-tools me-1"></i> Services</a>
+          </li>
+        </ul>
 
-        <div class="d-flex flex-grow-1 align-items-center justify-content-between">
-          <div class="input-group search-bar me-3"
-            style="padding: 8px 12px; max-width: 1000px; height: 80px; margin-left: 120px; border-radius: 40px; overflow: hidden;">
+        <!-- Centered Search - Optimized for performance -->
+        <form class="d-flex justify-content-center flex-grow-1 my-2 my-lg-0 position-relative mx-auto"
+          style="max-width: 600px;" role="search">
+          <div class="input-group has-search">
+            <span class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></span>
+            <input type="search" class="form-control ps-5 rounded-start-pill" id="search-input"
+              placeholder="Search parts, brands, vehicles..." aria-label="Search" autocomplete="off"
+              (keydown.enter)="onSearch()">
+            <button class="btn btn-danger px-2 py-1 ms-1 rounded-end-pill" type="submit" (click)="onSearch()">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </form>
 
-            <div class="form-control inner-search d-flex align-items-center justify-content-between"
-              style="padding: 8px 12px; border-radius: 26px; background-color: #fff;">
- 
-              <input id="search-input" class="form-control border-0" type="search" placeholder="Search keyword"
-                aria-label="Search" (keydown.enter)="onSearch()"
-                style="flex: 1; outline: none; box-shadow: none; color:black">
-
-              <button class="bg-transparent border-0 p-0 ms-2" (click)="onSearch()">
-                <i class="fa fa-search fa-xl text-dark"></i>
+        <!-- Right-side Actions - Optimized -->
+        <div class="navbar-actions ms-auto d-flex align-items-center">
+          <ng-container *ngIf="!userID; else customerSection">
+            <div class="d-flex gap-2 me-3">
+              <button class="btn btn-outline-danger btn-sm px-3" aria-label="Sign In" routerLink="/B2C/login">
+                <span class="d-none d-lg-inline">Sign In</span>
+                <i class="bi bi-box-arrow-in-right d-lg-none"></i>
+              </button>
+              <button class="btn btn-danger btn-sm px-3" aria-label="Sign Up" routerLink="/sidebar/signup">
+                <span class="d-none d-lg-inline">Sign Up</span>
+                <i class="bi bi-person-plus d-lg-none"></i>
               </button>
             </div>
-          </div>
-        </div>
-
-        <!-- Right Section with Login, Signup, Heart, and Cart -->
-        <div class="Login d-flex align-items-center">
-
-          <!-- Show Sign in and Sign up when loginType is not 'customer' -->
-          <ng-container *ngIf="!this.userID; else customerSection">
-            <a class="Login d-flex align-items-center text-decoration-none" routerLink="/B2C/login">
-              <i class="fa fa-user me-2 user-icon"></i>
-              <strong>Sign in</strong>
-            </a>            
-
-            <a class="signup-button ms-3 d-flex align-items-center" routerLink="/sidebar/signup">
-              Sign up
-            </a>
           </ng-container>
 
-          <!-- Customer Section (Visible only when loginType is 'customer') -->
+          <!-- Customer Section (Visible when logged in) -->
           <ng-template #customerSection>
-            <div class="d-flex customer-dropdown position-relative">
-              <span class="me-2 mt-2">Welcome</span>
-              
+            <div class="d-flex gap-2 align-items-center position-relative me-3">
+              <span class="d-none d-lg-inline">Welcome</span>
               <div class="dropdown">
-                <button class="signup-button align-items-center"  (click)="toggleDropdown()"
-                >
+                <button class="btn btn-danger btn-sm px-3 d-flex align-items-center" (click)="toggleDropdown()">
                   {{ customer_name }}
                   <i class="fa fa-caret-down ms-2"></i>
                 </button>
@@ -69,51 +93,93 @@
             </div>
           </ng-template>
 
-          <button *ngIf="!this.userID" class="heart-btn ms-3" routerLink="/B2C/wishlist">
-            <i class="far fa-heart wishlist nav-icon-color"></i>
-          </button>
+          <div class="ms-auto nav-icons d-flex align-items-center gap-3 position-relative">
+            <!-- Wishlist -->
+            <a *ngIf="userID" class="nav-link position-relative" [routerLink]="'/B2C/wishlist'">
+              <i class="bi bi-heart fs-4 text-danger"></i>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger shadow-sm">
+                {{ wishlistCount }}
+              </span>
+            </a>
 
-          <button *ngIf="loginType !== 'admin'" class="btn btn-outline-light ms-2 red-button" id="shopping_cart"
-            routerLink="/B2C/cart">
-            <i class="fa-solid fa-cart-shopping fa-2xl large-icon nav-icon-color"></i>
-            <span *ngIf="cartItemCount > 0" class="cart-count-badge">{{ cartItemCount }}</span>
-          </button>
-        </div>
-      </div>
-    </nav>
-
-
-
-
-    <div class="overlay">
-      <div class="container-fluid h-100 d-flex flex-column justify-content-center align-items-center">
-        <div class="welcome-message-outer-div">
-          <h2 class="welcome-message">Welcome to</h2>
-          <h2 class="USAP-message"> US AUTOPARTS EXPERTS</h2>
-          <h2 class="B2C-message"> B2C Platform </h2>
-        </div>
-
-        <div class="mt-auto w-100" id="stickyButtons">
-          <div class="row btn-row justify-content-center">
-            <div class="col-md-4 text-center mb-2 btn-div">
-              <button class="btn btn-danger-button w-100" (click)="onSearchOptionClick('Vehicle')"
-                style="margin-bottom:-420px">Search By Vehicle</button>
-            </div>
-            <div class="col-md-4 text-center mb-2 btn-div">
-              <button class="btn btn-danger-button w-100" (click)="onSearchOptionClick('Category')"
-                style="margin-bottom:-420px">Search By Category</button>
-            </div>
-            <div class="col-md-4 text-center mb-2 btn-div">
-              <button class="btn btn-danger-button w-100" (click)="onSearchOptionClick('Attributes')"
-                style="margin-bottom:-420px">Search By
-                Attributes</button>
-            </div>
+            <!-- Cart -->
+            <a *ngIf="loginType !== 'admin'" class="nav-link position-relative" [routerLink]="'/B2C/cart'">
+              <i class="bi bi-cart3 fs-4"></i>
+              <span *ngIf="cartItemCount > 0"
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary shadow-sm">
+                {{ cartItemCount }}
+              </span>
+            </a>
           </div>
         </div>
       </div>
     </div>
+  </nav>
+
+  <!-- Header Section -->
+  <!-- Header Section with Overlay Content -->
+  <header class="position-relative bg-dark text-white" style="height: 550px; overflow: hidden;">
+    <!-- Background Image -->
+    <img src="../../../../../assets/b2c-home.avif" alt="Auto parts background"
+      class="w-100 h-100 position-absolute top-0 start-0 object-fit-cover" style="opacity: 0.5;">
+
+    <!-- Overlay Content -->
+    <div class="position-relative z-1 h-100 d-flex align-items-center justify-content-center">
+      <div class="text-center px-3 px-md-5">
+        <h1 class="display-4 fw-bold mb-3">
+          Welcome to <span class="text-danger">US AUTOPARTS EXPERTS</span>
+          <span class="text-warning"> B2C</span> Platform
+        </h1>
+
+        <p class="lead mb-4">
+          Premium auto parts with expert advice and fast nationwide delivery
+        </p>
+        <div class="d-flex flex-wrap gap-3 justify-content-center">
+          <a href="#" class="btn btn-danger btn-lg px-4 fw-bold" (click)="onSearch()">
+            Shop Now <i class="bi bi-arrow-right ms-2"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+<div class="container mt-3">
+  <div class="row g-4 justify-content-center text-center">
+
+    <!-- Search by Vehicle -->
+    <div class="col-sm-6 col-md-4">
+      <button class="btn btn-outline-danger shadow-sm rounded-4 w-100 py-3 px-2 fw-semibold d-flex flex-column align-items-center"
+              (click)="onSearchOptionClick('Vehicle')"
+              data-bs-toggle="tooltip" title="Search using your vehicle's make, model, and trim">
+        <i class="fas fa-car-side fa-2x mb-2"></i>
+        Search by Vehicle
+      </button>
+    </div>
+
+    <!-- Search by Category -->
+    <div class="col-sm-6 col-md-4">
+      <button class="btn btn-outline-danger shadow-sm rounded-4 w-100 py-3 px-2 fw-semibold d-flex flex-column align-items-center"
+              (click)="onSearchOptionClick('Category')"
+              data-bs-toggle="tooltip" title="Find parts by selecting from category and sub-categories">
+        <i class="fas fa-layer-group fa-2x mb-2"></i>
+        Search by Category
+      </button>
+    </div>
+
+    <!-- Search by Attributes -->
+    <div class="col-sm-6 col-md-4">
+      <button class="btn btn-outline-danger shadow-sm rounded-4 w-100 py-3 px-2 fw-semibold d-flex flex-column align-items-center"
+              (click)="onSearchOptionClick('Attributes')"
+              data-bs-toggle="tooltip" title="Filter products using technical or feature-based attributes">
+        <i class="fas fa-sliders-h fa-2x mb-2"></i>
+        Search by Attributes
+      </button>
+    </div>
+
   </div>
-  <div class="slider-container" style="height: inherit;" id="sliderContainer" [ngClass]="{'active': isSliderVisible}">
+</div>
+
+ <div class="slider-container" style="height: inherit;" id="sliderContainer" [ngClass]="{'active': isSliderVisible}">
     <div class="inner-container" *ngIf="isSliderVisible">
       <div class="content-wrapper">
         <h2 class="slider-title">Unlock Exclusive B2B Benefits</h2>
@@ -126,178 +192,176 @@
     </button>
   </div>
 
-  <!-- <app-sidebar *ngIf="isSidebarVisible" [isVisible]="isSidebarVisible"></app-sidebar> -->
-
-  <!-- <p *ngIf="isSidebarVisible">Sidebar is visible!</p> -->
-  <app-sidebar *ngIf="isSidebarVisible"></app-sidebar>
-  <!-- <div *ngIf="isSidebarVisible" style="background: #ccc; padding: 10px; z-index: 1000;">Sidebar Placeholder</div>
-<app-sidebar *ngIf="isSidebarVisible && isBrowser"></app-sidebar> -->
-  <!-- <app-sidebar style="display: block !important; visibility: visible !important;"></app-sidebar> -->
-
-
-
-  <div>
-    <div *ngIf="showVehicleForm" class="vehicle-search-modal">
-      <!-- Background blur overlay -->
-      <div class="modal-overlay">
-        <span class="overlay-close-icon" (click)="closeForm()">&#x2715;</span>
+  <!-- Vehicle Search Modal -->
+<div class="modal fade" id="vehicleSearchModal" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);" tabindex="-1" aria-labelledby="vehicleSearchLabel" aria-hidden="true" [ngClass]="{'show d-block': showVehicleForm}" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="vehicleSearchLabel">Vehicle Search</h5>
+        <button type="button" class="btn-close" (click)="closeForm()" aria-label="Close"></button>
       </div>
-
-      <!-- Centered form container -->
-      <div class="vehicle-search-form-wrapper">
-        <div class="vehicle-search-form">
-          <div class="form-row">
-            <div class="form-group">
-              <label class="model" for="year">Year:</label>
-              <select id="year" [(ngModel)]="selectedYear" (change)="onYearChange()">
-                <option value="" disabled selected>Select Year</option>
-                <option *ngFor="let year of years" [value]="year.year">{{ year.year }}</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label class="model" for="make">Make:</label>
-              <select id="make" [(ngModel)]="selectedMake" (change)="onMakeChange()" [disabled]="!selectedYear">
-                <option value="" disabled selected>Select Make</option>
-                <option *ngFor="let make of makes" [value]="make.name">{{ make.name }}</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label class="model" for="model">Model:</label>
-              <select id="model" [(ngModel)]="selectedModel" (change)="onModelChange()" [disabled]="!selectedMake">
-                <option value="" disabled selected>Select Model</option>
-                <option *ngFor="let model of models" [value]="model.name">{{ model.name }}</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label class="model" for="trim">Trim:</label>
-              <select id="trim" [(ngModel)]="selectedTrim" (change)="onTrimChange()" [disabled]="!selectedModel">
-                <option value="" disabled selected>Select Trim</option>
-                <option *ngFor="let trim of trims" [value]="trim.name">{{ trim.name }}</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="engine">Engine:</label>
-              <select [(ngModel)]="selectedEngine" (change)="onEngineChange()">
-                <option *ngFor="let engine of engines" [value]="engine.name">{{ engine.name }}</option>
-              </select>
-            </div>
-          </div>
-
-          <button class="search-button" (click)="searchByVehicle()"
-            [disabled]="!selectedYear || !selectedMake || !selectedModel || !selectedTrim || !selectedEngine">
-            Search
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  <div *ngIf="showCategoryForm" class="category-search-modal">
-    <div class="modal-overlay">
-      <span class="overlay-close-icon" (click)="closeForm()">&#x2715;</span>
-    </div>
-    <div class="category-search-form-wrapper">
-      <div class="category-search-form">
-        <h4 *ngIf="mainCategories.length === 0">No categories available. Please try again later.</h4>
-        <div class="form-row" *ngIf="mainCategories.length > 0">
-          <!-- Main Category Dropdown -->
-          <div class="form-group">
-            <label class="category-form" for="mainCategory">Main Category:</label>
-            <select id="mainCategory" [(ngModel)]="selectedMainCategory" (change)="onMainCategoryChange()">
-              <option value="" disabled selected>Select Main Category</option>
-              <option *ngFor="let mainCategory of mainCategories" [value]="mainCategory.id">{{ mainCategory.name }}
-              </option>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label for="year" class="form-label">Year:</label>
+            <select id="year" class="form-select" [(ngModel)]="selectedYear" (change)="onYearChange()">
+              <option value="" disabled selected>Select Year</option>
+              <option *ngFor="let year of years" [value]="year.year">{{ year.year }}</option>
             </select>
           </div>
 
-          <!-- First Sub-Category Dropdown -->
-          <div class="form-group">
-            <label class="category-form" for="firstSubCategory">First Sub-Category:</label>
-            <select id="firstSubCategory" [(ngModel)]="selectedFirstSubCategory" (change)="onFirstSubCategoryChange()"
-              [disabled]="!selectedMainCategory">
-              <option value="" disabled selected>Select First Sub-Category</option>
-              <option *ngFor="let firstSubCategory of firstSubCategories" [value]="firstSubCategory.id">{{
-                firstSubCategory.name }}</option>
+          <div class="col-md-4">
+            <label for="make" class="form-label">Make:</label>
+            <select id="make" class="form-select" [(ngModel)]="selectedMake" (change)="onMakeChange()" [disabled]="!selectedYear">
+              <option value="" disabled selected>Select Make</option>
+              <option *ngFor="let make of makes" [value]="make.name">{{ make.name }}</option>
             </select>
           </div>
 
-          <!-- Second Sub-Category Dropdown -->
-          <div class="form-group">
-            <label class="category-form" for="secondSubCategory">Second Sub-Category:</label>
-            <select id="secondSubCategory" [(ngModel)]="selectedSecondSubCategory"
-              [disabled]="!selectedFirstSubCategory">
-              <option value="" disabled selected>Select Second Sub-Category</option>
-              <option *ngFor="let secondSubCategory of secondSubCategories" [value]="secondSubCategory.id">{{
-                secondSubCategory.name }}</option>
+          <div class="col-md-4">
+            <label for="model" class="form-label">Model:</label>
+            <select id="model" class="form-select" [(ngModel)]="selectedModel" (change)="onModelChange()" [disabled]="!selectedMake">
+              <option value="" disabled selected>Select Model</option>
+              <option *ngFor="let model of models" [value]="model.name">{{ model.name }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label for="trim" class="form-label">Trim:</label>
+            <select id="trim" class="form-select" [(ngModel)]="selectedTrim" (change)="onTrimChange()" [disabled]="!selectedModel">
+              <option value="" disabled selected>Select Trim</option>
+              <option *ngFor="let trim of trims" [value]="trim.name">{{ trim.name }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label for="engine" class="form-label">Engine:</label>
+            <select id="engine" class="form-select" [(ngModel)]="selectedEngine" (change)="onEngineChange()">
+              <option *ngFor="let engine of engines" [value]="engine.name">{{ engine.name }}</option>
             </select>
           </div>
         </div>
-        <button class="search-button" (click)="searchByCategory()"
-          [disabled]="!selectedMainCategory || !selectedFirstSubCategory || !selectedSecondSubCategory">
+      </div>
+      <div class="modal-footer">
+        <button type="button"
+                class="btn btn-primary"
+                (click)="searchByVehicle()"
+                [disabled]="!selectedYear || !selectedMake || !selectedModel || !selectedTrim || !selectedEngine">
           Search
         </button>
       </div>
     </div>
   </div>
+</div>
 
-  <hr class="my-4">
+<!-- Category Search Modal -->
+<div class="modal fade" id="categorySearchModal" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);" aria-labelledby="categorySearchLabel" aria-hidden="true" [ngClass]="{'show d-block': showCategoryForm}" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="categorySearchLabel">Category Search</h5>
+        <button type="button" class="btn-close" (click)="closeForm()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ng-container *ngIf="mainCategories.length > 0; else noCategories">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label for="mainCategory" class="form-label">Main Category:</label>
+              <select id="mainCategory" class="form-select" [(ngModel)]="selectedMainCategory" (change)="onMainCategoryChange()">
+                <option value="" disabled selected>Main Category</option>
+                <option *ngFor="let mainCategory of mainCategories" [value]="mainCategory.id">{{ mainCategory.name }}</option>
+              </select>
+            </div>
 
-  <div class="container-fluid py-5 text-center text-white" 
-  style="background: url('../../../../../assets/banner2-1.jpg') no-repeat center center/cover;">
-  <div class="container">
-  <h2 class="fw-bold mb-3">Find the Perfect Auto Part</h2>
-  <p class="lead mb-4">Explore our wide range of high-quality auto parts — just a click away.</p>
-  <button class="btn btn-light fw-bold px-4 py-2 mt-3" (click)="onSearch()">
-    View More
-  </button>
+            <div class="col-md-4">
+              <label for="firstSubCategory" class="form-label">First Sub-Category:</label>
+              <select id="firstSubCategory" class="form-select" [(ngModel)]="selectedFirstSubCategory"
+                      (change)="onFirstSubCategoryChange()" [disabled]="!selectedMainCategory">
+                <option value="" disabled selected>First Sub-Category</option>
+                <option *ngFor="let firstSubCategory of firstSubCategories" [value]="firstSubCategory.id">{{ firstSubCategory.name }}</option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label for="secondSubCategory" class="form-label">Second Sub-Category:</label>
+              <select id="secondSubCategory" class="form-select" [(ngModel)]="selectedSecondSubCategory"
+                      [disabled]="!selectedFirstSubCategory">
+                <option value="" disabled selected>Second Sub-Category</option>
+                <option *ngFor="let secondSubCategory of secondSubCategories" [value]="secondSubCategory.id">{{ secondSubCategory.name }}</option>
+              </select>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-template #noCategories>
+          <p class="text-danger text-center">No categories available. Please try again later.</p>
+        </ng-template>
+      </div>
+      <div class="modal-footer">
+        <button type="button"
+                class="btn btn-primary"
+                (click)="searchByCategory()"
+                [disabled]="!selectedMainCategory || !selectedFirstSubCategory || !selectedSecondSubCategory">
+          Search
+        </button>
+      </div>
+    </div>
   </div>
 </div>
+
+  <div class="container-fluid py-5 mt-2 text-center text-white"
+    style="background: url('../../../../../assets/banner2-1.jpg') no-repeat center center/cover;">
+    <div class="container">
+      <h2 class="fw-bold mb-3">Find the Perfect Auto Part</h2>
+      <p class="lead mb-4">Explore our wide range of high-quality auto parts — just a click away.</p>
+      <button class="btn btn-light fw-bold px-4 py-2 mt-3" (click)="onSearch()">
+        View More
+      </button>
+    </div>
+  </div>
 
   <hr class="my-4">
 
   <!------------ Product categories -------------------->
+
   <div class="container my-5">
     <h3 class="text-center fw-bold mb-4">Shop by Category</h3>
-    <div class="row g-4">
-      <div class="col-lg-3 col-md-4 col-sm-6" *ngFor="let category of categories$ | async">
-        <div class="card h-100 text-center shadow-sm border-0"
-          style="cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" (click)="onCategoryClick(category.id)">
-          <div class="card-body d-flex flex-column justify-content-center p-3">
-            <h6 class="card-title text-dark fw-bold">{{ category.name | titlecase }}</h6>
-            <small class="card-text text-secondary">{{ category.productCount }} products</small>
+    <div class="row g-4 justify-content-center">
+      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6" *ngFor="let category of categories$ | async">
+        <div class="category-card p-3 text-center" (click)="onCategoryClick(category.id)">
+          <div class="icon-circle mb-3 mx-auto">
+            <i [ngClass]="getCategoryIcon(category.name)" class="fs-4 text-danger"></i>
           </div>
+          <h6 class="fw-semibold mb-1">{{ category.name | titlecase }}</h6>
+          <p class="text-muted small mb-0">{{ category.productCount }} products</p>
         </div>
       </div>
     </div>
   </div>
   <hr class="my-4">
-  <div class="mx-5 my-5">
+
+  <div class="mx-5 my-5" id="top-products">
     <h3 class="text-center fw-bold mb-4">Our Top Products</h3>
     <div class="row g-3 justify-content-center align-items-center"
       *ngIf="products$ | async as products; else loadingProducts">
-      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6" *ngFor="let product of products">
-        <div class="card">
-          <div class="d-flex rounded justify-content-center align-items-center img-container">
-            <img [src]="'https://usaperp.com:5001/Images/Products/' + product.image"
-              class="img-fluid p-3 product-image h-500" [alt]="product.product_name">
+      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 d-flex" *ngFor="let product of products">
+        <div class="card flex-fill d-flex flex-column shadow-sm border-0">
+          <!-- Fixed height image container -->
+          <div class="d-flex justify-content-center align-items-center" style="height: 150px;">
+            <img [src]="'https://usaperp.com:5001/Images/Products/' + product.image" class="img-fluid"
+              [alt]="product.product_name" style="max-height: 100%; object-fit: contain;">
           </div>
-          <div class="card-body">
-            <!-- Product Name and Price -->
-            <div class="row">
-              <h5 class="col card-title text-center text-truncate text-md-start">
-                {{ product.product_name }}
+
+          <div class="card-body d-flex flex-column px-3 py-2">
+            <!-- Product Name and Price in uppercase -->
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h5 class="card-title text-truncate mb-0" style="max-width: 65%;">
+                {{ product.product_name.charAt(0).toUpperCase() + product.product_name.slice(1).toLowerCase() }}
               </h5>
-              <h5 class="col mb-0 text-center">
+              <h5 class="mb-0 text-center flex-shrink-0 text-uppercase" style="min-width: 60px;">
                 <span *ngIf="product.product_price === 0 || product.availableQuantity === 0; else showPrice"
                   class="text-info">
-                  Sold Out
+                  SOLD OUT
                 </span>
                 <ng-template #showPrice>
                   <span class="text-secondary"><i class="fa-solid fa-dollar-sign"></i> {{ product.product_price
@@ -305,51 +369,44 @@
                 </ng-template>
               </h5>
             </div>
-            <div class="row my-1 justify-content-center align-items-center">
-              <div class="col-xxl-6 col-xl-4 col-lg-0 col-md-0 col-sm-0"></div>
-              <div class="col-xxl-6 col-xl-8 col-lg-12 col-md-12 col-sm-12 d-flex justify-content-between">
-                <div class="col-auto">
-                  <!-- Decrease Button -->
-                  <button class="btn btn-danger" (click)="decreaseQuantity(product)"
-                    [disabled]="product.product_quantity === 0" title="Decrease quantity">
-                    <i class="fa fa-minus"></i>
-                  </button>
-                </div>
-                <div class="col-auto">
-                  <!-- Quantity Input -->
-                  <input type="number" class="form-control text-center" [(ngModel)]="product.product_quantity"
-                    style="max-width: 80px;" min="1" />
-                </div>
-                <div class="col-auto">
-                  <!-- Increase Button -->
-                  <button class="btn btn-success" (click)="increaseQuantity(product)" title="Increase quantity">
-                    <i class="fa fa-plus"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12">
-                <button class="btn btn-secondary w-100" 
-                (click)="viewProductDetails(product.product_id)"
-              >
-              <i class="fa-regular fa-eye"></i> <span class="ms-2">View Detail</span>
+
+            <!-- Quantity Controls -->
+            <div class="d-flex justify-content-center align-items-center mb-3">
+              <button class="btn btn-danger btn-sm me-2" (click)="decreaseQuantity(product)"
+                [disabled]="product.product_quantity === 0" title="Decrease quantity">
+                <i class="fa fa-minus"></i>
               </button>
-              </div>
-              <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 mt-xl-0 mt-lg-1 mt-md-1 mt-sm-2">
-                <button *ngIf="product.product_price > 0 || product.availableQuantity > 0; else wishlistButton"
-                  class="btn btn-outline-success w-100" (click)="addToCart(product)">
-                  <i class="fa-solid fa-cart-shopping"></i>
-                  <span class="ms-2">Add to Cart</span>
-                </button>
+              <input type="number" class="form-control text-center form-control-sm"
+                [(ngModel)]="product.product_quantity" style="max-width: 70px;" min="1" />
+              <button class="btn btn-success btn-sm ms-2" (click)="increaseQuantity(product)" title="Increase quantity">
+                <i class="fa fa-plus"></i>
+              </button>
+            </div>
 
-                <ng-template #wishlistButton>
-                  <button class="btn btn-outline-warning w-100" (click)="addToWishlist(product)">
-                    <i class="fa-solid fa-heart"></i>
-                    <span class="ms-2">Add to Wishlist</span>
+            <!-- Push buttons to bottom -->
+            <div class="mt-auto">
+              <div class="row g-2">
+                <div class="col-6">
+                  <button class="btn btn-secondary btn-sm w-100 text-uppercase"
+                    (click)="viewProductDetails(product.product_id)">
+                    <i class="fa-regular fa-eye"></i> <span class="ms-1">View Detail</span>
                   </button>
-                </ng-template>
+                </div>
+                <div class="col-6">
+                  <button *ngIf="product.product_price > 0 || product.availableQuantity > 0; else wishlistButton"
+                    class="btn btn-outline-success btn-sm w-100 text-uppercase" (click)="addToCart(product)">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="ms-1">Add to Cart</span>
+                  </button>
 
+                  <ng-template #wishlistButton>
+                    <button class="btn btn-outline-warning btn-sm w-100 text-uppercase"
+                      (click)="addToWishlist(product)">
+                      <i class="fa-solid fa-heart"></i>
+                      <span class="ms-1">Add to Wishlist</span>
+                    </button>
+                  </ng-template>
+                </div>
               </div>
             </div>
           </div>
@@ -366,112 +423,113 @@
     </div>
   </ng-template>
 
+
   <hr class="mt-2">
-  
-  <div class="best-seller-container">
 
-    <h3 class="text-center fw-bold mb-4">Flash Sale</h3>
+  <section class="py-5 bg-light">
+    <div class="container">
+      <h2 class="text-center fw-bold mb-5">🔥 Flash Sale</h2>
+      <div class="row g-4">
 
-  </div>
-  <div class="container">
-    <div class="product-listing">
-      <!-- Product Card 1 -->
-      <div class="product-card">
-        <div class="badge">NEW</div>
-        <div class="product-image">
-          <img src="../../../assets/last-tire.jpg" alt="Product 1" />
+        <!-- Product Card -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card shadow-sm h-100 border-0">
+            <div class="position-relative">
+              <span class="badge bg-danger position-absolute top-0 start-0 m-2">NEW</span>
+              <img src="../../../assets/last-tire.jpg" class="card-img-top" alt="Product">
+            </div>
+            <div class="card-body">
+              <div class="mb-2">
+                <span class="text-warning">★★★★★</span>
+                <small class="text-muted ms-1">(2 reviews)</small>
+              </div>
+              <p class="card-text">Curabitur ultrices enim ut nunc commodo semper suscipit.</p>
+              <div class="d-flex align-items-center mb-2">
+                <span class="fs-5 fw-bold text-primary me-2">$100.00</span>
+                <del class="text-muted me-2">$140.00</del>
+                <span class="badge bg-success">-29%</span>
+              </div>
+              <div class="d-flex justify-content-between text-center mb-2 small">
+                <div><strong>01</strong><br><span class="text-muted">Days</span></div>
+                <div><strong>13</strong><br><span class="text-muted">Hours</span></div>
+                <div><strong>47</strong><br><span class="text-muted">Minutes</span></div>
+                <div><strong>41</strong><br><span class="text-muted">Seconds</span></div>
+              </div>
+              <div class="progress mb-1" style="height: 8px;">
+                <div class="progress-bar bg-warning" style="width: 87%"></div>
+              </div>
+              <small class="text-muted">87% Sold - Available: 13</small>
+            </div>
+          </div>
         </div>
-        <div class="product-details">
-          <div class="rating">
-            <span class="stars">★★★★★</span>
-            <span class="reviews">(2)</span>
+
+        <!-- Product Card -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card shadow-sm h-100 border-0">
+            <div class="position-relative">
+              <span class="badge bg-danger position-absolute top-0 start-0 m-2">NEW</span>
+              <img src="../../../assets/red-rim.jpg" class="card-img-top" alt="Product">
+            </div>
+            <div class="card-body">
+              <div class="mb-2">
+                <span class="text-warning">★★★★★</span>
+                <small class="text-muted ms-1">(7 reviews)</small>
+              </div>
+              <p class="card-text">Curabitur id est vel nisi dictum rutrum consectetur vel.</p>
+              <div class="d-flex align-items-center mb-2">
+                <span class="fs-5 fw-bold text-primary me-2">$130.00</span>
+                <del class="text-muted me-2">$190.00</del>
+                <span class="badge bg-success">-32%</span>
+              </div>
+              <div class="d-flex justify-content-between text-center mb-2 small">
+                <div><strong>31</strong><br><span class="text-muted">Days</span></div>
+                <div><strong>13</strong><br><span class="text-muted">Hours</span></div>
+                <div><strong>47</strong><br><span class="text-muted">Minutes</span></div>
+                <div><strong>41</strong><br><span class="text-muted">Seconds</span></div>
+              </div>
+              <div class="progress mb-1" style="height: 8px;">
+                <div class="progress-bar bg-warning" style="width: 45%"></div>
+              </div>
+              <small class="text-muted">45% Sold - Available: 78</small>
+            </div>
           </div>
-          <p class="product-description">
-            Curabitur ultrices enim ut nunc commodo semper suscipit
-          </p>
-          <div class="price">
-            <span class="discounted">$100.00</span>
-            <span class="original">$140.00</span>
-          </div>
-          <div class="countdown">
-            <div class="time">01 Days</div>
-            <div class="time">13 Hours</div>
-            <div class="time">47 Minutes</div>
-            <div class="time">41 Seconds</div>
-          </div>
-          <div class="progress-bar">
-            <div class="progress" style="width: 87%;"></div>
-          </div>
-          <p class="stock">87% Sold - Available: 13</p>
         </div>
+
+        <!-- Product Card -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card shadow-sm h-100 border-0">
+            <div class="position-relative">
+              <span class="badge bg-danger position-absolute top-0 start-0 m-2">NEW</span>
+              <img src="../../../assets/red-weel.jpg" class="card-img-top" alt="Product">
+            </div>
+            <div class="card-body">
+              <div class="mb-2">
+                <span class="text-warning">★★★★★</span>
+                <small class="text-muted ms-1">(7 reviews)</small>
+              </div>
+              <p class="card-text">Curabitur id est vel nisi dictum rutrum consectetur vel.</p>
+              <div class="d-flex align-items-center mb-2">
+                <span class="fs-5 fw-bold text-primary me-2">$130.00</span>
+                <del class="text-muted me-2">$190.00</del>
+                <span class="badge bg-success">-32%</span>
+              </div>
+              <div class="d-flex justify-content-between text-center mb-2 small">
+                <div><strong>31</strong><br><span class="text-muted">Days</span></div>
+                <div><strong>13</strong><br><span class="text-muted">Hours</span></div>
+                <div><strong>47</strong><br><span class="text-muted">Minutes</span></div>
+                <div><strong>41</strong><br><span class="text-muted">Seconds</span></div>
+              </div>
+              <div class="progress mb-1" style="height: 8px;">
+                <div class="progress-bar bg-warning" style="width: 45%"></div>
+              </div>
+              <small class="text-muted">45% Sold - Available: 78</small>
+            </div>
+          </div>
+        </div>
+
       </div>
-
-      <!-- Product Card 2 -->
-      <div class="product-card">
-        <div class="badge">NEW</div>
-        <div class="product-image">
-          <img src="../../../assets/red-rim.jpg" alt="Product 2" />
-        </div>
-        <div class="product-details">
-          <div class="rating">
-            <span class="stars">★★★★★</span>
-            <span class="reviews">(7)</span>
-          </div>
-          <p class="product-description">
-            Curabitur id est vel nisi dictum rutrum consectetur vel
-          </p>
-          <div class="price">
-            <span class="discounted">$130.00</span>
-            <span class="original">$190.00</span>
-            <span class="discount">-16%</span>
-          </div>
-          <div class="countdown">
-            <div class="time">31 Days</div>
-            <div class="time">13 Hours</div>
-            <div class="time">47 Minutes</div>
-            <div class="time">41 Seconds</div>
-          </div>
-          <div class="progress-bar">
-            <div class="progress" style="width: 45%;"></div>
-          </div>
-          <p class="stock">45% Sold - Available: 78</p>
-        </div>
-      </div>
-      <div class="product-card">
-        <div class="badge">NEW</div>
-        <div class="product-image">
-          <img src="../../../assets/red-weel.jpg" alt="Product 2" />
-        </div>
-        <div class="product-details">
-          <div class="rating">
-            <span class="stars">★★★★★</span>
-            <span class="reviews">(7)</span>
-          </div>
-          <p class="product-description">
-            Curabitur id est vel nisi dictum rutrum consectetur vel
-          </p>
-          <div class="price">
-            <span class="discounted">$130.00</span>
-            <span class="original">$190.00</span>
-            <span class="discount">-16%</span>
-          </div>
-          <div class="countdown">
-            <div class="time">31 Days</div>
-            <div class="time">13 Hours</div>
-            <div class="time">47 Minutes</div>
-            <div class="time">41 Seconds</div>
-          </div>
-          <div class="progress-bar">
-            <div class="progress" style="width: 45%;"></div>
-          </div>
-          <p class="stock">45% Sold - Available: 78</p>
-        </div>
-      </div>
-
     </div>
-
-
-  </div>
+  </section>
 
   <br>
 
@@ -479,20 +537,19 @@
     <!-- Bootstrap Carousel -->
     <div id="brandCarousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
       <div class="carousel-inner">
-        <div 
-          *ngFor="let chunk of paginatedBrands; let i = index" 
-          class="carousel-item" 
+        <div *ngFor="let chunk of paginatedBrands; let i = index" class="carousel-item"
           [ngClass]="{'active': i === currentPage}">
-          
+
           <div class="d-flex justify-content-evenly align-items-center">
             <div *ngFor="let brand of chunk" class="text-center">
-              <img [src]="'https://usaperp.com:5001/Images/Brands/' + brand.brand_image" class="img-fluid" alt="{{ brand.brand_name }}" style="max-width: 150px; display: block; margin: 0 auto;">
+              <img [src]="'https://usaperp.com:5001/Images/Brands/' + brand.brand_image" class="img-fluid"
+                alt="{{ brand.brand_name }}" style="max-width: 150px; display: block; margin: 0 auto;">
               <p>{{ brand.brand_name }}</p>
             </div>
           </div>
         </div>
       </div>
-    
+
       <!-- Carousel controls -->
       <button class="carousel-control-prev" type="button" data-bs-target="#brandCarousel" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true" style="filter: invert(1);"></span>
@@ -504,142 +561,86 @@
       </button>
     </div>
   </div>
-  
-  <!-- Title outside of columns -->
-  <div class="card-container">
-    <div class="card">
-      <div class="card-overlay">
-        <h3 class="card-product">MICHELIN TIRE</h3>
-        <p>PREMIUM PERFORMANCE</p>
-        <button class="btn-shop">SHOP NOW</button>
-      </div>
-      <img src="assets/banner2-1.jpg" alt="Michelin Tire" class="card-image" />
-    </div>
 
-    <div class="card">
-      <div class="card-overlay">
-        <h3 class="card-product">CAR WHEEL</h3>
-        <p>SPORT EDITION</p>
-        <button class="btn-shop">SHOP NOW</button>
-      </div>
-      <img src="assets/banner3-3.jpg" alt="Car Wheel" class="card-image" />
-    </div>
+  <!--Footer-->
+  <footer class="bg-light pt-5 pb-4 border-top shadow-sm">
+    <div class="container">
+      <div class="row g-4">
 
-    <div class="card">
-      <div class="card-overlay">
-        <h3 class="card-product">BEST SELLERS</h3>
-        <p>PROJECTOR HEADLIGHTS</p>
-        <button class="btn-shop">SHOP NOW</button>
-      </div>
-      <img src="assets/banner2-2.jpg" alt="Best Sellers" class="card-image" />
-    </div>
-  </div>
-  <div class="subscription-container">
-    <div class="subscription-content">
-      <div class="subscription-info">
-        <img src="assets/envelope-icon.jpg" alt="Subscribe Icon" class="subscribe-icon" />
-        <div>
-          <h2 class="subscribe-title">
-            Subscribe & <span class="highlight">Get 10% Discount</span>
-          </h2>
-          <p class="subscribe-description">
-            Get 10% off your first purchase! Plus, be the first to know about sales, new product launches, and exclusive
-            offers!
-          </p>
+        <!-- Company Info -->
+        <div class="col-lg-3 col-md-6">
+          <a class="navbar-brand mb-3 d-inline-block" href="#">
+            <img src="assets/logo.png" alt="US Auto Parts" height="40">
+          </a>
+          <p class="text-muted">Your trusted source for quality auto parts since 1995.</p>
+          <div class="d-flex gap-2">
+            <a href="#" class="text-dark"><i class="bi bi-facebook fs-5"></i></a>
+            <a href="#" class="text-dark"><i class="bi bi-twitter-x fs-5"></i></a>
+            <a href="#" class="text-dark"><i class="bi bi-instagram fs-5"></i></a>
+            <a href="#" class="text-dark"><i class="bi bi-youtube fs-5"></i></a>
+          </div>
         </div>
-      </div>
-      <div class="subscription-form">
-        <input type="email" placeholder="Enter your email" class="email-input" />
-        <button class="subscribe-btn">Subscribe</button>
-      </div>
-    </div>
-  </div>
-  <div class="footer-container">
-    <div class="footer-content">
-      <!-- Left Section: Company Description -->
-      <div class="footer-left">
-        <div class="footer-logo">
-          <img src="assets/logo.png" alt="US Auto Parts Experts Logo" />
-          <p class="para-US">US Auto Parts Expert is dedicated to delivering top-quality parts, competitive pricing, and
-            exceptional customer service in the automotive aftermarket sector. Our focus remains on ensuring customer
-            satisfaction.</p>
+
+        <!-- Quick Links -->
+        <div class="col-lg-3 col-md-6">
+          <h5 class="text-dark mb-3">Quick Links</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">About Us</a></li>
+            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">How to Order</a></li>
+            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">How to Track</a></li>
+            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Shipping Info</a></li>
+            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Return Policy</a></li>
+          </ul>
         </div>
-        <div class="footer-social-media">
-          <a href="#" class="social-icon"><img src="assets/facebook.png" alt=""></a>
-          <a href="#" class="social-icon"><img src="assets/instagram.png" alt=""></a>
-          <a href="#" class="social-icon"><img src="assets/linkedin.png" alt=""></a>
+
+        <!-- Customer Service -->
+        <div class="col-lg-3 col-md-6">
+          <h5 class="text-dark mb-3">Customer Service</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Contact Us</a></li>
+            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">FAQs</a></li>
+            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Shipping Info</a></li>
+            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Terms of Service</a></li>
+            <li class="mb-2"><a href="/privacy-policy" class="text-muted text-decoration-none">Privacy Policy</a></li>
+          </ul>
+        </div>
+
+        <!-- Newsletter -->
+        <div class="col-lg-3 col-md-6">
+          <h5 class="text-dark mb-3">Stay Updated</h5>
+          <p class="text-muted">Get exclusive deals and auto tips</p>
+          <form>
+            <div class="input-group">
+              <input type="email" class="form-control border-end-0" placeholder="Your email">
+              <button class="btn btn-primary" type="submit">Subscribe</button>
+            </div>
+          </form>
+          <div class="mt-3">
+            <img src="assets/icons/visa-logo.svg" alt="Visa" class="me-2" style="max-height: 30px;">
+            <!-- Add more icons if needed -->
+          </div>
         </div>
       </div>
 
-      <!-- Center Section: Help & Support Links -->
-      <div class="footer-left">
-        <h3 class="help">Help & Support</h3>
-        <ul class="footer-center">
-          <li><a href="#">Shipping Info</a></li>
-          <li><a href="#">Returns</a></li>
-          <li><a href="#">How To Order</a></li>
-          <li><a href="#">How To Track</a></li>
-          <li><a href="#">Size Guide</a></li>
-        </ul>
-      </div>
+      <hr class="my-4">
 
-      <!-- Right Section: Company Info Links -->
-      <div class="footer-left">
-        <h3>Company Info</h3>
-        <ul class="footer-center">
-          <li><a href="#">About Us</a></li>
-          <li><a href="#">Our Blog</a></li>
-          <li><a href="#">Careers</a></li>
-          <li><a href="#">Store Location</a></li>
-          <li><a href="#">Testimonials</a></li>
-        </ul>
+      <!-- Bottom Footer -->
+      <div class="row text-center text-md-start align-items-center">
+        <div class="col-md-6 mb-2 mb-md-0">
+          <p class="mb-0 text-muted">&copy; 2025 US Auto Parts. All rights reserved.</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <ul class="list-inline mb-0">
+            <li class="list-inline-item"><a href="#" class="text-muted text-decoration-none">Privacy Policy</a></li>
+            <li class="list-inline-item px-2">•</li>
+            <li class="list-inline-item"><a href="#" class="text-muted text-decoration-none">Terms of Service</a></li>
+            <li class="list-inline-item px-2">•</li>
+            <li class="list-inline-item"><a href="#" class="text-muted text-decoration-none">Sitemap</a></li>
+          </ul>
+        </div>
       </div>
-
-      <!-- Additional Section: Customer Care Links -->
-      <div class="footer-left">
-        <h3>Customer Care</h3>
-        <ul class="footer-center">
-          <li><a href="#">FAQs</a></li>
-          <li><a href="#">Terms of Service</a></li>
-          <li><a href="/privacy-policy">Privacy Policy</a></li>
-          <li><a href="#">Contact Us</a></li>
-          <li><a href="#">Gift Cards</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  <footer class="footer">
-    <div class="contact-info">
-      <div class="phone">
-        <i class="fas fa-phone"></i>
-        <span>We're available by phone</span>
-        <a href="tel:+123456789" class="phone-number">+123-456-789</a>
-      </div>
-      <div class="email">
-        <i class="fas fa-envelope"></i>
-        <span>Email:</span>
-        <a href="">usautopartsexperts.com</a>
-
-      </div>
-      <div class="hours">
-        <i class="fas fa-clock"></i>
-        <span>Opening Hours: Monday till Friday 9 to 5 GMT-6</span>
-      </div>
-    </div>
-    <div class="payment-options">
-      <!-- <img src="assets/icons/applepay.png" alt="Apple Pay" />
-      <img src="assets/icons/google-pay.png" alt="Google Pay" />
-      <img src="assets/icons/paypal.png" alt="PayPal" /> -->
-      <img src="assets/icons/visa.png" alt="Visa" />
-      <!-- <img src="assets/icons/mastercard.png" alt="MasterCard" /> -->
-    </div>
-    <div class="copyright">
-      <p>&copy; 2024 All Rights Reserved.</p>
     </div>
   </footer>
 </div>
-
-<app-chat-bot></app-chat-bot>
-
 
 <router-outlet />
