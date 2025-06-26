@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CartService } from '../../core/services/cart/cart.service';
 import { Router } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
@@ -20,69 +20,88 @@ import Swal from 'sweetalert2';
 })
  
 export class CartSidebarComponent implements OnInit, OnDestroy  {
- // Define the type for cartItems, adding cartId and discountedPrice as optional fields
- private cartSub!: Subscription;
+  // Add Output EventEmitter to communicate with parent component
+  @Output() closeMobileCart = new EventEmitter<void>();
 
- cartItems: Array<{
-  cartId: string; // Add cartId for deletion
-  productId: string;
-  upc: string;
-  name: string;
-  quantity: number;
-  price: number;
-  discountedPrice?: number; // Added field to store discounted price
-  image: string;
-  imageError: boolean;
-  discounts_Seller?: Array<{
-    id: number;
-    product_id: number;
+  // Define the type for cartItems, adding cartId and discountedPrice as optional fields
+  private cartSub!: Subscription;
+
+  cartItems: Array<{
+    cartId: string; // Add cartId for deletion
+    productId: string;
+    upc: string;
+    name: string;
     quantity: number;
-    amount: number;
-    percentage: number | null;
-    customer_type: string;
-  }>; // Optional discounts_Seller array to handle products without discounts
-}> = [];
+    price: number;
+    discountedPrice?: number; // Added field to store discounted price
+    image: string;
+    imageError: boolean;
+    discounts_Seller?: Array<{
+      id: number;
+      product_id: number;
+      quantity: number;
+      amount: number;
+      percentage: number | null;
+      customer_type: string;
+    }>; // Optional discounts_Seller array to handle products without discounts
+  }> = [];
 
+  businessId: number | null = null;
+  isSidebarVisible: boolean = true;
 
-businessId: number | null = null;
-isSidebarVisible: boolean = true;
+  billing = {
+    fullName: '',
+    email: '',
+    contact: '',
+    billingAddress: '',
+    country: 'United States',
+    state: '',
+    city: '',
+    zipcode: '',
+  };
 
-billing = {
-  fullName: '',
-  email: '',
-  contact: '',
-  billingAddress: '',
-  country: 'United States',
-  state: '',
-  city: '',
-  zipcode: '',
-};
+  constructor(
+    private cartService: CartService,
+    private businessCartService: BusinessCartService,
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    private deleteCartService: DeleteCartService,
+  ) {}
 
-constructor(
-  private cartService: CartService,
-  private businessCartService: BusinessCartService,
-  private router: Router,
-  private cdr: ChangeDetectorRef,
-  private deleteCartService: DeleteCartService,
-) {}
+  ngOnInit(): void {
+    this.businessId = this.cartService.getUserID() ? +this.cartService.getUserID()! : null;
 
-ngOnInit(): void {
-  this.businessId = this.cartService.getUserID() ? +this.cartService.getUserID()! : null;
-
-  if (this.businessId !== null) {
-    this.loadCartData(); // Fetch cart data if businessId is available
-     this.cartSub = this.cartService.cartItems$.subscribe(_ => {
-        this.loadCartData();
-      });
-  } else {
-    console.error('Business ID (userID) is not set.');
+    if (this.businessId !== null) {
+      this.loadCartData(); // Fetch cart data if businessId is available
+      this.cartSub = this.cartService.cartItems$.subscribe(_ => {
+          this.loadCartData();
+        });
+    } else {
+      console.error('Business ID (userID) is not set.');
+    }
   }
-}
 
-toggleSidebar() {
-  this.isSidebarVisible = !this.isSidebarVisible;
-}
+  // Method to emit close event to parent component
+  onCloseMobileCart(): void {
+    this.closeMobileCart.emit();
+  }
 
+// Add this method to your B2cCartSidebarComponent class
+
+getBillingProgress(): number {
+  const fields = [
+    this.billing.fullName,
+    this.billing.email,
+    this.billing.contact,
+    this.billing.billingAddress,
+    this.billing.state,
+    this.billing.city,
+    this.billing.zipcode
+  ];
+  
+  const filledFields = fields.filter(field => field && field.trim().length > 0).length;
+  return Math.round((filledFields / fields.length) * 100);
+}
 
 ngOnDestroy(): void {
     this.cartSub?.unsubscribe();
@@ -93,7 +112,7 @@ calculateSubtotal(): number {
 }
 
 goToCart(): void {
-  this.router.navigate(['/B2B/cart']);
+  this.router.navigate(['/cart']);
 }
 
   closeCartSidebar(): void {
@@ -144,7 +163,7 @@ removeFromCart(cartId: string): void {
   Swal.fire({
     title: 'Remove item from cart',
     text: 'This product will no longer appear in your cart.',
-    icon: 'warning', // You can also use 'question' or 'info' if preferred
+    icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#d33',
     cancelButtonColor: '#3085d6',
@@ -155,10 +174,13 @@ removeFromCart(cartId: string): void {
     focusCancel: true
   }).then((result) => {
     if (result.isConfirmed) {
+      console.log('Attempting to remove item with Cart ID:', cartId);
       this.deleteCartService.deleteCart(+cartId).subscribe(
         (response) => {
+          console.log('Delete response:', response);
           if (response.success) {
             this.cartItems = this.cartItems.filter(item => item.cartId !== cartId);
+            console.log('Item removed successfully.');
             Swal.fire({
               icon: 'success',
               title: 'Item removed',
@@ -175,7 +197,7 @@ removeFromCart(cartId: string): void {
           }
         },
         (error) => {
-          console.error('Delete error:', error);
+          console.error('Error occurred while deleting the cart item:', error);
           Swal.fire({
             icon: 'error',
             title: 'Something went wrong',
@@ -186,7 +208,6 @@ removeFromCart(cartId: string): void {
     }
   });
 }
-
 
 applyDiscount(product: any, prod_qty: number, customerType: string): number {
   // console.log('applyDiscount called with: Product:', product, 'Quantity:', prod_qty, 'Customer Type:', customerType);
@@ -270,6 +291,9 @@ saveBillingDetails(): void {
 
 goToCheckout(): void {
   // Save billing details before navigating to checkout
+  if(this.billing.fullName == '' || this.billing.email == '' || this.billing.contact == '' || this.billing.billingAddress == '' || this.billing.state == '' || this.billing.city == '' || this.billing.zipcode == '') {
+    return;
+  }
   this.saveBillingDetails(); 
   console.log('Billing details saved before going to checkout:', this.billing);
 
@@ -290,7 +314,8 @@ goToCheckout(): void {
   localStorage.setItem('cartItems', JSON.stringify(cartItemsToSave));
 
   // Navigate to the CheckoutComponent
-  this.router.navigate(['/B2B/cart/checkout']);
+  this.router.navigate(['B2C/checkout']);
 }
 
 }
+

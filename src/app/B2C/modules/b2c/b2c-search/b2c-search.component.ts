@@ -23,7 +23,8 @@ export class B2cSearchComponent implements OnInit {
   isFilterCollapsed: boolean = false;
   isCartCollapsed: boolean = false; // For Cart Sidebar
 
-    mobileFilterOpen = false;
+  mobileFilterOpen = false;
+  mobileCartOpen = false; // New property for mobile cart
 
 
   constructor(
@@ -51,7 +52,7 @@ export class B2cSearchComponent implements OnInit {
     }
   }
 
-   toggleMobileFilter() {
+  toggleMobileFilter() {
     this.mobileFilterOpen = !this.mobileFilterOpen;
     
     // Optional: Prevent body scrolling when mobile filter is open
@@ -62,6 +63,17 @@ export class B2cSearchComponent implements OnInit {
     }
   }
 
+  // New method for mobile cart toggle
+  toggleMobileCart() {
+    this.mobileCartOpen = !this.mobileCartOpen;
+    
+    // Optional: Prevent body scrolling when mobile cart is open
+    if (this.mobileCartOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }
 
   toggleSidebar() {
     this.isCollapsed = !this.isCollapsed;
@@ -72,7 +84,7 @@ export class B2cSearchComponent implements OnInit {
   }
 
   toggleCartSidebar(): void {
-    this.isCartSidebarCollapsed = !this.isCartSidebarCollapsed;
+    this.isCartCollapsed = !this.isCartCollapsed;
   }
 
   collapseCartSidebar(): void {

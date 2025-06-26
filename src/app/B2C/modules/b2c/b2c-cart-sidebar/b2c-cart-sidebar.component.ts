@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CartService } from '../../../../core/services/cart/cart.service';
 import { BusinessCartService } from '../../../../core/services/business-cart/business-cart.service';
 import { Router } from '@angular/router';
@@ -18,65 +18,88 @@ import Swal from 'sweetalert2';
   styleUrl: './b2c-cart-sidebar.component.css'
 })
 export class B2cCartSidebarComponent implements OnInit, OnDestroy  {
- // Define the type for cartItems, adding cartId and discountedPrice as optional fields
- private cartSub!: Subscription;
+  // Add Output EventEmitter to communicate with parent component
+  @Output() closeMobileCart = new EventEmitter<void>();
 
- cartItems: Array<{
-  cartId: string; // Add cartId for deletion
-  productId: string;
-  upc: string;
-  name: string;
-  quantity: number;
-  price: number;
-  discountedPrice?: number; // Added field to store discounted price
-  image: string;
-  imageError: boolean;
-  discounts_Seller?: Array<{
-    id: number;
-    product_id: number;
+  // Define the type for cartItems, adding cartId and discountedPrice as optional fields
+  private cartSub!: Subscription;
+
+  cartItems: Array<{
+    cartId: string; // Add cartId for deletion
+    productId: string;
+    upc: string;
+    name: string;
     quantity: number;
-    amount: number;
-    percentage: number | null;
-    customer_type: string;
-  }>; // Optional discounts_Seller array to handle products without discounts
-}> = [];
+    price: number;
+    discountedPrice?: number; // Added field to store discounted price
+    image: string;
+    imageError: boolean;
+    discounts_Seller?: Array<{
+      id: number;
+      product_id: number;
+      quantity: number;
+      amount: number;
+      percentage: number | null;
+      customer_type: string;
+    }>; // Optional discounts_Seller array to handle products without discounts
+  }> = [];
 
+  businessId: number | null = null;
+  isSidebarVisible: boolean = true;
 
-businessId: number | null = null;
-isSidebarVisible: boolean = true;
+  billing = {
+    fullName: '',
+    email: '',
+    contact: '',
+    billingAddress: '',
+    country: 'United States',
+    state: '',
+    city: '',
+    zipcode: '',
+  };
 
-billing = {
-  fullName: '',
-  email: '',
-  contact: '',
-  billingAddress: '',
-  country: 'United States',
-  state: '',
-  city: '',
-  zipcode: '',
-};
+  constructor(
+    private cartService: CartService,
+    private businessCartService: BusinessCartService,
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    private deleteCartService: DeleteCartService,
+  ) {}
 
-constructor(
-  private cartService: CartService,
-  private businessCartService: BusinessCartService,
-  private router: Router,
-  private cdr: ChangeDetectorRef,
-  private deleteCartService: DeleteCartService,
-) {}
+  ngOnInit(): void {
+    this.businessId = this.cartService.getUserID() ? +this.cartService.getUserID()! : null;
 
-ngOnInit(): void {
-  this.businessId = this.cartService.getUserID() ? +this.cartService.getUserID()! : null;
-
-  if (this.businessId !== null) {
-    this.loadCartData(); // Fetch cart data if businessId is available
-    this.cartSub = this.cartService.cartItems$.subscribe(_ => {
-        this.loadCartData();
-      });
-  } else {
-    console.error('Business ID (userID) is not set.');
+    if (this.businessId !== null) {
+      this.loadCartData(); // Fetch cart data if businessId is available
+      this.cartSub = this.cartService.cartItems$.subscribe(_ => {
+          this.loadCartData();
+        });
+    } else {
+      console.error('Business ID (userID) is not set.');
+    }
   }
-}
 
+  // Method to emit close event to parent component
+  onCloseMobileCart(): void {
+    this.closeMobileCart.emit();
+  }
+
+// Add this method to your B2cCartSidebarComponent class
+
+getBillingProgress(): number {
+  const fields = [
+    this.billing.fullName,
+    this.billing.email,
+    this.billing.contact,
+    this.billing.billingAddress,
+    this.billing.state,
+    this.billing.city,
+    this.billing.zipcode
+  ];
+  
+  const filledFields = fields.filter(field => field && field.trim().length > 0).length;
+  return Math.round((filledFields / fields.length) * 100);
+}
 
 ngOnDestroy(): void {
     this.cartSub?.unsubscribe();

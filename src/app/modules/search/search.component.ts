@@ -27,22 +27,18 @@ export class SearchComponent implements OnInit {
   isCollapsed: boolean = false;
   isCartSidebarCollapsed: boolean = false;
   isFilterCollapsed: boolean = false;
-  isCartCollapsed: boolean = true; // For Cart Sidebar
+  isCartCollapsed: boolean = false; // For Cart Sidebar
 
   mobileFilterOpen = false;
+  mobileCartOpen = false; // New property for mobile cart
+
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
-    private cartSidebarService: CartSidebarService,
     private cdr: ChangeDetectorRef,
   ) {}
 
-  ngOnInit(): void {
-    this.cartSidebarService.cartSidebarState$.subscribe((state) => {
-      this.isCartCollapsed = state;
-      this.cdr.detectChanges();
-    });
-  }
+  ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -62,8 +58,27 @@ export class SearchComponent implements OnInit {
     }
   }
 
-   toggleMobileFilter(): void {
+  toggleMobileFilter() {
     this.mobileFilterOpen = !this.mobileFilterOpen;
+    
+    // Optional: Prevent body scrolling when mobile filter is open
+    if (this.mobileFilterOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }
+
+  // New method for mobile cart toggle
+  toggleMobileCart() {
+    this.mobileCartOpen = !this.mobileCartOpen;
+    
+    // Optional: Prevent body scrolling when mobile cart is open
+    if (this.mobileCartOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
   }
 
   toggleSidebar() {
@@ -74,19 +89,15 @@ export class SearchComponent implements OnInit {
     this.isFilterCollapsed = !this.isFilterCollapsed;
   }
 
- toggleCartSidebar(): void {
-    if (this.isCartCollapsed) {
-      this.openCartSidebar();
-    } else {
-      this.collapseCartSidebar();
-    }
+  toggleCartSidebar(): void {
+    this.isCartCollapsed = !this.isCartCollapsed;
   }
 
   collapseCartSidebar(): void {
-    this.cartSidebarService.closeCartSidebar(); // Trigger close
+    this.isCartCollapsed = true;
   }
 
   openCartSidebar(): void {
-    this.cartSidebarService.openCartSidebar(); // Trigger open
+    this.isCartCollapsed = false;
   }
 }

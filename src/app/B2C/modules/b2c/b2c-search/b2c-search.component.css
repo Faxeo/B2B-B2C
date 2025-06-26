@@ -85,15 +85,15 @@
 }
 
 .general-search.expanded-right {
-  flex-grow: 2; /* Expand more when cart sidebar is collapsed */
-  margin-right: -170px;
+  flex-grow: 2; 
+  margin-right: -10px;
 }
 
 /* Right Sidebar (Cart Sidebar) */
 .sidebar-cart {
   width: 290px;
   height: 100%;
-  transition: transform 0.5s ease, width 0.5s ease;
+  transition: transform 0.05s ease, width 0.5s ease;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -102,36 +102,8 @@
 
 .sidebar-cart.collapsed {
   width: 0;
-  transform: translateX(-290px);
-  overflow: hidden;
-}
-
-/* Cancel Button for Cart Sidebar */
-.cancel-btn {
-  position: fixed;
-  top: 14%;
-  right: 1%;
-  background: none;  /* Transparent */
-  color: #1a3056;  /* Dark Navy */
-  border: none;
-  cursor: pointer;
-  font-size: 32px;  /* Larger and more visible */
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.3s ease, color 0.3s ease;
-  z-index: 10000;
-}
-
-.cancel-btn:hover {
-  color: #0f1d3a;  /* Darker navy on hover */
-  transform: rotate(90deg) scale(1.2);  /* Rotation and slight enlargement */
-}
-
-.cancel-btn:active {
-  transform: scale(0.9);  /* Slight shrink on click */
-  color: #0c172b;
+  transform: translateX(0px);
+  overflow: hidden; 
 }
 
 /* Toggle Button Styling (for backwards compatibility) */
@@ -178,6 +150,23 @@
   transform: rotate(180deg);
 }
 
+/* Position the cart toggle beside the cart sidebar */
+.cart-toggle {
+  position: fixed;
+  top: 50%;
+  right: 350px;          /* ← match your .sidebar-cart width */
+  transform: translateY(-50%);
+  z-index: 1001;
+}
+
+/* When cart is collapsed, pull the button flush to the edge */
+.sidebar-cart.collapsed + .cart-toggle {
+  right: 10px;
+}
+
+/* All other styling (background, hover, shadows) comes from .toggle-btn */
+
+
 /* ─── Mobile Overrides ─── */
 @media (max-width: 768px) {
   /* Hide desktop sidebars & toggle */
@@ -193,6 +182,31 @@
     margin: 0;
     padding: 16px;
     width: 100%;
+  }
+
+  /* Mobile Cart Button (FAB) - Positioned above filter button */
+  .mobile-cart-button {
+    position: fixed;
+    bottom: 86px; /* Position above the filter button */
+    right: 16px;
+    background: radial-gradient(circle, #28a745 20%, #1e7e34 80%); /* Green theme for cart */
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    padding: 12px 20px;
+    font-size: 16px;
+    z-index: 1002;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .mobile-cart-button:hover {
+    background: radial-gradient(circle, #1e7e34 20%, #155724 80%);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
   }
 
   /* Mobile Filter Button (FAB) - Using B2C Blue Theme */
@@ -220,7 +234,97 @@
     transform: scale(1.05);
   }
 
-  /* Backdrop */
+  /* Mobile Cart Overlay */
+  .mobile-cart-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 1003; /* Higher z-index than filter overlay */
+  }
+  .mobile-cart-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Mobile Cart Panel - Full screen slide-in */
+  .mobile-cart-panel {
+    position: fixed;
+    top: -50px;
+    right: 0;
+    width: 100%; /* Full screen width for mobile */
+    height: 110%;
+    background: #fff;
+    transform: translateX(100%); /* Slide from right */
+    transition: transform 0.3s ease;
+    overflow-y: none;
+    z-index: 1004; /* Higher z-index than filter panel */
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  }
+  .mobile-cart-panel.active {
+    transform: translateX(0);
+  }
+
+  /* Mobile Cart Header */
+  .mobile-cart-header {
+    position: sticky;
+    top: 0;
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .mobile-cart-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: white;
+    flex: 1;
+    text-align: center;
+  }
+  .mobile-cart-header .back-button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: white;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+  }
+  .mobile-cart-header .back-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(-2px);
+  }
+  .mobile-cart-header .close-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: white;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .mobile-cart-header .close-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Filter Backdrop */
   .mobile-filter-overlay {
     position: fixed;
     inset: 0;
@@ -235,7 +339,7 @@
     visibility: visible;
   }
 
-  /* Slide-in panel */
+  /* Slide-in panel for filters */
   .mobile-filter-panel {
     position: fixed;
     top: 0;
@@ -254,7 +358,7 @@
     transform: translateX(0);
   }
 
-  /* Panel header */
+  /* Panel header for filters */
   .mobile-filter-header {
     position: sticky;
     top: 0;
@@ -304,3 +408,4 @@
     box-sizing: border-box;       /* include the padding in that width */
   }
 }
+
