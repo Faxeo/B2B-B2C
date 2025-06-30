@@ -42,6 +42,7 @@ import { AddToWishlistService } from '../../../../core/services/add-to-wishlist/
 import { ToastrService } from 'ngx-toastr';
 import { CookieService } from 'ngx-cookie-service';
 import { SearchQueryService } from '../../../../core/services/search-query/search-query.service';
+import { WishlistService } from '../../../../core/services/wishlist/wishlist.service';
 
 
 @Component({
@@ -56,13 +57,12 @@ import { SearchQueryService } from '../../../../core/services/search-query/searc
     FormsModule,
     // SearchComponent,
     // B2cSearchComponent,
-    ChatBotComponent    
+    ChatBotComponent
   ],
   providers: [ApiService, SidebarToggleService],
   templateUrl: './b2c-home.component.html',
-  styleUrls:[
-    './b2c-home.component.css',
-    './b2c-theme.component.css'
+  styleUrls: [
+    './b2c-home.component.css'
   ]
 })
 
@@ -82,6 +82,7 @@ export class B2CHomeComponent implements OnInit {
   searchInput$ = new BehaviorSubject<string>(''); // Search input
   searchQuery: string = ''; // Store the search query entered by the user
   cartItemCount: number = 0; // Variable for cart item count
+  wishlistCount: number = 0; // Variable for cart item count
   isLoading: boolean = false; // Main loading flag
   isPaginationLoading: boolean = false; // Pagination loading flag
   totalPages: number = 0; // Initialize to 0 or another appropriate value
@@ -141,16 +142,17 @@ export class B2CHomeComponent implements OnInit {
     private addToWishlistService: AddToWishlistService,
     private toastr: ToastrService,
     private searchQueryService: SearchQueryService,
-  ) {}
-  
-  
+    private wishlistService: WishlistService
+  ) { }
+
+
   ngOnInit(): void {
     this.route.url.subscribe((segments) => {
       if (segments.map(segment => segment.path).includes('search')) {
         // this.showSearchComponent = true;
         this.isLoading = false;
       }
-    }); 
+    });
     this.isBrowser = isPlatformBrowser(this.platformId);
     this.getMainCategories();
     this.getYears();
@@ -180,9 +182,9 @@ export class B2CHomeComponent implements OnInit {
     this.categories$ = this.apiService.getMainCategory().pipe(
       map((categories) =>
         categories.map((category: { id: number; name: string; productCount: number }) => ({
-            ...category,
-            productCount: category.productCount || 0
-          }))
+          ...category,
+          productCount: category.productCount || 0
+        }))
           .sort((a: { productCount: number }, b: { productCount: number }) => b.productCount - a.productCount) // Sort in descending order
       )
     );
@@ -211,10 +213,10 @@ export class B2CHomeComponent implements OnInit {
       if (params['query']) {
         const queryFromUrl = params['query'];
         this.searchQuery = queryFromUrl;
-        
+
         // Update the service (only need to do this in one component)
         this.searchQueryService.setQuery(queryFromUrl);
-        
+
         // Update the input field directly if needed
         const searchInput = document.getElementById('search-input') as HTMLInputElement;
         if (searchInput) {
@@ -224,28 +226,43 @@ export class B2CHomeComponent implements OnInit {
     });
   }
 
-@HostListener('window:scroll', [])
-onWindowScroll() {
-  const stickyDiv = document.getElementById('stickyButtons');
-  const navbar = document.querySelector('.navbar'); // Get the navbar element
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    const stickyDiv = document.getElementById('stickyButtons');
+    const navbar = document.querySelector('.navbar'); // Get the navbar element
 
-  if (stickyDiv && navbar) {
-    const navbarHeight = navbar.clientHeight; // Get navbar height dynamically
-    const scrollY = window.scrollY || window.pageYOffset;
-    const offsetTop = stickyDiv.offsetTop - navbarHeight; // Adjust based on navbar height
+    if (stickyDiv && navbar) {
+      const navbarHeight = navbar.clientHeight; // Get navbar height dynamically
+      const scrollY = window.scrollY || window.pageYOffset;
+      const offsetTop = stickyDiv.offsetTop - navbarHeight; // Adjust based on navbar height
 
-    if (scrollY > offsetTop) {
-      stickyDiv.classList.add('sticky', 'sticky-visible');
-      stickyDiv.style.top = `${navbarHeight}px`; // Dynamically set the position below navbar
-    } else {
-      stickyDiv.classList.remove('sticky-visible');
-      setTimeout(() => {
-        stickyDiv.classList.remove('sticky');
-      }, 100); // Delay for smooth animation
+      if (scrollY > offsetTop) {
+        stickyDiv.classList.add('sticky', 'sticky-visible');
+        stickyDiv.style.top = `${navbarHeight}px`; // Dynamically set the position below navbar
+      } else {
+        stickyDiv.classList.remove('sticky-visible');
+        setTimeout(() => {
+          stickyDiv.classList.remove('sticky');
+        }, 100); // Delay for smooth animation
+      }
     }
   }
-}
 
+  loadWishlistData(): void {
+    if (!this.userID) {
+      return;
+    }
+    // Fetch wishlist details from the service
+    this.wishlistService.getWishlistDetailsByBusinessId(Number(this.userID)).subscribe(
+      (data) => {
+        // Map the products array to wishlistItems
+        this.wishlistCount = data.products.length;
+      },
+      (error) => {
+        console.error('Error fetching wishlist details:', error);
+      }
+    );
+  }
 
   openSidebar(): void {
     this.sidebarToggleService.toggleSidebar();
@@ -260,18 +277,18 @@ onWindowScroll() {
     this.cdr.detectChanges();
     // this.sidebarToggleService.toggleSidebar();
 
-     // Toggle sidebar visibility when slider is activated
+    // Toggle sidebar visibility when slider is activated
     //  if (this.isSliderVisible) {
     //   this.isSidebarVisible = true;
     // } else {
     //   this.isSidebarVisible = false;
     // }
     console.log('isSliderVisible:', this.isSliderVisible, 'isSidebarVisible:', this.isSidebarVisible);
-  
+
     // Use Angular's Renderer2 for DOM manipulation if necessary
     const sliderContainer = document.getElementById('sliderContainer');
     const sliderButton = document.getElementById('sliderButton');
-    
+
     if (sliderContainer && sliderButton) {
       if (this.isSliderVisible) {
         sliderContainer.classList.add('active');
@@ -312,7 +329,7 @@ onWindowScroll() {
       }
     );
   }
-  
+
   loadBrands(): void {
     this.brandsService.fetchAllBrands().subscribe({
       next: (data) => {
@@ -333,7 +350,7 @@ onWindowScroll() {
     }
     this.currentBrandsPage = 0;
   }
-  
+
   onMainCategoryChange(): void {
     if (this.selectedMainCategory) {
       this.subCategoryService.getSubCategories(1, Number(this.selectedMainCategory)).subscribe(
@@ -398,7 +415,7 @@ onWindowScroll() {
     }
     this.cdr.detectChanges(); // Ensure the view is updated when the flag changes
   }
-  
+
 
   searchByCategory(page: number = 1): void {
     this.currentSearchType = 'categorySearch';
@@ -442,7 +459,7 @@ onWindowScroll() {
     if (this.selectedSecondSubCategory) {
       queryParams.secondSubCategory = this.selectedSecondSubCategory;
     }
-    
+
     if (Object.keys(queryParams).length > 0) {
       this.router.navigate(['/B2C/search'], { queryParams });
     }
@@ -468,7 +485,7 @@ onWindowScroll() {
       }
     );
   }
-  
+
   updateVehicleSelection(vehicle: any) {
     this.vehicleSearchService.setVehicleData(vehicle); // Save vehicle data
     // console.log('Updated vehicle data:', vehicle); 
@@ -476,7 +493,7 @@ onWindowScroll() {
 
   onSearchOptionClick(option: string): void {
     this.showSearchBar = false; // Hide main search bar by default
-  
+
     if (option === 'Vehicle') {
       this.showVehicleForm = true;
       this.showCategoryForm = false;
@@ -488,12 +505,12 @@ onWindowScroll() {
       this.showCategoryForm = false;
       this.showVehicleForm = false;
     }
-  
+
     this.searchEnabled = true;
     this.searchPlaceholder = `Search By ${option}`;
     this.cdr.detectChanges();  // Ensure the DOM reflects the change immediately
   }
-  
+
 
   onSearchClick(): void {
     debugger;
@@ -637,7 +654,7 @@ onWindowScroll() {
     } else {
       console.log('Engine is not selected'); // Debug log
     }
-  } 
+  }
 
   searchByVehicle(page: number = 1): void {
     this.currentSearchType = 'vehicleSearch';
@@ -713,7 +730,7 @@ onWindowScroll() {
           trim: vehicleData.trim,
           engine: vehicleData.engine,
         },
-      }); 
+      });
     }
 
     this.dynamicSearchService.searchProducts(requestData).subscribe(
@@ -736,8 +753,8 @@ onWindowScroll() {
       }
     );
   }
-  
-  
+
+
   // In home.component.ts, inside the `onSearch` function:
   onSearch(page: number = 1): void {
     debugger;
@@ -799,10 +816,10 @@ onWindowScroll() {
     };
 
     // Update query params if there's a search query
-   
-      this.router.navigate(['/B2C/search'], {
-        queryParams: { query: this.searchQuery },
-      });
+
+    this.router.navigate(['/B2C/search'], {
+      queryParams: { query: this.searchQuery },
+    });
 
     this.dynamicSearchService
       .searchProducts(requestData)
@@ -827,12 +844,12 @@ onWindowScroll() {
         this.cdr.detectChanges(); // Ensure the UI is updated
       });
 
-      this.router.navigate(['/B2C/search'], {
-        queryParams: { query: this.searchQuery },
-      });
+    this.router.navigate(['/B2C/search'], {
+      queryParams: { query: this.searchQuery },
+    });
   }
 
-  onPageChange(page: number): void { 
+  onPageChange(page: number): void {
     // console.log('Current Search Type:', this.currentSearchType, 'Page:', page); 
     if (this.currentSearchType === 'generalSearch') {
       this.onSearch(page); // General search
@@ -887,94 +904,137 @@ onWindowScroll() {
   }
 
 
-// Updated addToCart function to handle logged in and not logged in users
-addToCart(product: {
-  product_id: number;
-  product_name: string;
-  product_price: number;
-  product_quantity: number;
-  product_image: string;
-  product_identifier2: string;
-  showMessage?: boolean; // Add an optional property for showMessage
-}): void {
-  debugger;
-  const userID = this.userID || '';
-  const businessId = this.userID ? +this.userID : 0;
-  const upc = product.product_identifier2;
+  // Updated addToCart function to handle logged in and not logged in users
+  addToCart(product: {
+    product_id: number;
+    product_name: string;
+    product_price: number;
+    product_quantity: number;
+    product_image: string;
+    product_identifier2: string;
+    showMessage?: boolean; // Add an optional property for showMessage
+  }): void {
+    debugger;
+    const userID = this.userID || '';
+    const businessId = this.userID ? +this.userID : 0;
+    const upc = product.product_identifier2;
 
-  console.log('Adding product to cart:', product);
+    console.log('Adding product to cart:', product);
 
-  this.addToCartService
-    .addToCart(
-      product.product_id,
-      userID,
-      businessId,
-      product.product_quantity
-    )
-    .subscribe({
-      next: () => {
-        // Update local cart
-        this.cartService.addToCart({
-          productId: product.product_id.toString(),
-          name: product.product_name,
-          price: product.product_price,
-          image: product.product_image,
-          quantity: product.product_quantity,
-          upc: upc
-        });
+    this.addToCartService
+      .addToCart(
+        product.product_id,
+        userID,
+        businessId,
+        product.product_quantity
+      )
+      .subscribe({
+        next: () => {
+          // Update local cart
+          this.cartService.addToCart({
+            productId: product.product_id.toString(),
+            name: product.product_name,
+            price: product.product_price,
+            image: product.product_image,
+            quantity: product.product_quantity,
+            upc: upc
+          });
 
-        // Show success message for this product
-        this.toastr.success("Item added to cart successfully", 'Success');
+          // Show success message for this product
+          this.toastr.success("Item added to cart successfully", 'Success');
 
-        // Hide the message after 1 second
-        setTimeout(() => {
-          product.showMessage = false;
-        }, 1000);
-      },
-      error: (error) => {
-        console.error('Error adding to cart:', error);
-      },
-    });
-}
+          // Hide the message after 1 second
+          setTimeout(() => {
+            product.showMessage = false;
+          }, 1000);
+        },
+        error: (error) => {
+          console.error('Error adding to cart:', error);
+        },
+      });
+  }
 
   closeForm(): void {
     this.showVehicleForm = false; // Hide the vehicle form
     this.showCategoryForm = false; // Hide category form if applicable
   }
-  
+
   viewProductDetails(productId: number): void {
     if (productId) {
-      this.router.navigate(['/B2C/product-details', productId]); 
+      this.router.navigate(['/B2C/product-details', productId]);
     } else {
       console.error('Product ID is undefined');
     }
   }
 
   onBrandClick(brandId: number) {
-      this.router.navigate(['/B2C/search'], { queryParams:{ selectedBrand : brandId }});
+    this.router.navigate(['/B2C/search'], { queryParams: { selectedBrand: brandId } });
+  }
+
+  addToWishlist(product: any): void {
+    if (!this.userID) {
+      this.toastr.info('Please log in for wishlist.', 'Login Required');
+      return;
     }
 
-    addToWishlist(product: any): void {
-      if (!this.userID) {
-        this.toastr.info('Please log in for wishlist.', 'Login Required');
-        return;
-      }
-  
-      this.addToWishlistService
-        .addToWishlist(
-          product.product_id,
-          this.userID,
-          Number(this.userID)
-        )
-        .subscribe({
-          next: () => {
-            product.isInWishlist = true;
-            this.toastr.success('Product added to wishlist!', 'Success');
-          },
-          error: (error) => {
-            console.error('Error adding to wishlist:', error);
-            this.toastr.error('Error adding item to wishlist!', 'Error');
-          },
-        });
+    this.addToWishlistService
+      .addToWishlist(
+        product.product_id,
+        this.userID,
+        Number(this.userID)
+      )
+      .subscribe({
+        next: () => {
+          product.isInWishlist = true;
+          this.wishlistCount++;
+          this.toastr.success('Product added to wishlist!', 'Success');
+        },
+        error: (error) => {
+          console.error('Error adding to wishlist:', error);
+          this.toastr.error('Error adding item to wishlist!', 'Error');
+        },
+      });
+  }
+
+  getCategoryIcon(name: string): string {
+    const key = name.toLowerCase();
+
+    if (key.includes('body')) return 'bi-person-fill';              // Body Parts
+    if (key.includes('brake') || key.includes('wheel')) return 'bi-circle-half';  // Brake And Wheel
+    if (key.includes('engine') || key.includes('component')) return 'bi-gear-fill'; // Engine & Components
+    if (key.includes('suspension') || key.includes('steering')) return 'bi-arrows-angle-expand'; // Suspension & Steering
+    if (key.includes('filter')) return 'bi-funnel-fill';           // Filter
+    if (key.includes('transmission') || key.includes('drivetrain')) return 'bi-shuffle';  // Transmission & Drivetrain
+    if (key.includes('heat') || key.includes('air conditioning')) return 'bi-snow'; // Heat And Air Conditioning
+    if (key.includes('electrical')) return 'bi-plug-fill';         // Electrical
+    if (key.includes('air') && key.includes('fuel')) return 'bi-wind';  // Air And Fuel Delivery
+    if (key.includes('car parts') || key.includes('accessories')) return 'bi-box-seam'; // Car Parts & Accessories
+    if (key.includes('kits')) return 'bi-tools';                    // Kits
+    if (key.includes('lubricants')) return 'bi-droplet-fill';       // Lubricants
+    if (key.includes('hydraulics')) return 'bi-pie-chart-fill';     // Hydraulics (closest)
+    if (key.includes('tools') || key.includes('supplies')) return 'bi-wrench'; // Automotive Tools & Supplies
+    if (key.includes('ignition')) return 'bi-lightning-fill';       // Ignition System
+    if (key.includes('oil seal')) return 'bi-shield-fill';          // Oil Seal
+    if (key.includes('interior')) return 'bi-cup-fill';             // Interior (symbolic)
+    if (key.includes('cabin') || key.includes('frame')) return 'bi-house-door'; // Cabin & Frame
+
+    return 'bi-box-seam';  // default fallback icon
+  }
+
+  onMouseEnter(event: Event) {
+    const target = event.currentTarget as HTMLElement;
+    target.style.transform = 'scale(1.05)';
+  }
+
+  onMouseLeave(event: Event) {
+    const target = event.currentTarget as HTMLElement;
+    target.style.transform = 'scale(1)';
+  }
+
+  scrollToSection(id: string): void {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  }
 }
