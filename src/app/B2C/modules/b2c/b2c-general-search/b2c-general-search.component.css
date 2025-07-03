@@ -6,6 +6,11 @@
   overflow-x: hidden;
 }
 
+.search-toggle-wrapper{
+  /* margin-bottom: 0px; */
+  padding-right: 20px;
+}
+
 /* Product List */
 .product-list {
   width: 100%;
@@ -24,6 +29,8 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   min-height: 220px;
   margin-bottom: 15px;
+  margin-right: 15px;
+  margin-left: -10px;
 }
 
 .product-item:hover {
@@ -690,12 +697,17 @@
   .search-toggle-wrapper {
     display: flex;
     gap: 8px;
+    margin-left: 15px;
   }
   
   .search-toggle-wrapper .search-toggle-item {
     flex: 1 1 0;
     margin-bottom: 0;  /* kill the desktop bottom margin */
-    margin-top: -15px;
+    /* margin-top: -5px; */
+  }
+
+  .main-content-cart{
+    margin-left: 20px;
   }
 }
 

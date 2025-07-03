@@ -4,7 +4,6 @@ import { BehaviorSubject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-
 export class CartService {
   private cartItemsSubject = new BehaviorSubject<Array<{
     productId: string;
@@ -43,14 +42,78 @@ export class CartService {
     this.loginType = loginType;
   }
 
-  // Methods to get userID and loginType
+  // FIXED: Method to get userID - now decodes token directly
   getUserID(): string | null {
-    return this.userID;
+    // First try to return the stored userID if available
+    if (this.userID) {
+      return this.userID;
+    }
+
+    // If not stored, try to decode from token
+    try {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      if (!token) {
+        console.log('No token found in storage');
+        return null;
+      }
+
+      // Decode JWT token manually (since you might not have jwt-decode)
+      const payload = token.split('.')[1];
+      const decoded = JSON.parse(atob(payload));
+      
+      console.log('Decoded token payload:', decoded);
+      
+      // Extract the ID from the token
+      const extractedId = decoded.id || decoded.userId || decoded.businessId;
+      
+      if (extractedId) {
+        // Store it for future use
+        this.userID = extractedId.toString();
+        console.log('Extracted and stored user ID:', this.userID);
+        return this.userID;
+      }
+      
+      console.log('No ID found in token payload');
+      return null;
+      
+    } catch (error) {
+      console.error('Error extracting user ID from token:', error);
+      return null;
+    }
   }
 
   getLoginType(): string | null {
-    return this.loginType;
+    // First try to return stored loginType
+    if (this.loginType) {
+      return this.loginType;
+    }
+
+    // If not stored, try to decode from token
+    try {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      if (!token) {
+        return null;
+      }
+
+      const payload = token.split('.')[1];
+      const decoded = JSON.parse(atob(payload));
+      
+      // Extract category as login type
+      const extractedType = decoded.category || decoded.loginType || decoded.type;
+      
+      if (extractedType) {
+        this.loginType = extractedType;
+        return this.loginType;
+      }
+      
+      return null;
+      
+    } catch (error) {
+      console.error('Error extracting login type from token:', error);
+      return null;
+    }
   }
+
   // Modified to accept the UPC field
   addToCart(item: {
     productId: string;
@@ -116,7 +179,6 @@ export class CartService {
     return subtotal;
   }
   
-
   private updateCartItemCount(): void {
     const totalCount = this.cartItemsSubject.value.reduce((sum, item) => sum + item.quantity, 0);
     this.cartItemCountSubject.next(totalCount);
@@ -150,4 +212,4 @@ export class CartService {
   } | null {
     return this.billingDetailsSubject.value;
   }
-} 
+}

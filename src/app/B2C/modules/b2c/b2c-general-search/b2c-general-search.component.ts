@@ -36,11 +36,13 @@ import { FormsModule } from '@angular/forms';
 import { FilterComponent } from '../../../../modules/search/filter/filter.component';
 import { CartSidebarComponent } from '../../../../modules/cart-sidebar/cart-sidebar.component';
 import { ToastrService } from 'ngx-toastr';
+import { B2cSearchByCategoryComponent } from '../b2c-search-by-category/b2c-search-by-category.component';
+import { B2cSearchByVehicleComponent } from '../b2c-search-by-vehicle/b2c-search-by-vehicle.component';
 
 @Component({
   selector: 'app-b2c-general-search',
   standalone: true,
-  imports: [RouterModule, RecentlyViewedComponent, CommonModule, FormsModule],
+  imports: [RouterModule, RecentlyViewedComponent, CommonModule, FormsModule, B2cSearchByCategoryComponent, B2cSearchByVehicleComponent],
   templateUrl: './b2c-general-search.component.html',
   styleUrl: './b2c-general-search.component.css',
 })
@@ -1150,7 +1152,7 @@ export class B2cGeneralSearchComponent {
           this.toastr.success('Item added to cart successfully!', 'Success');
 
           // ✅ Navigate only after product is added to cart
-          this.router.navigate(['/B2B/cart']);
+          this.router.navigate(['/B2C/cart']);
         },
         error: (error) => {
           console.error('Error adding to cart:', error);

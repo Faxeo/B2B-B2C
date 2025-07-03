@@ -26,8 +26,11 @@
 
     <div class="main-content" [class.expanded]="!isCollapsed">
 
-      <!-- <app-search-by-vehicle></app-search-by-vehicle>
-      <app-search-by-category></app-search-by-category> -->
+       <!-- wherever you render them, e.g. in search.component.html -->
+    <div class="search-toggle-wrapper">
+      <app-b2c-search-by-vehicle class="search-toggle-item"></app-b2c-search-by-vehicle>
+      <app-b2c-search-by-category class="search-toggle-item"></app-b2c-search-by-category>
+    </div>
 
       <div class="main-content-cart" [class.expanded]="!isCollapsed">
         <!-- Right Sidebar -->
