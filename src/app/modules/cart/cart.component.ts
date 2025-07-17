@@ -136,6 +136,8 @@ export class CartComponent implements OnInit {
 
   searchTerm: string = '';
 
+  toastMessage: string = ''; 
+
   billing = {
     fullName: '',
     email: '',
@@ -213,6 +215,25 @@ export class CartComponent implements OnInit {
       this.billing.country?.trim()
     );
   }
+
+  /** Mobile detector (used by *ngIf in template) */
+  get isMobile(): boolean {
+    return window.innerWidth < 768;
+  }
+
+  /** Flat shipping fee (or whatever logic you prefer) */
+  shippingCost: number = 9.99;
+
+  /** Sum of all per‑item discounts */
+  totalDiscount(): number {
+    return this.cartItems.reduce((sum, item) => {
+      const full = item.price * item.quantity;
+      const disc = item.discountedPrice ?? full;
+      return sum + (full - disc);
+    }, 0);
+  }
+
+
 
   handleNewAddressPaste(event: ClipboardEvent): void {
     event.preventDefault(); // Prevent default paste action

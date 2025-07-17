@@ -15,6 +15,10 @@ body{
   /* padding: 5px; */
 }
 
+.view-products{
+  margin-right: 10px;
+}
+
 .wishlist-count-badge {
   background-color: red;
   color: white;
