@@ -39,6 +39,7 @@ import { response } from 'express';
 import { ChatBotComponent } from '../chat-bot/chat-bot.component';
 import { SearchQueryService } from '../../core/services/search-query/search-query.service';
 import { ToastrService } from 'ngx-toastr';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-home',
@@ -52,6 +53,7 @@ import { ToastrService } from 'ngx-toastr';
     FormsModule,
     // SearchComponent,
     ChatBotComponent,
+    NgSelectModule,
   ],
   providers: [ApiService, SidebarToggleService],
   templateUrl: './home.component.html',
