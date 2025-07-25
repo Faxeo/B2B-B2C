@@ -2,6 +2,7 @@
 /* @import "~@angular/material/prebuilt-themes/indigo-pink.css"; */
 
 /* ensure toastr toasts float on top */
+
 .toast-top-right,
 .toast-bottom-right,
 .toast-top-full-width,

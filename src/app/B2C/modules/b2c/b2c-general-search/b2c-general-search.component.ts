@@ -207,66 +207,62 @@ export class B2cGeneralSearchComponent {
     });
 
     this.activatedRoute.queryParams.subscribe((params) => {
-      this.searchResults = [];
-      this.currentPage = 1;
+    this.searchResults = [];
+    this.currentPage = 1;
 
-      if (params['query']) {
-        this.currentSearchState = {
-          type: 'generalSearch',
-          data: params['query'],
-        };
-        this.searchType = 'generalSearch';
-        this.performGeneralSearch(params['query']);
-      }
-      // Reset search results when params change
-      debugger;
-      this.searchResults = [];
-      this.currentPage = 1;
-
-      if (params['query']) {
-        this.currentSearchState = {
-          type: 'generalSearch',
-          data: params['query'],
-        };
-        this.searchType = 'generalSearch';
-        this.performGeneralSearch(params['query']);
+    if (params['selectedBrand']) {
+      const brandId = Number(params['selectedBrand']);
+      this.filterSearchService.setSelectedBrand(brandId);
+      this.currentSearchState = {
+        type: 'generalSearch',
+        data: '',
+      };
+      this.searchType = 'generalSearch';
+      this.performGeneralSearch('');
+      } else if (params['query']) {
+      this.currentSearchState = {
+        type: 'generalSearch',
+        data: params['query'],
+      };
+      this.searchType = 'generalSearch';
+      this.performGeneralSearch(params['query']);
       } else if (
         params['mainCategory'] ||
         params['firstSubCategory'] ||
         params['secondSubCategory']
       ) {
-        const categoryData = {
-          mainCategory: params['mainCategory'],
-          firstSubCategory: params['firstSubCategory'],
-          secondSubCategory: params['secondSubCategory'],
-        };
-        this.currentSearchState = {
-          type: 'categorySearch',
-          data: categoryData,
-        };
-        this.searchType = 'categorySearch';
-        this.performCategorySearch(categoryData);
-      } else if (
-        params['year'] ||
-        params['make'] ||
-        params['model'] ||
-        params['trim'] ||
-        params['engine']
-      ) {
-        const vehicleData = {
-          year: params['year'],
-          make: params['make'],
-          model: params['model'],
-          trim: params['trim'],
-          engine: params['engine'],
-        };
-        this.currentSearchState = {
-          type: 'vehicleSearch',
-          data: vehicleData,
-        };
-        this.searchType = 'vehicleSearch';
-        this.performVehicleSearch(vehicleData);
-      } else {
+      const categoryData = {
+        mainCategory: params['mainCategory'],
+        firstSubCategory: params['firstSubCategory'],
+        secondSubCategory: params['secondSubCategory'],
+      };
+      this.currentSearchState = {
+        type: 'categorySearch',
+        data: categoryData,
+      };
+      this.searchType = 'categorySearch';
+      this.performCategorySearch(categoryData);
+    } else if (
+      params['year'] ||
+      params['make'] ||
+      params['model'] ||
+      params['trim'] ||
+      params['engine']
+    ) {
+      const vehicleData = {
+        year: params['year'],
+        make: params['make'],
+        model: params['model'],
+        trim: params['trim'],
+        engine: params['engine'],
+      };
+      this.currentSearchState = {
+        type: 'vehicleSearch',
+        data: vehicleData,
+      };
+      this.searchType = 'vehicleSearch';
+      this.performVehicleSearch(vehicleData);
+    } else {
         this.currentSearchState = {
           type: 'generalSearch',
           data: '',
@@ -275,6 +271,7 @@ export class B2cGeneralSearchComponent {
         this.performGeneralSearch('');
       }
     });
+
     this.loadWishlist();
     const { m_id, f_id, s_id } =
       this.categoryNavbarSearchService.getCategoryData();

@@ -40,6 +40,7 @@ import { ChatBotComponent } from '../chat-bot/chat-bot.component';
 import { SearchQueryService } from '../../core/services/search-query/search-query.service';
 import { ToastrService } from 'ngx-toastr';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { UserService } from '../../core/services/User/user.service';
 
 @Component({
   selector: 'app-home',
@@ -68,6 +69,7 @@ export class HomeComponent implements OnInit {
   loginType: string | null = null;
   isAdminSidebarVisible: boolean = false;
   userID: string | null = null;
+  userName: string | null = null; // Added for userName
   message: string = '';
   showMessage: boolean = false;
   searchInput$ = new BehaviorSubject<string>('');
@@ -109,6 +111,7 @@ export class HomeComponent implements OnInit {
     private apiService: ApiService,
     private sidebarToggleService: SidebarToggleService,
     private loginService: LoginService,
+    private userService: UserService,
     private addToCartService: AddToCartService,
     private cartService: CartService,
     private logoutService: LogoutService,
@@ -128,33 +131,54 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getMainCategories();
-    this.getYears();
-    if (isPlatformBrowser(this.platformId)) {
-      this.userID = localStorage.getItem('userID');
-      this.loginService.getUserID().subscribe((userID) => {
-        this.userID = userID;
-      });
+  this.getMainCategories();
+  this.getYears();
 
-      this.loginService.getLoginType().subscribe((loginType) => {
+  if (isPlatformBrowser(this.platformId)) {
+    this.userID = localStorage.getItem('userID');
+    this.userName = localStorage.getItem('username');
+    this.loginType = localStorage.getItem('loginType');
+
+    console.log('Initial from localStorage →', {
+      userID: this.userID,
+      userName: this.userName,
+      loginType: this.loginType
+    });
+
+    this.loginService.getUserID().subscribe((userID) => {
+  if (userID) {
+    this.userID = userID;
+    this.userService.fetchUserNameById(userID, 'business'); // ← Now it works
+    }
+  });
+
+    this.loginService.getLoginType().subscribe((loginType) => {
         this.loginType = loginType;
         if (this.loginType === 'business') {
           const username = localStorage.getItem('username');
           this.loginType = username || this.loginType;
         }
       });
-      this.cartService.setUserDetails(this.userID, this.loginType);
-    }
 
-    this.categories$ = this.apiService.getMainCategory().pipe(
-      map((categories) =>
-        categories.map((category: { name: string }) => ({
-          ...category,
-          image: `assets/car-parts-&-accessories.png`,
-        }))
-      )
-    );
+    this.userService.getUserNameObservable().subscribe((userName) => {
+      if (userName) {
+        this.userName = userName;
+        console.log('userName from UserService:', userName);
+      }
+    });
 
+    this.cartService.setUserDetails(this.userID, this.loginType);
+  }
+
+  this.categories$ = this.apiService.getMainCategory().pipe(
+    map((categories) =>
+      categories.map((category: { name: string }) => ({
+        ...category,
+        image: `assets/car-parts-&-accessories.png`,
+      }))
+    )
+  );
+    
     this.products$ = this.apiService.getTopSellingProducts().pipe(
       map((products) =>
         products.map((product: { product_image: string }) => ({

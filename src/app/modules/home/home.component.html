@@ -90,9 +90,13 @@
 
         <!-- Auth Buttons -->
         <div class="d-flex flex-column flex-lg-row gap-2">
-          <button *ngIf="loginType === 'business'" class="btn btn-danger btn-auth" (click)="toggleAdminSidebar($event)">
-            Business
-          </button>
+          <button
+            *ngIf="loginType === 'business'"
+            class="btn btn-danger btn-auth"
+            (click)="toggleAdminSidebar($event)"
+          >
+            {{ userName || 'Business User' }}
+          </button>        
 
           <button *ngIf="!loginType" class="btn btn-outline-danger btn-auth" (click)="openSidebar()">
             Login
@@ -235,58 +239,79 @@
           <!-- Year -->
           <div class="col-12 col-md-6">
             <label for="year" class="form-label">Year:</label>
-            <select id="year" class="form-select" [(ngModel)]="selectedYear" (change)="onYearChange()">
-              <option value="" disabled selected>Select Year</option>
-              <option *ngFor="let year of years" [value]="year.year">
-                {{ year.year }}
-              </option>
-            </select>
+              <ng-select
+                [items]="years"
+                bindLabel="year"
+                bindValue="year"
+                placeholder="Select Year"
+                [(ngModel)]="selectedYear"
+                (change)="onYearChange()"
+                [clearable]="false"
+                id="year">
+              </ng-select>
           </div>
 
           <!-- Make -->
           <div class="col-12 col-md-6">
             <label for="make" class="form-label">Make:</label>
-            <select id="make" class="form-select" [(ngModel)]="selectedMake" (change)="onMakeChange()"
-              [disabled]="!selectedYear">
-              <option value="" disabled selected>Select Make</option>
-              <option *ngFor="let make of makes" [value]="make.name">
-                {{ make.name }}
-              </option>
-            </select>
+              <ng-select
+                [items]="makes"
+                bindLabel="name"
+                bindValue="name"
+                placeholder="Select Make"
+                [(ngModel)]="selectedMake"
+                (change)="onMakeChange()"
+                [disabled]="!selectedYear"
+                [clearable]="false"
+                id="make">
+              </ng-select>
           </div>
 
           <!-- Model -->
           <div class="col-12 col-md-6">
             <label for="model" class="form-label">Model:</label>
-            <select id="model" class="form-select" [(ngModel)]="selectedModel" (change)="onModelChange()"
-              [disabled]="!selectedMake">
-              <option value="" disabled selected>Select Model</option>
-              <option *ngFor="let model of models" [value]="model.name">
-                {{ model.name }}
-              </option>
-            </select>
+              <ng-select
+                [items]="models"
+                bindLabel="name"
+                bindValue="name"
+                placeholder="Select Model"
+                [(ngModel)]="selectedModel"
+                (change)="onModelChange()"
+                [disabled]="!selectedMake"
+                [clearable]="false"
+                id="model">
+              </ng-select>
           </div>
 
           <!-- Trim -->
           <div class="col-12 col-md-6">
             <label for="trim" class="form-label">Trim:</label>
-            <select id="trim" class="form-select" [(ngModel)]="selectedTrim" (change)="onTrimChange()"
-              [disabled]="!selectedModel">
-              <option value="" disabled selected>Select Trim</option>
-              <option *ngFor="let trim of trims" [value]="trim.name">
-                {{ trim.name }}
-              </option>
-            </select>
+              <ng-select
+                [items]="trims"
+                bindLabel="name"
+                bindValue="name"
+                placeholder="Select Trim"
+                [(ngModel)]="selectedTrim"
+                (change)="onTrimChange()"
+                [disabled]="!selectedModel"
+                [clearable]="false"
+                id="trim">
+              </ng-select>
           </div>
 
           <!-- Engine -->
           <div class="col-12">
             <label for="engine" class="form-label">Engine:</label>
-            <select id="engine" class="form-select" [(ngModel)]="selectedEngine" (change)="onEngineChange()">
-              <option *ngFor="let engine of engines" [value]="engine.name">
-                {{ engine.name }}
-              </option>
-            </select>
+              <ng-select
+                [items]="engines"
+                bindLabel="name"
+                bindValue="name"
+                placeholder="Select Engine"
+                [(ngModel)]="selectedEngine"
+                (change)="onEngineChange()"
+                [clearable]="false"
+                id="engine">
+              </ng-select>
           </div>
 
           <!-- Search Button -->
@@ -329,41 +354,47 @@
         <!-- Main Category -->
         <div class="col-12">
           <label for="mainCategory" class="form-label">Main Category:</label>
-          <select id="mainCategory" class="form-select" [(ngModel)]="selectedMainCategory"
-            (change)="onMainCategoryChange()">
-            <option value="" disabled selected>Select Main Category</option>
-            <option *ngFor="let mainCategory of mainCategories" [value]="mainCategory.id">
-              {{ mainCategory.name }}
-            </option>
-          </select>
+            <ng-select
+              [items]="mainCategories"
+              bindLabel="name"
+              bindValue="id"
+              placeholder="Select Main Category"
+              [(ngModel)]="selectedMainCategory"
+              (change)="onMainCategoryChange()"
+              [clearable]="false"
+              id="mainCategory">
+            </ng-select>
         </div>
 
         <!-- First Sub-Category -->
         <div class="col-12">
           <label for="firstSubCategory" class="form-label">First Sub-Category:</label>
-          <select id="firstSubCategory" class="form-select" [(ngModel)]="selectedFirstSubCategory"
-            (change)="onFirstSubCategoryChange()" [disabled]="!selectedMainCategory">
-            <option value="" disabled selected>
-              Select First Sub-Category
-            </option>
-            <option *ngFor="let firstSubCategory of firstSubCategories" [value]="firstSubCategory.id">
-              {{ firstSubCategory.name }}
-            </option>
-          </select>
+          <ng-select
+            id="firstSubCategory"
+            [items]="firstSubCategories"
+            bindLabel="name"
+            bindValue="id"
+            placeholder="Select First Sub-Category"
+            [(ngModel)]="selectedFirstSubCategory"
+            (change)="onFirstSubCategoryChange()"
+            [disabled]="!selectedMainCategory"
+            [clearable]="false">
+          </ng-select>
         </div>
 
         <!-- Second Sub-Category -->
         <div class="col-12">
           <label for="secondSubCategory" class="form-label">Second Sub-Category:</label>
-          <select id="secondSubCategory" class="form-select" [(ngModel)]="selectedSecondSubCategory"
-            [disabled]="!selectedFirstSubCategory">
-            <option value="" disabled selected>
-              Select Second Sub-Category
-            </option>
-            <option *ngFor="let secondSubCategory of secondSubCategories" [value]="secondSubCategory.id">
-              {{ secondSubCategory.name }}
-            </option>
-          </select>
+          <ng-select
+            id="secondSubCategory"
+            [items]="secondSubCategories"
+            bindLabel="name"
+            bindValue="id"
+            placeholder="Select Second Sub-Category"
+            [(ngModel)]="selectedSecondSubCategory"
+            [disabled]="!selectedFirstSubCategory"
+            [clearable]="false">
+          </ng-select>
         </div>
 
         <!-- Search Button -->

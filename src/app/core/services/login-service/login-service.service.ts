@@ -10,6 +10,7 @@ import { isPlatformBrowser } from '@angular/common';
 export class LoginService {
   private loginTypeSubject = new BehaviorSubject<string | null>(null);
   private userIDSubject = new BehaviorSubject<string | null>(null);
+  private userNameSubject = new BehaviorSubject<string | null>(null);
   private categorySubject = new BehaviorSubject<string | null>(null);
 
   constructor(private cookieService: CookieService,
@@ -19,7 +20,9 @@ export class LoginService {
       // Initialize from stored values (only on the browser)
       const storedLoginType = localStorage.getItem('loginType') || this.cookieService.get('loginType');
       const storedUserID = localStorage.getItem('userID') || this.cookieService.get('userID');
+      const storedUserName = localStorage.getItem('username') || this.cookieService.get('username');
 
+      if (storedUserName) this.userNameSubject.next(storedUserName);
       if (storedLoginType) this.loginTypeSubject.next(storedLoginType);
       if (storedUserID) this.userIDSubject.next(storedUserID);
     }
@@ -59,6 +62,30 @@ export class LoginService {
     return this.userIDSubject.asObservable();
   }
 
+  setUserName(userName: string) {
+  this.userNameSubject.next(userName);
+
+  console.log('[setUserName] Called with:', userName);
+
+  if (isPlatformBrowser(this.platformId)) {
+    console.log('[setUserName] Saving to localStorage:', userName); 
+    localStorage.setItem('username', userName);
+  }
+
+  this.cookieService.set('username', userName, {
+    expires: new Date().getHours() + 2,
+    path: '/',
+    secure: true,
+    sameSite: 'Strict'
+    });
+  }
+
+
+  getUserName(): Observable<string | null> {
+    return this.userNameSubject.asObservable();
+  }
+
+
   setCategory(category: string) {
     this.categorySubject.next(category);
   }
@@ -71,13 +98,16 @@ export class LoginService {
     this.loginTypeSubject.next(null);
     this.userIDSubject.next(null);
     this.categorySubject.next(null);
+    this.userNameSubject.next(null);
 
     this.cookieService.delete('loginType', '/');
     this.cookieService.delete('userID', '/');
+    this.cookieService.delete('username', '/');
 
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('loginType');
       localStorage.removeItem('userID');
+      localStorage.removeItem('username');
     }
   }
 }

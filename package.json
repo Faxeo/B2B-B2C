@@ -37,6 +37,7 @@
     "html2canvas": "^1.4.1",
     "intl-tel-input": "^23.8.2",
     "jspdf": "^3.0.0",
+    "jwt-decode": "^4.0.0",
     "lottie-web": "^5.12.2",
     "ng2-charts": "^4.1.1",
     "ngx-cookie-service": "^17.0.0",

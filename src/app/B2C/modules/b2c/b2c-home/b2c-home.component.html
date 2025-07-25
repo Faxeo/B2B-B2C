@@ -193,7 +193,8 @@
   </div>
 
   <!-- Vehicle Search Modal -->
-<div class="modal fade" id="vehicleSearchModal" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);" tabindex="-1" aria-labelledby="vehicleSearchLabel" aria-hidden="true" [ngClass]="{'show d-block': showVehicleForm}" data-bs-backdrop="static" data-bs-keyboard="false">
+   <!--
+ <div class="modal fade" id="vehicleSearchModal" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);" tabindex="-1" aria-labelledby="vehicleSearchLabel" aria-hidden="true" [ngClass]="{'show d-block': showVehicleForm}" data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
@@ -253,9 +254,123 @@
     </div>
   </div>
 </div>
+-->
+<div class="modal fade" id="vehicleSearchModal" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);" tabindex="-1" aria-labelledby="vehicleSearchLabel" aria-hidden="true" [ngClass]="{'show d-block': showVehicleForm}" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="vehicleSearchLabel">Vehicle Search</h5>
+        <button type="button" class="btn-close" (click)="closeForm()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <!-- YEAR DROPDOWN -->
+          <div class="col-md-4">
+            <label for="year" class="form-label">Year:</label>
+            <select id="year" class="form-select" [(ngModel)]="selectedYear" (change)="onYearChange()">
+              <option value="" disabled selected>Select Year</option>
+              <option *ngFor="let year of years" [value]="year.year">{{ year.year }}</option>
+            </select>
+          </div>
+
+          <!-- MAKE AUTOCOMPLETE -->
+          <div class="col-md-4 position-relative">
+            <label for="make" class="form-label">Make:</label>
+            <input
+              id="make"
+              type="text"
+              class="form-control"
+              [(ngModel)]="makeInput"
+              (input)="filterMakes(makeInput)"
+              (focus)="filterMakes(makeInput)"
+              (blur)="hideMakeDropdown()"
+              [disabled]="!selectedYear"
+              autocomplete="off"
+            />
+            <ul class="list-group position-absolute z-3 w-100"
+                *ngIf="showMakeDropdown && filteredMakes.length"
+                style="max-height: 200px; overflow-y: auto;">
+              <li class="list-group-item list-group-item-action"
+                  *ngFor="let make of filteredMakes"
+                  (mousedown)="selectMake(make)">
+                {{ make.name }}
+              </li>
+            </ul>
+          </div>
+
+          <!-- MODEL AUTOCOMPLETE -->
+          <div class="col-md-4 position-relative">
+            <label for="model" class="form-label">Model:</label>
+            <input
+              id="model"
+              type="text"
+              class="form-control"
+              [(ngModel)]="modelInput"
+              (input)="filterModels(modelInput)"
+              (focus)="filterModels(modelInput)"
+              (blur)="hideModelDropdown()"
+              [disabled]="!selectedMake"
+              autocomplete="off"
+            />
+            <ul class="list-group position-absolute z-3 w-100"
+                *ngIf="showModelDropdown && filteredModels.length"
+                style="max-height: 200px; overflow-y: auto;">
+              <li class="list-group-item list-group-item-action"
+                  *ngFor="let model of filteredModels"
+                  (mousedown)="selectModel(model)">
+                {{ model.name }}
+              </li>
+            </ul>
+          </div>
+
+          <!-- TRIM AUTOCOMPLETE -->
+          <div class="col-md-6 position-relative">
+            <label for="trim" class="form-label">Trim:</label>
+            <input
+              id="trim"
+              type="text"
+              class="form-control"
+              [(ngModel)]="trimInput"
+              (input)="filterTrims(trimInput)"
+              (focus)="filterTrims(trimInput)"
+              (blur)="hideTrimDropdown()"
+              [disabled]="!selectedModel"
+              autocomplete="off"
+            />
+            <ul class="list-group position-absolute z-3 w-100"
+                *ngIf="showTrimDropdown && filteredTrims.length"
+                style="max-height: 200px; overflow-y: auto;">
+              <li class="list-group-item list-group-item-action"
+                  *ngFor="let trim of filteredTrims"
+                  (mousedown)="selectTrim(trim)">
+                {{ trim.name }}
+              </li>
+            </ul>
+          </div>
+
+          <!-- ENGINE DROPDOWN -->
+          <div class="col-md-6">
+            <label for="engine" class="form-label">Engine:</label>
+            <select id="engine" class="form-select" [(ngModel)]="selectedEngine" (change)="onEngineChange()">
+              <option *ngFor="let engine of engines" [value]="engine.name">{{ engine.name }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button"
+                class="btn btn-primary"
+                (click)="searchByVehicle()"
+                [disabled]="!selectedYear || !selectedMake || !selectedModel || !selectedTrim || !selectedEngine">
+          Search
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Category Search Modal -->
-<div class="modal fade" id="categorySearchModal" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);" aria-labelledby="categorySearchLabel" aria-hidden="true" [ngClass]="{'show d-block': showCategoryForm}" data-bs-backdrop="static" data-bs-keyboard="false">
+<!-- <div class="modal fade" id="categorySearchModal" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);" aria-labelledby="categorySearchLabel" aria-hidden="true" [ngClass]="{'show d-block': showCategoryForm}" data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
@@ -320,7 +435,95 @@
     </div>
   </div>
 
-  <hr class="my-4">
+  <hr class="my-4">  -->
+  <div class="modal fade" id="categorySearchModal" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);" aria-labelledby="categorySearchLabel" aria-hidden="true" [ngClass]="{'show d-block': showCategoryForm}" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="categorySearchLabel">Category Search</h5>
+        <button type="button" class="btn-close" (click)="closeForm()" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <ng-container *ngIf="mainCategories.length > 0; else noCategories">
+          <div class="row g-3">
+            <!-- Main Category -->
+            <div class="col-md-4">
+              <label for="mainCategory" class="form-label">Main Category:</label>
+              <ng-select
+                [items]="mainCategories"
+                bindLabel="name"
+                bindValue="id"
+                placeholder="Main Category"
+                [(ngModel)]="selectedMainCategory"
+                (change)="onMainCategoryChange()"
+                [clearable]="false"
+                id="mainCategory">
+              </ng-select>
+            </div>
+
+            <!-- First Sub-Category -->
+            <div class="col-md-4">
+              <label for="firstSubCategory" class="form-label">First Sub-Category:</label>
+              <ng-select
+                [items]="firstSubCategories"
+                bindLabel="name"
+                bindValue="id"
+                placeholder="First Sub-Category"
+                [(ngModel)]="selectedFirstSubCategory"
+                (change)="onFirstSubCategoryChange()"
+                [disabled]="!selectedMainCategory"
+                [clearable]="false"
+                id="firstSubCategory">
+              </ng-select>
+            </div>
+
+            <!-- Second Sub-Category -->
+            <div class="col-md-4">
+              <label for="secondSubCategory" class="form-label">Second Sub-Category:</label>
+              <ng-select
+                [items]="secondSubCategories"
+                bindLabel="name"
+                bindValue="id"
+                placeholder="Second Sub-Category"
+                [(ngModel)]="selectedSecondSubCategory"
+                [disabled]="!selectedFirstSubCategory"
+                [clearable]="false"
+                id="secondSubCategory">
+              </ng-select>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-template #noCategories>
+          <p class="text-danger text-center">No categories available. Please try again later.</p>
+        </ng-template>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button"
+                class="btn btn-primary"
+                (click)="searchByCategory()"
+                [disabled]="!selectedMainCategory || !selectedFirstSubCategory || !selectedSecondSubCategory">
+          Search
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid py-5 mt-2 text-center text-white"
+  style="background: url('../../../../../assets/banner2-1.jpg') no-repeat center center/cover;">
+  <div class="container">
+    <h2 class="fw-bold mb-3">Find the Perfect Auto Part</h2>
+    <p class="lead mb-4">Explore our wide range of high-quality auto parts — just a click away.</p>
+    <button class="btn btn-light fw-bold px-4 py-2 mt-3" (click)="onSearch()">
+      View More
+    </button>
+  </div>
+</div>
+
+<hr class="my-4">
 
   <!------------ Product categories -------------------->
 
@@ -533,24 +736,59 @@
 
   <br>
 
-  <div class="container-fluid mt-4">
-    <!-- Bootstrap Carousel -->
-    <div id="brandCarousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
-      <div class="carousel-inner">
-        <div *ngFor="let chunk of paginatedBrands; let i = index" class="carousel-item"
-          [ngClass]="{'active': i === currentPage}">
+  <!-- Bootstrap Carousel -->
+<!-- <div class="container-fluid mt-4">
+  <div id="brandCarousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div *ngFor="let chunk of paginatedBrands; let i = index" class="carousel-item"
+        [ngClass]="{'active': i === currentPage}">
 
-          <div class="d-flex justify-content-evenly align-items-center">
-            <div *ngFor="let brand of chunk" class="text-center">
-              <img [src]="'https://usaperp.com:5001/Images/Brands/' + brand.brand_image" class="img-fluid"
-                alt="{{ brand.brand_name }}" style="max-width: 150px; display: block; margin: 0 auto;">
-              <p>{{ brand.brand_name }}</p>
-            </div>
+        <div class="d-flex justify-content-evenly align-items-center">
+          <div *ngFor="let brand of chunk" class="text-center brand-clickable" (click)="onBrandClick(brand.brand_id)">
+            <img [src]="'https://usaperp.com:5001/Images/Brands/' + brand.brand_image" class="img-fluid"
+              alt="{{ brand.brand_name }}" style="max-width: 150px; display: block; margin: 0 auto;">
+            <p>{{ brand.brand_name }}</p>
           </div>
         </div>
+      </div> -->
+      <div class="container-fluid mt-4">
+  <div id="brandCarousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+
+      <div *ngFor="let chunk of paginatedBrands; let i = index" class="carousel-item"
+        [ngClass]="{ 'active': i === currentPage }">
+
+        <div class="d-flex justify-content-evenly align-items-center">
+          <div
+            *ngFor="let brand of chunk"
+            class="text-center brand-clickable"
+            role="button"
+            tabindex="0"
+            (click)="onBrandClick(brand.brand_id)"
+            (keydown.enter)="onBrandClick(brand.brand_id)"
+            style="cursor: pointer;"
+          >
+            <img [src]="'https://usaperp.com:5001/Images/Brands/' + brand.brand_image"
+              class="img-fluid"
+              alt="{{ brand.brand_name }}"
+              style="max-width: 150px; display: block; margin: 0 auto;" />
+            <p>{{ brand.brand_name }}</p>
+          </div>
+        </div>
+
       </div>
 
-      <!-- Carousel controls -->
+      <!-- carousel controls -->
+      <!-- <button class="carousel-control-prev" type="button" data-bs-target="#brandCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true" style="filter: invert(1);"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#brandCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true" style="filter: invert(1);"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+</div> -->
       <button class="carousel-control-prev" type="button" data-bs-target="#brandCarousel" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true" style="filter: invert(1);"></span>
         <span class="visually-hidden">Previous</span>
@@ -559,6 +797,8 @@
         <span class="carousel-control-next-icon" aria-hidden="true" style="filter: invert(1);"></span>
         <span class="visually-hidden">Next</span>
       </button>
+
+      </div>
     </div>
   </div>
 

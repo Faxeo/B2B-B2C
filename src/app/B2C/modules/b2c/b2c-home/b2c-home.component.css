@@ -168,3 +168,13 @@
   .slider-container.active .inner-container {
     display: flex;
   }
+
+
+  .brand-clickable {
+    cursor: pointer; /* Changes mouse cursor to a pointer when hovering */
+    transition: transform 0.2s ease-in-out; /* Smooth transition for hover effect */
+}
+
+.brand-clickable:hover {
+    transform: scale(1.05); 
+}

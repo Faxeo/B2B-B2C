@@ -43,7 +43,7 @@ import { ToastrService } from 'ngx-toastr';
 import { CookieService } from 'ngx-cookie-service';
 import { SearchQueryService } from '../../../../core/services/search-query/search-query.service';
 import { WishlistService } from '../../../../core/services/wishlist/wishlist.service';
-
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-b2c-home',
@@ -53,6 +53,7 @@ import { WishlistService } from '../../../../core/services/wishlist/wishlist.ser
     HttpClientModule,
     RouterModule,
     SidebarComponent,
+    NgSelectModule,
     // FooterComponent,
     FormsModule,
     // SearchComponent,
@@ -118,6 +119,22 @@ export class B2CHomeComponent implements OnInit {
   brandsPerPage = 6;
   customer_name: string = '';
 
+    // --- Make ---
+  makeInput: string = '';
+  filteredMakes: any[] = [];
+  showMakeDropdown: boolean = false;
+
+  // --- Model ---
+  modelInput: string = '';
+  filteredModels: any[] = [];
+  showModelDropdown: boolean = false;
+
+  // --- Trim ---
+  trimInput: string = '';
+  filteredTrims: any[] = [];
+  showTrimDropdown: boolean = false;
+
+
   constructor(
     private apiService: ApiService,
     private sidebarToggleService: SidebarToggleService,
@@ -146,7 +163,10 @@ export class B2CHomeComponent implements OnInit {
   ) { }
 
 
-  ngOnInit(): void {
+  ngOnInit(): void {    
+    this.filteredMakes = [];
+    this.filteredModels = [];
+    this.filteredTrims = [];
     this.route.url.subscribe((segments) => {
       if (segments.map(segment => segment.path).includes('search')) {
         // this.showSearchComponent = true;
@@ -333,6 +353,7 @@ export class B2CHomeComponent implements OnInit {
   loadBrands(): void {
     this.brandsService.fetchAllBrands().subscribe({
       next: (data) => {
+        // console.log('Fetched brands: ', data);
         this.brands = data;
 
         this.updatePagination();
@@ -540,29 +561,152 @@ export class B2CHomeComponent implements OnInit {
   }
 
   onYearChange(): void {
-    if (this.selectedYear) {
-      this.fetchMakeService.fetchMakes(this.selectedYear).subscribe(
-        (data: any[]) => {
-          // console.log('Fetched Makes:', data);
-          this.makes = data.map((item) => ({
-            name: item.value_name,
-            cvalue_id: item.cvalue_id,
-          }));
-          // Save the selected year in the service
-          this.updateVehicleSelection({ year: this.selectedYear });
-          this.selectedMake = '';
-          this.models = [];
-          this.trims = [];
-          this.engines = [];
-          this.selectedModel = '';
-          this.selectedTrim = '';
-          this.selectedEngine = '';
-        },
-        (error) => {
-          console.error('Error fetching makes:', error);
+  if (this.selectedYear) {
+    this.fetchMakeService.fetchMakes(this.selectedYear).subscribe(
+      (data: any[]) => {
+        this.makes = data.map((item) => ({
+          name: item.value_name,
+          cvalue_id: item.cvalue_id,
+        }));
+        this.updateVehicleSelection({ year: this.selectedYear });
+
+        // Reset all child fields
+        this.makeInput = '';
+        this.selectedMake = '';
+        this.modelInput = '';
+        this.selectedModel = '';
+        this.trimInput = '';
+        this.selectedTrim = '';
+        this.selectedEngine = '';
+        this.models = [];
+        this.trims = [];
+        this.engines = [];
+        this.filteredMakes = [];
+        this.filteredModels = [];
+        this.filteredTrims = [];
+      },
+      (error) => {
+        console.error('Error fetching makes:', error);
         }
       );
     }
+  }
+
+  filterMakes(value: string): void {
+  if (value) {
+    this.filteredMakes = this.makes.filter(make =>
+      make.name.toLowerCase().includes(value.toLowerCase())
+    );
+    this.showMakeDropdown = true; 
+    this.selectedMake = ''; 
+  } else {
+    this.filteredMakes = [...this.makes];
+  }
+
+    this.showMakeDropdown = true;
+    this.selectedMake = ''; // Clear selected until confirmed
+  }
+
+  selectMake(make: any): void {
+  this.makeInput = make.name;
+  this.selectedMake = make.name;
+  this.showMakeDropdown = false;
+
+  const selectedMakeObject = this.makes.find(m => m.name === make.name);
+  const parentID = selectedMakeObject ? selectedMakeObject.cvalue_id : 0;
+
+  this.fetchChildService.fetchChildren(parentID).subscribe(
+    (data: any[]) => {
+      this.models = data.map((item) => ({
+        name: item.value_name,
+        cvalue_id: item.cvalue_id,
+      }));
+
+      this.updateVehicleSelection({ make: this.selectedMake });
+
+      // Reset lower selections
+      this.modelInput = '';
+      this.selectedModel = '';
+      this.trimInput = '';
+      this.selectedTrim = '';
+      this.selectedEngine = '';
+      this.trims = [];
+      this.engines = [];
+      this.filteredModels = [];
+      this.filteredTrims = [];
+      this.cdr.detectChanges();
+    },
+    (error) => console.error('Error fetching models:', error)
+    );
+  }
+
+  hideMakeDropdown(): void {
+  setTimeout(() => {
+    this.showMakeDropdown = false;
+    }, 200);
+  }
+  hideModelDropdown(): void {
+  setTimeout(() => {
+    this.showModelDropdown = false;
+  }, 200); // Allows time for mousedown to register before hiding
+  }
+
+  filterModels(value: string): void {
+  if (value) {
+    this.filteredModels = this.models.filter(model =>
+      model.name.toLowerCase().includes(value.toLowerCase())
+    );
+    this.showModelDropdown = true;
+    this.selectedModel = '';
+  } else {
+    this.filteredModels = [...this.models];
+  }
+
+    this.showModelDropdown = true;
+    this.selectedModel = '';
+  }
+  filterTrims(value: string): void {
+  if (value) {
+    this.filteredTrims = this.trims.filter(trim =>
+      trim.name.toLowerCase().includes(value.toLowerCase())
+    );
+    this.showTrimDropdown = true;
+    this.selectedTrim = '';
+  } else {
+    this.filteredTrims = [...this.trims];
+  }
+
+    this.showTrimDropdown = true;
+    this.selectedTrim = '';
+  }
+
+  selectModel(model: any): void {
+  this.modelInput = model.name;
+  this.selectedModel = model.name;
+  this.showModelDropdown = false;
+
+  const selectedModelObject = this.models.find(m => m.name === model.name);
+  const parentID = selectedModelObject ? selectedModelObject.cvalue_id : 0;
+
+  this.fetchChildService.fetchChildren(parentID).subscribe(
+    (data: any[]) => {
+      this.trims = data.map((item) => ({
+        name: item.value_name,
+        cvalue_id: item.cvalue_id,
+      }));
+
+      this.updateVehicleSelection({ model: this.selectedModel });
+
+      // Reset lower fields
+      this.trimInput = '';
+      this.selectedTrim = '';
+      this.selectedEngine = '';
+      this.engines = [];
+      this.filteredTrims = [];
+      this.cdr.detectChanges();
+    },
+    (error) => console.error('Error fetching trims:', error)
+    );
   }
 
   onMakeChange(): void {
@@ -622,6 +766,32 @@ export class B2CHomeComponent implements OnInit {
       );
     }
   }
+
+  selectTrim(trim: any): void {
+  this.trimInput = trim.name;
+  this.selectedTrim = trim.name;
+  this.showTrimDropdown = false;
+
+  const selectedTrimObject = this.trims.find(t => t.name === trim.name);
+  const parentID = selectedTrimObject ? selectedTrimObject.cvalue_id : 0;
+
+  this.fetchChildService.fetchChildren(parentID).subscribe(
+    (data: any[]) => {
+      this.engines = data.map((item) => ({ name: item.value_name }));
+      this.updateVehicleSelection({ trim: this.selectedTrim });
+
+      this.selectedEngine = '';
+      this.cdr.detectChanges();
+    },
+    (error) => console.error('Error fetching engines:', error)
+  );
+}
+
+hideTrimDropdown(): void {
+  setTimeout(() => {
+    this.showTrimDropdown = false;
+  }, 200);
+}
 
   onTrimChange(): void {
     if (this.selectedTrim) {
@@ -966,7 +1136,7 @@ export class B2CHomeComponent implements OnInit {
       console.error('Product ID is undefined');
     }
   }
-
+  
   onBrandClick(brandId: number) {
     this.router.navigate(['/B2C/search'], { queryParams: { selectedBrand: brandId } });
   }
