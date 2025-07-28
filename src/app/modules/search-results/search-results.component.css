@@ -841,7 +841,7 @@
 /* Additional mobile optimization for very small screens */
 @media (max-width: 480px) {
   .product-image img {
-    max-width: 60% !important; /* Even smaller on very small screens */
+    min-width: 60% !important; /* Even smaller on very small screens */
   }
   
   .product-name {

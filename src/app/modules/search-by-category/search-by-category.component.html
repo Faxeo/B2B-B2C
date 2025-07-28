@@ -4,55 +4,49 @@
 <div class="category-search-form-wrapper d-none d-md-block">
   <div class="category-search-form row g-2 align-items-center">
     <!-- Main Category -->
-    <div class="col mobile-col form-group">
-      <select
-        id="mainCategory"
-        class="form-select"
-        [(ngModel)]="selectedMainCategory"
-        (change)="onMainCategoryChange()"
-      >
-        <option value="" disabled [selected]="!selectedMainCategory">
-          Main Category
-        </option>
-        <option *ngFor="let mc of mainCategories" [value]="mc.id">
-          {{ mc.name }}
-        </option>
-      </select>
-    </div>
+      <div class="col mobile-col form-group">
+        <ng-select
+          id="mainCategory"
+          class="form-select"  
+          [(ngModel)]="selectedMainCategory"
+          (change)="onMainCategoryChange()"
+          [items]="mainCategories"         
+          bindLabel="name"                 
+          bindValue="id"                   
+          placeholder="Main Category"      
+          [clearable]="true"               >
+          </ng-select>
+      </div>
 
     <!-- First Sub-Category -->
     <div class="col mobile-col form-group">
-      <select
-        id="firstSubCategory"
-        class="form-select"
-        [(ngModel)]="selectedFirstSubCategory"
-        (change)="onFirstSubCategoryChange()"
-        [disabled]="!selectedMainCategory"
-      >
-        <option value="" disabled [selected]="!selectedFirstSubCategory">
-          First Sub-Category
-        </option>
-        <option *ngFor="let sc1 of firstSubCategories" [value]="sc1.id">
-          {{ sc1.name }}
-        </option>
-      </select>
+      <ng-select
+          id="firstSubCategory"
+          class="form-select"  
+          [(ngModel)]="selectedFirstSubCategory"
+          (change)="onFirstSubCategoryChange()"
+          [items]="firstSubCategories"        
+          bindLabel="name"                    
+          bindValue="id"                      
+          placeholder="First Sub-Category"    
+          [clearable]="true"                  
+          [disabled]="!selectedMainCategory"  >
+      </ng-select>
     </div>
 
     <!-- Second Sub-Category -->
     <div class="col mobile-col form-group">
-      <select
+      <ng-select
         id="secondSubCategory"
-        class="form-select"
+        class="form-select"  
         [(ngModel)]="selectedSecondSubCategory"
-        [disabled]="!selectedFirstSubCategory"
-      >
-        <option value="" disabled [selected]="!selectedSecondSubCategory">
-          Second Sub-Category
-        </option>
-        <option *ngFor="let sc2 of secondSubCategories" [value]="sc2.id">
-          {{ sc2.name }}
-        </option>
-      </select>
+        [items]="secondSubCategories"        
+        bindLabel="name"                     
+        bindValue="id"                       
+        placeholder="Second Sub-Category"    
+        [clearable]="true"                   
+        [disabled]="!selectedFirstSubCategory"  >
+      </ng-select>
     </div>
 
     <!-- Search Button -->

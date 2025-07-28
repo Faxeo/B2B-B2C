@@ -7,7 +7,9 @@
   </div>
 
   <!-- Desktop toggle -->
-  <button class="toggle-btn-2 d-none d-sm-inline-block" (click)="toggleSidebar()">
+  <button class="toggle-btn-2 d-none d-sm-inline-block" 
+      [class.is-collapsed]="isCollapsed"
+      (click)="toggleSidebar()">
     <span class="toggle-icon-2">{{ isCollapsed ? '→' : '←' }}</span>
   </button>
 

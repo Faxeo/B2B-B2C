@@ -21,6 +21,7 @@ import { SidebarComponent } from '../sidebar/sidebar/sidebar.component';
 import { CategoryNavbarSearchService } from '../../core/services/category-navbar-search/category-navbar-search.service';
 import { FilterSearchService } from '../../core/services/filter-search/filter-search.service';
 import { SearchQueryService } from '../../core/services/search-query/search-query.service';
+import { UserService } from '../../core/services/User/user.service';
 
 @Component({
   selector: 'app-navbar',
@@ -67,7 +68,6 @@ export class NavbarComponent {
 
   navbarSearchTerm = '';
 
-
   constructor(
     private router: Router,
     private apiService: ApiService,
@@ -79,9 +79,10 @@ export class NavbarComponent {
     private dynamicSearchService: DynamicSearchService,
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object,
-    private categoryNavbarSearchService: CategoryNavbarSearchService, 
+    private categoryNavbarSearchService: CategoryNavbarSearchService,
     private filterSearchService: FilterSearchService,
     private searchQueryService: SearchQueryService,
+    public userService: UserService // Inject UserService
   ) {}
 
   ngOnInit(): void {
@@ -90,6 +91,11 @@ export class NavbarComponent {
       this.loginService.getUserID().subscribe((userID) => {
         this.userID = userID;
         this.cartService.setUserDetails(this.userID, this.loginType);
+
+        // Call fetchUserNameById and subscribe to the username observable
+        if (this.userID) {
+          this.userService.fetchUserNameById(this.userID, 'business'); // Assuming loginType 'business' for username
+        }
       });
 
       this.loginService.getLoginType().subscribe((loginType) => {
@@ -102,11 +108,10 @@ export class NavbarComponent {
       });
     }
 
-    this.searchQueryService.query$.subscribe(term => {
+    this.searchQueryService.query$.subscribe((term) => {
       this.navbarSearchTerm = term;
       this.cdr.markForCheck();
     });
-
 
     this.categories$ = this.apiService.getMainCategory().pipe(
       map((categories) =>
@@ -134,6 +139,15 @@ export class NavbarComponent {
     const { m_id, f_id, s_id } =
       this.categoryNavbarSearchService.getCategoryData();
     console.log('Saved Category Data:', { m_id, f_id, s_id });
+
+    // Subscribe to the username observable from UserService
+    this.userService.getUserNameObservable().subscribe((userName) => {
+      if (userName) {
+        console.log('NavbarComponent: Received userName from UserService:', userName);
+      } else {
+        console.log('NavbarComponent: userName is null or not yet available.');
+      }
+    });
   }
 
   @HostListener('document:click', ['$event'])
@@ -162,7 +176,7 @@ export class NavbarComponent {
 
   onSearch(page: number = 1): void {
     this.currentSearchType = 'generalSearch';
-  
+
     const searchInputElement = document.getElementById(
       'search-input'
     ) as HTMLInputElement;
@@ -189,7 +203,7 @@ export class NavbarComponent {
 
     this.showSearchComponent = true;
     const take = 10;
-    const skip = (page - 1) * take; 
+    const skip = (page - 1) * take;
 
     // Get m_id, f_id, and s_id from CategoryNavbarSearchService
     const { m_id, f_id, s_id } =
@@ -202,7 +216,7 @@ export class NavbarComponent {
 
     this.searchQueryService.setQuery(this.navbarSearchTerm);
 
-    const requestData = { 
+    const requestData = {
       productName: '',
       manufacturer: '',
       compatibility: '',
@@ -251,26 +265,26 @@ export class NavbarComponent {
     }
 
     this.dynamicSearchService
-    .searchProducts(requestData)
-    .pipe(
-      map((response: any) => response || []),
-      catchError((error) => {
-        console.error('Error fetching products:', error);
+      .searchProducts(requestData)
+      .pipe(
+        map((response: any) => response || []),
+        catchError((error) => {
+          console.error('Error fetching products:', error);
+          this.isLoading = false;
+          this.isPaginationLoading = false;
+          return of({ products: [], totalPages: 1 });
+        })
+      )
+      .subscribe((products: any) => {
+        this.searchProducts$ = of(products.products || []);
+        this.searchResults = products.products || [];
+        // console.log('Search Results:', this.searchResults);
+        this.totalPages = products.totalPages || 1;
+        this.currentPage = page;
         this.isLoading = false;
         this.isPaginationLoading = false;
-        return of({ products: [], totalPages: 1 });
-      })
-    )
-    .subscribe((products: any) => {
-      this.searchProducts$ = of(products.products || []);
-      this.searchResults = products.products || [];
-      // console.log('Search Results:', this.searchResults); 
-      this.totalPages = products.totalPages || 1;
-      this.currentPage = page;
-      this.isLoading = false;
-      this.isPaginationLoading = false;
-      this.cdr.detectChanges();
-    });     
+        this.cdr.detectChanges();
+      });
   }
 
   logout(): void {

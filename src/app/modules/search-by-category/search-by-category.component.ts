@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, Input, Output, PLATFORM_ID, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Input, Output, PLATFORM_ID, SimpleChanges, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LoginService } from '../../core/services/login-service/login-service.service';
 import { NavigationService } from '../../core/services/navigation-service/navigation-service.service';
@@ -13,6 +13,7 @@ import { CategoryIdService } from '../../core/services/category-id/category-id.s
 import { HierarchyProductsService } from '../../core/services/hierarchy-products/hierarchy-products.service';
 import { FilterSearchService } from '../../core/services/filter-search/filter-search.service';
 import { CategoryNavbarSearchService } from '../../core/services/category-navbar-search/category-navbar-search.service';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-search-by-category',
@@ -20,6 +21,7 @@ import { CategoryNavbarSearchService } from '../../core/services/category-navbar
   imports: [
     CommonModule,
     FormsModule,
+    NgSelectModule
   ],
   templateUrl: './search-by-category.component.html',
   styleUrl: './search-by-category.component.css'

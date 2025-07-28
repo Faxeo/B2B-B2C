@@ -8,7 +8,7 @@ import { NavbarComponent } from "../../layout/navbar/navbar.component";
 import { SearchResultsComponent } from "../search-results/search-results.component";
 import { CartSidebarService } from '../../core/services/cart-sidebar/cart-sidebar.service';
 import { FooterComponent } from '../../layout/footer/footer.component';
-
+import { fromEvent, Subject, Subscription } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -23,22 +23,32 @@ import { FooterComponent } from '../../layout/footer/footer.component';
 
 export class SearchComponent implements OnInit {
 
+  private resizeSubscription!: Subscription
   isLocallyLoading: boolean = false;
-  isCollapsed: boolean = false;
+  isCollapsed: boolean = true;
   isCartSidebarCollapsed: boolean = false;
   isFilterCollapsed: boolean = false;
-  isCartCollapsed: boolean = false; // For Cart Sidebar
+  isCartCollapsed: boolean = true; // For Cart Sidebar
 
   mobileFilterOpen = false;
   mobileCartOpen = false; // New property for mobile cart
 
-
-  constructor(
+  private readonly _largeScreenBreakpoint = 992;
+    constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private cdr: ChangeDetectorRef,
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      // Initial layout check
+      this.checkScreenSize();
+
+      // Subscribe to window resize event
+      this.resizeSubscription = fromEvent(window, 'resize')
+        .subscribe(() => this.checkScreenSize());
+    }
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -57,6 +67,18 @@ export class SearchComponent implements OnInit {
       }
     }
   }
+  private checkScreenSize(): void {
+      if (isPlatformBrowser(this.platformId)) {
+        const isLargeScreen = window.innerWidth >= this._largeScreenBreakpoint;
+  
+        // On large screens, sidebars are always expanded.
+        // On smaller (medium) screens, they are always collapsed by default.
+        this.isCollapsed = !isLargeScreen;
+        this.isCartCollapsed = !isLargeScreen;
+  
+        this.cdr.markForCheck(); // Notify Angular of the change
+      }
+    }
 
   toggleMobileFilter() {
     this.mobileFilterOpen = !this.mobileFilterOpen;

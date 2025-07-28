@@ -146,11 +146,11 @@ export class HomeComponent implements OnInit {
     });
 
     this.loginService.getUserID().subscribe((userID) => {
-  if (userID) {
-    this.userID = userID;
-    this.userService.fetchUserNameById(userID, 'business'); // ← Now it works
-    }
-  });
+    if (userID) {
+      this.userID = userID;
+      this.userService.fetchUserNameById(userID, 'business'); // ← Now it works
+      }
+    });
 
     this.loginService.getLoginType().subscribe((loginType) => {
         this.loginType = loginType;

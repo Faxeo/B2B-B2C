@@ -84,7 +84,7 @@
         <!-- Login / Business / Admin Buttons -->
         <div class="d-flex flex-column flex-lg-row gap-2">
           <button *ngIf="loginType === 'business'" class="btn btn-danger btn-auth" (click)="toggleAdminSidebar($event)">
-            Business
+            {{ (userService.getUserNameObservable() | async) || null }}
           </button>
           <button *ngIf="!loginType" class="btn btn-outline-danger btn-auth" (click)="openSidebar()">
             Login

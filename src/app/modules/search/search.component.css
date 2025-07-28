@@ -27,12 +27,14 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  z-index: 9;
 }
 
 .sidebar.collapsed {
   width: 0;
   transform: translateX(-350px);
   overflow: hidden;
+  z-index: 1; /* Lower z-index when collapsed */
 }
 
 /* Toggle Button Styling for Filter Sidebar */
@@ -78,6 +80,7 @@
   background-color: #fff;
   padding: 20px;
   margin-left: 10px;
+  z-index: 5;
 }
 
 .general-search.expanded-left {
@@ -203,7 +206,7 @@
 
 .toggle-btn-2 .is-collapsed .toggle-icon-2 {
   transform: rotate(180deg);
-  left: 0px;
+  left: 5px;
 }
 
 
@@ -397,6 +400,7 @@
   }
   .mobile-filter-panel.active {
     transform: translateX(0);
+    z-index: 1001; /* Ensure it overlays the content */
   }
 
   /* Panel header for filters */
@@ -447,5 +451,14 @@
     padding: 0 !important;     /* keep whatever inner padding you like */
     width: 100vw !important;      
     box-sizing: border-box;       /* include the padding in that width */
+  }
+}
+
+/* ─── Large Screen Overrides ─── */
+@media (min-width: 992px) {
+  /* Hide the toggle buttons on large screens since sidebars are always open */
+  .toggle-btn-2,
+  .cart-toggle {
+    display: none !important;
   }
 }
