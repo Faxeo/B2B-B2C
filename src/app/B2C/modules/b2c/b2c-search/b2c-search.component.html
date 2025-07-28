@@ -1,18 +1,17 @@
 <app-b2c-navbar class="fixed-top"></app-b2c-navbar>
 
 <div class="container">
-  <!-- Desktop Left Sidebar -->
-  <div class="sidebar" [class.collapsed]="isCollapsed">
-    <app-filter *ngIf="!isCollapsed"></app-filter>
+  <!-- ─── Desktop Left Sidebar ─── -->
+  <div class="sidebar" [class.collapsed]="isFilterSidebarCollapsed">
+    <app-filter *ngIf="!isFilterSidebarCollapsed"></app-filter>
   </div>
 
-  <!-- Desktop Toggle Button for Filter Sidebar -->
-  <button class="toggle-btn filter-toggle" (click)="toggleSidebar()">
-    <span class="toggle-icon">{{ isCollapsed ? '☰' : '✕' }}</span>
+  <!-- ─── Desktop Toggle Button for Filter Sidebar ─── -->
+  <button class="toggle-btn filter-toggle" (click)="toggleFilterSidebar()">
+    <span class="toggle-icon">{{ isFilterSidebarCollapsed ? '☰' : '✕' }}</span>
   </button>
 
   <!-- ─── Mobile Cart Button ─── -->
-  <!-- Cart button positioned above the filter button -->
   <button
     class="mobile-cart-button d-md-none"
     (click)="toggleMobileCart()"
@@ -21,8 +20,7 @@
     <i class="fa fa-shopping-cart"></i>
   </button>
 
-  <!-- ─── Mobile Filter Icon ─── -->
-  <!-- only visible on small screens; use your own utility class or d-md-none -->
+  <!-- ─── Mobile Filter Button ─── -->
   <button
     class="mobile-filter-button d-md-none"
     (click)="toggleMobileFilter()"
@@ -34,14 +32,14 @@
   <!-- ─── Mobile Cart Overlay ─── -->
   <div
     class="mobile-cart-overlay d-md-none"
-    [class.active]="mobileCartOpen"
+    [class.active]="isMobileCartOpen"
     (click)="toggleMobileCart()"
   ></div>
 
   <!-- ─── Mobile Cart Panel ─── -->
   <div
     class="mobile-cart-panel d-md-none"
-    [class.active]="mobileCartOpen"
+    [class.active]="isMobileCartOpen"
   >
     <div class="mobile-cart-header">
       <button
@@ -61,21 +59,21 @@
       </button>
     </div>
 
-    <!-- Reuse your existing desktop cart component with event binding -->
+    <!-- Reusable Cart Sidebar for Mobile -->
     <app-b2c-cart-sidebar (closeMobileCart)="toggleMobileCart()"></app-b2c-cart-sidebar>
   </div>
 
   <!-- ─── Mobile Filter Overlay ─── -->
   <div
     class="mobile-filter-overlay d-md-none"
-    [class.active]="mobileFilterOpen"
+    [class.active]="isMobileFilterOpen"
     (click)="toggleMobileFilter()"
   ></div>
 
   <!-- ─── Mobile Filter Panel ─── -->
   <div
     class="mobile-filter-panel d-md-none"
-    [class.active]="mobileFilterOpen"
+    [class.active]="isMobileFilterOpen"
   >
     <div class="mobile-filter-header">
       <h2>Filters</h2>
@@ -88,31 +86,35 @@
       </button>
     </div>
 
-    <!-- Reuse your existing desktop filter component -->
+    <!-- Reusable Filter Component for Mobile -->
     <app-filter></app-filter>
   </div>
 
-  <!-- General Search Component -->
-  <div class="general-search" [class.expanded-left]="isCollapsed" [class.expanded-right]="isCartCollapsed">
+  <!-- ─── General Search Component ─── -->
+  <div
+    class="general-search"
+    [class.expanded-left]="!isFilterSidebarCollapsed"
+    [class.expanded-right]="!isCartSidebarCollapsed"
+  >
     <app-b2c-general-search></app-b2c-general-search>
-  </div> 
+  </div>
 
-  <!-- Right Sidebar (Cart Sidebar) -->
-  <div class="sidebar-cart" [class.collapsed]="isCartCollapsed">
+  <!-- ─── Desktop Right Sidebar (Cart Sidebar) ─── -->
+  <div class="sidebar-cart" [class.collapsed]="isCartSidebarCollapsed">
     <app-b2c-cart-sidebar></app-b2c-cart-sidebar>
   </div>
 
-    <!-- Desktop Toggle Button for Cart Sidebar -->
+  <!-- ─── Desktop Toggle Button for Cart Sidebar ─── -->
   <button
     class="toggle-btn cart-toggle"
     (click)="toggleCartSidebar()"
     aria-label="Toggle Cart"
   >
     <span class="toggle-icon">
-      <!-- show shopping-cart when closed, ✕ when open -->
+      <!-- Show shopping cart icon when collapsed, close icon when open -->
       <i
         class="fa"
-        [ngClass]="isCartCollapsed ? 'fa-shopping-cart' : 'fa-times'"
+        [ngClass]="isCartSidebarCollapsed ? 'fa-shopping-cart' : 'fa-times'"
       ></i>
     </span>
   </button>

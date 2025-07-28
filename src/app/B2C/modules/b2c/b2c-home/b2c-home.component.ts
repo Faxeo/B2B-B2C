@@ -22,6 +22,7 @@ import { SidebarComponent } from '../../../../layout/sidebar/sidebar/sidebar.com
 import { SidebarToggleService } from '../../../../core/services/sidebar-toggle/sidebar-toggle.service';
 import { FooterComponent } from '../../../../layout/footer/footer.component';
 import { LoginService } from '../../../../core/services/login-service/login-service.service';
+import { CustomerLoginService } from '../../../../core/services/customer-login/customer-login.service';
 import { LogoutService } from '../../../../core/services/logout-service/logout-service.service';
 import { AddToCartService } from '../../../../core/services/add-to-cart/add-to-cart.service';
 import { CartService } from '../../../../core/services/cart/cart.service';
@@ -77,6 +78,7 @@ export class B2CHomeComponent implements OnInit {
   showingSearchResults: boolean = false; // Flag to toggle between trending and search results
   // showSearchComponent: boolean = false; 
   loginType: string | null = null;
+  isCustomerLoggedIn: boolean = false;
   isAdminSidebarVisible: boolean = false;
   userID: string | null = null;
   message: string = '';
@@ -139,6 +141,7 @@ export class B2CHomeComponent implements OnInit {
     private apiService: ApiService,
     private sidebarToggleService: SidebarToggleService,
     private loginService: LoginService,
+    private customerLoginService: CustomerLoginService,
     private addToCartService: AddToCartService,
     private cartService: CartService,
     private logoutService: LogoutService,
@@ -163,84 +166,110 @@ export class B2CHomeComponent implements OnInit {
   ) { }
 
 
-  ngOnInit(): void {    
-    this.filteredMakes = [];
-    this.filteredModels = [];
-    this.filteredTrims = [];
-    this.route.url.subscribe((segments) => {
-      if (segments.map(segment => segment.path).includes('search')) {
-        // this.showSearchComponent = true;
-        this.isLoading = false;
-      }
-    });
-    this.isBrowser = isPlatformBrowser(this.platformId);
-    this.getMainCategories();
-    this.getYears();
-    if (isPlatformBrowser(this.platformId)) {
-      this.userID = localStorage.getItem('userID');
-      // console.log('User ID from localStorage:', this.userID);
-      this.loginService.getUserID().subscribe((userID) => {
-        this.userID = userID;
-      });
+  ngOnInit(): void {
+  this.filteredMakes = [];
+  this.filteredModels = [];
+  this.filteredTrims = [];
 
-      this.loginService.getLoginType().subscribe((loginType) => {
-        this.loginType = loginType;
-        if (this.loginType === 'business') {
-          const username = localStorage.getItem('username');
-          // console.log('Username:', username);
-          this.loginType = username || this.loginType;
-        }
-        console.log('Login type updated:', this.loginType);
-      });
-      this.cartService.setUserDetails(this.userID, this.loginType);
-      this.customer_name = this.cookieService.get("customerName");
-    } else {
-      // console.log('Running in a non-browser environment');
+  this.route.url.subscribe((segments) => {
+    if (segments.map(segment => segment.path).includes('search')) {
+      this.isLoading = false;
+    }
+  });
+
+  this.isBrowser = isPlatformBrowser(this.platformId);
+  this.getMainCategories();
+  this.getYears();
+
+  if (this.isBrowser) {
+    this.loginService.getUserName().subscribe((name) => {
+      this.customer_name = name || '';
+      console.log('Customer Name from loginservice:', name);
+      this.isCustomerLoggedIn = !!name;
+      this.cdr.detectChanges();
+    });
+
+    this.loginService.getUserID().subscribe((userID) => {
+      this.userID = userID;
+      this.cdr.detectChanges();
+    });
+
+    this.loginService.getLoginType().subscribe((loginType) => {
+      this.loginType = loginType;
+
+      // Handle special case for business login showing username as loginType
+      if (loginType === 'business') {
+        const username = localStorage.getItem('username');
+        this.loginType = username || loginType;
+        console.log('User ID:', username);
+      }
+      
+      console.log('Login type updated:', this.loginType);    
+      this.cdr.detectChanges();  
+    });
+
+    const token = this.cookieService.get('authToken') || localStorage.getItem('authToken');
+    if (token) {
+      const decoded = this.customerLoginService['decodedToken'];
+      const customerName = this.customerLoginService.getCustomerName();
+      const customerID = this.customerLoginService.getCustomerID();
+
+      if (customerName && customerID) {
+        this.loginService.setUserName(customerName);
+        this.loginService.setUserID(customerID);
+        this.loginService.setLoginType('customer');
+
+        this.customer_name = customerName;
+        this.isCustomerLoggedIn = true; // 👈 SET FLAG HERE
+        this.cdr.detectChanges();
+      }
     }
 
-    // Initialize categories
-    this.categories$ = this.apiService.getMainCategory().pipe(
-      map((categories) =>
-        categories.map((category: { id: number; name: string; productCount: number }) => ({
-          ...category,
-          productCount: category.productCount || 0
-        }))
-          .sort((a: { productCount: number }, b: { productCount: number }) => b.productCount - a.productCount) // Sort in descending order
-      )
-    );
+    this.cartService.setUserDetails(this.userID, this.loginType);
+  }
 
+  // Categories observable
+  this.categories$ = this.apiService.getMainCategory().pipe(
+    map((categories) =>
+      categories.map((category: { id: number; name: string; productCount: number }) => ({
+        ...category,
+        productCount: category.productCount || 0
+      }))
+        .sort((a: { productCount: number }, b: { productCount: number }) => b.productCount - a.productCount)
+    )
+  );
 
-    // Trending products observable (default state)
-    this.products$ = this.apiService.getTopSellingProducts().pipe(
-      map((products) =>
-        products.map((product: { product_image: string }) => ({
-          ...product,
-          image: `${product.product_image}`,
-          product_quantity: 1,
-          showMessage: false
-        }))
-      )
-    );
+  // Trending products
+  this.products$ = this.apiService.getTopSellingProducts().pipe(
+    map((products) =>
+      products.map((product: { product_image: string }) => ({
+        ...product,
+        image: `${product.product_image}`,
+        product_quantity: 1,
+        showMessage: false
+      }))
+    )
+  );
 
-    // Set up the cart item count observable
-    this.cartService.cartItemCount$.subscribe((count) => {
-      this.cartItemCount = count;
-    });
+  // Cart count observable
+  this.cartService.cartItemCount$.subscribe((count) => {
+    this.cartItemCount = count;
+  });
 
-    this.loadBrands();
+  // Load paginated brands
+  this.loadBrands();
 
-    this.route.queryParams.subscribe(params => {
-      if (params['query']) {
-        const queryFromUrl = params['query'];
-        this.searchQuery = queryFromUrl;
+  // Handle query param search
+  this.route.queryParams.subscribe(params => {
+    if (params['query']) {
+      const queryFromUrl = params['query'];
+      this.searchQuery = queryFromUrl;
 
-        // Update the service (only need to do this in one component)
-        this.searchQueryService.setQuery(queryFromUrl);
+      this.searchQueryService.setQuery(queryFromUrl);
 
-        // Update the input field directly if needed
-        const searchInput = document.getElementById('search-input') as HTMLInputElement;
-        if (searchInput) {
-          searchInput.value = queryFromUrl;
+      const searchInput = document.getElementById('search-input') as HTMLInputElement;
+      if (searchInput) {
+        searchInput.value = queryFromUrl;
         }
       }
     });

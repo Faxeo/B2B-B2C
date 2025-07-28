@@ -14,25 +14,36 @@ import { B2cCartSidebarComponent } from "../b2c-cart-sidebar/b2c-cart-sidebar.co
   templateUrl: './b2c-search.component.html',
   styleUrls: ['./b2c-search.component.css'],
 })
-
 export class B2cSearchComponent implements OnInit {
 
   isLocallyLoading: boolean = false;
-  isCollapsed: boolean = false;
-  isCartSidebarCollapsed: boolean = false;
-  isFilterCollapsed: boolean = false;
-  isCartCollapsed: boolean = false; // For Cart Sidebar
 
-  mobileFilterOpen = false;
-  mobileCartOpen = false; // New property for mobile cart
+  // Consolidated sidebar state properties for clarity and to remove redundancy.
+  isFilterSidebarCollapsed: boolean = true;
+  isCartSidebarCollapsed: boolean = true;
 
+  isMobileFilterOpen = false;
+  isMobileCartOpen = false;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private cdr: ChangeDetectorRef,
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Set sidebars to be collapsed on component initialization (page load/refresh)
+    this.isFilterSidebarCollapsed = true;
+    this.isCartSidebarCollapsed = true;
+
+    // Additionally, if you want mobile overlays to be closed on load/refresh
+    this.isMobileFilterOpen = false;
+    this.isMobileCartOpen = false;
+
+    // Ensure body overflow is reset in case it was left 'hidden' from a previous session or state
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.style.overflow = '';
+    }
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -53,45 +64,44 @@ export class B2cSearchComponent implements OnInit {
   }
 
   toggleMobileFilter() {
-    this.mobileFilterOpen = !this.mobileFilterOpen;
-    
-    // Optional: Prevent body scrolling when mobile filter is open
-    if (this.mobileFilterOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
+    this.isMobileFilterOpen = !this.isMobileFilterOpen;
+
+    // Only interact with document.body if running in a browser
+    if (isPlatformBrowser(this.platformId)) {
+      if (this.isMobileFilterOpen) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
     }
   }
 
-  // New method for mobile cart toggle
   toggleMobileCart() {
-    this.mobileCartOpen = !this.mobileCartOpen;
-    
-    // Optional: Prevent body scrolling when mobile cart is open
-    if (this.mobileCartOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
+    this.isMobileCartOpen = !this.isMobileCartOpen;
+
+    // Only interact with document.body if running in a browser
+    if (isPlatformBrowser(this.platformId)) {
+      if (this.isMobileCartOpen) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
     }
   }
-
-  toggleSidebar() {
-    this.isCollapsed = !this.isCollapsed;
-  } 
 
   toggleFilterSidebar(): void {
-    this.isFilterCollapsed = !this.isFilterCollapsed;
+    this.isFilterSidebarCollapsed = !this.isFilterSidebarCollapsed;
   }
 
   toggleCartSidebar(): void {
-    this.isCartCollapsed = !this.isCartCollapsed;
+    this.isCartSidebarCollapsed = !this.isCartSidebarCollapsed;
   }
 
   collapseCartSidebar(): void {
-    this.isCartCollapsed = true;
+    this.isCartSidebarCollapsed = true;
   }
 
   openCartSidebar(): void {
-    this.isCartCollapsed = false;
+    this.isCartSidebarCollapsed = false;
   }
 }

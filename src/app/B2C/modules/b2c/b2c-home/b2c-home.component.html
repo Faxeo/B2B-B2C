@@ -62,13 +62,13 @@
 
         <!-- Right-side Actions - Optimized -->
         <div class="navbar-actions ms-auto d-flex align-items-center">
-          <ng-container *ngIf="!userID; else customerSection">
+          <ng-container *ngIf="!isCustomerLoggedIn; else customerSection">
             <div class="d-flex gap-2 me-3">
-              <button class="btn btn-outline-danger btn-sm px-3" aria-label="Sign In" routerLink="/B2C/login">
+              <button class="btn btn-outline-danger btn-sm px-3" routerLink="/B2C/login">
                 <span class="d-none d-lg-inline">Sign In</span>
                 <i class="bi bi-box-arrow-in-right d-lg-none"></i>
               </button>
-              <button class="btn btn-danger btn-sm px-3" aria-label="Sign Up" routerLink="/sidebar/signup">
+              <button class="btn btn-danger btn-sm px-3" routerLink="/signup">
                 <span class="d-none d-lg-inline">Sign Up</span>
                 <i class="bi bi-person-plus d-lg-none"></i>
               </button>
@@ -81,12 +81,12 @@
               <span class="d-none d-lg-inline">Welcome</span>
               <div class="dropdown">
                 <button class="btn btn-danger btn-sm px-3 d-flex align-items-center" (click)="toggleDropdown()">
-                  {{ customer_name }}
-                  <i class="fa fa-caret-down ms-2"></i>
+                  {{ customer_name || 'Customer' }}
+                  <i class="bi bi-caret-down-fill ms-2"></i>
                 </button>
-                <div *ngIf="showDropdown" class="dropdown-menu-custom">
-                  <a class="dropdown-item-custom" (click)="logout()">
-                    <i class="fa fa-sign-out-alt me-2"></i> Log Out
+                <div *ngIf="showDropdown" class="dropdown-menu dropdown-menu-end show" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(0px, 38px);">
+                  <a class="dropdown-item" href="javascript:void(0)" (click)="logout()">
+                    <i class="bi bi-box-arrow-right me-2"></i> Log Out
                   </a>
                 </div>
               </div>
