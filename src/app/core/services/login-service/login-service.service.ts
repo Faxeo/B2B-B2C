@@ -38,7 +38,7 @@ export class LoginService {
       if (sessionStart) {
         const sessionStartDate = new Date(sessionStart);
         const now = new Date();
-        const msInDay = 24 * 60 * 60 * 1000;  // 1 day in ms
+        const msInDay = 4 * 60 * 60 * 1000;  // 4 hours in ms
         if (now.getTime() - sessionStartDate.getTime() > msInDay) {
           console.log('[LoginService] Session expired based on sessionStart, clearing data...');
           this.clearData();
@@ -71,7 +71,7 @@ export class LoginService {
     }
 
     const expires = new Date();
-    expires.setDate(expires.getDate() + 1); // Set cookie to expire in 1 day
+    expires.setHours(expires.getDate() + 4); // Set cookie to expire in 4 hours
     this.cookieService.set('loginType', loginType, {
       expires,
       path: '/',
@@ -92,7 +92,7 @@ export class LoginService {
     }
 
     const expires = new Date();
-    expires.setDate(expires.getDate() + 1); // Set cookie to expire in 1 day
+    expires.setHours(expires.getDate() + 4); // Set cookie to expire in 4 hrs
     this.cookieService.set('userID', userID, {
       expires,
       path: '/',
@@ -116,7 +116,7 @@ export class LoginService {
     }
 
     const expires = new Date();
-    expires.setDate(expires.getDate() + 1); // Set cookie to expire in 1 day
+    expires.setHours(expires.getDate() + 4); // Set cookie to expire in 4 hrs
     this.cookieService.set('username', userName, {
       expires,
       path: '/',
