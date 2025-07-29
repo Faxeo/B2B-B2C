@@ -31,6 +31,16 @@ export function isTokenExpired(decoded: DecodedCustomerToken): boolean {
 })
 export class CustomerLoginService {
   private decodedToken: DecodedCustomerToken | null = null;
+  
+  private getDecodedToken(): DecodedCustomerToken | null {
+    const token = this.getToken();
+    return token ? decodeToken(token) : null;
+  }
+
+  private getTokenExpiry(): Date | null {
+    const decoded = this.getDecodedToken();
+    return decoded?.exp ? new Date(decoded.exp * 1000) : null;
+  }
 
   constructor(
     private apiService: ApiService,
@@ -38,7 +48,7 @@ export class CustomerLoginService {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem('sessionStart', new Date().toISOString());
+      // localStorage.setItem('sessionStart', new Date().toISOString());  //will be removed later
       const token = this.getToken();
       if (token) {
         const decoded = decodeToken(token);
@@ -58,21 +68,26 @@ export class CustomerLoginService {
   }
 
   login(response: any): void {
-    if (!isPlatformBrowser(this.platformId)) return;
+  if (!isPlatformBrowser(this.platformId)) return;
 
-    const token = response.token;
-    const customerName = response.response?.data?.customer_name;
+  const token = response.token;
+  const customerName = response.response?.data?.customer_name;
 
-    if (token && customerName) {
-      this.cookieService.set('authToken', token);
-      this.cookieService.set('customerName', customerName);
+  if (token && customerName) {
+    const decoded = decodeToken(token);
+    if (decoded && !isTokenExpired(decoded)) {
+      this.decodedToken = decoded;
+
+      const expires = this.getTokenExpiry(); 
+      if (expires) {
+        this.cookieService.set('authToken', token, { expires, path: '/', secure: true, sameSite: 'Strict' });
+        this.cookieService.set('customerName', customerName, { expires, path: '/', secure: true, sameSite: 'Strict' });
+      }
+
       localStorage.setItem('authToken', token);
-
-      const decoded = decodeToken(token);
       console.log('[CustomerLoginService] Login decoded token:', decoded);
-      if (decoded && !isTokenExpired(decoded)) {
-        this.decodedToken = decoded;
-        console.log('[CustomerLoginService] Login decoded token:', decoded);
+      } else {
+        this.clearCustomerData();
       }
     }
   }
