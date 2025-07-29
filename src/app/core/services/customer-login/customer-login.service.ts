@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { jwtDecode } from 'jwt-decode';
 
-// --- Token Utils ---
 export interface DecodedCustomerToken {
   exp: number;
   customer_id?: string;
@@ -23,13 +22,12 @@ export function decodeToken(token: string): DecodedCustomerToken | null {
 }
 
 export function isTokenExpired(decoded: DecodedCustomerToken): boolean {
-  const currentTime = Math.floor(Date.now() / 1000); // seconds
+  const currentTime = Math.floor(Date.now() / 1000);    
   return decoded.exp < currentTime;
 }
 
-// --- Service ---
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CustomerLoginService {
   private decodedToken: DecodedCustomerToken | null = null;
@@ -40,13 +38,15 @@ export class CustomerLoginService {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('sessionStart', new Date().toISOString());
       const token = this.getToken();
       if (token) {
         const decoded = decodeToken(token);
         if (decoded && !isTokenExpired(decoded)) {
           this.decodedToken = decoded;
+          console.log('[CustomerLoginService] Token decoded on init:', decoded);
         } else {
-          this.clearCustomerData(); // Expired or invalid
+          this.clearCustomerData();
         }
       }
     }
@@ -69,39 +69,37 @@ export class CustomerLoginService {
       localStorage.setItem('authToken', token);
 
       const decoded = decodeToken(token);
+      console.log('[CustomerLoginService] Login decoded token:', decoded);
       if (decoded && !isTokenExpired(decoded)) {
         this.decodedToken = decoded;
+        console.log('[CustomerLoginService] Login decoded token:', decoded);
       }
     }
   }
 
   getToken(): string | null {
     if (!isPlatformBrowser(this.platformId)) return null;
-
     return this.cookieService.get('authToken') || localStorage.getItem('authToken');
   }
 
   isLoggedIn(): boolean {
     if (!isPlatformBrowser(this.platformId)) return false;
-
     return this.decodedToken !== null && !isTokenExpired(this.decodedToken);
   }
 
   getCustomerName(): string | null {
     if (!isPlatformBrowser(this.platformId)) return null;
-
     return this.decodedToken?.customer_name || this.cookieService.get('customerName') || null;
   }
 
   getCustomerID(): string | null {
-    if (!isPlatformBrowser(this.platformId)) return null;
-
-    return this.decodedToken?.customer_id || null;
+  const id = this.decodedToken?.customer_id || this.decodedToken?.['id'] || null;
+  console.log('[CustomerLoginService] Returning customerID:', id);
+  return id;
   }
 
   clearCustomerData(): void {
     if (!isPlatformBrowser(this.platformId)) return;
-
     this.cookieService.delete('authToken');
     this.cookieService.delete('customerName');
     localStorage.removeItem('authToken');

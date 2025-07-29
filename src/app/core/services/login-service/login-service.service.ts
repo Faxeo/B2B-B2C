@@ -2,42 +2,81 @@ import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { isPlatformBrowser } from '@angular/common';
+import { decodeToken, isTokenExpired} from '../customer-login/customer-login.service';
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class LoginService {
   private loginTypeSubject = new BehaviorSubject<string | null>(null);
   private userIDSubject = new BehaviorSubject<string | null>(null);
   private userNameSubject = new BehaviorSubject<string | null>(null);
   private categorySubject = new BehaviorSubject<string | null>(null);
 
-  constructor(private cookieService: CookieService,
+  constructor(
+    private cookieService: CookieService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    if (isPlatformBrowser(this.platformId)) {
-      // Initialize from stored values (only on the browser)
-      const storedLoginType = localStorage.getItem('loginType') || this.cookieService.get('loginType');
-      const storedUserID = localStorage.getItem('userID') || this.cookieService.get('userID');
-      const storedUserName = localStorage.getItem('username') || this.cookieService.get('username');
-
-      if (storedUserName) this.userNameSubject.next(storedUserName);
-      if (storedLoginType) this.loginTypeSubject.next(storedLoginType);
-      if (storedUserID) this.userIDSubject.next(storedUserID);
-    }
+    this.refreshFromStorage(); // 🔁 Hydrate at start
   }
+
+  refreshFromStorage(): void {
+  if (!isPlatformBrowser(this.platformId)) return;
+
+  // Option1: Use JWT token to validate session, if present
+  const token = localStorage.getItem('authToken') || this.cookieService.get('authToken');
+  if (token) {
+    const decoded = decodeToken(token);
+    if (!decoded || isTokenExpired(decoded)) {
+      console.log('[LoginService] JWT expired or invalid, clearing data...');
+      this.clearData();
+      return;
+    }
+  } else {
+      // Fallback to sessionStart timestamp check (legacy logic)
+      const sessionStart = localStorage.getItem('sessionStart');
+      if (sessionStart) {
+        const sessionStartDate = new Date(sessionStart);
+        const now = new Date();
+        const msInDay = 24 * 60 * 60 * 1000;  // 1 day in ms
+        if (now.getTime() - sessionStartDate.getTime() > msInDay) {
+          console.log('[LoginService] Session expired based on sessionStart, clearing data...');
+          this.clearData();
+          return;
+        }
+      }
+    }
+
+    // Restore state from storage
+    const storedLoginType = localStorage.getItem('loginType') || this.cookieService.get('loginType');
+    const storedUserID = localStorage.getItem('userID') || this.cookieService.get('userID');
+    const storedUserName = localStorage.getItem('username') || this.cookieService.get('username');
+
+    console.log('[LoginService] Refreshing from storage...');
+
+    if (storedUserName) {
+      console.log('[LoginService] Setting userNameSubject from storage:', storedUserName);
+      this.userNameSubject.next(storedUserName);
+    }
+    if (storedLoginType) this.loginTypeSubject.next(storedLoginType);
+    if (storedUserID) this.userIDSubject.next(storedUserID);
+  }
+
 
   setLoginType(loginType: string) {
     this.loginTypeSubject.next(loginType);
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('loginType', loginType);
+      localStorage.setItem('sessionStart', new Date().toISOString());
     }
+
+    const expires = new Date();
+    expires.setDate(expires.getDate() + 1); // Set cookie to expire in 1 day
     this.cookieService.set('loginType', loginType, {
-      expires: new Date().getHours() + 2,
+      expires,
       path: '/',
       secure: true,
-      sameSite: 'Strict'
+      sameSite: 'Strict',
     });
   }
 
@@ -49,12 +88,16 @@ export class LoginService {
     this.userIDSubject.next(userID);
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('userID', userID);
+      localStorage.setItem('sessionStart', new Date().toISOString());
     }
+
+    const expires = new Date();
+    expires.setDate(expires.getDate() + 1); // Set cookie to expire in 1 day
     this.cookieService.set('userID', userID, {
-      expires: new Date().getHours() + 2,
+      expires,
       path: '/',
       secure: true,
-      sameSite: 'Strict'
+      sameSite: 'Strict',
     });
   }
 
@@ -63,28 +106,28 @@ export class LoginService {
   }
 
   setUserName(userName: string) {
-  this.userNameSubject.next(userName);
+    this.userNameSubject.next(userName);
 
-  console.log('[setUserName] Called with:', userName);
+    console.log('[LoginService:setUserName] Called with:', userName);
 
-  if (isPlatformBrowser(this.platformId)) {
-    console.log('[setUserName] Saving to localStorage:', userName); 
-    localStorage.setItem('username', userName);
-  }
+    if (isPlatformBrowser(this.platformId)) {
+      console.log('[LoginService:setUserName] Saving to localStorage:', userName);
+      localStorage.setItem('username', userName);
+    }
 
-  this.cookieService.set('username', userName, {
-    expires: new Date().getHours() + 2,
-    path: '/',
-    secure: true,
-    sameSite: 'Strict'
+    const expires = new Date();
+    expires.setDate(expires.getDate() + 1); // Set cookie to expire in 1 day
+    this.cookieService.set('username', userName, {
+      expires,
+      path: '/',
+      secure: true,
+      sameSite: 'Strict',
     });
   }
-
 
   getUserName(): Observable<string | null> {
     return this.userNameSubject.asObservable();
   }
-
 
   setCategory(category: string) {
     this.categorySubject.next(category);
@@ -97,8 +140,8 @@ export class LoginService {
   clearData() {
     this.loginTypeSubject.next(null);
     this.userIDSubject.next(null);
-    this.categorySubject.next(null);
     this.userNameSubject.next(null);
+    this.categorySubject.next(null);
 
     this.cookieService.delete('loginType', '/');
     this.cookieService.delete('userID', '/');
@@ -108,6 +151,7 @@ export class LoginService {
       localStorage.removeItem('loginType');
       localStorage.removeItem('userID');
       localStorage.removeItem('username');
+      localStorage.removeItem('sessionStart');
     }
   }
 }
