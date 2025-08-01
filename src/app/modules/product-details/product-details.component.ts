@@ -12,6 +12,7 @@ import {
   ProductDetailsService,
   ProductDetails,
 } from '../../core/services/product-details/product-details.service';
+import { GetLinkedProductsService } from '../../core/services/get-linked-products/get-linked-products.service'; 
 import { FooterComponent } from '../../layout/footer/footer.component';
 import { LoginService } from '../../core/services/login-service/login-service.service';
 import { CartService } from '../../core/services/cart/cart.service';
@@ -22,6 +23,7 @@ import { MainCategoryService } from '../../core/services/main-category/main-cate
 import { FetchChildService } from '../../core/services/fetch-child/fetch-child.service';
 import { FormsModule } from '@angular/forms';
 import { trigger, state, style, animate, transition, keyframes } from '@angular/animations';
+import { CarouselModule } from 'primeng/carousel';
 
 interface Testimonial {
   customerName: string;
@@ -30,7 +32,7 @@ interface Testimonial {
 
 @Component({
   standalone: true,
-  imports: [RouterModule, CommonModule, FooterComponent, FormsModule],
+  imports: [RouterModule, CommonModule, FooterComponent, FormsModule, CarouselModule],
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.css'],
   animations: [
@@ -87,6 +89,8 @@ export class ProductDetailsComponent {
   // mainImage: string = '';
   quantity: number = 1;
   isLoading: boolean = false;
+  linkedProducts: any[] = []; // New property to store linked products
+  
 
   // New properties for company and variant selection
   selectedCompany: string | null = null;
@@ -100,6 +104,7 @@ export class ProductDetailsComponent {
   mainCategories: any[] = [];
   firstSubCategories: any[] = [];
   secondSubCategories: any[] = [];
+  autoplayInterval: number = 3000;   
   // product: any;
   // mainImage: string;
   // zoomed: boolean = false;
@@ -119,6 +124,7 @@ export class ProductDetailsComponent {
   private zoomScale: number = 2.5;
   private debounceTimer: any;
 
+  readonly imageBaseUrl = 'https://usaperp.com:5001/';
   shakeTrigger = false;
 
   constructor(
@@ -132,7 +138,8 @@ export class ProductDetailsComponent {
     private navigationService: NavigationService,
     private fetchChildService: FetchChildService,
     private mainCategoryService: MainCategoryService,
-    private subCategoryService: SubCategoryService
+    private subCategoryService: SubCategoryService,
+    private getLinkedProductsService: GetLinkedProductsService // Inject the new service
   ) {
     setInterval(() => {
       this.shakeTrigger = !this.shakeTrigger;
@@ -140,39 +147,54 @@ export class ProductDetailsComponent {
   }
 
   ngOnInit(): void {
-    this.getMainCategories();
-    if (isPlatformBrowser(this.platformId)) {
-      this.userID = localStorage.getItem('userID');
-      this.loginService.getUserID().subscribe((userID) => {
-        this.userID = userID;
-        this.cartService.setUserDetails(this.userID, this.loginType);
-      });
+  this.getMainCategories();
 
-      this.loginService.getLoginType().subscribe((loginType) => {
-        this.loginType = loginType;
-        if (this.loginType === 'business') {
-          const username = localStorage.getItem('username');
-          this.loginType = username || this.loginType;
-        }
-        this.cartService.setUserDetails(this.userID, this.loginType);
-      });
-    }
-
-    this.cartService.cartItemCount$.subscribe((count) => {
-      this.cartItemCount = count;
+  if (isPlatformBrowser(this.platformId)) {
+    this.userID = localStorage.getItem('userID');
+    this.loginService.getUserID().subscribe((userID) => {
+      this.userID = userID;
+      this.cartService.setUserDetails(this.userID, this.loginType);
     });
 
-    this.startTestimonialSlider();
-    const productId = Number(this.route.snapshot.params['id']);
-    console.log('Product ID from route:', productId);
-    if (!isNaN(productId)) {
-      this.fetchProductDetails(productId);
-    } else {
+    this.loginService.getLoginType().subscribe((loginType) => {
+      this.loginType = loginType;
+      if (this.loginType === 'business') {
+        const username = localStorage.getItem('username');
+        this.loginType = username || this.loginType;
+      }
+      this.cartService.setUserDetails(this.userID, this.loginType);
+    });
+  }
+
+  this.cartService.cartItemCount$.subscribe((count) => {
+    this.cartItemCount = count;
+  });
+
+  this.startTestimonialSlider();
+
+  // 🔁 Subscribe to route changes
+  this.route.paramMap.subscribe((params) => {
+  const productId = Number(params.get('id'));
+  if (!isNaN(productId)) {
+    this.fetchProductDetails(productId, true); // 👈 pass a flag
+  } else {
       console.error('Invalid product ID');
     }
-    if (this.product?.images?.length) {
-      this.mainImage = 'https://usaperp.com:5001/' + this.product.images[0].image_path;
-    }
+  });
+
+  }
+
+  // Fetch product details when the component is initialized
+  fetchLinkedProducts(productId: number): void {
+    this.getLinkedProductsService.getLinkedProducts(productId).subscribe({
+      next: (linkedProducts) => {
+        // The service returns the response directly, which should be the array
+        this.linkedProducts = linkedProducts;
+      },
+      error: (err) => {
+        console.error('Error fetching linked products:', err);
+      },
+    });
   }
 
   // Set the main image
@@ -192,8 +214,7 @@ export class ProductDetailsComponent {
         (this.currentImageIndex - 1 + this.product.images.length) %
         this.product.images.length;
       this.setMainImage(
-        'https://usaperp.com:5001/' +
-          this.product.images[this.currentImageIndex].image_path,
+        this.imageBaseUrl + this.product.images[this.currentImageIndex].image_path,
         this.currentImageIndex
       );
     }
@@ -205,8 +226,7 @@ export class ProductDetailsComponent {
       this.currentImageIndex =
         (this.currentImageIndex + 1) % this.product.images.length;
       this.setMainImage(
-        'https://usaperp.com:5001/' +
-          this.product.images[this.currentImageIndex].image_path,
+         this.imageBaseUrl + this.product.images[this.currentImageIndex].image_path,
         this.currentImageIndex
       );
     }
@@ -265,18 +285,25 @@ export class ProductDetailsComponent {
   }
 
   // Open the image in fullscreen
-// Open the custom fullscreen overlay
-openFullScreen(): void {
-  this.isFullScreen = true;
-  this.resetZoom(); // Reset zoom when entering fullscreen
-}
+  // Open the custom fullscreen overlay
+  openFullScreen(): void {
+    this.isFullScreen = true;
+    this.resetZoom(); // Reset zoom when entering fullscreen
+  }
 
-// Close the custom fullscreen overlay
-closeFullScreen(): void {
-  this.isFullScreen = false;
-  this.resetZoom(); // Reset zoom when exiting fullscreen
-}
+  // Close the custom fullscreen overlay
+  closeFullScreen(): void {
+    this.isFullScreen = false;
+    this.resetZoom(); // Reset zoom when exiting fullscreen
+  }
 
+  stopAutoplay(): void {
+    this.autoplayInterval = 0;
+  }
+
+  startAutoplay(): void {
+    this.autoplayInterval = 3000;
+  }
 
   getMainCategories(): void {
     this.mainCategoryService.getMainCategories().subscribe(
@@ -299,6 +326,11 @@ closeFullScreen(): void {
   onBackClick(): void {
     this.navigationService.goBack();
   }
+
+  onExitClick(): void {
+    this.router.navigate(['/B2B']);
+  }
+
 
   addToCart(product: {
     product_id: number;
@@ -373,22 +405,47 @@ closeFullScreen(): void {
     return `translateX(-${this.currentTestimonialIndex * 100}%)`;
   }
 
-  fetchProductDetails(productId: number): void {
-    this.productDetailsService.getProductByID(productId).subscribe({
-      next: (data) => {
-        // console.log('Product data received:', data);
-        if (data) {
-          this.product = data;
-          this.mainImage = `https://usaperp.com:5001/Images/Products/${data.product_image}`;
-        } else {
-          console.error('No product data found');
+  responsiveOptions: any[] = [
+  {
+    breakpoint: '12000000px',
+    numVisible: 3,
+    numScroll: 1,
+  },
+  {
+    breakpoint: '560px',
+    numVisible: 1,
+    numScroll: 1,
+    },
+  ];
+
+  fetchProductDetails(productId: number, scrollAfterLoad: boolean = false): void {
+  this.productDetailsService.getProductByID(productId).subscribe({
+    next: (data) => {
+      if (data) {
+        this.product = data;
+        this.fetchLinkedProducts(productId);
+
+        if (data.images?.length) {
+          this.mainImage = this.imageBaseUrl + data.images[0].image_path;
+        } else if (data.product_image) {
+          this.mainImage = this.imageBaseUrl + `Images/Products/${data.product_image}`;
         }
-      },
-      error: (err) => {
-        console.error('Error fetching product details:', err);
-      },
-    });
-  }
+
+        if (scrollAfterLoad && isPlatformBrowser(this.platformId)) {
+          setTimeout(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }, 200); // Delay ensures DOM update
+        }
+
+      } else {
+        console.error('No product data found');
+      }
+    },
+    error: (err) => {
+      console.error('Error fetching product details:', err);
+    },
+  });
+}
 
   // Methods to handle company and variant selection
   selectCompany(company: string): void {

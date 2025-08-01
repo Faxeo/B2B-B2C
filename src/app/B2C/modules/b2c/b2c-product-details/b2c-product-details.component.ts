@@ -4,17 +4,12 @@ import {
   Inject,
   Input,
   PLATFORM_ID,
-  OnInit, // Import OnInit
-  OnDestroy, // Import OnDestroy
-  // SimpleChanges, // Remove if not used
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
 } from '@angular/core';
 
-import {
-  ActivatedRoute,
-  ParamMap,
-  Router,
-  RouterModule,
-} from '@angular/router'; // Import ParamMap
+import { ActivatedRoute, ParamMap, Router, RouterModule } from '@angular/router';
 import { ProductDetails } from '../../../../core/services/product-details/product-details.service';
 import { ProductDetailsService } from '../../../../core/services/product-details/product-details.service';
 import { FooterComponent } from '../../../../layout/footer/footer.component';
@@ -24,7 +19,7 @@ import { AddToCartService } from '../../../../core/services/add-to-cart/add-to-c
 import { NavigationService } from '../../../../core/services/navigation-service/navigation-service.service';
 import { SubCategoryService } from '../../../../core/services/sub-category/sub-category.service';
 import { MainCategoryService } from '../../../../core/services/main-category/main-category.service';
-// import { FetchChildService } from '../../../../core/services/fetch-child/fetch-child.service'; // If not used
+import { GetLinkedProductsService } from '../../../../core/services/get-linked-products/get-linked-products.service'; 
 import { FormsModule } from '@angular/forms';
 import {
   trigger,
@@ -35,11 +30,9 @@ import {
   keyframes,
 } from '@angular/animations';
 
-import { filter, map, switchMap, takeUntil } from 'rxjs/operators'; // Added switchMap and takeUntil
-import { Subject, Observable } from 'rxjs'; // Import Observable for type hints if needed
-
-// Remove if environment is not used, or ensure it's correctly set up
-// import { environment} from '../../../../../environment';
+import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
+import { Subject, Observable } from 'rxjs';
+import { CarouselModule } from 'primeng/carousel';
 
 interface Testimonial {
   customerName: string;
@@ -49,11 +42,11 @@ interface Testimonial {
 @Component({
   selector: 'app-b2c-product-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, FooterComponent],
+  imports: [CommonModule, FormsModule, RouterModule, FooterComponent, CarouselModule],
   templateUrl: './b2c-product-details.component.html',
   styleUrls: ['./b2c-product-details.component.css'],
 })
-export class B2cProductDetailsComponent implements OnInit, OnDestroy {
+export class B2cProductDetailsComponent implements OnInit, OnDestroy, AfterViewInit {
   testimonials: Testimonial[] = [
     {
       customerName: 'Gavin',
@@ -85,11 +78,11 @@ export class B2cProductDetailsComponent implements OnInit, OnDestroy {
   testimonialInterval: any;
 
   product: ProductDetails | null = null;
-  // mainImage: string = '';
   quantity: number = 1;
   isLoading: boolean = false;
+  linkedProducts: any[] = []; // New property to store linked products
+  
 
-  // New properties for company and variant selection
   selectedCompany: string | null = null;
   selectedVariant: string | null = null;
 
@@ -101,13 +94,8 @@ export class B2cProductDetailsComponent implements OnInit, OnDestroy {
   mainCategories: any[] = [];
   firstSubCategories: any[] = [];
   secondSubCategories: any[] = [];
-  // product: any;
-  // mainImage: string;
-  // zoomed: boolean = false;
-  // zoomTransform: string = 'scale(1)';
-  // currentImageIndex: number = 0;
-  // zoomOriginX: number = 50;
-  // zoomOriginY: number = 50;
+  autoplayInterval: number = 3000; 
+
   @Input() loginType: string | null = null;
   isFullScreen: boolean = false;
   private zoomTimeout: any;
@@ -119,8 +107,6 @@ export class B2cProductDetailsComponent implements OnInit, OnDestroy {
   mainImage: string = '';
   private zoomScale: number = 2.5;
   private debounceTimer: any;
-
-  // shakeTrigger = false;
 
   readonly imageBaseUrl = 'https://usaperp.com:5001/';
   private destroy$ = new Subject<void>();
@@ -134,69 +120,98 @@ export class B2cProductDetailsComponent implements OnInit, OnDestroy {
     private cartService: CartService,
     private loginService: LoginService,
     private navigationService: NavigationService,
-    // private fetchChildService: FetchChildService,
-    private mainCategoryService: MainCategoryService
-  ) // private subCategoryService: SubCategoryService
-  {
-    // setInterval(() => {
-    //   this.shakeTrigger = !this.shakeTrigger;
-    // }, 5000); // Trigger shake every 5 seconds
+    private mainCategoryService: MainCategoryService,
+    private getLinkedProductsService: GetLinkedProductsService // Inject the service
+  ) {}
+
+  stopAutoplay(): void {
+    this.autoplayInterval = 0;
+  }
+
+  startAutoplay(): void {
+    this.autoplayInterval = 3000;
   }
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (isNaN(id)) {
-      console.error('Invalid product ID');
-      return;
-    }
-    this.fetchProductDetails(id);
+    this.route.paramMap.pipe(
+      switchMap((params: ParamMap) => {
+        const id = Number(params.get('id'));
+        if (isNaN(id)) {
+          console.error('Invalid product ID');
+          return new Observable<ProductDetails | null>((observer) => {
+            observer.next(null);
+            observer.complete();
+          });
+        }
+        this.isLoading = true;
+        this.fetchLinkedProducts(id); 
+        return this.productDetailsService.getProductByID(id);
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: data => {
+        this.product = data;
+        this.isLoading = false;
+        if (data) {
+          let filePath: string;
+          if (data.images?.length) {
+            this.currentImageIndex = 0;
+            filePath = data.images[0].image_path;
+          } else if (data.product_image) {
+            filePath = `Images/Products/${data.product_image}`;
+          } else {
+            return;
+          }
+          this.mainImage = this.imageBaseUrl + filePath;
+          // console.log(' loading:', this.mainImage);
+          if (isPlatformBrowser(this.platformId)) {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        }
+      },
+      error: err => {
+        console.error('Error fetching product details:', err);
+        this.isLoading = false;
+      }
+    });
   }
 
-    ngAfterViewInit(): void {
-    // only start the slider once the view (and DOM) is fully initialized
+  ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.startTestimonialSlider();
     }
   }
 
-  fetchProductDetails(productId: number): void {
-    this.productDetailsService.getProductByID(productId).subscribe({
-      next: data => {
-        this.product = data;
-
-        // pick the first image from data.images[], or fall back to product_image
-        let filePath: string;
-        if (data.images?.length) {
-          this.currentImageIndex = 0;
-          filePath = data.images[0].image_path;
-        } else if (data.product_image) {
-          // if your API’s `product_image` is just the filename:
-          filePath = `Images/Products/${data.product_image}`;
-        } else {
-          // neither? leave the placeholder
-          return;
-        }
-
-        // **Critical:** use the _same_ imageBaseUrl
-        this.mainImage = this.imageBaseUrl + filePath;
-        console.log('🖼 loading:', this.mainImage);
+  fetchLinkedProducts(productId: number): void {
+    this.getLinkedProductsService.getLinkedProducts(productId).subscribe({
+      next: (linkedProducts) => {
+        // The service returns the response directly, which should be the array
+        this.linkedProducts = linkedProducts;
       },
-      error: err => console.error('Error fetching product details:', err)
+      error: (err) => {
+        console.error('Error fetching linked products:', err);
+      },
     });
   }
 
+  responsiveOptions: any[] = [
+  {
+    breakpoint: '12000000px',
+    numVisible: 3,
+    numScroll: 1,
+  },
+  {
+    breakpoint: '560px',
+    numVisible: 1,
+    numScroll: 1,
+    },
+  ];
 
-  // Set the main image
   setMainImage(imageUrl: string, index: number): void {
     this.mainImage = imageUrl;
     this.currentImageIndex = index;
   }
 
-  // setMainImage(imagePath: string): void {
-  //   this.mainImage = imagePath;
-  // }
-
-  // Navigate to the previous image
   prevImage(): void {
     if (this.product?.images?.length) {
       this.currentImageIndex =
@@ -210,7 +225,6 @@ export class B2cProductDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Navigate to the next image
   nextImage(): void {
     if (this.product?.images?.length) {
       this.currentImageIndex =
@@ -223,7 +237,6 @@ export class B2cProductDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Toggle zoom on image click
   toggleZoom(event: MouseEvent): void {
     this.zoomed = !this.zoomed;
 
@@ -252,19 +265,16 @@ export class B2cProductDetailsComponent implements OnInit, OnDestroy {
       const x = ((event.clientX - rect.left) / rect.width) * 100;
       const y = ((event.clientY - rect.top) / rect.height) * 100;
 
-      // Enhanced sensitivity calculation
-      const sensitivity = 1; // Adjust this value to increase/decrease sensitivity
+      const sensitivity = 1;
       const centerX = 50;
       const centerY = 50;
 
-      // Calculate offset from center with increased sensitivity
       const offsetX = (x - centerX) * sensitivity;
       const offsetY = (y - centerY) * sensitivity;
 
-      // Apply the offset to create more sensitive movement
       this.zoomOriginX = Math.min(Math.max(centerX + offsetX, 10), 90);
       this.zoomOriginY = Math.min(Math.max(centerY + offsetY, 10), 90);
-    }, 5); // Even faster response time
+    }, 5);
   }
 
   resetZoom(): void {
@@ -274,17 +284,14 @@ export class B2cProductDetailsComponent implements OnInit, OnDestroy {
     this.zoomOriginY = 50;
   }
 
-  // Open the image in fullscreen
-  // Open the custom fullscreen overlay
   openFullScreen(): void {
     this.isFullScreen = true;
-    this.resetZoom(); // Reset zoom when entering fullscreen
+    this.resetZoom();
   }
 
-  // Close the custom fullscreen overlay
   closeFullScreen(): void {
     this.isFullScreen = false;
-    this.resetZoom(); // Reset zoom when exiting fullscreen
+    this.resetZoom();
   }
 
   getMainCategories(): void {
@@ -309,6 +316,10 @@ export class B2cProductDetailsComponent implements OnInit, OnDestroy {
     this.navigationService.goBack();
   }
 
+  onExitClick(): void {
+    this.router.navigate(['/B2C']);
+  }
+
   addToCart(product: {
     product_id: number;
     product_name: string;
@@ -320,7 +331,6 @@ export class B2cProductDetailsComponent implements OnInit, OnDestroy {
     const businessId = this.userID ? +this.userID : 0;
     const upc = product.product_identifier2;
 
-    // Use the selected quantity from the component
     const selectedQuantity = this.quantity;
 
     this.addToCartService
@@ -344,7 +354,6 @@ export class B2cProductDetailsComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Quantity management methods
   increaseQuantity(): void {
     this.quantity += 1;
   }
@@ -368,42 +377,21 @@ export class B2cProductDetailsComponent implements OnInit, OnDestroy {
     this.testimonialInterval = setInterval(() => {
       this.currentTestimonialIndex =
         (this.currentTestimonialIndex + 1) % this.testimonials.length;
-    }, 3000); // Change testimonial every 3 seconds
+    }, 3000);
   }
 
   ngOnDestroy(): void {
     if (this.testimonialInterval) {
       clearInterval(this.testimonialInterval);
     }
-
-    // === ADD THESE LINES ===
     this.destroy$.next();
     this.destroy$.complete();
-    // =======================
   }
 
   get transformStyle(): string {
     return `translateX(-${this.currentTestimonialIndex * 100}%)`;
   }
 
-  // fetchProductDetails(productId: number): void {
-  //   this.productDetailsService.getProductByID(productId).subscribe({
-  //     next: (data) => {
-  //       // console.log('Product data received:', data);
-  //       if (data) {
-  //         this.product = data;
-  //         this.mainImage = `https://usaperp.com:5001/Images/Products/${data.product_image}`;
-  //       } else {
-  //         console.error('No product data found');
-  //       }
-  //     },
-  //     error: (err) => {
-  //       console.error('Error fetching product details:', err);
-  //     },
-  //   });
-  // }
-
-  // Methods to handle company and variant selection
   selectCompany(company: string): void {
     this.selectedCompany = company;
   }
@@ -413,7 +401,7 @@ export class B2cProductDetailsComponent implements OnInit, OnDestroy {
   }
 
   buyNow(product: any) {
-    this.addToCart(product); // Call the existing Add to Cart function
-    this.router.navigate(['/B2C/cart']); // Navigate to the cart page
+    this.addToCart(product);
+    this.router.navigate(['/B2C/cart']);
   }
 }

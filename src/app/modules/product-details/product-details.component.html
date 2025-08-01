@@ -6,6 +6,10 @@
   <i class="fa fa-arrow-left back-button" aria-hidden="true"></i>
 </button>
 
+<button class="exit-button" (click)="onExitClick()">
+    <i class="fa fa-times" aria-hidden="true"></i>
+  </button>
+
 <div class="product-details-container" *ngIf="product; else loadingTemplate">
 
   <div class="product-section">
@@ -202,6 +206,51 @@
     </div>
   </div>
 
+</div>
+
+<div class="linked-products-container">
+  <ng-container *ngIf="linkedProducts.length > 0; else noLinkedProducts">
+    <div class="title-bar">
+      <h2 class="linked-products-title">Linked Products</h2>
+    </div>
+
+    <p-carousel
+      [value]="linkedProducts"
+      [numVisible]="4"
+      [numScroll]="1"
+      [responsiveOptions]="responsiveOptions"
+      [circular]="true"
+      [autoplayInterval]="autoplayInterval"
+    >
+      <ng-template let-linkedProduct pTemplate="item">
+        <div
+          class="product-card"
+          (mouseenter)="stopAutoplay()"
+          (mouseleave)="startAutoplay()"
+        >
+          <a [routerLink]="['/B2B/product-details', linkedProduct.product_id]">
+            <img
+              [src]="imageBaseUrl + 'Images/Products/' + linkedProduct.product_image"
+              alt="{{ linkedProduct.product_name }}"
+              class="product-image"
+            />
+            <div class="product-details">
+              <h3 class="product-title">{{ linkedProduct.product_name }}</h3>
+              <p class="product-price">
+                ${{ linkedProduct.product_price | number : '1.2-2' }}
+              </p>
+            </div>
+          </a>
+        </div>
+      </ng-template>
+    </p-carousel>
+  </ng-container>
+
+  <ng-template #noLinkedProducts>
+    <div class="no-linked-products">
+      <p>No related products found.</p>
+    </div>
+  </ng-template>
 </div>
 
 <!-- Loading Template -->

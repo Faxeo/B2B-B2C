@@ -49,7 +49,7 @@ export class ProductDetailsService {
     
     return this.apiService.post<ProductDetails>(url, {}).pipe(
       map((response) => {
-        console.log('API Response:', response);
+        // console.log('API Response:', response);
         return response; // Return the response directly
       }),
       catchError((error) => {
