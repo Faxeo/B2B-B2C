@@ -565,6 +565,20 @@
   text-align: center;
   margin: 10px;
   height: 100%;
+  flex: 0 0 calc(25% - 20px);
+}
+
+/* Responsive breakpoints */
+@media (max-width: 991px) {
+  .product-card {
+    flex: 0 0 calc(50% - 20px); /* 2 per row on tablets */
+  }
+}
+
+@media (max-width: 575px) {
+  .product-card {
+    flex: 0 0 100%; /* 1 per row on mobile */
+  }
 }
 
 /* Card lift and autoplay pause on hover */
@@ -573,20 +587,12 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
-/* Link wraps full card */
 .product-card a {
   text-decoration: none;
   color: inherit;
   display: flex;
   flex-direction: column;
   height: 100%;
-}
-
-/* Hide the navigation arrows and page indicators */
-.linked-products-carousel ::ng-deep .p-carousel-prev,
-.linked-products-carousel ::ng-deep .p-carousel-next,
-.linked-products-carousel ::ng-deep .p-carousel-paginator {
-  display: none;
 }
 
 /* Center and scale images */
@@ -614,7 +620,7 @@
   justify-content: center;
 }
 
-.product-card .product-title {
+.product-title {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 1.15rem;
   font-weight: 600;
@@ -625,7 +631,6 @@
   white-space: nowrap;
 }
 
-/* Price styling */
 .product-price {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 1.4rem;
@@ -641,4 +646,29 @@
   color: #777;
   font-size: 1.2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navigation arrows styling override (optional) */
+::ng-deep .carousel-control-prev,
+::ng-deep .carousel-control-next {
+  width: 50px;
+  height: 50px;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+::ng-deep .carousel-control-prev:hover,
+::ng-deep .carousel-control-next:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+  transform: translateY(-50%) scale(1.1);
+}
+
+::ng-deep .carousel-control-prev-icon,
+::ng-deep .carousel-control-next-icon {
+  background-size: 60% 60%;
+  filter: brightness(0) invert(1); /* white arrow */
 }

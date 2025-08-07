@@ -193,50 +193,59 @@
   
   </div>
   
+  <!-- linked products section -->
   <div class="linked-products-container">
-  <ng-container *ngIf="linkedProducts.length > 0; else noLinkedProducts">
-    <div class="title-bar">
-      <h2 class="linked-products-title">Linked Products</h2>
-    </div>
+    <ng-container *ngIf="linkedProducts.length > 0; else noLinkedProducts">
+      <div class="title-bar">
+        <h2 class="linked-products-title">Linked Products</h2>
+      </div>
 
-    <p-carousel
-      [value]="linkedProducts"
-      [numVisible]="4"
-      [numScroll]="1"
-      [responsiveOptions]="responsiveOptions"
-      [circular]="true"
-      [autoplayInterval]="autoplayInterval"
-    >
-      <ng-template let-linkedProduct pTemplate="item">
-        <div
-          class="product-card"
-          (mouseenter)="stopAutoplay()"
-          (mouseleave)="startAutoplay()"
-        >
-          <a [routerLink]="['/B2C/product-details', linkedProduct.product_id]">
-            <img
-              [src]="imageBaseUrl + 'Images/Products/' + linkedProduct.product_image"
-              alt="{{ linkedProduct.product_name }}"
-              class="product-image"
-            />
-            <div class="product-details">
-              <h3 class="product-title">{{ linkedProduct.product_name }}</h3>
-              <p class="product-price">
-                ${{ linkedProduct.product_price | number : '1.2-2' }}
-              </p>
+      <!-- ngb-carousel must be properly opened and closed -->
+      <ngb-carousel
+        [interval]="autoplayInterval"
+        [pauseOnHover]="true"
+        [wrap]="true"
+        [keyboard]="true"
+        [showNavigationArrows]="true"
+        [showNavigationIndicators]="true"
+      >
+        <!-- ngbSlide must be inside ngb-carousel -->
+        <ng-template ngbSlide *ngFor="let group of groupedLinkedProducts">
+          <div class="d-flex justify-content-center flex-wrap">
+            <div
+              class="product-card"
+              *ngFor="let product of group"
+              (mouseenter)="stopAutoplay()"
+              (mouseleave)="startAutoplay()"
+            >
+              <a [routerLink]="['/B2C/product-details', product.product_id]">
+                <img
+                  [src]="imageBaseUrl + 'Images/Products/' + product.product_image"
+                  (error)="product.product_image = 'fallback.jpg'"
+                  alt="{{ product.product_name }}"
+                  class="product-image"
+                  loading="lazy"
+                />
+                <div class="product-details">
+                  <h3 class="product-title">{{ product.product_name }}</h3>
+                  <p class="product-price">
+                    ${{ product.product_price | number : '1.2-2' }}
+                  </p>
+                </div>
+              </a>
             </div>
-          </a>
-        </div>
-      </ng-template>
-    </p-carousel>
-  </ng-container>
+          </div>
+        </ng-template>
+      </ngb-carousel>
+    </ng-container>
 
-  <ng-template #noLinkedProducts>
-    <div class="no-linked-products">
-      <p>No related products found.</p>
-    </div>
-  </ng-template>
-</div>
+    <ng-template #noLinkedProducts>
+      <div class="no-linked-products">
+        <p>No related products found.</p>
+      </div>
+    </ng-template>
+  </div>
+
 
   <!-- Loading Template -->
   <ng-template #loadingTemplate>

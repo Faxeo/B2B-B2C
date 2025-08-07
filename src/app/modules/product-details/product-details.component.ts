@@ -23,7 +23,7 @@ import { MainCategoryService } from '../../core/services/main-category/main-cate
 import { FetchChildService } from '../../core/services/fetch-child/fetch-child.service';
 import { FormsModule } from '@angular/forms';
 import { trigger, state, style, animate, transition, keyframes } from '@angular/animations';
-import { CarouselModule } from 'primeng/carousel';
+import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
 
 interface Testimonial {
   customerName: string;
@@ -32,7 +32,7 @@ interface Testimonial {
 
 @Component({
   standalone: true,
-  imports: [RouterModule, CommonModule, FooterComponent, FormsModule, CarouselModule],
+  imports: [RouterModule, CommonModule, FooterComponent, FormsModule, NgbCarouselModule],
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.css'],
   animations: [
@@ -90,6 +90,7 @@ export class ProductDetailsComponent {
   quantity: number = 1;
   isLoading: boolean = false;
   linkedProducts: any[] = []; // New property to store linked products
+  groupedLinkedProducts: any[][] = [];
   
 
   // New properties for company and variant selection
@@ -186,15 +187,23 @@ export class ProductDetailsComponent {
 
   // Fetch product details when the component is initialized
   fetchLinkedProducts(productId: number): void {
-    this.getLinkedProductsService.getLinkedProducts(productId).subscribe({
-      next: (linkedProducts) => {
-        // The service returns the response directly, which should be the array
-        this.linkedProducts = linkedProducts;
-      },
-      error: (err) => {
-        console.error('Error fetching linked products:', err);
+  this.getLinkedProductsService.getLinkedProducts(productId).subscribe({
+    next: (linkedProducts) => {
+      this.linkedProducts = linkedProducts;
+      this.groupedLinkedProducts = this.groupIntoChunks(linkedProducts, 4); // <-- NEW
+    },
+    error: (err) => {
+      console.error('Error fetching linked products:', err);
       },
     });
+  }
+
+  private groupIntoChunks(array: any[], chunkSize: number): any[][] {
+    const result: any[][] = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+      result.push(array.slice(i, i + chunkSize));
+    }
+    return result;
   }
 
   // Set the main image

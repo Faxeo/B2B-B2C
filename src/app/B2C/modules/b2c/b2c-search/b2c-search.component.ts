@@ -19,8 +19,8 @@ export class B2cSearchComponent implements OnInit {
   isLocallyLoading: boolean = false;
 
   // Consolidated sidebar state properties for clarity and to remove redundancy.
-  isFilterSidebarCollapsed: boolean = true;
-  isCartSidebarCollapsed: boolean = true;
+  isFilterSidebarCollapsed: boolean = false;
+  isCartSidebarCollapsed: boolean = false;
 
   isMobileFilterOpen = false;
   isMobileCartOpen = false;

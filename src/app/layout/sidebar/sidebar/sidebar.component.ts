@@ -97,8 +97,9 @@ export class SidebarComponent implements OnInit {
       this.apiService.post<any>(apiUrl, loginData).subscribe({
         next: (response) => {
           if (response.token) {
+            const usernameresponse = response.response?.data?.customer_name || 'Guest';
             // Use AuthService to set token instead of localStorage
-            this.authService.login(response.token);  // Use login to set token
+            this.authService.login(response.token, usernameresponse);  // Use login to set token
             this.loginService.setLoginType(this.selectedLoginType);
   
             if (response.response?.data?.customer_id) {

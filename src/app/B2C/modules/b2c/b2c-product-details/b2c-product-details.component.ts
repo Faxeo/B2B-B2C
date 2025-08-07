@@ -32,7 +32,7 @@ import {
 
 import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
 import { Subject, Observable } from 'rxjs';
-import { CarouselModule } from 'primeng/carousel';
+import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
 
 interface Testimonial {
   customerName: string;
@@ -42,7 +42,7 @@ interface Testimonial {
 @Component({
   selector: 'app-b2c-product-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, FooterComponent, CarouselModule],
+  imports: [CommonModule, FormsModule, RouterModule, FooterComponent, NgbCarouselModule],
   templateUrl: './b2c-product-details.component.html',
   styleUrls: ['./b2c-product-details.component.css'],
 })
@@ -94,6 +94,7 @@ export class B2cProductDetailsComponent implements OnInit, OnDestroy, AfterViewI
   mainCategories: any[] = [];
   firstSubCategories: any[] = [];
   secondSubCategories: any[] = [];
+  groupedLinkedProducts: any[][] = [];
   autoplayInterval: number = 3000; 
 
   @Input() loginType: string | null = null;
@@ -183,29 +184,24 @@ export class B2cProductDetailsComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   fetchLinkedProducts(productId: number): void {
-    this.getLinkedProductsService.getLinkedProducts(productId).subscribe({
-      next: (linkedProducts) => {
-        // The service returns the response directly, which should be the array
-        this.linkedProducts = linkedProducts;
-      },
-      error: (err) => {
-        console.error('Error fetching linked products:', err);
+  this.getLinkedProductsService.getLinkedProducts(productId).subscribe({
+    next: (linkedProducts) => {
+      this.linkedProducts = linkedProducts;
+      this.groupedLinkedProducts = this.groupIntoChunks(linkedProducts, 4); // <-- NEW
+    },
+    error: (err) => {
+      console.error('Error fetching linked products:', err);
       },
     });
   }
 
-  responsiveOptions: any[] = [
-  {
-    breakpoint: '12000000px',
-    numVisible: 3,
-    numScroll: 1,
-  },
-  {
-    breakpoint: '560px',
-    numVisible: 1,
-    numScroll: 1,
-    },
-  ];
+  private groupIntoChunks(array: any[], chunkSize: number): any[][] {
+    const result: any[][] = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+      result.push(array.slice(i, i + chunkSize));
+    }
+    return result;
+  }
 
   setMainImage(imageUrl: string, index: number): void {
     this.mainImage = imageUrl;
