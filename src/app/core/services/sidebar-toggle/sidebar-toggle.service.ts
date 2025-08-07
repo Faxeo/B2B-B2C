@@ -15,3 +15,4 @@ export class SidebarToggleService {
     return this.sidebarOpen.asObservable();
   }
 }
+ 

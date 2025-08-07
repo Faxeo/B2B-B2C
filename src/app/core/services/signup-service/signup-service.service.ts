@@ -12,3 +12,4 @@ export class SignUpService {
     this.router.navigate(['/sidebar/signup']);
   }
 }
+ 

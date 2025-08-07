@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ApiService } from '../../../core/services/api.service';
 import { Router } from '@angular/router';
 import { LoginService } from '../../../core/services/login-service/login-service.service';
+import { AuthService } from '../../../core/services/Session/auth.service';
 
 @Component({
   selector: 'app-business-login',
@@ -10,7 +11,12 @@ import { LoginService } from '../../../core/services/login-service/login-service
 })
 export class BusinessLoginComponent {
 
-  constructor(private apiService: ApiService, private router: Router, private loginService: LoginService) {}
+  constructor(
+    private apiService: ApiService, 
+    private router: Router, 
+    private loginService: LoginService,
+    private authService: AuthService
+  ) {}
 
   email: string = '';
   password: string = '';
@@ -33,13 +39,24 @@ export class BusinessLoginComponent {
           const userName = data.customer_name || 'Guest';
           const loginType = data.customer_type;
 
-          // Save login data
+          // Save auth state first
+          this.authService.login(token);  // This handles token storage properly
+
+          // Then save user data
           this.loginService.setUserID(userId);
           this.loginService.setUserName(userName);
           this.loginService.setLoginType(loginType);
-          localStorage.setItem('authToken', token);
-
-          console.log('Saved username:', userName);
+          this.loginService.setCategory('business');
+          
+          // Store additional business-specific data
+          localStorage.setItem('businessID', userId);
+          
+          console.log('Business login successful:', {
+            token: !!token,
+            userId,
+            userName,
+            loginType
+          });
 
           // Navigate to homepage
           this.router.navigate(['/home']);

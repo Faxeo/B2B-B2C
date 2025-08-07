@@ -92,7 +92,7 @@ public lineChartType: 'line' = 'line';
     if (token && userId) {
       this.isLoading = true;
       this.businessProfileService
-        .getBusinessProfile(+userId, category, token)
+        .getBusinessProfile(+userId, category)
         .subscribe({
           next: resp => {
             if (resp.success && resp.data) {
@@ -153,7 +153,7 @@ public lineChartType: 'line' = 'line';
       const token = localStorage.getItem('token');
       if (token) {
         this.isLoading = true;
-        this.businessProfileService.updateBusinessProfile(this.businessProfile, token)
+        this.businessProfileService.updateBusinessProfile(this.businessProfile)
           .subscribe({
             next: (response) => {
               console.log('Profile updated successfully', response);

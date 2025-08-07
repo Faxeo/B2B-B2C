@@ -23,7 +23,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { MerchantProfileComponent } from './dashboard/merchant-dashboard/merchant-profile/merchant-profile.component';
 // import { B2cSearchModule } from './B2C/modules/b2c/b2c-search/b2c-search.module';
-
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor }    from './core/interceptors/auth.interceptor';
 
 @NgModule({
   imports: [
@@ -55,6 +56,11 @@ import { MerchantProfileComponent } from './dashboard/merchant-dashboard/merchan
     // B2cSearchModule
   ],
   providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    },
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
     JwtHelperService,
     ApiService,

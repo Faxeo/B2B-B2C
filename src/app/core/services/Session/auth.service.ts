@@ -53,19 +53,43 @@ export class AuthService {
   }
 
   login(token: string) {
-    // Store token in both cookie and localStorage for redundancy
-    this.cookieService.set('token', token, {
-      path: '/',
-      secure: true,
-      sameSite: 'Strict',
-      expires: 7 // 7 days expiration
-    });
-    
-    if (typeof window !== 'undefined' && window.localStorage) {
-      localStorage.setItem('token', token);
+    if (!token) {
+      console.error('Attempted to login with null token');
+      return;
     }
-    
-    this.isAuthenticated.next(true);
+
+    try {
+      // Decode token to get expiration
+      const decodedToken = this.jwtHelper.decodeToken(token);
+      const expirationDate = new Date(decodedToken.exp * 1000);
+
+      // Store token in both cookie and localStorage
+      this.cookieService.set('token', token, {
+        path: '/',
+        secure: true,
+        sameSite: 'Strict',
+        expires: expirationDate
+      });
+      
+      // Also store as authToken for LoginService compatibility
+      this.cookieService.set('authToken', token, {
+        path: '/',
+        secure: true,
+        sameSite: 'Strict',
+        expires: expirationDate
+      });
+      
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem('token', token);
+        localStorage.setItem('authToken', token);  // For LoginService compatibility
+      }
+      
+      console.log('Token stored successfully, expires:', expirationDate);
+      this.isAuthenticated.next(true);
+    } catch (error) {
+      console.error('Failed to process login token:', error);
+      this.clearSession();
+    }
   }
 
   logout() {
@@ -73,13 +97,22 @@ export class AuthService {
   }
 
   private clearSession(navigate: boolean = true) {
+    // Clear all auth-related cookies
     this.cookieService.delete('token', '/');
+    this.cookieService.delete('authToken', '/');
     this.cookieService.delete('userID', '/');
+    this.cookieService.delete('businessID', '/');
+    this.cookieService.delete('loginType', '/');
+    this.cookieService.delete('username', '/');
     
+    // Clear localStorage
     if (typeof window !== 'undefined' && window.localStorage) {
       localStorage.removeItem('token');
+      localStorage.removeItem('authToken');
       localStorage.removeItem('userID');
+      localStorage.removeItem('businessID');
       localStorage.removeItem('loginType');
+      localStorage.removeItem('username');
     }
     
     this.isAuthenticated.next(false);

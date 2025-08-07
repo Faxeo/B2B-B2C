@@ -13,52 +13,134 @@ export class LoginService {
   private userNameSubject = new BehaviorSubject<string | null>(null);
   private categorySubject = new BehaviorSubject<string | null>(null);
 
-  private getTokenExpiry(): Date | null {
-    const decoded = this.getDecodedToken();
-    if (decoded && decoded.exp) {
-      return new Date(decoded.exp * 1000); // Convert exp to milliseconds
+
+    /** Call this immediately after you get your token back from the server */
+  setAuthToken(token: string): void {
+    if (!token) {
+      console.warn('[LoginService] Attempted to set null/empty token');
+      return;
     }
-    return null;
+
+    // Decode and validate token first
+    const decoded = decodeToken(token);
+    if (!decoded || isTokenExpired(decoded)) {
+      console.error('[LoginService] Invalid or expired token');
+      this.clearData();
+      return;
+    }
+
+    const expires = new Date(decoded.exp * 1000);
+    console.log('[LoginService] Setting token with expiry:', expires);
+
+    // Set in both localStorage and cookies for redundancy
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('authToken', token);
+    }
+
+    this.cookieService.set('authToken', token, {
+      expires,
+      path: '/',
+      secure: true,
+      sameSite: 'Strict'
+    });
   }
 
   private getDecodedToken(): any | null {
+    // now localStorage *and* cookie will contain the token
     const token = this.cookieService.get('authToken') || localStorage.getItem('authToken');
     return token ? decodeToken(token) : null;
+  }
+
+  private getTokenExpiry(): Date | null {
+    const decoded = this.getDecodedToken();
+    return decoded && decoded.exp
+      ? new Date(decoded.exp * 1000)
+      : null;
   }
 
   constructor(
     private cookieService: CookieService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    this.refreshFromStorage(); // Hydrate at start
+    if (isPlatformBrowser(this.platformId)) {
+      // Initialize immediately
+      this.refreshFromStorage();
+      
+      // Also refresh when the page becomes visible again
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          this.refreshFromStorage();
+        }
+      });
+    }
   }
+
+    /** for debugging: snapshot of all the BehaviorSubjects’ current values */
+  getCurrentState(): {
+    loginType:  string | null;
+    userID:     string | null;
+    userName:   string | null;
+    category:   string | null;
+  } {
+    return {
+      loginType: this.loginTypeSubject.value,
+      userID:    this.userIDSubject.value,
+      userName:  this.userNameSubject.value,
+      category:  this.categorySubject.value,
+    };
+  }
+
+
+  /** Return the raw, current auth token (or null) */
+  getRawToken(): string | null {
+    if (!isPlatformBrowser(this.platformId)) { return null; }
+    // you wrote this.getDecodedToken() but that only returns the decoded payload.
+    // instead grab the raw string:
+    return this.cookieService.get('authToken') || localStorage.getItem('authToken');
+  }
+
 
   refreshFromStorage(): void {
   if (!isPlatformBrowser(this.platformId)) return;
 
-  // Option1: Use JWT token to validate session, if present
-  const decoded = this.getDecodedToken();
-    if (!decoded || isTokenExpired(decoded)) {
-      console.log('[LoginService] JWT expired or invalid, clearing data...');
-      this.clearData();
-      return;
-    }
-   
+  console.log('[LoginService] Refreshing from storage…');
 
-    // Restore state from storage
-    const storedLoginType = localStorage.getItem('loginType') || this.cookieService.get('loginType');
-    const storedUserID = localStorage.getItem('userID') || this.cookieService.get('userID');
-    const storedUserName = localStorage.getItem('username') || this.cookieService.get('username');
-
-    console.log('[LoginService] Refreshing from storage...');
-
-    if (storedUserName) {
-      console.log('[LoginService] Setting userNameSubject from storage:', storedUserName);
-      this.userNameSubject.next(storedUserName);
-    }
-    if (storedLoginType) this.loginTypeSubject.next(storedLoginType);
-    if (storedUserID) this.userIDSubject.next(storedUserID);
+  // Try to get token from cookie first, then localStorage
+  const token = this.cookieService.get('authToken') || localStorage.getItem('authToken');
+  if (!token) {
+    console.log('[LoginService] No token found in storage');
+    return;
   }
+
+  // Validate token
+  const decoded = decodeToken(token);
+  if (!decoded || isTokenExpired(decoded)) {
+    console.log('[LoginService] JWT expired or invalid, clearing data…');
+    this.clearData();
+    return;
+  }
+
+  console.log('[LoginService] Valid token found, restoring session state...');
+
+  // Re-store token with proper expiry for redundancy
+  const expires = new Date(decoded.exp * 1000);
+  localStorage.setItem('authToken', token);
+  this.cookieService.set('authToken', token, {
+    path: '/',
+    secure: true,
+    sameSite: 'Strict',
+    expires: expires
+  });
+
+  // token is valid; restore everything else
+  const storedLoginType = localStorage.getItem('loginType') || this.cookieService.get('loginType');
+  const storedUserID    = localStorage.getItem('userID')    || this.cookieService.get('userID');
+  const storedUserName  = localStorage.getItem('username')  || this.cookieService.get('username');
+
+  if (storedLoginType) this.loginTypeSubject.next(storedLoginType);
+  if (storedUserID)    this.userIDSubject.next(storedUserID);
+  if (storedUserName)  this.userNameSubject.next(storedUserName);
+}
 
 
   setLoginType(loginType: string) {

@@ -35,7 +35,7 @@ export class ProfileComponent {
       if (token && userId) {
         this.isLoading = true;
         this.businessProfileService
-          .getBusinessProfile(+userId, category, token)
+          .getBusinessProfile(+userId, category,)
           .subscribe({
             next: (response) => {
               console.log('Business Profile API Response:', response);
@@ -63,7 +63,7 @@ export class ProfileComponent {
       const token = localStorage.getItem('token');
       if (token) {
         this.isLoading = true;
-        this.businessProfileService.updateBusinessProfile(this.businessProfile, token)
+        this.businessProfileService.updateBusinessProfile(this.businessProfile,)
           .subscribe({
             next: (response) => {
               console.log('Profile updated successfully', response);

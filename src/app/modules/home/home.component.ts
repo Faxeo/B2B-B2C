@@ -58,7 +58,7 @@ import { UserService } from '../../core/services/User/user.service';
   ],
   providers: [ApiService, SidebarToggleService],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css','home-mobile.component.css'],
+  styleUrls: ['./home.component.css', 'home-mobile.component.css'],
 })
 export class HomeComponent implements OnInit {
   categories$: Observable<any[]> | undefined;
@@ -125,60 +125,97 @@ export class HomeComponent implements OnInit {
     private subCategoryService: SubCategoryService,
     private router: Router,
     private categoryIdService: CategoryIdService,
-    private searchQueryService: SearchQueryService, 
-        private toastr: ToastrService,
+    private searchQueryService: SearchQueryService,
+    private toastr: ToastrService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit(): void {
-  this.getMainCategories();
-  this.getYears();
+    this.getMainCategories();
+    this.getYears();
 
-  if (isPlatformBrowser(this.platformId)) {
-    this.userID = localStorage.getItem('userID');
-    this.userName = localStorage.getItem('username');
-    this.loginType = localStorage.getItem('loginType');
+// B2B Home Component - Simplified and more reliable approach
+// Replace your existing initialization code with this:
 
-    console.log('Initial from localStorage →', {
-      userID: this.userID,
-      userName: this.userName,
-      loginType: this.loginType
-    });
+if (isPlatformBrowser(this.platformId)) {
+  console.log('[B2B Home] Component initializing...');
 
-    this.loginService.getUserID().subscribe((userID) => {
+  // Debug: Check what LoginService currently has
+  console.log('[B2B Home] LoginService current state:', this.loginService.getCurrentState());
+
+  // Subscribe to LoginService observables immediately
+  this.loginService.getUserID().subscribe((userID) => {
+    console.log('[B2B Home] UserID changed:', userID);
+    this.userID = userID;
+
+    // If we have a userID and it's a business user, fetch the username
     if (userID) {
-      this.userID = userID;
-      this.userService.fetchUserNameById(userID, 'business'); // ← Now it works
-      }
-    });
-
-    this.loginService.getLoginType().subscribe((loginType) => {
-        this.loginType = loginType;
-        if (this.loginType === 'business') {
-          const username = localStorage.getItem('username');
-          this.loginType = username || this.loginType;
+      this.loginService.getLoginType().subscribe((loginType) => {
+        console.log('[B2B Home] LoginType for userID', userID, ':', loginType);
+        
+        if (loginType === 'business') {
+          console.log('[B2B Home] Fetching business username for userID:', userID);
+          this.userService.fetchUserNameById(userID, 'business');
         }
       });
+    }
 
-    this.userService.getUserNameObservable().subscribe((userName) => {
-      if (userName) {
-        this.userName = userName;
-        console.log('userName from UserService:', userName);
-      }
+    // Update cart service when we have user details
+    if (this.userID && this.loginType) {
+      console.log('[B2B Home] Setting cart user details:', this.userID, this.loginType);
+      this.cartService.setUserDetails(this.userID, this.loginType);
+    }
+  });
+
+  this.loginService.getLoginType().subscribe((loginType) => {
+    console.log('[B2B Home] LoginType changed:', loginType);
+    this.loginType = loginType;
+
+    // Update cart service when we have user details
+    if (this.userID && this.loginType) {
+      console.log('[B2B Home] Setting cart user details:', this.userID, this.loginType);
+      this.cartService.setUserDetails(this.userID, this.loginType);
+    }
+  });
+
+  // Subscribe to username from LoginService
+  this.loginService.getUserName().subscribe((userName) => {
+    console.log('[B2B Home] UserName from LoginService:', userName);
+    if (userName) {
+      this.userName = userName;
+    }
+  });
+
+  // Subscribe to username updates from UserService (when it fetches from API)
+  this.userService.getUserNameObservable().subscribe((userName) => {
+    console.log('[B2B Home] UserName from UserService:', userName);
+    if (userName) {
+      this.userName = userName;
+      // Make sure LoginService also has this username
+      this.loginService.setUserName(userName);
+    }
+  });
+
+  // Debug: Log final state after subscriptions
+  setTimeout(() => {
+    console.log('[B2B Home] Final component state:', {
+      userID: this.userID,
+      userName: this.userName,
+      loginType: this.loginType,
+      loginServiceState: this.loginService.getCurrentState()
     });
+  }, 1000);
+}
 
-    this.cartService.setUserDetails(this.userID, this.loginType);
-  }
+    this.categories$ = this.apiService.getMainCategory().pipe(
+      map((categories) =>
+        categories.map((category: { name: string }) => ({
+          ...category,
+          image: `assets/car-parts-&-accessories.png`,
+        }))
+      )
+    );
 
-  this.categories$ = this.apiService.getMainCategory().pipe(
-    map((categories) =>
-      categories.map((category: { name: string }) => ({
-        ...category,
-        image: `assets/car-parts-&-accessories.png`,
-      }))
-    )
-  );
-    
     this.products$ = this.apiService.getTopSellingProducts().pipe(
       map((products) =>
         products.map((product: { product_image: string }) => ({
@@ -227,29 +264,29 @@ export class HomeComponent implements OnInit {
   getMaterialIcon(categoryName: string): string | null {
     switch (categoryName.toUpperCase()) {
       case 'ENGINE & COMPONENTS':
-        return 'directions_car';       // car silhouette
+        return 'directions_car'; // car silhouette
       case 'HEAT AND AIR CONDITIONING':
-      return 'car_fan_recirculate';             // A/C snowflake
+        return 'car_fan_recirculate'; // A/C snowflake
       case 'ELECTRICAL':
-        return 'electrical_services';  // lightning‐bolt icon
+        return 'electrical_services'; // lightning‐bolt icon
       case 'BRAKE AND WHEEL':
-        return 'build_circle';         // gear inside circle
-        case 'SUSPENSION & STEERING':
-      return 'search_hands_free'; 
-    case 'TRANSMISSION & DRIVETRAIN':
-      return 'auto_transmission';  
+        return 'build_circle'; // gear inside circle
+      case 'SUSPENSION & STEERING':
+        return 'search_hands_free';
+      case 'TRANSMISSION & DRIVETRAIN':
+        return 'auto_transmission';
       case 'HYDRAULICS':
-        return 'valve';  
+        return 'valve';
       // Add more Material‐icon mappings here as you wish…
       default:
-        return null;                   // fall back to Font Awesome
+        return null; // fall back to Font Awesome
     }
   }
 
-   getIconClass(categoryName: string): string {
+  getIconClass(categoryName: string): string {
     switch (categoryName.toUpperCase()) {
       case 'CAR PARTS & ACCESSORIES':
-        return 'fa-solid fa-car'; 
+        return 'fa-solid fa-car';
       case 'AUTOMOTIVE TOOLS & SUPPLIES':
         return 'fa-solid fa-wrench';
       case 'INTERIOR':
@@ -288,7 +325,7 @@ export class HomeComponent implements OnInit {
   //     if (stickyDiv) {
   //       const scrollY = window.scrollY || window.pageYOffset;
   //       const offsetTop = stickyDiv.offsetTop;
-  
+
   //       if (scrollY > offsetTop) {
   //         stickyDiv.classList.add('sticky', 'sticky-visible');
   //       } else {
@@ -300,7 +337,6 @@ export class HomeComponent implements OnInit {
   //     }
   //   });
   // }
-
 
   viewProductDetails(productId: number): void {
     if (!this.loginType) {
@@ -705,7 +741,6 @@ export class HomeComponent implements OnInit {
   }
 
   onSearch(page: number = 1): void {
-    
     if (!this.loginType) {
       this.openLoginModal();
       return;
@@ -816,7 +851,7 @@ export class HomeComponent implements OnInit {
         },
       });
 
-      // … your existing code to read the input …
+    // … your existing code to read the input …
     this.searchQuery = searchInputElement.value.trim();
 
     // **broadcast** to the service
