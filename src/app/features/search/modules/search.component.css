@@ -1,6 +1,6 @@
 * {
-  margin: 0px 0px 0px 0px;
-  /* padding: 0px 0px 0px 0px; */
+  margin: 0px;
+  /* padding: 0px; */
   /* background-color: aliceblue; */
   /* margin-right: 0px;
   width: 100%; */
@@ -21,9 +21,7 @@
   height: 100%;
   margin-right: 0px;
   padding-right: 0px;
-  /* transform: translateX(0); */
   transition: transform 0.5s ease, width 0.5s ease;
-  /* background-color: #f8f9fa; */
   display: flex;
   flex-direction: column;
   position: relative;
@@ -34,7 +32,7 @@
   width: 0;
   transform: translateX(-350px);
   overflow: hidden;
-  z-index: 1; /* Lower z-index when collapsed */
+  z-index: 1;
 }
 
 /* Toggle Button Styling for Filter Sidebar */
@@ -55,12 +53,12 @@
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
   margin-left: 5px;
 }
 
 .sidebar.collapsed + .toggle-btn-2 {
-  left: 5px; /* Pull the button flush to the edge when sidebar is collapsed */
+  left: 5px;
 }
 
 .filter-toggle:hover {
@@ -84,11 +82,11 @@
 }
 
 .general-search.expanded-left {
-  flex-grow: 2; /* Expand more when filter sidebar is collapsed */
+  flex-grow: 2;
 }
 
 .general-search.expanded-right {
-  flex-grow: 2; 
+  flex-grow: 2;
   margin-right: -10px;
 }
 
@@ -109,16 +107,15 @@
   overflow: hidden; 
 }
 
-/* Toggle Button Styling (for backwards compatibility) */
+/* Toggle Button Styling */
 .toggle-btn {
   position: fixed;
   top: 50%;
-  /* left: 340px; */
   transform: translateY(-50%);
   background: radial-gradient(circle, #b71c1c 20%, #b71c1c 80%);
   color: white;
   border: none;
-  border-radius: 50%;  /* Circular Shape */
+  border-radius: 50%;
   cursor: pointer;
   height: 45px;
   width: 45px;
@@ -157,12 +154,11 @@
 .cart-toggle {
   position: fixed;
   top: 50%;
-  right: 350px;          /* ← match your .sidebar-cart width */
+  right: 350px;
   transform: translateY(-50%);
   z-index: 1001;
 }
 
-/* When cart is collapsed, pull the button flush to the edge */
 .sidebar-cart.collapsed + .cart-toggle {
   right: 10px;
 }
@@ -172,13 +168,13 @@
   top: 50%;
   left: 350px;
   transform: translateY(-50%);
-  background-color: #d32f2f; /* Modern Red */
+  background-color: #d32f2f;
   color: white;
   border: none;
-  border-radius: 10px; /* Slightly rounded edges */
+  border-radius: 10px;
   cursor: pointer; 
-  height: 100px; /* Taller */
-  width: 35px; /* Slimmer */
+  height: 100px;
+  width: 35px;
   z-index: 10;
   transition: all 0.4s ease-in-out;
   display: flex;
@@ -187,11 +183,11 @@
   font-size: 1.5rem;
   font-weight: bold;
   text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .toggle-btn-2:hover {
-  background-color: #b71c1c; /* Darker red on hover */
+  background-color: #b71c1c;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
   transform: translateY(-50%) scale(1.1);
 }
@@ -209,11 +205,8 @@
   left: 5px;
 }
 
-
-
 /* ─── Mobile Overrides ─── */
 @media (max-width: 768px) {
-  /* Hide desktop sidebars & toggle */
   .sidebar,
   .sidebar-cart,
   .toggle-btn,
@@ -221,19 +214,17 @@
     display: none !important;
   }
 
-  /* Make results full width */
   .general-search {
     margin: 0;
     padding: 16px;
     width: 100%;
   }
 
-  /* Mobile Cart Button (FAB) - Positioned above filter button */
   .mobile-cart-button {
     position: fixed;
-    bottom: 86px; /* Position above the filter button */
+    bottom: 86px;
     right: 16px;
-    background: radial-gradient(circle, #28a745 20%, #1e7e34 80%); /* Green theme for cart */
+    background: radial-gradient(circle, #28a745 20%, #1e7e34 80%);
     color: #fff;
     border: none;
     border-radius: 24px;
@@ -253,7 +244,6 @@
     transform: scale(1.05);
   }
 
-  /* Mobile Filter Button (FAB) - Using B2C Red Theme */
   .mobile-filter-button {
     position: fixed;
     bottom: 16px;
@@ -278,7 +268,6 @@
     transform: scale(1.05);
   }
 
-  /* Mobile Cart Overlay */
   .mobile-cart-overlay {
     position: fixed;
     inset: 0;
@@ -286,32 +275,32 @@
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease;
-    z-index: 1003; /* Higher z-index than filter overlay */
+    z-index: 1003;
   }
+
   .mobile-cart-overlay.active {
     opacity: 1;
     visibility: visible;
   }
 
-  /* Mobile Cart Panel - Full screen slide-in */
   .mobile-cart-panel {
     position: fixed;
     top: -50px;
     right: 0;
-    width: 100%; /* Full screen width for mobile */
+    width: 100%;
     height: 110%;
     background: #fff;
-    transform: translateX(100%); /* Slide from right */
+    transform: translateX(100%);
     transition: transform 0.3s ease;
     overflow-y: none;
-    z-index: 1004; /* Higher z-index than filter panel */
+    z-index: 1004;
     box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
   }
+
   .mobile-cart-panel.active {
     transform: translateX(0);
   }
 
-  /* Mobile Cart Header */
   .mobile-cart-header {
     position: sticky;
     top: 0;
@@ -324,6 +313,7 @@
     border-bottom: 1px solid #e5e7eb;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
+
   .mobile-cart-header h2 {
     margin: 0;
     font-size: 1.25rem;
@@ -332,7 +322,9 @@
     flex: 1;
     text-align: center;
   }
-  .mobile-cart-header .back-button {
+
+  .mobile-cart-header .back-button,
+  .mobile-cart-header .close-button {
     background: none;
     border: none;
     font-size: 18px;
@@ -346,29 +338,13 @@
     justify-content: center;
     min-width: 40px;
   }
+
+  .mobile-cart-header .close-button:hover,
   .mobile-cart-header .back-button:hover {
     background-color: rgba(255, 255, 255, 0.1);
     transform: translateX(-2px);
   }
-  .mobile-cart-header .close-button {
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: white;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    transition: background-color 0.2s ease;
-    min-width: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .mobile-cart-header .close-button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
 
-  /* Filter Backdrop */
   .mobile-filter-overlay {
     position: fixed;
     inset: 0;
@@ -378,12 +354,12 @@
     transition: opacity 0.3s ease;
     z-index: 1000;
   }
+
   .mobile-filter-overlay.active {
     opacity: 1;
     visibility: visible;
   }
 
-  /* Slide-in panel for filters */
   .mobile-filter-panel {
     position: fixed;
     top: 0;
@@ -398,12 +374,12 @@
     z-index: 1001;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   }
+
   .mobile-filter-panel.active {
     transform: translateX(0);
-    z-index: 1001; /* Ensure it overlays the content */
+    z-index: 1001;
   }
 
-  /* Panel header for filters */
   .mobile-filter-header {
     position: sticky;
     top: 0;
@@ -416,12 +392,14 @@
     border-bottom: 1px solid #e5e7eb;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
+
   .mobile-filter-header h2 {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
     color: white;
   }
+
   .mobile-filter-header .close-button {
     background: none;
     border: none;
@@ -432,33 +410,32 @@
     border-radius: 4px;
     transition: background-color 0.2s ease;
   }
+
   .mobile-filter-header .close-button:hover {
     background-color: rgba(255, 255, 255, 0.1);
   }
 
   .d-md-none { display: block !important; }
 
-  /* make the container fluid on mobile */
   .container {
     max-width: 100% !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
 
-  /* ensure the search-results wrapper fills every px */
   .general-search {
     margin: 0 !important;
-    padding: 0 !important;     /* keep whatever inner padding you like */
+    padding: 0 !important;
     width: 100vw !important;      
-    box-sizing: border-box;       /* include the padding in that width */
+    box-sizing: border-box;
   }
 }
 
-/* ─── Large Screen Overrides ─── */
+/* Removed: 
 @media (min-width: 992px) {
-  /* Hide the toggle buttons on large screens since sidebars are always open */
   .toggle-btn-2,
   .cart-toggle {
     display: none !important;
   }
 }
+*/

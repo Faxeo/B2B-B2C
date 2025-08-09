@@ -1,29 +1,35 @@
 <div class="dashboard-container">
-  <app-business-sidebar (componentSelected)="selectComponent($event)"  [class.blurred]="showVehicleForm"></app-business-sidebar>
+  <app-business-sidebar 
+    (componentSelected)="selectComponent($event)"  
+    [class.blurred]="showVehicleForm">
+  </app-business-sidebar>
+  
   <div class="main-content">
-    <div *ngIf="showDefaultView()" class="content-area">
-      <app-merchant-profile></app-merchant-profile>
-      <app-orders-to-receive></app-orders-to-receive>
-      <!-- <app-orders-to-ship></app-orders-to-ship> -->
-    </div>
-    <div *ngIf="selectedComponent === 'orders-to-receive'" class="below-content">
-      <app-orders-to-receive></app-orders-to-receive>
-    </div>
-    <div *ngIf="selectedComponent === 'orders-to-ship'" class="below-content">
-      <app-orders-to-ship></app-orders-to-ship>
-    </div>
-    <div *ngIf="selectedComponent === 'profile'" class="below-content">
-      <app-merchant-profile></app-merchant-profile>
-    </div>
+    <ng-container [ngSwitch]="selectedComponent">
+      <!-- Default view -->
+      <div *ngSwitchDefault class="content-area">
+        <app-Business-profile></app-Business-profile>
+      </div>
 
-    <div *ngIf="selectedComponent === 'track-order'" class="below-content">
-      <app-track-order></app-track-order>
-    </div>
-    <div *ngIf="selectedComponent === 'purchase-history'" class="below-content">
-      <app-purchase-history></app-purchase-history>
-    </div>
-    <div *ngIf="selectedComponent === 'my-garage'" class="below-content">
-      <app-my-garage (formVisibilityChanged)="updateFormVisibility($event)"></app-my-garage>
-    </div>
+      <!-- Component-specific views -->
+      <div *ngSwitchCase="'orders-to-receive'" class="below-content">
+        <app-orders-to-receive></app-orders-to-receive>
+      </div>
+      <div *ngSwitchCase="'orders-to-ship'" class="below-content">
+        <app-orders-to-ship></app-orders-to-ship>
+      </div>
+      <div *ngSwitchCase="'profile'" class="below-content">
+        <app-Business-profile></app-Business-profile>
+      </div>
+      <div *ngSwitchCase="'track-order'" class="below-content">
+        <app-track-order></app-track-order>
+      </div>
+      <div *ngSwitchCase="'purchase-history'" class="below-content">
+        <app-purchase-history></app-purchase-history>
+      </div>
+      <div *ngSwitchCase="'my-garage'" class="below-content">
+        <app-my-garage (formVisibilityChanged)="updateFormVisibility($event)"></app-my-garage>
+      </div>
+    </ng-container>
   </div>
 </div>

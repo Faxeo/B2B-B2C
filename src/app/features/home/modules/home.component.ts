@@ -34,8 +34,8 @@ import { FetchYearService } from '../../core/services/fetch-year/fetch-year.serv
 import { VehicleSearchService } from '../../core/services/search-vehicle/search-vehicle.service';
 import { MainCategoryService } from '../../core/services/main-category/main-category.service';
 import { SubCategoryService } from '../../core/services/sub-category/sub-category.service';
-import { CategoryIdService } from '../../core/services/category-id/category-id.service';
-import { response } from 'express';
+// import { CategoryIdService } from '../../core/services/category-id/category-id.service';
+// import { response } from 'express';
 import { ChatBotComponent } from '../chat-bot/chat-bot.component';
 import { SearchQueryService } from '../../core/services/search-query/search-query.service';
 import { ToastrService } from 'ngx-toastr';
@@ -124,7 +124,7 @@ export class HomeComponent implements OnInit {
     private mainCategoryService: MainCategoryService,
     private subCategoryService: SubCategoryService,
     private router: Router,
-    private categoryIdService: CategoryIdService,
+    // private categoryIdService: CategoryIdService,
     private searchQueryService: SearchQueryService, 
         private toastr: ToastrService,
     @Inject(PLATFORM_ID) private platformId: Object
@@ -922,19 +922,38 @@ export class HomeComponent implements OnInit {
     this.showCategoryForm = false;
   }
 
+  // onCategoryClick(categoryId: number): void {
+  //   if (!this.loginType) {
+  //     this.openLoginModal();
+  //     return;
+  //   }
+  //   console.log('Setting categoryId in service:', categoryId);
+
+  //   // Set the categoryId in the service
+  //   this.categoryIdService.setCategoryId(categoryId);
+
+  //   // Navigate to the category route
+  //   this.router.navigate(['/B2B/search']);
+  // }
   onCategoryClick(categoryId: number): void {
-    if (!this.loginType) {
-      this.openLoginModal();
-      return;
-    }
-    console.log('Setting categoryId in service:', categoryId);
-
-    // Set the categoryId in the service
-    this.categoryIdService.setCategoryId(categoryId);
-
-    // Navigate to the category route
-    this.router.navigate(['/category']);
+  if (!this.loginType) {
+    this.openLoginModal();
+    return;
   }
+
+  // Optional: Log for debugging
+  console.log('Navigating to SearchComponent with mainCategory:', categoryId);
+
+  // Navigate to SearchComponent and set the mainCategory via query param
+  this.router.navigate(['/B2B/search'], {
+    queryParams: {
+      mainCategory: categoryId
+      // firstSubCategory: '',
+      // secondSubCategory: '',
+    },
+  });
+  }
+
 
   openLoginModal() {
     if (isPlatformBrowser(this.platformId)) {

@@ -161,13 +161,13 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./modules/garage/garage.module').then((m) => m.GarageModule),
   },
-  {
-    path: 'category',
-    loadChildren: () =>
-      import('./modules/category/category.module').then(
-        (m) => m.CategoryModule
-      ),
-  },
+  // {
+  //   path: 'category',
+  //   loadChildren: () =>
+  //     import('./modules/category/category.module').then(
+  //       (m) => m.CategoryModule
+  //     ),
+  // },
   {
     path: 'privacy-policy',
     loadChildren: () =>
