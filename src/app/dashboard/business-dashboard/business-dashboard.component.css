@@ -1,0 +1,148 @@
+.dashboard-container {
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: auto;
+  background-color: #d9e1e3;
+  display: flex;
+  overflow: hidden;
+  /* desktop: sidebar + main content side by side */
+}
+
+/* Sidebar container is fixed width on desktop */
+app-business-sidebar {
+  position: relative;
+  width: 250px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 20px 30px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: auto;
+  height: 100%; /* Fill available height */
+  width: 100%; /* Fill available width */;
+}
+
+/* Back and toggle buttons styling */
+.back-button {
+  font-size: 25px;
+  background-color: transparent;
+  padding: 10px;
+  border: none;
+  margin: 0;
+  position: fixed;
+  top: 15px;
+  right: 15px; /* changed from left to right */
+  z-index: 1200;
+  cursor: pointer;
+}
+
+.sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 15px;
+  left: 15px; /* keep on left */
+  font-size: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 1300; /* higher than sidebar */
+}
+
+/* Content areas */
+.content-area {
+  padding-top: 50px;
+  /* desktop padding to avoid sidebar overlap */
+}
+
+.below-content {
+  width: 100%;
+  padding: 40px;
+  margin-left: 0; /* adjusted for mobile */
+}
+
+/* Blur main content when sidebar overlays */
+.blurred {
+  filter: blur(5px);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* --- Responsive: Tablet and below --- */
+@media (max-width: 1024px) {
+  /* Sidebar slides out of view to left */
+  app-business-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 250px;
+    background-color: #F5F5F5;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    border-radius: 0 8px 8px 0;
+    z-index: 1500;
+  }
+
+  /* When sidebar is open, slide in */
+  app-business-sidebar.open,
+  app-business-sidebar[isOpen="true"] {
+    transform: translateX(0);
+  }
+
+  .sidebar-toggle {
+    display: block;
+  }
+
+  /* Main content takes full width */
+  .main-content {
+    padding: 20px;
+    height: calc(100vh - 40px);
+    width: 100%;
+  }
+}
+
+/* Small screens: sidebar slides over content */
+@media (max-width: 768px) {
+  .sidebar-toggle {
+    display: block;
+  }
+
+  app-business-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 250px;
+    background: white;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+    transform: translateX(-100%); /* hidden by default */
+    transition: transform 0.3s ease;
+    z-index: 1250;
+    border-radius: 0 8px 8px 0;
+  }
+
+  /* When sidebarOpen is true, slide sidebar in */
+  app-business-sidebar.open,
+  app-business-sidebar[isOpen="true"] {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    padding: 20px;
+    height: calc(100vh - 30px);
+    width: 100%;
+  }
+}
+
+/* Optional: blur main content when sidebar is open */
+.main-content.blurred {
+  filter: blur(5px);
+  pointer-events: none;
+}

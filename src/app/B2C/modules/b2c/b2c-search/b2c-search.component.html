@@ -1,0 +1,121 @@
+<app-b2c-navbar class="fixed-top"></app-b2c-navbar>
+
+<div class="container">
+  <!-- ─── Desktop Left Sidebar ─── -->
+  <div class="sidebar" [class.collapsed]="isFilterSidebarCollapsed">
+    <app-filter *ngIf="!isFilterSidebarCollapsed"></app-filter>
+  </div>
+
+  <!-- ─── Desktop Toggle Button for Filter Sidebar ─── -->
+  <button class="toggle-btn filter-toggle" (click)="toggleFilterSidebar()">
+    <span class="toggle-icon">{{ isFilterSidebarCollapsed ? '☰' : '✕' }}</span>
+  </button>
+
+  <!-- ─── Mobile Cart Button ─── -->
+  <button
+    class="mobile-cart-button d-md-none"
+    (click)="toggleMobileCart()"
+    aria-label="Open Cart"
+  >
+    <i class="fa fa-shopping-cart"></i>
+  </button>
+
+  <!-- ─── Mobile Filter Button ─── -->
+  <button
+    class="mobile-filter-button d-md-none"
+    (click)="toggleMobileFilter()"
+    aria-label="Open Filters"
+  >
+    <i class="fa fa-filter"></i>
+  </button>
+
+  <!-- ─── Mobile Cart Overlay ─── -->
+  <div
+    class="mobile-cart-overlay d-md-none"
+    [class.active]="isMobileCartOpen"
+    (click)="toggleMobileCart()"
+  ></div>
+
+  <!-- ─── Mobile Cart Panel ─── -->
+  <div
+    class="mobile-cart-panel d-md-none"
+    [class.active]="isMobileCartOpen"
+  >
+    <div class="mobile-cart-header">
+      <button
+        class="back-button"
+        (click)="toggleMobileCart()"
+        aria-label="Go Back"
+      >
+        <i class="fa fa-arrow-left"></i>
+      </button>
+      <h2>Shopping Cart</h2>
+      <button
+        class="close-button"
+        (click)="toggleMobileCart()"
+        aria-label="Close Cart"
+      >
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Reusable Cart Sidebar for Mobile -->
+    <app-b2c-cart-sidebar (closeMobileCart)="toggleMobileCart()"></app-b2c-cart-sidebar>
+  </div>
+
+  <!-- ─── Mobile Filter Overlay ─── -->
+  <div
+    class="mobile-filter-overlay d-md-none"
+    [class.active]="isMobileFilterOpen"
+    (click)="toggleMobileFilter()"
+  ></div>
+
+  <!-- ─── Mobile Filter Panel ─── -->
+  <div
+    class="mobile-filter-panel d-md-none"
+    [class.active]="isMobileFilterOpen"
+  >
+    <div class="mobile-filter-header">
+      <h2>Filters</h2>
+      <button
+        class="close-button"
+        (click)="toggleMobileFilter()"
+        aria-label="Close Filters"
+      >
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Reusable Filter Component for Mobile -->
+    <app-filter></app-filter>
+  </div>
+
+  <!-- ─── General Search Component ─── -->
+  <div
+    class="general-search"
+    [class.expanded-left]="!isFilterSidebarCollapsed"
+    [class.expanded-right]="!isCartSidebarCollapsed"
+  >
+    <app-b2c-general-search></app-b2c-general-search>
+  </div>
+
+  <!-- ─── Desktop Right Sidebar (Cart Sidebar) ─── -->
+  <div class="sidebar-cart" [class.collapsed]="isCartSidebarCollapsed">
+    <app-b2c-cart-sidebar></app-b2c-cart-sidebar>
+  </div>
+
+  <!-- ─── Desktop Toggle Button for Cart Sidebar ─── -->
+  <button
+    class="toggle-btn cart-toggle"
+    (click)="toggleCartSidebar()"
+    aria-label="Toggle Cart"
+  >
+    <span class="toggle-icon">
+      <!-- Show shopping cart icon when collapsed, close icon when open -->
+      <i
+        class="fa"
+        [ngClass]="isCartSidebarCollapsed ? 'fa-shopping-cart' : 'fa-times'"
+      ></i>
+    </span>
+  </button>
+</div>

@@ -1,0 +1,208 @@
+.sidebar-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 100vw;
+  z-index: 2000;
+  pointer-events: none;
+}
+
+.sidebar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 0;
+  background-image: url('/assets/SanwaSystemLogin.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat; 
+  transition: width 0.3s ease;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.sidebar.expanded {
+  width: 100%; 
+  transition: width 0.3s ease;
+}
+
+.logo{
+  width: 250px;
+  padding-top: 10px;
+  padding-left: 30px;
+  margin-bottom: -100px;
+  padding-bottom: -150px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: rgb(227, 222, 222);
+  &:hover {
+    transform: scale(1.4);
+  }
+  cursor: pointer;
+}
+
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content:left;
+  height: 100%; /* Ensure container takes full height */
+  padding-top: 40px;
+  padding-right: 20px;
+}
+
+.screen {
+  background: #f6f5f3;
+  display:grid;
+  justify-items:left;
+  padding-left: 30px;
+  padding-right: 50px;
+  box-shadow: 0px 0px 24px #585757;
+  border-radius: 10px;
+}
+
+.screen__content {
+  height: 100%;
+}
+
+.login {
+  width: 320px;
+  padding: 30px;
+  padding-top: 156px;
+}
+
+.login__field {
+  padding: 20px 0px;
+  position: relative;
+}
+
+.login__icon {
+  position: absolute;
+  top: 30px;
+  color: #484848e4;
+}
+
+.login__input {
+  border: none;
+  border-bottom: 2px solid #d4d1d1;
+  background: none;
+  padding: 10px;
+  padding-left: 24px;
+  font-weight: 700;
+  width: 100%;
+  transition: .2s;
+}
+
+.login__input:active,
+.login__input:focus,
+.login__input:hover {
+  outline: none;
+  border-bottom-color: #9e6767;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.login__submit {
+  background: #fff;
+  font-size: 14px;
+  margin-top: 30px;
+  padding: 16px 20px;
+  border-radius: 10px;
+  border: none;
+  text-transform: uppercase;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  width: 40%;
+  color: #ffffff;
+  background-color: #b71c1c;
+  box-shadow: 0px 2px 2px #bcb1b1;
+  cursor: pointer;
+  transition: all .3s;
+  position: relative;
+  right: 10px;
+  bottom: 20px;
+}
+
+.login__submit:hover {
+  box-shadow: 0px 15px 25px -5px rgba(0, 0, 0, 0.3);
+  transform: scale(1.03);
+}
+
+.login__submit:active {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  transform: scale(0.98);
+}
+
+.login__dropdown {
+  width: 100%;
+  padding: 10px;
+  padding-left: 24px;
+  font-weight: 700;
+  background: none;
+  border: none;
+  border-bottom: 2px solid #d4d1d1;
+  color: #000000;
+  transition: .2s;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23b57575" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+  background-repeat: no-repeat;
+  background-position-x: 100%;
+  background-position-y: 5px;
+}
+
+.signup-link {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.signup-link a {
+  color: #9d4848;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
+.error-message {
+  color: #ff4b4b; /* More subtle red */
+  background-color: rgba(255, 75, 75, 0.1); /* Light red background */
+  padding: 10px; /* Add padding around the message */
+  border-radius: 5px; /* Rounded corners */
+  font-weight: bold;
+  margin-bottom: 20px; /* Increase spacing between the message and buttons */
+  text-align: center;
+  border: 1px solid #ff4b4b; /* Add a thin border for emphasis */
+}
+
+
+
+.toggle-password{
+  display: flex;
+  border: none;
+  height: 40px;
+  .eye{
+    position: relative;
+    top: 0px;
+    right: 20px;
+    border: none;
+    background: none;
+  }
+}

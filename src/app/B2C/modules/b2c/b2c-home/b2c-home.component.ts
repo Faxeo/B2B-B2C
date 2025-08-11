@@ -1,0 +1,1242 @@
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  Inject,
+  OnInit,
+  PLATFORM_ID,
+} from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { ApiService } from '../../../../core/services/api.service';
+import { BehaviorSubject, fromEvent, Observable, of } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  switchMap,
+  catchError,
+} from 'rxjs/operators';
+import { HttpClientModule } from '@angular/common/http';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { SidebarComponent } from '../../../../layout/sidebar/sidebar/sidebar.component';
+import { SidebarToggleService } from '../../../../core/services/sidebar-toggle/sidebar-toggle.service';
+import { FooterComponent } from '../../../../layout/footer/footer.component';
+import { LoginService } from '../../../../core/services/login-service/login-service.service';
+import { CustomerLoginService } from '../../../../core/services/customer-login/customer-login.service';
+import { LogoutService } from '../../../../core/services/logout-service/logout-service.service';
+import { AddToCartService } from '../../../../core/services/add-to-cart/add-to-cart.service';
+import { CartService } from '../../../../core/services/cart/cart.service';
+import { FormsModule } from '@angular/forms';
+import { DynamicSearchService } from '../../../../core/services/dynamic-search/dynamic-search.service';
+import { SearchComponent } from '../../../../modules/search/search.component';
+import { FetchChildService } from '../../../../core/services/fetch-child/fetch-child.service';
+import { FetchMakeService } from '../../../../core/services/fetch-make/fetch-make.service';
+import { FetchYearService } from '../../../../core/services/fetch-year/fetch-year.service';
+import { VehicleSearchService } from '../../../../core/services/search-vehicle/search-vehicle.service';
+import { MainCategoryService } from '../../../../core/services/main-category/main-category.service';
+import { SubCategoryService } from '../../../../core/services/sub-category/sub-category.service';
+import { CategoryIdService } from '../../../../core/services/category-id/category-id.service';
+import { B2cSearchComponent } from '../b2c-search/b2c-search.component';
+import { Brand, GetBrandsService } from '../../../../core/services/get-brands/get-brands.service';
+import { ChatBotComponent } from '../../../../modules/chat-bot/chat-bot.component';
+import { AddToWishlistService } from '../../../../core/services/add-to-wishlist/add-to-wishlist.service';
+import { ToastrService } from 'ngx-toastr';
+import { CookieService } from 'ngx-cookie-service';
+import { SearchQueryService } from '../../../../core/services/search-query/search-query.service';
+import { WishlistService } from '../../../../core/services/wishlist/wishlist.service';
+import { NgSelectModule } from '@ng-select/ng-select';
+
+@Component({
+  selector: 'app-b2c-home',
+  standalone: true,
+  imports: [
+    CommonModule,
+    HttpClientModule,
+    RouterModule,
+    SidebarComponent,
+    NgSelectModule,
+    // FooterComponent,
+    FormsModule,
+    // SearchComponent,
+    // B2cSearchComponent,
+    ChatBotComponent
+  ],
+  providers: [ApiService, SidebarToggleService],
+  templateUrl: './b2c-home.component.html',
+  styleUrls: [
+    './b2c-home.component.css'
+  ]
+})
+
+export class B2CHomeComponent implements OnInit {
+  showSearchBar = true; // Initially, show the search bar
+  isSliderVisible: boolean = false;
+  isSidebarVisible = false;
+  categories$: Observable<any[]> | undefined;
+  products$: Observable<any[]> | undefined; // For trending items
+  searchProducts$: Observable<any[]> = of([]); // Initialize as empty array observable
+  showingSearchResults: boolean = false; // Flag to toggle between trending and search results
+  // showSearchComponent: boolean = false; 
+  loginType: string | null = null;
+  isCustomerLoggedIn: boolean = false;
+  isAdminSidebarVisible: boolean = false;
+  userID: string | null = null;
+  message: string = '';
+  searchInput$ = new BehaviorSubject<string>(''); // Search input
+  searchQuery: string = ''; // Store the search query entered by the user
+  cartItemCount: number = 0; // Variable for cart item count
+  wishlistCount: number = 0; // Variable for cart item count
+  isLoading: boolean = false; // Main loading flag
+  isPaginationLoading: boolean = false; // Pagination loading flag
+  totalPages: number = 0; // Initialize to 0 or another appropriate value
+  currentPage: number = 1; // Start at the first page by default
+  searchEnabled: boolean = false; // Controls whether the main search input is enabled or not
+  searchPlaceholder: string = ''; // Placeholder for the main search bar based on button click
+  showVehicleForm: boolean = false;
+  selectedYear: string = '';
+  selectedMake: string = '';
+  selectedModel: string = '';
+  selectedTrim: string = ''; // Variable for selected trim
+  selectedEngine: string = '';
+  years: { year: string }[] = [];
+  makes: { name: string; cvalue_id: number }[] = [];
+  models: { name: string; cvalue_id: number }[] = [];
+  trims: { name: string; cvalue_id: number }[] = []; // Array for trims
+  engines: { name: string }[] = [];
+  currentSearchType: 'generalSearch' | 'vehicleSearch' | 'categorySearch' | null = null;
+  hasSearched: boolean = false; // Track if a search has been performed at least once
+  showMainSearchBar: boolean = false;
+  mainCategories: { id: number; name: string }[] = [];
+  firstSubCategories: { id: number; name: string }[] = [];
+  secondSubCategories: { id: number; name: string }[] = [];
+  selectedMainCategory: string = '';
+  selectedFirstSubCategory: string = '';
+  selectedSecondSubCategory: string = '';
+  showCategoryForm: boolean = false;
+  isBrowser: boolean = false;
+  showDropdown: boolean = false;
+  brands: Brand[] = [];
+  paginatedBrands: Brand[][] = [];
+  currentBrandsPage = 0;
+  brandsPerPage = 6;
+  customer_name: string = '';
+
+    // --- Make ---
+  makeInput: string = '';
+  filteredMakes: any[] = [];
+  showMakeDropdown: boolean = false;
+
+  // --- Model ---
+  modelInput: string = '';
+  filteredModels: any[] = [];
+  showModelDropdown: boolean = false;
+
+  // --- Trim ---
+  trimInput: string = '';
+  filteredTrims: any[] = [];
+  showTrimDropdown: boolean = false;
+
+
+  constructor(
+    private apiService: ApiService,
+    private sidebarToggleService: SidebarToggleService,
+    private loginService: LoginService,
+    private customerLoginService: CustomerLoginService,
+    private addToCartService: AddToCartService,
+    private cartService: CartService,
+    private logoutService: LogoutService,
+    private dynamicSearchService: DynamicSearchService,
+    private cdr: ChangeDetectorRef,
+    private fetchYearService: FetchYearService,
+    private fetchMakeService: FetchMakeService,
+    private fetchChildService: FetchChildService,
+    private changeDetectorRef: ChangeDetectorRef,
+    private vehicleSearchService: VehicleSearchService,
+    private mainCategoryService: MainCategoryService,
+    private subCategoryService: SubCategoryService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private cookieService: CookieService,
+    private brandsService: GetBrandsService,
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private addToWishlistService: AddToWishlistService,
+    private toastr: ToastrService,
+    private searchQueryService: SearchQueryService,
+    private wishlistService: WishlistService
+  ) { }
+
+
+  ngOnInit(): void {
+  this.filteredMakes = [];
+  this.filteredModels = [];
+  this.filteredTrims = [];
+
+  this.route.url.subscribe((segments) => {
+    if (segments.map(segment => segment.path).includes('search')) {
+      this.isLoading = false;
+    }
+  });
+
+  this.isBrowser = isPlatformBrowser(this.platformId);
+  this.getMainCategories();
+  this.getYears();
+
+  if (this.isBrowser) {
+    const token = this.cookieService.get('authToken') || localStorage.getItem('authToken');
+
+    if (token) {
+      const customerName = this.customerLoginService.getCustomerName();
+      const customerID = this.customerLoginService.getCustomerID();
+
+      console.log('🔑 Token exists. Decoded name:', customerName, 'ID:', customerID);
+
+      if (customerName) {
+        this.loginService.setUserName(customerName);
+        this.loginService.setLoginType('customer');
+        this.isCustomerLoggedIn = true;
+
+        this.loginService.setUserID(customerID || '');
+        this.loginService.refreshFromStorage(); // Optional if already using BehaviorSubjects
+        console.log('✅ Set loginService values from token (name, id, type)');
+      }
+    }
+
+    // 👤 Subscribe AFTER values are set
+    this.loginService.getUserName().subscribe((name) => {
+      this.customer_name = name || '';
+      this.isCustomerLoggedIn = !!name;
+      console.log('👤 Customer Name from loginservice:', name);
+      this.cdr.detectChanges();
+    });
+
+    this.loginService.getUserID().subscribe((userID) => {
+      this.userID = userID;
+
+      // ✅ Now pass userID to cartService AFTER it's set
+      this.cartService.setUserDetails(this.userID, this.loginType);
+
+      this.cdr.detectChanges();
+    });
+
+    this.loginService.getLoginType().subscribe((loginType) => {
+      this.loginType = loginType;
+
+      if (loginType === 'business') {
+        const username = localStorage.getItem('username');
+        this.loginType = username || loginType;
+        console.log('User ID (business):', username);
+      }
+
+      console.log('🧩 Login type updated:', this.loginType);
+      this.cdr.detectChanges();
+    });
+  }
+
+  // 📦 Categories observable
+  this.categories$ = this.apiService.getMainCategory().pipe(
+    map((categories) =>
+      categories.map((category: { id: number; name: string; productCount: number }) => ({
+        ...category,
+        productCount: category.productCount || 0
+      }))
+      .sort((a: { productCount: number }, b: { productCount: number }) => b.productCount - a.productCount)
+    )
+  );
+
+  // 🔥 Trending products
+  this.products$ = this.apiService.getTopSellingProducts().pipe(
+    map((products) =>
+      products.map((product: { product_image: string }) => ({
+        ...product,
+        image: product.product_image,
+        product_quantity: 1,
+        showMessage: false
+      }))
+    )
+  );
+
+  // 🛒 Cart count
+  this.cartService.cartItemCount$.subscribe((count) => {
+    this.cartItemCount = count;
+  });
+
+  // 🏷️ Load paginated brands
+  this.loadBrands();
+
+  // 🔍 Query param search binding
+  this.route.queryParams.subscribe(params => {
+    if (params['query']) {
+      const queryFromUrl = params['query'];
+      this.searchQuery = queryFromUrl;
+      this.searchQueryService.setQuery(queryFromUrl);
+
+      const searchInput = document.getElementById('search-input') as HTMLInputElement;
+      if (searchInput) {
+        searchInput.value = queryFromUrl;
+        }
+      }
+    });
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    const stickyDiv = document.getElementById('stickyButtons');
+    const navbar = document.querySelector('.navbar'); // Get the navbar element
+
+    if (stickyDiv && navbar) {
+      const navbarHeight = navbar.clientHeight; // Get navbar height dynamically
+      const scrollY = window.scrollY || window.pageYOffset;
+      const offsetTop = stickyDiv.offsetTop - navbarHeight; // Adjust based on navbar height
+
+      if (scrollY > offsetTop) {
+        stickyDiv.classList.add('sticky', 'sticky-visible');
+        stickyDiv.style.top = `${navbarHeight}px`; // Dynamically set the position below navbar
+      } else {
+        stickyDiv.classList.remove('sticky-visible');
+        setTimeout(() => {
+          stickyDiv.classList.remove('sticky');
+        }, 100); // Delay for smooth animation
+      }
+    }
+  }
+
+  loadWishlistData(): void {
+    if (!this.userID) {
+      return;
+    }
+    // Fetch wishlist details from the service
+    this.wishlistService.getWishlistDetailsByBusinessId(Number(this.userID)).subscribe(
+      (data) => {
+        // Map the products array to wishlistItems
+        this.wishlistCount = data.products.length;
+      },
+      (error) => {
+        console.error('Error fetching wishlist details:', error);
+      }
+    );
+  }
+
+  openSidebar(): void {
+    this.sidebarToggleService.toggleSidebar();
+  }
+
+  toggleAdminSidebar() {
+    this.isAdminSidebarVisible = !this.isAdminSidebarVisible;
+  }
+
+  toggleSlider(): void {
+    this.isSliderVisible = !this.isSliderVisible;
+    this.cdr.detectChanges();
+    // this.sidebarToggleService.toggleSidebar();
+
+    // Toggle sidebar visibility when slider is activated
+    //  if (this.isSliderVisible) {
+    //   this.isSidebarVisible = true;
+    // } else {
+    //   this.isSidebarVisible = false;
+    // }
+    console.log('isSliderVisible:', this.isSliderVisible, 'isSidebarVisible:', this.isSidebarVisible);
+
+    // Use Angular's Renderer2 for DOM manipulation if necessary
+    const sliderContainer = document.getElementById('sliderContainer');
+    const sliderButton = document.getElementById('sliderButton');
+
+    if (sliderContainer && sliderButton) {
+      if (this.isSliderVisible) {
+        sliderContainer.classList.add('active');
+        sliderButton.classList.add('slide-out');
+      } else {
+        sliderContainer.classList.remove('active');
+        sliderButton.classList.remove('slide-out');
+      }
+    }
+  }
+
+  becomeB2BUser() {
+    this.router.navigate(['/B2B']);
+  }
+
+  onCategoryClick(categoryId: number): void {
+    this.selectedMainCategory = categoryId.toString();
+    this.searchByCategory();
+  }
+
+  getMainCategories(): void {
+    this.mainCategoryService.getMainCategories().subscribe(
+      (data: any[]) => {
+        // console.log('Main Categories API Response:', data);
+        if (Array.isArray(data)) {
+          this.mainCategories = data.map((category) => ({
+            id: category.id,
+            name: category.name,
+          }));
+          // console.log('Mapped Main Categories:', this.mainCategories);
+        } else {
+          console.error('Unexpected API response format or empty response:', data);
+          this.mainCategories = []; // Assign an empty array to avoid further errors
+        }
+      },
+      (error: any) => {
+        console.error('Error fetching main categories:', error);
+      }
+    );
+  }
+
+  loadBrands(): void {
+    this.brandsService.fetchAllBrands().subscribe({
+      next: (data) => {
+        // console.log('Fetched brands: ', data);
+        this.brands = data;
+
+        this.updatePagination();
+      },
+      error: (err) => {
+        console.error('Error fetching brands:', err);
+      },
+    });
+  }
+
+  updatePagination() {
+    this.paginatedBrands = [];
+    for (let i = 0; i < this.brands.length; i += this.brandsPerPage) {
+      this.paginatedBrands.push(this.brands.slice(i, i + this.brandsPerPage));
+    }
+    this.currentBrandsPage = 0;
+  }
+
+  onMainCategoryChange(): void {
+    if (this.selectedMainCategory) {
+      this.subCategoryService.getSubCategories(1, Number(this.selectedMainCategory)).subscribe(
+        (data: any[]) => {
+          console.log('First Sub-Categories API Response:', data); // Debugging: Log the response
+          if (Array.isArray(data)) {
+            this.firstSubCategories = data.map((subCategory) => ({
+              id: subCategory.id,
+              name: subCategory.name,
+            }));
+          } else {
+            console.error('Unexpected API response format for first sub-categories:', data);
+            this.firstSubCategories = []; // Assign an empty array if the response is not as expected
+          }
+          this.selectedFirstSubCategory = '';
+          this.secondSubCategories = [];
+          this.selectedSecondSubCategory = '';
+        },
+        (error: any) => {
+          console.error('Error fetching first sub-categories:', error);
+        }
+      );
+    }
+  }
+
+  // Fetch second sub-categories based on selected first sub-category
+  onFirstSubCategoryChange(): void {
+    if (this.selectedFirstSubCategory) {
+      this.subCategoryService.getSubCategories(2, Number(this.selectedFirstSubCategory)).subscribe(
+        (data: any[]) => {
+          // console.log('Second Sub-Categories API Response:', data); 
+          if (Array.isArray(data)) {
+            this.secondSubCategories = data.map((subCategory) => ({
+              id: subCategory.id,
+              name: subCategory.name,
+            }));
+          } else {
+            console.error('Unexpected API response format for second sub-categories:', data);
+            this.secondSubCategories = []; // Assign an empty array if the response is not as expected
+          }
+          this.selectedSecondSubCategory = '';
+        },
+        (error: any) => {
+          console.error('Error fetching second sub-categories:', error);
+        }
+      );
+    }
+  }
+
+  displaySearchBar(option: string): void {
+    if (option === 'Category') {
+      this.showCategoryForm = true;
+      this.showVehicleForm = false; // Hide vehicle form when category form is shown
+      this.getMainCategories(); // Fetch main categories when 'Category' is selected
+      console.log('Category form should be visible now.'); // Debugging statement
+    } else if (option === 'Vehicle') {
+      this.showVehicleForm = true;
+      this.showCategoryForm = false;
+    } else {
+      this.showCategoryForm = false;
+      this.showVehicleForm = false;
+    }
+    this.cdr.detectChanges(); // Ensure the view is updated when the flag changes
+  }
+
+
+  searchByCategory(page: number = 1): void {
+    this.currentSearchType = 'categorySearch';
+
+    const requestData = {
+      productName: '',
+      manufacturer: '',
+      compatibility: '',
+      brand: '',
+      description: '',
+      upc: '',
+      partNumber: '',
+      attribute: '',
+      includeCompatibility: false,
+      includeManufacturer: false,
+      includeAttribute: false,
+      includeQuantity: false,
+      includeImages: false,
+      skip: (page - 1) * 10,
+      take: 10,
+      m_id: this.selectedMainCategory
+        ? Number(this.selectedMainCategory)
+        : null,
+      f_id: this.selectedFirstSubCategory
+        ? Number(this.selectedFirstSubCategory)
+        : null,
+      s_id: this.selectedSecondSubCategory
+        ? Number(this.selectedSecondSubCategory)
+        : null,
+      page: page,
+    };
+
+    const queryParams: any = {};
+
+    if (this.selectedMainCategory) {
+      queryParams.mainCategory = this.selectedMainCategory;
+    }
+    if (this.selectedFirstSubCategory) {
+      queryParams.firstSubCategory = this.selectedFirstSubCategory;
+    }
+    if (this.selectedSecondSubCategory) {
+      queryParams.secondSubCategory = this.selectedSecondSubCategory;
+    }
+
+    if (Object.keys(queryParams).length > 0) {
+      this.router.navigate(['/B2C/search'], { queryParams });
+    }
+
+    this.dynamicSearchService.searchProducts(requestData).subscribe(
+      (data: any) => {
+        this.searchProducts$ = of(data.products || []);
+        this.showCategoryForm = false;
+        // this.showSearchComponent = true;
+        this.totalPages = data.totalPages || 1;
+        this.currentPage = page;
+
+        this.isLoading = false;
+        this.isPaginationLoading = false;
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        console.error('Category Search Error:', error);
+
+        this.isLoading = false;
+        this.isPaginationLoading = false;
+        this.cdr.detectChanges();
+      }
+    );
+  }
+
+  updateVehicleSelection(vehicle: any) {
+    this.vehicleSearchService.setVehicleData(vehicle); // Save vehicle data
+    // console.log('Updated vehicle data:', vehicle); 
+  }
+
+  onSearchOptionClick(option: string): void {
+    this.showSearchBar = false; // Hide main search bar by default
+
+    if (option === 'Vehicle') {
+      this.showVehicleForm = true;
+      this.showCategoryForm = false;
+    } else if (option === 'Category') {
+      this.showCategoryForm = true;
+      this.showVehicleForm = false;
+      this.getMainCategories(); // Fetch categories immediately
+    } else {
+      this.showCategoryForm = false;
+      this.showVehicleForm = false;
+    }
+
+    this.searchEnabled = true;
+    this.searchPlaceholder = `Search By ${option}`;
+    this.cdr.detectChanges();  // Ensure the DOM reflects the change immediately
+  }
+
+
+  onSearchClick(): void {
+    debugger;
+    if (this.searchPlaceholder === 'Search By Vehicle') {
+      this.showVehicleForm = true; // Show the vehicle form
+    }
+    else if (this.searchPlaceholder === 'Search By Category') {
+      this.showCategoryForm = true; // Show the category form
+    }
+    console.log('Search clicked');
+  }
+
+  closeVehicleForm(): void {
+    this.showVehicleForm = false; // Close the vehicle form
+  }
+
+  getYears(): void {
+    this.fetchYearService.fetchYears().subscribe(
+      (data: any[]) => {
+        // console.log('Fetched Years:', data);
+        this.years = data.map((item) => ({ year: item.value_name }));
+      },
+      (error) => {
+        console.error('Error fetching years:', error);
+      }
+    );
+  }
+
+  onYearChange(): void {
+  if (this.selectedYear) {
+    this.fetchMakeService.fetchMakes(this.selectedYear).subscribe(
+      (data: any[]) => {
+        this.makes = data.map((item) => ({
+          name: item.value_name,
+          cvalue_id: item.cvalue_id,
+        }));
+        this.updateVehicleSelection({ year: this.selectedYear });
+
+        // Reset all child fields
+        this.makeInput = '';
+        this.selectedMake = '';
+        this.modelInput = '';
+        this.selectedModel = '';
+        this.trimInput = '';
+        this.selectedTrim = '';
+        this.selectedEngine = '';
+        this.models = [];
+        this.trims = [];
+        this.engines = [];
+        this.filteredMakes = [];
+        this.filteredModels = [];
+        this.filteredTrims = [];
+      },
+      (error) => {
+        console.error('Error fetching makes:', error);
+        }
+      );
+    }
+  }
+
+  filterMakes(value: string): void {
+  if (value) {
+    this.filteredMakes = this.makes.filter(make =>
+      make.name.toLowerCase().includes(value.toLowerCase())
+    );
+    this.showMakeDropdown = true; 
+    this.selectedMake = ''; 
+  } else {
+    this.filteredMakes = [...this.makes];
+  }
+
+    this.showMakeDropdown = true;
+    this.selectedMake = ''; // Clear selected until confirmed
+  }
+
+  selectMake(make: any): void {
+  this.makeInput = make.name;
+  this.selectedMake = make.name;
+  this.showMakeDropdown = false;
+
+  const selectedMakeObject = this.makes.find(m => m.name === make.name);
+  const parentID = selectedMakeObject ? selectedMakeObject.cvalue_id : 0;
+
+  this.fetchChildService.fetchChildren(parentID).subscribe(
+    (data: any[]) => {
+      this.models = data.map((item) => ({
+        name: item.value_name,
+        cvalue_id: item.cvalue_id,
+      }));
+
+      this.updateVehicleSelection({ make: this.selectedMake });
+
+      // Reset lower selections
+      this.modelInput = '';
+      this.selectedModel = '';
+      this.trimInput = '';
+      this.selectedTrim = '';
+      this.selectedEngine = '';
+      this.trims = [];
+      this.engines = [];
+      this.filteredModels = [];
+      this.filteredTrims = [];
+      this.cdr.detectChanges();
+    },
+    (error) => console.error('Error fetching models:', error)
+    );
+  }
+
+  hideMakeDropdown(): void {
+  setTimeout(() => {
+    this.showMakeDropdown = false;
+    }, 200);
+  }
+  hideModelDropdown(): void {
+  setTimeout(() => {
+    this.showModelDropdown = false;
+  }, 200); // Allows time for mousedown to register before hiding
+  }
+
+  filterModels(value: string): void {
+  if (value) {
+    this.filteredModels = this.models.filter(model =>
+      model.name.toLowerCase().includes(value.toLowerCase())
+    );
+    this.showModelDropdown = true;
+    this.selectedModel = '';
+  } else {
+    this.filteredModels = [...this.models];
+  }
+
+    this.showModelDropdown = true;
+    this.selectedModel = '';
+  }
+  filterTrims(value: string): void {
+  if (value) {
+    this.filteredTrims = this.trims.filter(trim =>
+      trim.name.toLowerCase().includes(value.toLowerCase())
+    );
+    this.showTrimDropdown = true;
+    this.selectedTrim = '';
+  } else {
+    this.filteredTrims = [...this.trims];
+  }
+
+    this.showTrimDropdown = true;
+    this.selectedTrim = '';
+  }
+
+  selectModel(model: any): void {
+  this.modelInput = model.name;
+  this.selectedModel = model.name;
+  this.showModelDropdown = false;
+
+  const selectedModelObject = this.models.find(m => m.name === model.name);
+  const parentID = selectedModelObject ? selectedModelObject.cvalue_id : 0;
+
+  this.fetchChildService.fetchChildren(parentID).subscribe(
+    (data: any[]) => {
+      this.trims = data.map((item) => ({
+        name: item.value_name,
+        cvalue_id: item.cvalue_id,
+      }));
+
+      this.updateVehicleSelection({ model: this.selectedModel });
+
+      // Reset lower fields
+      this.trimInput = '';
+      this.selectedTrim = '';
+      this.selectedEngine = '';
+      this.engines = [];
+      this.filteredTrims = [];
+      this.cdr.detectChanges();
+    },
+    (error) => console.error('Error fetching trims:', error)
+    );
+  }
+
+  onMakeChange(): void {
+    if (this.selectedMake) {
+      const selectedMakeObject = this.makes.find(
+        (make) => make.name === this.selectedMake
+      );
+      const parentID = selectedMakeObject ? selectedMakeObject.cvalue_id : 0;
+
+      this.fetchChildService.fetchChildren(parentID).subscribe(
+        (data: any[]) => {
+          // console.log('Fetched Models:', data);
+          this.models = data.map((item) => ({
+            name: item.value_name,
+            cvalue_id: item.cvalue_id,
+          }));
+          // Save the selected make in the service
+          this.updateVehicleSelection({ make: this.selectedMake });
+          this.selectedModel = '';
+          this.trims = [];
+          this.engines = [];
+          this.selectedTrim = '';
+          this.selectedEngine = '';
+          this.changeDetectorRef.detectChanges();
+        },
+        (error) => {
+          console.error('Error fetching models:', error);
+        }
+      );
+    }
+  }
+
+  onModelChange(): void {
+    if (this.selectedModel) {
+      const selectedModelObject = this.models.find(
+        (model) => model.name === this.selectedModel
+      );
+      const modelID = selectedModelObject ? selectedModelObject.cvalue_id : 0;
+
+      this.fetchChildService.fetchChildren(modelID).subscribe(
+        (data: any[]) => {
+          // console.log('Fetched Trims:', data);
+          this.trims = data.map((item) => ({
+            name: item.value_name,
+            cvalue_id: item.cvalue_id,
+          }));
+          // Save the selected model in the service
+          this.updateVehicleSelection({ model: this.selectedModel });
+          this.selectedTrim = '';
+          this.engines = [];
+          this.selectedEngine = '';
+          this.changeDetectorRef.detectChanges();
+        },
+        (error) => {
+          console.error('Error fetching trims:', error);
+        }
+      );
+    }
+  }
+
+  selectTrim(trim: any): void {
+  this.trimInput = trim.name;
+  this.selectedTrim = trim.name;
+  this.showTrimDropdown = false;
+
+  const selectedTrimObject = this.trims.find(t => t.name === trim.name);
+  const parentID = selectedTrimObject ? selectedTrimObject.cvalue_id : 0;
+
+  this.fetchChildService.fetchChildren(parentID).subscribe(
+    (data: any[]) => {
+      this.engines = data.map((item) => ({ name: item.value_name }));
+      this.updateVehicleSelection({ trim: this.selectedTrim });
+
+      this.selectedEngine = '';
+      this.cdr.detectChanges();
+    },
+    (error) => console.error('Error fetching engines:', error)
+  );
+}
+
+hideTrimDropdown(): void {
+  setTimeout(() => {
+    this.showTrimDropdown = false;
+  }, 200);
+}
+
+  onTrimChange(): void {
+    if (this.selectedTrim) {
+      const selectedTrimObject = this.trims.find(
+        (trim) => trim.name === this.selectedTrim
+      );
+      const trimID = selectedTrimObject ? selectedTrimObject.cvalue_id : 0;
+
+      this.fetchChildService.fetchChildren(trimID).subscribe(
+        (data: any[]) => {
+          // console.log('Fetched Engines:', data);
+          this.engines = data.map((item) => ({ name: item.value_name }));
+          // Save the selected trim in the service
+          this.updateVehicleSelection({ trim: this.selectedTrim });
+          this.selectedEngine = '';
+          this.changeDetectorRef.detectChanges();
+        },
+        (error) => {
+          console.error('Error fetching engines:', error);
+        }
+      );
+    }
+  }
+
+  onEngineChange(): void {
+    if (this.selectedEngine) {
+      // Update vehicle selection with engine
+      this.updateVehicleSelection({ engine: this.selectedEngine });
+      // console.log('Selected Engine:', this.selectedEngine); 
+    } else {
+      console.log('Engine is not selected'); // Debug log
+    }
+  }
+
+  searchByVehicle(page: number = 1): void {
+    this.currentSearchType = 'vehicleSearch';
+    const vehicleData = this.vehicleSearchService.getVehicleData();
+    const searchInputElement = document.getElementById(
+      'search-input'
+    ) as HTMLInputElement;
+    const newSearchQuery = searchInputElement
+      ? searchInputElement.value.trim()
+      : '';
+
+    // if (!this.showSearchComponent || newSearchQuery !== this.searchQuery) {
+    //   this.isLoading = true;
+    //   this.isPaginationLoading = false;
+    //   this.searchQuery = newSearchQuery;
+    // } else {
+    //   this.isLoading = false;
+    //   this.isPaginationLoading = true;
+    // }
+
+    // this.showSearchComponent = true;
+
+    const take = 10;
+    const skip = (page - 1) * take;
+
+    const requestData = {
+      productName: '',
+      manufacturer: '',
+      compatibility: '',
+      brand: '',
+      description: '',
+      upc: '',
+      partNumber: '',
+      attribute: '',
+      includeCompatibility: false,
+      includeManufacturer: false,
+      includeAttribute: false,
+      includeQuantity: false,
+      includeImages: false,
+      skip: skip,
+      take: take,
+      search_description: '',
+      compatiblityValues: {
+        compatibilityID: 0,
+        productID: 0,
+        sno: null,
+        year: vehicleData.year,
+        make: vehicleData.make,
+        model: vehicleData.model,
+        trim: vehicleData.trim,
+        engine: vehicleData.engine,
+        notes: '',
+        isDeleted: null,
+      },
+      product_Attributes:
+        "SELECT product_id FROM product_attributes_view WHERE concatenated_attributes LIKE '%%' order by product_id",
+      attributeSearch: false,
+      page: page,
+    };
+
+    if (
+      vehicleData.year &&
+      vehicleData.make &&
+      vehicleData.model &&
+      vehicleData.trim &&
+      vehicleData.engine
+    ) {
+      this.router.navigate(['/B2C/search'], {
+        queryParams: {
+          year: vehicleData.year,
+          make: vehicleData.make,
+          model: vehicleData.model,
+          trim: vehicleData.trim,
+          engine: vehicleData.engine,
+        },
+      });
+    }
+
+    this.dynamicSearchService.searchProducts(requestData).subscribe(
+      (data: any) => {
+        this.searchProducts$ = of(data.products || []);
+        this.showVehicleForm = false;
+        // this.showSearchComponent = true;
+        this.totalPages = data.totalPages || 1;
+        this.currentPage = page;
+
+        this.isLoading = false;
+        this.isPaginationLoading = false;
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        console.error('Vehicle Search Error:', error);
+        this.isLoading = false;
+        this.isPaginationLoading = false;
+        this.cdr.detectChanges();
+      }
+    );
+  }
+
+
+  // In home.component.ts, inside the `onSearch` function:
+  onSearch(page: number = 1): void {
+    debugger;
+    this.currentSearchType = 'generalSearch';
+    const searchInputElement = document.getElementById(
+      'search-input'
+    ) as HTMLInputElement;
+    const newSearchQuery = searchInputElement
+      ? searchInputElement.value.trim()
+      : '';
+
+    // Initialize loading states
+    this.isPaginationLoading = page !== 1; // Only show pagination loading for pages other than 1
+    this.isLoading = page === 1; // Show main loading spinner only on the first page
+
+    // Update search query if it has changed
+    if (newSearchQuery !== this.searchQuery) {
+      this.searchQuery = newSearchQuery;
+      this.searchQueryService.setQuery(this.searchQuery);
+    }
+
+    // this.showSearchComponent = true;
+    const take = 10;
+    const skip = (page - 1) * take;
+
+    const requestData = {
+      productName: '',
+      manufacturer: '',
+      compatibility: '',
+      brand: '',
+      description: '',
+      upc: '',
+      partNumber: '',
+      attribute: '',
+      includeCompatibility: false,
+      includeManufacturer: false,
+      includeAttribute: false,
+      includeQuantity: false,
+      includeImages: false,
+      skip: skip,
+      take: take,
+      search_description: this.searchQuery,
+      compatiblityValues: {
+        compatibilityID: 0,
+        productID: 0,
+        sno: null,
+        year: '',
+        make: '',
+        model: '',
+        trim: '',
+        engine: '',
+        notes: '',
+        isDeleted: null,
+      },
+      product_Attributes:
+        "SELECT product_id FROM product_attributes_view WHERE concatenated_attributes LIKE '%%' order by product_id",
+      attributeSearch: false,
+      page: page,
+    };
+
+    // Update query params if there's a search query
+
+    this.router.navigate(['/B2C/search'], {
+      queryParams: { query: this.searchQuery },
+    });
+
+    this.dynamicSearchService
+      .searchProducts(requestData)
+      .pipe(
+        map((response: any) => response || []),
+        catchError((error) => {
+          console.error('Error fetching products:', error);
+          this.isLoading = false;
+          this.isPaginationLoading = false;
+          return of({ products: [], totalPages: 1 });
+        })
+      )
+      .subscribe((products: any) => {
+        // Update results and pagination data
+        this.searchProducts$ = of(products.products || []);
+        this.totalPages = products.totalPages || 1;
+        this.currentPage = page;
+
+        // Reset loading states
+        this.isLoading = false;
+        this.isPaginationLoading = false;
+        this.cdr.detectChanges(); // Ensure the UI is updated
+      });
+
+    this.router.navigate(['/B2C/search'], {
+      queryParams: { query: this.searchQuery },
+    });
+  }
+
+  onPageChange(page: number): void {
+    // console.log('Current Search Type:', this.currentSearchType, 'Page:', page); 
+    if (this.currentSearchType === 'generalSearch') {
+      this.onSearch(page); // General search
+    } else if (this.currentSearchType === 'vehicleSearch') {
+      const vehicleData = this.vehicleSearchService.getVehicleData(); // Get stored vehicle data
+      // console.log('Vehicle Data used in Pagination:', vehicleData);
+
+      // Check if vehicle data is available before making a request
+      if (
+        vehicleData &&
+        vehicleData.make &&
+        vehicleData.model &&
+        vehicleData.year &&
+        vehicleData.trim &&
+        vehicleData.engine
+      ) {
+        this.searchByVehicle(page); // Vehicle search, using saved vehicle data
+      } else {
+        console.warn('No vehicle data available for search.'); // Warn if no vehicle data is found
+      }
+    }
+  }
+
+  // Utility to toggle between trending and search products
+  get displayedProducts$(): Observable<any[]> {
+    return this.showingSearchResults ? this.searchProducts$! : this.products$!;
+  }
+
+  toggleDropdown() {
+    this.showDropdown = !this.showDropdown;
+  }
+
+  logout() {
+    this.logoutService.logout();
+  }
+
+  increaseQuantity(product: any): void {
+    if (product.product_quantity < 99) {
+      product.product_quantity += 1;
+    }
+  }
+
+  decreaseQuantity(product: any): void {
+    if (product.product_quantity > 1) {
+      product.product_quantity -= 1;
+    }
+  }
+
+  onQuantityInput(event: any, product: any): void {
+    const inputQuantity = Number(event.target.value);
+    product.product_quantity = inputQuantity > 0 ? inputQuantity : 1;
+  }
+
+
+  // Updated addToCart function to handle logged in and not logged in users
+  addToCart(product: {
+    product_id: number;
+    product_name: string;
+    product_price: number;
+    product_quantity: number;
+    product_image: string;
+    product_identifier2: string;
+    showMessage?: boolean; // Add an optional property for showMessage
+  }): void {
+    debugger;
+    const userID = this.userID || '';
+    const businessId = this.userID ? +this.userID : 0;
+    const upc = product.product_identifier2;
+
+    console.log('Adding product to cart:', product);
+
+    this.addToCartService
+      .addToCart(
+        product.product_id,
+        userID,
+        businessId,
+        product.product_quantity
+      )
+      .subscribe({
+        next: () => {
+          // Update local cart
+          this.cartService.addToCart({
+            productId: product.product_id.toString(),
+            name: product.product_name,
+            price: product.product_price,
+            image: product.product_image,
+            quantity: product.product_quantity,
+            upc: upc
+          });
+
+          // Show success message for this product
+          this.toastr.success("Item added to cart successfully", 'Success');
+
+          // Hide the message after 1 second
+          setTimeout(() => {
+            product.showMessage = false;
+          }, 1000);
+        },
+        error: (error) => {
+          console.error('Error adding to cart:', error);
+        },
+      });
+  }
+
+  closeForm(): void {
+    this.showVehicleForm = false; // Hide the vehicle form
+    this.showCategoryForm = false; // Hide category form if applicable
+  }
+
+  viewProductDetails(productId: number): void {
+    if (productId) {
+      this.router.navigate(['/B2C/product-details', productId]);
+    } else {
+      console.error('Product ID is undefined');
+    }
+  }
+  
+  onBrandClick(brandId: number) {
+    this.router.navigate(['/B2C/search'], { queryParams: { selectedBrand: brandId } });
+  }
+
+  addToWishlist(product: any): void {
+    if (!this.userID) {
+      this.toastr.info('Please log in for wishlist.', 'Login Required');
+      return;
+    }
+
+    this.addToWishlistService
+      .addToWishlist(
+        product.product_id,
+        this.userID,
+        Number(this.userID)
+      )
+      .subscribe({
+        next: () => {
+          product.isInWishlist = true;
+          this.wishlistCount++;
+          this.toastr.success('Product added to wishlist!', 'Success');
+        },
+        error: (error) => {
+          console.error('Error adding to wishlist:', error);
+          this.toastr.error('Error adding item to wishlist!', 'Error');
+        },
+      });
+  }
+
+  getCategoryIcon(name: string): string {
+    const key = name.toLowerCase();
+
+    if (key.includes('body')) return 'bi-person-fill';              // Body Parts
+    if (key.includes('brake') || key.includes('wheel')) return 'bi-circle-half';  // Brake And Wheel
+    if (key.includes('engine') || key.includes('component')) return 'bi-gear-fill'; // Engine & Components
+    if (key.includes('suspension') || key.includes('steering')) return 'bi-arrows-angle-expand'; // Suspension & Steering
+    if (key.includes('filter')) return 'bi-funnel-fill';           // Filter
+    if (key.includes('transmission') || key.includes('drivetrain')) return 'bi-shuffle';  // Transmission & Drivetrain
+    if (key.includes('heat') || key.includes('air conditioning')) return 'bi-snow'; // Heat And Air Conditioning
+    if (key.includes('electrical')) return 'bi-plug-fill';         // Electrical
+    if (key.includes('air') && key.includes('fuel')) return 'bi-wind';  // Air And Fuel Delivery
+    if (key.includes('car parts') || key.includes('accessories')) return 'bi-box-seam'; // Car Parts & Accessories
+    if (key.includes('kits')) return 'bi-tools';                    // Kits
+    if (key.includes('lubricants')) return 'bi-droplet-fill';       // Lubricants
+    if (key.includes('hydraulics')) return 'bi-pie-chart-fill';     // Hydraulics (closest)
+    if (key.includes('tools') || key.includes('supplies')) return 'bi-wrench'; // Automotive Tools & Supplies
+    if (key.includes('ignition')) return 'bi-lightning-fill';       // Ignition System
+    if (key.includes('oil seal')) return 'bi-shield-fill';          // Oil Seal
+    if (key.includes('interior')) return 'bi-cup-fill';             // Interior (symbolic)
+    if (key.includes('cabin') || key.includes('frame')) return 'bi-house-door'; // Cabin & Frame
+
+    return 'bi-box-seam';  // default fallback icon
+  }
+
+  onMouseEnter(event: Event) {
+    const target = event.currentTarget as HTMLElement;
+    target.style.transform = 'scale(1.05)';
+  }
+
+  onMouseLeave(event: Event) {
+    const target = event.currentTarget as HTMLElement;
+    target.style.transform = 'scale(1)';
+  }
+
+  scrollToSection(id: string): void {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+}

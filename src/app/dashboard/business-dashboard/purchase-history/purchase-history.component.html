@@ -1,0 +1,55 @@
+<div class="purchase-history">
+  <h2>Your Orders <span class="order-count">{{ orders.length }}</span></h2>
+  <div class="filter-options">
+    <button class="filter-btn">Orders</button>
+    <button class="filter-btn">Not Yet Shipped</button>
+    <button class="filter-btn">Cancelled Orders</button>
+    <button class="filter-btn">Order Returns </button>
+    <div class="dropdown">
+      <button class="filter-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Filter
+      </button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#">Past 1 Month</a></li>
+        <li><a class="dropdown-item" href="#">Past 2 Months</a></li>
+        <li><a class="dropdown-item" href="#">Past 3 Months</a></li>
+      </ul>
+    </div>
+    
+  </div>
+  
+  <div *ngFor="let order of orders" class="order-card">
+    <div class="order-header">
+      <div> 
+        <span class="order-date">Order placed: {{ order.orderDate }}</span>
+        <span class="order-total">Total: {{ order.totalAmount }}</span>
+        <span class="order-ship">Ship to: {{ order.shippedTo }}</span>
+      </div>
+      <div>
+        <span class="order-number">Order #: {{ order.orderNumber }}</span>
+        <a href="#" class="order-details-link">View order details</a>
+        <a href="#" class="invoice-link">View invoice</a>
+      </div>
+    </div>
+
+    <div *ngFor="let item of order.items" class="order-item">
+      <div class="order-item-image">
+        <!-- <img [src]="item.imageUrl" alt="{{ item.name }}"> -->
+      </div>
+      <div class="order-item-details">
+        <p class="item-name">{{ item.name }}</p>
+        <p class="item-return">Return or replace items: {{ item.returnEligible }}</p>
+        <div class="order-item-actions">
+          <button class="action-btn">Buy it again</button>
+          <button class="action-btn">View your item</button>
+          <button class="action-btn">Track package</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="order-status">
+      <p>{{ order.orderStatus }}</p>
+      <p>{{ order.deliveryDetails }}</p>
+    </div>
+  </div>
+</div>

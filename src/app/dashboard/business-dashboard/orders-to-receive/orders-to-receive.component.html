@@ -1,0 +1,139 @@
+<div class="container">
+
+  <div class="table-container">
+    <h2> Orders to Receive</h2>
+
+    <div *ngIf="isLoading" class="loading-indicator">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+
+    <div class="scroll-container" style="overflow-y: auto; max-height: 70vh;">
+      <div class="table-wrapper">
+        <table *ngIf="!isLoading && !errorMessage">
+          <thead>
+            <tr>
+              <th>Order Date</th>
+              <th>Total Amount</th>
+              <th>Total Quantity</th>
+              <th>Transaction ID</th>
+              <th>Customer</th>
+              <th>Order Status</th>
+              <th>Order Tracking</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngIf="filteredOrders && filteredOrders.length > 0; else noOrdersTemplate">
+              <tr
+                *ngFor="let order of filteredOrders"
+                (click)="showOrderDetails(order.orderID)"
+                [class.selected]="order.orderID === selectedOrderId">
+                <td>{{ order.orderDate | date:'short' }}</td>
+                <td>{{ order.totalAmount | currency }}</td>
+                <td>{{ order.totalQuantity }}</td>
+                <td>{{ order.transactionID }}</td>
+                <td>{{ order.customerName || 'Guest' }}</td>
+                <td>
+                  <span [ngClass]="{
+                    'status-badge status-pending': order.orderStatus === 'Pending',
+                    'status-badge status-shipped': order.orderStatus === 'Shipped',
+                    'status-badge status-delivered': order.orderStatus === 'Delivered'
+                  }">
+                    {{ order.orderStatus }}
+                  </span>
+                </td>
+                <td>{{ order.trackingNumber }}</td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-template #noOrdersTemplate>
+        <div class="no-orders">No orders found</div>
+      </ng-template>
+
+      <div *ngIf="isLoadingDetails" class="loading-details">
+        <div class="spinner"></div>
+        <p>Loading order details...</p>
+      </div>
+
+      <div *ngIf="selectedOrderDetails" class="order-details">
+        <h3>
+          <i class="{{ icons.infoCircle }}"></i>
+          Order Details for Order ID: {{ selectedOrderDetails?.transactionID }}
+        </h3>
+
+        <table class="order-details-table">
+          <thead>
+            <tr>
+              <th>UPC</th>
+              <th>Product Name</th>
+              <th>Quantity</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ selectedOrderDetails.upc }}</td>
+              <td>{{ selectedOrderDetails.name }}</td>
+              <td>{{ selectedOrderDetails.quantity }}</td>
+              <td>{{ selectedOrderDetails.price | currency }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="order-details-grid">
+          <div class="shipping-details">
+            <h4><i class="{{ icons.truck }}"></i> Shipping Details:</h4>
+            <p><b>Name:</b> {{ selectedOrderShipping?.shippingName }}</p>
+            <p><b>Email:</b> {{ selectedOrderShipping?.shippingEmail }}</p>
+            <p><b>Address:</b> {{ decodeURI(selectedOrderShipping?.address) }}</p>
+            <p *ngIf="selectedOrderShipping?.phone"><b>Phone:</b> {{ selectedOrderShipping.phone }}</p>
+
+            <div class="copy-container">
+              <button (click)="copyShippingDetails()">
+                <i class="{{ icons.copy }}"></i> Copy Details
+              </button>
+              <span *ngIf="copyMessage" class="copy-message">{{ copyMessage }}</span>
+            </div>
+          </div>
+
+          <div class="order-summary">
+            <h4><i class="{{ icons.fileInvoice }}"></i> Order Summary:</h4>
+            <p><b>Customer:</b> {{ selectedOrderDetails.customerName || 'Guest' }}</p>
+            <p><b>Total Amount:</b> {{ selectedOrderDetails.totalPrice | currency }}</p>
+
+            <p><b>Order Status:</b></p>
+            <select [(ngModel)]="selectedOrderDetails.orderStatus">
+              <option value="Pending">Pending</option>
+              <option value="Shipped">Shipped</option>
+              <option value="Delivered">Delivered</option>
+            </select>
+
+            <p><b>Tracking Channel:</b></p>
+            <select [(ngModel)]="selectedOrderDetails.trackingChannel">
+              <option value="USPS">USPS</option>
+              <option value="FedEx">FedEx</option>
+              <option value="UPS">UPS</option>
+            </select>
+
+            <p><b>Tracking:</b></p>
+            <div class="update-container">
+              <input
+                type="text"
+                [(ngModel)]="selectedOrderDetails.trackingNumber"
+                placeholder="Enter tracking details"
+              >
+              <button class="btn" (click)="updateTracking(selectedOrderDetails.orderID, selectedOrderDetails.trackingNumber)">
+                <i class="{{ icons.save }}"></i> Update
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

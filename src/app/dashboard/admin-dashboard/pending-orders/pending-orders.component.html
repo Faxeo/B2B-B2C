@@ -1,0 +1,97 @@
+<div class="container">
+  <h2>Pending Orders</h2>
+  <div *ngIf="isLoading">Loading...</div>
+  <div *ngIf="error">{{ error }}</div>
+  <table class="order-table" *ngIf="!isLoading && !error && pendingOrders.length > 0">
+    <thead>
+      <tr>
+        <th>Order Date</th>  
+        <th>Total Amount</th>
+        <th>Total Quantity</th>
+        <th>Transaction ID</th>
+        <th>Customer</th>
+        <th>Order Status</th>
+        <th>Order Tracking</th>
+      </tr>
+    </thead> 
+    <tbody>
+      <tr *ngFor="let order of pendingOrders" 
+          (click)="showOrderDetails(order.orderID)"
+          [class.selected]="order.orderID === selectedOrderId">
+        <td>{{ order.orderDate | date:'short' }}</td>
+        <td>{{ order.totalAmount | currency }}</td>
+        <td>{{ order.totalQuantity }}</td>
+        <td>{{ order.transactionID }}</td> 
+        <td>{{ order.customerName || 'Guest' }}</td> 
+        <td>{{ order.orderStatus }}</td>
+        <td><a href="#">{{ order.orderTracking }}</a></td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="!isLoading && !error && pendingOrders.length === 0">No pending orders found.</div>
+  
+  <div *ngIf="isLoadingDetails">Loading order details...</div>
+  <div *ngIf="selectedOrderDetails" class="order-details">
+    <h3>Order Details for Order ID: {{ selectedPendingOrder?.transactionID }}</h3>
+    <table class="order-details-table">
+      <thead>
+        <tr>
+          <th>UPC</th>
+          <th>Product Name</th>
+          <th>Quantity</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ selectedOrderDetails.upc }}</td>
+          <td>{{ selectedOrderDetails.name }}</td>
+          <td>{{ selectedOrderDetails.quantity }}</td>
+          <td>{{ selectedOrderDetails.price | currency }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="shipping-details">
+      <h4>Shipping Details:</h4>
+      <p><b>Name:</b> {{ selectedOrderShipping?.shippingName }}</p>
+      <p><b>Email: </b>{{ selectedOrderShipping?.shippingEmail }}</p>
+      <p><b>Address: </b>{{ selectedOrderShipping?.address }}</p>
+    
+      <!-- Copy Button -->
+      <div class="copy-container">
+        <button (click)="copyShippingDetails()">Copy Details</button>
+        <span *ngIf="copyMessage" class="copy-message">{{ copyMessage }}</span>
+      </div> 
+    </div>
+    
+    
+
+    <div class="order-summary">
+      <h4><b>Order Summary:</b></h4>
+      <p><b>Customer: </b>{{ selectedOrderDetails.customerName || 'Guest' }}</p>
+      <p><b>Total Amount: </b>{{ selectedOrderDetails.totalPrice | currency }}</p>
+      <p>
+        <b>Order Status: </b>
+        <select [(ngModel)]="selectedOrderDetails.orderStatus">
+          <option value="Pending">Pending</option>
+          <option value="Shipped">Shipped</option>
+          <option value="Delivered">Delivered</option>
+        </select>
+      </p>
+      <p>
+        <b>Tracking Channel:</b> 
+        <select [(ngModel)]="selectedOrderDetails.trackingChannel">
+          <option value="USPS">USPS</option>
+          <option value="FedEx">FedEx</option>
+          <option value="UPS">UPS</option>
+        </select>
+      </p>
+      <p>
+        <b>Tracking: </b>
+        <input type="text" [(ngModel)]="selectedOrderDetails.trackingNumber" placeholder="Enter tracking details">
+        <button (click)="updateTracking(selectedOrderDetails.orderID, selectedOrderDetails.trackingNumber)">Update Tracking</button>
+      </p>
+    </div>
+  </div>
+</div> 

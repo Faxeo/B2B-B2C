@@ -1,0 +1,541 @@
+* {
+  margin: 0px 0px 0px 0px;
+  
+  /* background-color: #f9f9f9; */
+  /* padding: 0px 0px 0px 0px; */
+  /* background-color: aliceblue; */
+  /* margin-right: 0px;
+  width: 100%; */
+}
+
+  /* Toggle Button Styling */
+  .toggle-btn {
+    position: absolute;
+    top: 57%;
+    left: 340px;
+    transform: translateY(-50%); /* Center the button vertically */
+    background-color: #b71c1c;
+    color: white;
+    border: none;
+    border-radius: 50%; 
+    cursor: pointer;
+    height: 50px;
+    width: 50px;
+    z-index: 10;
+    transition: left 0.5s ease;
+  }
+  
+  .sidebar.collapsed + .toggle-btn {
+    left: 1px;
+  }
+
+  /* Container Styling */
+.container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  margin-top: 80px;
+}
+
+/* Sidebar styles */
+.sidebar {
+  width: 350px;
+  height: 100%;
+  margin-right: 0px;
+  padding-right: 0px;
+  /* transform: translateX(0); */
+  transition: transform 0.5s ease, width 0.5s ease;
+  /* background-color: #f8f9fa; */
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.sidebar.collapsed {
+  width: 0;
+  transform: translateX(-350px);
+  overflow: hidden;
+}
+
+/* Toggle Button Styling for Filter Sidebar */
+.filter-toggle {
+  position: absolute;
+  top: 50%;
+  left: 350px;
+  transform: translateY(-50%);
+  background-color: #b71c1c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  height: 50px;
+  width: 50px;
+  z-index: 10;
+  transition: left 0.5s ease;
+}
+
+.sidebar.collapsed + .filter-toggle {
+  left: 0;
+}
+
+/* General Search Component */
+.general-search {
+  flex: 1;
+  transition: flex 0.5s ease;
+  background-color: #fff;
+  padding: 20px;
+  margin-left: 10px;
+}
+
+.general-search.expanded-left {
+  flex-grow: 2; /* Expand more when filter sidebar is collapsed */
+}
+
+.general-search.expanded-right {
+  flex-grow: 2; /* Expand more when cart sidebar is collapsed */
+  margin-right: -170px;
+}
+
+/* Right Sidebar (Cart Sidebar) */
+.sidebar-cart {
+  width: 350px;
+  height: 100%;
+  background-color: #f8f9fa;
+  transition: transform 0.5s ease, width 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-right: -180px;
+}
+
+
+.sidebar-cart.collapsed {
+  width: 0;
+  transform: translateX(-350px);
+  overflow: hidden;
+}
+
+/* Cancel Button for Cart Sidebar */
+.cancel-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;  /* Transparent */
+  color: #1a3056;  /* Dark Navy */
+  border: none;
+  cursor: pointer;
+  font-size: 32px;  /* Larger and more visible */
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, color 0.3s ease;
+  z-index: 10;
+}
+
+.cancel-btn:hover {
+  color: #0f1d3a;  /* Darker navy on hover */
+  transform: rotate(90deg) scale(1.2);  /* Rotation and slight enlargement */
+}
+
+.cancel-btn:active {
+  transform: scale(0.9);  /* Slight shrink on click */
+  color: #0c172b;
+}
+
+
+
+.toggle-btn {
+  position: absolute;
+  top: 50%;
+  left: 350px;
+  transform: translateY(-50%);
+  background-color: #d32f2f; /* Modern Red */
+  color: white;
+  border: none;
+  border-radius: 10px; /* Slightly rounded edges */
+  cursor: pointer; 
+  height: 100px; /* Taller */
+  width: 35px; /* Slimmer */
+  z-index: 10;
+  transition: all 0.4s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow */
+}
+
+.toggle-btn:hover {
+  background-color: #b71c1c; /* Darker red on hover */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.toggle-btn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.toggle-icon {
+  transition: transform 0.3s ease;
+}
+
+.toggle-btn.is-collapsed .toggle-icon {
+  transform: rotate(180deg);
+}
+
+* {
+  margin: 0px 0px 0px 0px;
+  /* padding: 0px 0px 0px 0px; */
+  /* background-color: aliceblue; */
+  /* margin-right: 0px;
+  width: 100%; */
+}
+
+  /* Toggle Button Styling */
+  .toggle-btn {
+    position: fixed;
+    top: 57%;
+    left: 340px;
+    transform: translateY(-50%); 
+    background-color: #b71c1c;
+    color: white;
+    border: none;
+    border-radius: 50%; 
+    cursor: pointer;
+    height: 50px;
+    width: 50px;
+    z-index: 10;
+    transition: left 0.5s ease;
+  }
+  
+  .sidebar.collapsed + .toggle-btn {
+    left: 1px;
+  }
+
+  /* Container Styling */
+.container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  margin-top: 80px;
+}
+
+/* Sidebar styles */
+.sidebar { 
+  width: 350px;
+  height: 100%;
+  margin-right: 0px;
+  padding-right: 0px;
+  /* transform: translateX(0); */
+  transition: transform 0.5s ease, width 0.5s ease;
+  /* background-color: #f8f9fa; */
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.sidebar.collapsed {
+  width: 0;
+  transform: translateX(-350px);
+  overflow: hidden;
+}
+
+/* Toggle Button Styling for Filter Sidebar */
+.filter-toggle {
+  position: absolute;
+  top: 50%;
+  left: 350px;
+  transform: translateY(-50%);
+  background-color: #b71c1c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  height: 50px;
+  width: 50px;
+  z-index: 10;
+  transition: left 0.5s ease;
+}
+
+.sidebar.collapsed + .filter-toggle {
+  left: 0;
+}
+
+/* General Search Component */
+.general-search {
+  flex: 1;
+  transition: flex 0.5s ease;
+  background-color: #fff;
+  padding: 20px;
+  margin-left: 10px;
+}
+
+.general-search.expanded-left {
+  flex-grow: 2; /* Expand more when filter sidebar is collapsed */
+}
+
+.general-search.expanded-right {
+  flex-grow: 2; /* Expand more when cart sidebar is collapsed */
+  margin-right: -170px;
+}
+
+/* Right Sidebar (Cart Sidebar) */
+.sidebar-cart {
+  width: 300px;
+  height: 100%;
+  /* background-color: #f8f9fa; */
+  transition: transform 0.5s ease, width 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-right: -180px;
+}
+
+
+.sidebar-cart.collapsed {
+  width: 0;
+  transform: translateX(-350px);
+  overflow: hidden;
+}
+
+/* Cancel Button for Cart Sidebar */
+.cancel-btn {
+  /* position: absolute; */
+  position: fixed;
+  top: 105px;
+  right: 15px;
+  background: none;  /* Transparent */
+  color: #1a3056;  /* Dark Navy */
+  border: none;
+  cursor: pointer;
+  font-size: 32px;  /* Larger and more visible */
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, color 0.3s ease;
+  z-index: 10000;
+}
+
+.cancel-btn:hover {
+  color: #0f1d3a;  /* Darker navy on hover */
+  transform: rotate(90deg) scale(1.2);  /* Rotation and slight enlargement */
+}
+
+.cancel-btn:active {
+  transform: scale(0.9);  /* Slight shrink on click */
+  color: #0c172b;
+}
+
+
+.toggle-btn {
+  position: fixed;
+  top: 50%;
+  left: 350px;
+  transform: translateY(-50%);
+  background-color: #d32f2f; /* Modern Red */
+  color: white;
+  border: none;
+  border-radius: 10px; /* Slightly rounded edges */
+  cursor: pointer; 
+  height: 100px; /* Taller */
+  width: 35px; /* Slimmer */
+  z-index: 10;
+  transition: all 0.4s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow */
+}
+
+.toggle-btn:hover {
+  background-color: #b71c1c; /* Darker red on hover */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.toggle-btn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.toggle-icon {
+  transition: transform 0.3s ease;
+}
+
+.toggle-btn.is-collapsed .toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* ─── Base Container ─── */
+.container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  margin-top: 80px;
+}
+
+/* ─── Desktop Sidebars & Toggles ─── */
+/* (your existing rules for .sidebar, .sidebar.collapsed, .toggle-btn, etc.) */
+
+/* ─── Mobile Overrides ─── */
+@media (max-width: 768px) {
+  /* Hide desktop sidebars & toggle */
+  .sidebar,
+  .sidebar-cart,
+  .toggle-btn {
+    display: none !important;
+  }
+
+  /* Make results full width */
+  .general-search {
+    margin: 0;
+    padding: 16px;
+    width: 100%;
+  }
+
+  /* FAB */
+  .mobile-filter-button {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    padding: 12px 20px;
+    font-size: 16px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Backdrop */
+  .mobile-filter-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+  }
+  .mobile-filter-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Slide-in panel */
+  .mobile-filter-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    max-width: 320px;
+    height: 100%;
+    background: #fff;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    z-index: 1001;
+  }
+  .mobile-filter-panel.active {
+    transform: translateX(0);
+  }
+
+  /* Panel header */
+  .mobile-filter-header {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .mobile-filter-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+  .mobile-filter-header .close-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+  }
+  .mobile-filter-header .reset {
+    width: 32px;
+  }
+
+  .d-md-none { display: block !important; }
+
+  .mobile-filter-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+  }
+  .mobile-filter-overlay.active {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .mobile-filter-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 80%;
+    max-width: 320px;
+    height: 100%;
+    background: #fff;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1001;
+    overflow-y: auto;
+  }
+  .mobile-filter-panel.active {
+    transform: translateX(0);
+  }
+
+  .mobile-filter-button {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    background: #d32f2f;
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    padding: 12px 20px;
+    font-size: 16px;
+    z-index: 1002;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* make the container fluid on mobile */
+  .container {
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* ensure the search-results wrapper fills every px */
+  .general-search {
+    margin: 0 !important;
+    padding: 0 !important;     /* keep whatever inner padding you like */
+    width: 100vw !important;      
+    box-sizing: border-box;       /* include the padding in that width */
+  }
+}

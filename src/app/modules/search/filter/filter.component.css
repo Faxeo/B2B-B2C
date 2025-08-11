@@ -1,0 +1,402 @@
+/* Filter Container */
+.filter-container {
+  min-width: 250px;
+  max-width: 350px;
+  position: fixed;
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  margin-top: 15px;
+}
+ 
+.selected-label {
+  color: rgba(0, 0, 0, 0.4); /* Light grey with transparency */
+  font-size: 0.85em;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: 10px;
+}
+
+ 
+/* Back Button */
+.back-button {
+  position: relative;
+  top: 10px;
+  left: 10%;
+  font-size: 20px;
+  color: #4a5568;
+  padding: 0 10px;
+  margin: 0 0 15px 40px;
+  border-radius: none;
+  border: none;
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: none;
+  color: #2d3748;
+}
+
+.reset{
+  position: relative;
+  top: -40px;
+  /* right: 10%; */
+  left: 250px;
+  width: 55px;
+  /* font-size: 10px; */
+  /* color: #4a5568; */
+  padding: 0 10px;
+  margin: 0 0 15px 40px;
+  border-radius: none;
+  border: none;
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+
+.reset:hover {
+  scale: 1.1;
+  cursor: pointer;
+}
+
+/* Search Input */
+.filter-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #f8fafc;
+  transition: all 0.2s ease;
+  margin-bottom: 20px;
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Section Headers */
+.filter-section {
+  margin-bottom: 20px;
+  padding: 0 15px;
+}
+
+.filter-section h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  padding: 12px 0;
+  margin-bottom: 12px;
+  border-bottom: 2px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-section h3:hover {
+  color: #3b82f6;
+}
+
+.filter-section h3 i {
+  font-size: 14px;
+  color: #6b7280;
+  transition: transform 0.2s ease;
+}
+
+.filter-section h3:hover i {
+  color: #3b82f6;
+}
+
+/* Checkbox Styling */
+.filter-checkbox {
+  position: relative;
+  margin-bottom: 10px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.filter-checkbox:hover {
+  background-color: #f3f4f6;
+}
+
+.filter-checkbox label {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #4b5563;
+  cursor: pointer;
+  user-select: none;
+  width: 100%;
+}
+
+.filter-checkbox input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #cbd5e1;
+  border-radius: 4px;
+  margin-right: 10px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-checkbox input[type="checkbox"]:checked {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.filter-checkbox input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  color: white;
+  font-size: 12px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.count {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-left: auto;
+  padding-left: 8px;
+}
+
+/* Category Hierarchy Styling */
+.category-item {
+  position: relative;
+  width: 100%;
+}
+
+.sub-category-section {
+  margin-left: 28px;
+  margin-right: 20px;
+  padding-left: 15px;
+  border-left: 2px solid #e5e7eb;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.second-sub-category-section {
+  margin-left: 28px;
+  padding-left: 15px;
+  border-left: 2px solid #e5e7eb;
+  margin-top: 5px;
+}
+
+.toggle-icon {
+  position: absolute;
+  right: 8px;
+  /* margin-left: 10px; */
+  top: 10px;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.toggle-icon:hover {
+  background-color: #e5e7eb;
+  color: #4b5563;
+}
+
+/* See More Link */
+.see-more {
+  display: inline-block;
+  color: #3b82f6;
+  font-size: 13px;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.see-more:hover {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+/* Animations */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.filter-section > div {
+  animation: slideDown 0.3s ease;
+}
+
+.Options {
+  font-size: 1.2rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.brands-container {
+  max-height: 200px; /* Set the height for the scrollable area */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding-right: 10px; /* Add some padding for better readability */
+}
+
+
+input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+.filter-section::-webkit-scrollbar {
+  width: 8px;
+}
+
+.filter-section::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+.filter-section::-webkit-scrollbar-thumb:hover {
+  background-color: #bbb;
+}
+
+.filter-section::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+.filter-radio {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.filter-radio label {
+  font-size: 1rem;
+  cursor: pointer;
+  margin-left: 5px;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+
+.filter-radio label:hover {
+  color: #007bff; /* Highlight text on hover */
+}
+
+.sub-category-section {
+  max-height: 200px;  /* Adjust this value as needed */
+  overflow-y: auto;   /* Enables vertical scrolling when content exceeds max height */
+}
+
+
+input[type="radio"] {
+  margin-right: 0.5rem;
+  accent-color: #007bff; /* Style the radio button */
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease; 
+}
+
+input[type="radio"]:hover {
+  transform: scale(1.1); /* Slightly enlarge on hover */
+}
+
+/* Add this to your existing CSS */
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: block;
+  }
+
+  .reset{
+  position: relative;
+  top: -30px;
+  /* right: 10%; */
+  left: 210px;
+  width: 45px;
+  /* font-size: 10px; */
+  /* color: #4a5568; */
+  padding: 0 10px;
+  margin: 0 0 15px 40px;
+  border-radius: none;
+  border: none;
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+  
+  /* Your existing mobile overrides remain */
+  .sidebar,
+  .sidebar-cart,
+  .toggle-btn {
+    display: none !important;
+  }
+
+  /* Mobile Filter Styles */
+  .mobile-filter-button {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    font-size: 20px;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s ease;
+  }
+
+  .mobile-filter-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1500;
+  }
+
+  .mobile-filter-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .mobile-filter-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 85%;
+    max-width: 350px;
+    height: 100vh;
+    background: #ffffff;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    overflow-y: auto;
+    z-index: 1600;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .mobile-filter-panel.active {
+    transform: translateX(0);
+  }
+
+  /* Copy the rest of the mobile styles from the artifact */
+}

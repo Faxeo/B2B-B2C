@@ -1,0 +1,164 @@
+/* Container for the entire dashboard layout */
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: #d9e1e3;
+}
+
+/* Sidebar container styling */
+app-business-sidebar {
+  /* Fixed width sidebar on desktop with white background */
+  position: relative;
+  width: 250px;
+  flex-shrink: 0;
+  background-color: #ffffff; /* White background for entire sidebar */
+}
+
+/* Base styles for the sidebar's visual container */
+app-business-sidebar .container {
+  display: flex;
+  flex-direction: column;
+  height: 95%;
+  width: 250px;
+  background-color: #F5F5F5; /* Default background for mobile */
+  box-shadow:
+    rgba(17, 17, 26, 0.1) 0px 4px 16px,
+    rgba(17, 17, 26, 0.1) 0px 8px 24px,
+    rgba(17, 17, 26, 0.1) 0px 16px 56px;
+  border-radius: 15px;
+  padding: 20px;
+  margin: 20px 20px 0 20px;
+}
+
+.logo {
+  margin-top: 5%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.logo img {
+  width: 100px;
+  height: 50px;
+}
+
+.logo span {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-top: 10px;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+  width: 100%;
+}
+
+.sidebar li {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.sidebar a {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  text-decoration: none;
+  color: #333;
+  font-size: 18px;
+  border-radius: 20px;
+  width: 100%;
+}
+
+.sidebar a:hover {
+  background-color: #dcdcdc;
+  cursor: pointer;
+}
+
+.sidebar .active a {
+  background-color: #1B2330;
+  color: #fff;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  margin-top: 30px;
+  width: 100%;
+}
+
+.profile img {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+.profile span {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.profile p {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+/* --- Responsive Styles --- */
+
+/* Mobile & Tablet (<= 768px) */
+@media (max-width: 768px) {
+  app-business-sidebar .container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    border-radius: 0 8px 8px 0;
+    margin: 0;
+    transform: translateX(-100%); /* Hidden by default */
+    transition: transform 0.3s ease;
+    z-index: 1250; /* Ensure it's on top of other content */
+    box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+    background-color: #F5F5F5; /* Keep grey background on mobile */
+  }
+  
+  /* When the isOpen input is true, slide the sidebar in */
+  app-business-sidebar .container.open {
+    transform: translateX(0);
+  }
+}
+
+/* Desktop (>= 769px) */
+@media (min-width: 769px) {
+  app-business-sidebar {
+    background-color: #ffffff; /* White background for entire sidebar */
+  }
+  
+  app-business-sidebar .container {
+    position: static;
+    transform: none; /* Override mobile transform */
+    padding-top: 20px;
+    background-color: #ffffff; /* White background inside container */
+    margin: 0; /* Remove margin to avoid gaps */
+    border-radius: 0; /* Remove border radius for flush edges */
+    height: 100%; /* Fill the sidebar height */
+    box-shadow:
+      rgba(17, 17, 26, 0.1) 0px 4px 16px,
+      rgba(17, 17, 26, 0.1) 0px 8px 24px,
+      rgba(17, 17, 26, 0.1) 0px 16px 56px;
+  }
+  
+  /* Hide hamburger toggle button on desktop */
+  .sidebar-toggle {
+    display: none;
+  }
+}

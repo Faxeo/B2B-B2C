@@ -1,0 +1,9 @@
+<div class="dashboard-container">
+    <app-merchant-sidebar></app-merchant-sidebar>
+    <div class="main-content">
+        <!-- only the non-profile blocks are commented out: -->
+        <div *ngIf="selectedComponent === 'profile'" class="below-content">
+          <app-merchant-profile></app-merchant-profile>
+        </div>
+      </div>
+  </div>

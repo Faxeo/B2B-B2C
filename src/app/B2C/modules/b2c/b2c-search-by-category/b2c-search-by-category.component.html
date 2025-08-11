@@ -1,0 +1,121 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<!-- ─── Desktop Category Search (≥md) ─── -->
+<div class="category-search-form-wrapper d-none d-md-block">
+  <div class="category-search-form row g-2 align-items-center">
+    <!-- Main Category -->
+    <div class="col mobile-col form-group">
+      <select id="mainCategory" class="form-select" [(ngModel)]="selectedMainCategory"
+        (change)="onMainCategoryChange()">
+        <option value="" disabled [selected]="!selectedMainCategory">
+          Main Category
+        </option>
+        <option *ngFor="let mc of mainCategories" [value]="mc.id">
+          {{ mc.name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- First Sub-Category -->
+    <div class="col mobile-col form-group">
+      <select id="firstSubCategory" class="form-select" [(ngModel)]="selectedFirstSubCategory"
+        (change)="onFirstSubCategoryChange()" [disabled]="!selectedMainCategory">
+        <option value="" disabled [selected]="!selectedFirstSubCategory">
+          First Sub-Category
+        </option>
+        <option *ngFor="let sc1 of firstSubCategories" [value]="sc1.id">
+          {{ sc1.name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Second Sub-Category -->
+    <div class="col mobile-col form-group">
+      <select id="secondSubCategory" class="form-select" [(ngModel)]="selectedSecondSubCategory"
+        [disabled]="!selectedFirstSubCategory">
+        <option value="" disabled [selected]="!selectedSecondSubCategory">
+          Second Sub-Category
+        </option>
+        <option *ngFor="let sc2 of secondSubCategories" [value]="sc2.id">
+          {{ sc2.name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Search Button -->
+    <div class="col-auto search-col">
+      <button class="btn search-button" (click)="onSearchClick(); performCategorySearch({
+          mainCategory: selectedMainCategory,
+          firstSubCategory: selectedFirstSubCategory,
+          secondSubCategory: selectedSecondSubCategory
+        })" [disabled]="
+          !selectedMainCategory ||
+          !selectedFirstSubCategory ||
+          !selectedSecondSubCategory
+        ">
+        Search
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Mobile toggle (≤md) ─── -->
+<button class="btn w-100 mb-3 d-block d-md-none" style="color: #1a3056; border-color: #1a3056;"
+  (click)="toggleMobileCategorySearch()" [attr.aria-expanded]="showMobileCategorySearch">
+  Search by Category
+</button>
+
+<!-- ─── Mobile bottom-sheet panel ─── -->
+<div class="mobile-category-panel d-md-none" [class.open]="showMobileCategorySearch">
+  <div class="mobile-panel-header">
+    <h2>Category Search</h2>
+    <button class="close-btn" (click)="toggleMobileCategorySearch()">×</button>
+  </div>
+  <div class="mobile-panel-body">
+    <!-- Main Category -->
+    <div class="form-group">
+      <select id="mainCategoryMobile" class="form-select" [(ngModel)]="selectedMainCategory"
+        (change)="onMainCategoryChange()">
+        <option value="" disabled [selected]="!selectedMainCategory">
+          Main Category
+        </option>
+        <option *ngFor="let mc of mainCategories" [value]="mc.id">
+          {{ mc.name }}
+        </option>
+      </select>
+    </div>
+    <!-- First Sub-Category -->
+    <div class="form-group">
+      <select id="firstSubCategoryMobile" class="form-select" [(ngModel)]="selectedFirstSubCategory"
+        (change)="onFirstSubCategoryChange()" [disabled]="!selectedMainCategory">
+        <option value="" disabled [selected]="!selectedFirstSubCategory">
+          First Sub-Category
+        </option>
+        <option *ngFor="let sc1 of firstSubCategories" [value]="sc1.id">
+          {{ sc1.name }}
+        </option>
+      </select>
+    </div>
+    <!-- Second Sub-Category -->
+    <div class="form-group">
+      <select id="secondSubCategoryMobile" class="form-select" [(ngModel)]="selectedSecondSubCategory"
+        [disabled]="!selectedFirstSubCategory">
+        <option value="" disabled [selected]="!selectedSecondSubCategory">
+          Second Sub-Category
+        </option>
+        <option *ngFor="let sc2 of secondSubCategories" [value]="sc2.id">
+          {{ sc2.name }}
+        </option>
+      </select>
+    </div>
+
+    <button class="btn w-100 mt-3" style="background-color: #1a3056; color: #fff; border-color: #1a3056;"
+      (click)="onMobileCategorySearch()" [disabled]="
+        !selectedMainCategory ||
+        !selectedFirstSubCategory ||
+        !selectedSecondSubCategory
+      ">
+      Search
+    </button>
+  </div>
+</div>

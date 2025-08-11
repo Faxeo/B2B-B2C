@@ -1,0 +1,17 @@
+<div class="recently-viewed-container">
+    <div *ngIf="recentlyViewedProducts.length > 0; else noProducts" class="product-list">
+      <div *ngFor="let product of recentlyViewedProducts" class="product-item">
+        <button class="close-btn" (click)="removeProduct(product.product_id)">×</button>
+        <img [src]="'https://usaperp.com:5001/Images/Products/' + product.product_image" [alt]="product.product_name" />
+        <div class="product-info">
+          <h5>{{ product.product_name }}</h5>
+          <p><span>Brand:</span> {{ product.brand_name }}</p>
+          <p><span>Price:</span> ${{ product.price }}</p>
+        </div>
+      </div>
+    </div>
+    <ng-template #noProducts>
+      <p>No recently viewed products</p>
+    </ng-template>
+  </div>
+  

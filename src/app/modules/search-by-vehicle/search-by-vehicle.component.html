@@ -1,0 +1,210 @@
+<div class="vehicle-search-form-wrapper d-none d-md-block">
+  <div class="vehicle-search-form row g-2 align-items-center">
+    <div class="col mobile-col">
+      <div class="form-group">
+        <select
+          id="year"
+          class="form-select"
+          [(ngModel)]="selectedYear"
+          (change)="onYearChange()"
+        >
+          <option value="" disabled [selected]="!selectedYear">Year</option>
+          <option *ngFor="let year of years" [value]="year.year">
+            {{ year.year }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="col mobile-col">
+      <div class="form-group">
+        <ng-select
+          id="make"
+          [items]="makes"
+          bindLabel="name"
+          bindValue="name"
+          [(ngModel)]="selectedMake"
+          (change)="onMakeChange()"
+          [disabled]="!selectedYear"
+          placeholder="Make"
+          [clearable]="true"
+        >
+        </ng-select>
+      </div>
+    </div>
+    <div class="col mobile-col">
+      <div class="form-group">
+        <ng-select
+          id="model"
+          [items]="models"
+          bindLabel="name"
+          bindValue="name"
+          [(ngModel)]="selectedModel"
+          (change)="onModelChange()"
+          [disabled]="!selectedMake"
+          placeholder="Model"
+          [clearable]="true"
+        >
+        </ng-select>
+      </div>
+    </div>
+    <div class="col mobile-col">
+      <div class="form-group">
+        <ng-select
+          id="trim"
+          [items]="trims"
+          bindLabel="name"
+          bindValue="name"
+          [(ngModel)]="selectedTrim"
+          (change)="onTrimChange()"
+          [disabled]="!selectedModel"
+          placeholder="Trim"
+          [clearable]="true"
+        >
+        </ng-select>
+      </div>
+    </div>
+    <div class="col mobile-col">
+      <div class="form-group">
+        <select
+          id="engine"
+          class="form-select"
+          [(ngModel)]="selectedEngine"
+          (change)="onEngineChange()"
+          [disabled]="!selectedTrim"
+        >
+          <option value="" disabled [selected]="!selectedEngine">Engine</option>
+          <option *ngFor="let engine of engines" [value]="engine.name">
+            {{ engine.name }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="col-auto search-col">
+      <button
+        class="btn search-button"
+        (click)="onSearchClick(); performVehicleSearch({ year: selectedYear, make: selectedMake, model: selectedModel, trim: selectedTrim, engine: selectedEngine })"
+        [disabled]="
+          !selectedYear ||
+          !selectedMake ||
+          !selectedModel ||
+          !selectedTrim ||
+          !selectedEngine
+        "
+      >
+        Search
+      </button>
+    </div>
+  </div>
+</div>
+
+<button
+  class="btn btn-outline-danger w-100 mb-3 d-block d-md-none"
+  (click)="toggleMobileVehicleSearch()"
+  [attr.aria-expanded]="showMobileVehicleSearch"
+>
+  Search by Vehicle
+</button>
+
+<div
+  class="mobile-vehicle-panel d-md-none"
+  [class.open]="showMobileVehicleSearch"
+>
+  <div class="mobile-panel-header">
+    <h2>Search Vehicle</h2>
+    <button class="close-btn" (click)="toggleMobileVehicleSearch()">×</button>
+  </div>
+  <div class="mobile-panel-body">
+    <div class="form-group">
+      <select
+        id="year-mobile"
+        class="form-select"
+        [(ngModel)]="selectedYear"
+        (change)="onYearChange()"
+      >
+        <option value="" disabled [selected]="!selectedYear">Year</option>
+        <option *ngFor="let year of years" [value]="year.year">
+          {{ year.year }}
+        </option>
+      </select>
+    </div>
+    <div class="form-group">
+      <ng-select
+        id="make-mobile"
+        [items]="makes"
+        bindLabel="name"
+        bindValue="name"
+        [(ngModel)]="selectedMake"
+        (change)="onMakeChange()"
+        [disabled]="!selectedYear"
+        placeholder="Make"
+        [clearable]="true"
+      >
+      </ng-select>
+    </div>
+    <div class="form-group">
+      <ng-select
+        id="model-mobile"
+        [items]="models"
+        bindLabel="name"
+        bindValue="name"
+        [(ngModel)]="selectedModel"
+        (change)="onModelChange()"
+        [disabled]="!selectedMake"
+        placeholder="Model"
+        [clearable]="true"
+      >
+      </ng-select>
+    </div>
+    <div class="form-group">
+      <ng-select
+        id="trim-mobile"
+        [items]="trims"
+        bindLabel="name"
+        bindValue="name"
+        [(ngModel)]="selectedTrim"
+        (change)="onTrimChange()"
+        [disabled]="!selectedModel"
+        placeholder="Trim"
+        [clearable]="true"
+      >
+      </ng-select>
+    </div>
+    <div class="form-group">
+      <select
+        id="engine-mobile"
+        class="form-select"
+        [(ngModel)]="selectedEngine"
+        (change)="onEngineChange()"
+        [disabled]="!selectedTrim"
+      >
+        <option value="" disabled [selected]="!selectedEngine">Engine</option>
+        <option *ngFor="let engine of engines" [value]="engine.name">
+          {{ engine.name }}
+        </option>
+      </select>
+    </div>
+    <button
+      class="btn btn-danger w-100 mt-3"
+      (click)="
+        onSearchClick();
+        performVehicleSearch({
+          year: selectedYear,
+          make: selectedMake,
+          model: selectedModel,
+          trim: selectedTrim,
+          engine: selectedEngine
+        });
+        toggleMobileVehicleSearch()
+      "
+      [disabled]="
+        !selectedYear ||
+        !selectedMake ||
+        !selectedModel ||
+        !selectedTrim ||
+        !selectedEngine
+      "
+    >
+      Search
+    </button>
+  </div>
+</div>

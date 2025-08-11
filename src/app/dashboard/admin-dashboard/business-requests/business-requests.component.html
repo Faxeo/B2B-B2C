@@ -1,0 +1,45 @@
+<div class="table-container">
+  <table>
+    <caption>Business Requests</caption>
+    <thead>
+      <tr>
+        <th>Requested Date</th>
+        <th>Name</th>
+        <th>Business Name</th>
+        <th>Business Type</th>
+        <th>Email</th>
+        <th>Contact</th>
+        <th>Address</th>
+        <th>Joining Reason</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngIf="requests && requests.length > 0; else noRequestsTemplate">
+        <tr *ngFor="let request of requests">
+          <td>{{ request.requestedDate }}</td>
+          <td>{{ request.name }}</td>
+          <td>{{ request.businessName }}</td>
+          <td>{{ request.businessType }}</td>
+          <td>{{ request.email }}</td>
+          <td>{{ request.contact }}</td>
+          <td>{{ request.address }}</td>
+          <td>{{ request.joiningReason }}</td>
+          <td>{{ request.status }}</td>
+          <td>
+            <!-- Example action button -->
+            <button (click)="handleAction(request)">Approve</button>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+
+  <!-- Template to display when there are no requests -->
+  <ng-template #noRequestsTemplate>
+    <tr>
+      <td colspan="10" class="no-requests">No Pending Requests</td>
+    </tr>
+  </ng-template>
+</div>

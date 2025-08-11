@@ -1,0 +1,180 @@
+/* Custom Styles */
+.object-fit-cover {
+  object-fit: cover;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  header {
+    height: 350px !important;
+  }
+  
+  .display-4 {
+    font-size: calc(1.375rem + 1.5vw);
+  }
+  
+  .btn-lg {
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+/* Button Enhancements */
+.btn-warning {
+  transition: all 0.3s ease;
+}
+
+.btn-warning:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.category-card {
+  background-color: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+  transition: all 0.25s ease;
+  cursor: pointer;
+  min-height: 160px;
+}
+
+.category-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(220, 53, 69, 0.15);
+}
+
+.icon-circle {
+  width: 48px;
+  height: 48px;
+  background-color: #f8d7da;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slider-container {
+    
+    transition: left 0.5s ease; /* Smooth animation */
+  }
+  .slide-right {
+    left: 2; /* Slide to the right to show */
+  }
+  @keyframes slideLeftRight {
+    0% {
+      left: 10px;
+    }
+    50% {
+      left: 30px;
+    }
+    100% {
+      left: 10px;
+    }
+  }
+  
+  
+  .slider-button {
+    position: fixed;
+    height: 90px;
+    width: 60px;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    background-color: #b71c1c;
+    color: white;
+    border: none;
+    padding: 15px 20px;
+    border-radius: 0 50px 50px 0;
+    cursor: pointer;
+    z-index: 1000;
+    font-size: 20px;
+    letter-spacing: 2px;
+  
+    animation: slideLeftRight 2s infinite ease-in-out; /* Smooth left-to-right animation */
+  }
+  .slider-button.slide-out {
+    animation: buttonSlideOut 0.5s ease forwards;
+  }
+  .slider-button span {
+    display: block;
+    text-align: center;
+    margin-left: -10px;
+  }
+  .slider-container.active {
+    left: 0; /* Cover the full screen */
+    width: 100%;
+  }
+  .slider-container.active {
+    left: 0; /* Slide to the right to show */
+    width: 100%; /* Cover the full screen */
+  }
+  .slider-container{
+    transition: left 0.5s ease; /* Smooth animation */
+    left: -100%; /* Initially off-screen */
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    transition: left 0.5s ease-in-out;
+    z-index: 1000;
+  }
+  /* Inner Container for Slider Content */
+  .inner-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transform: translateX(-100%);
+    transition: transform 0.5s ease, opacity 0.5s ease;
+  }
+  
+  .slider-container.active .inner-container {
+    opacity: 1;
+    transform: translateX(0); /* Slide in from left */
+  }
+  
+  /* Button Style */
+  .slider-button {
+    position: fixed;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    background-color: #b71c1c;
+    color: white;
+    border: none;
+    padding: 15px 20px;
+    border-radius: 0 50px 50px 0;
+    cursor: pointer;
+    z-index: 1000;
+    font-size: 20px;
+    letter-spacing: 2px;
+    transition: left 0.5s ease; /* Animate button movement */
+  }
+  
+  .slider-container.active .slider-button {
+    left: calc(100% - 80px); /* Move the button to the right */
+  }
+  
+  /* Hide content when the slider is not active */
+  .inner-container {
+    display: none;
+  }
+  
+  .slider-container.active .inner-container {
+    display: flex;
+  }
+
+
+  .brand-clickable {
+    cursor: pointer; /* Changes mouse cursor to a pointer when hovering */
+    transition: transform 0.2s ease-in-out; /* Smooth transition for hover effect */
+}
+
+.brand-clickable:hover {
+    transform: scale(1.05); 
+}

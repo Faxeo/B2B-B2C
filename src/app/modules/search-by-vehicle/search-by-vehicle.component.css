@@ -1,0 +1,377 @@
+/* Styles for native <select> elements (Years and Engines) */
+/* Changed .form-select to select.form-select to target only native select elements */
+.vehicle-search-form select.form-select {
+  min-height: 45px; /* down from 48px */
+  padding: 0.5rem 0.75rem;
+  flex: 1 1 0; /* allow them to grow evenly */
+}
+
+.vehicle-search-form {
+  /* padding: 15px 10px; */
+  gap: 10px !important;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.search-button {
+  background-color: #b71c1c;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  min-height: 48px;
+}
+
+.search-button:hover:not(:disabled) {
+  background-color: #9a1717;
+}
+
+.search-button:disabled {
+  background-color: #e99ba7; /* a lighter pink-red */
+  color: #fff;
+  cursor: not-allowed;
+}
+
+/* Base styles for native <select> elements (global for the component) */
+select.form-select {
+  color: #555;
+  min-height: 48px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 0.75rem 0.75rem;
+  background-color: #fff;
+  transition: all 0.3s ease;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 16px 12px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+select.form-select:focus {
+  border-color: #b71c1c;
+  box-shadow: 0 0 0 3px rgba(183, 28, 28, 0.1);
+  outline: none;
+}
+
+select.form-select:disabled {
+  background-color: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+}
+
+select.form-select option[disabled] {
+  color: #999;
+}
+
+select.form-select option:not([disabled]) {
+  color: #000;
+}
+
+select.form-select option[value=""] {
+  color: #999;
+}
+
+
+/* --- ng-select specific styles (Google-like appearance) --- */
+
+/* Base container styling for ng-select */
+/* This targets the main wrapper of ng-select */
+ng-select.ng-select-container {
+  min-height: 48px; /* Match native select height */
+  border: 2px solid #e0e0e0; /* Match native select border */
+  border-radius: 8px; /* Match native select border-radius */
+  box-shadow: none; /* Remove default ng-select shadow */
+  transition: all 0.3s ease; /* Smooth transitions */
+}
+
+/* Style for the ng-select input field itself */
+/* This makes the input field within ng-select behave like a standard input */
+ng-select .ng-input > input {
+  /* Remove default styling that might interfere */
+  box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
+  outline: none !important;
+  padding: 0.75rem 0.75rem !important; /* Adjust padding to match form-select */
+  line-height: inherit; /* Inherit line height for better alignment */
+  height: auto; /* Allow height to be determined by content/padding */
+  min-height: unset; /* Remove min-height that might be inherited */
+}
+
+
+/* Focus state for ng-select (Google-like blue border) */
+ng-select.ng-select-focused .ng-select-container,
+ng-select.ng-select-opened .ng-select-container { /* Apply when opened too for consistency */
+  border-color: #b71c1c; /* Use your primary color for consistency */
+  box-shadow: 0 0 0 3px rgba(183, 28, 28, 0.1); /* Subtle glow on focus */
+}
+
+/* Styles for placeholder text */
+ng-select .ng-placeholder {
+  color: #555 !important; /* Match native select placeholder color */
+  padding: 0.75rem 0.75rem !important; /* Align with input padding */
+  line-height: unset; /* Ensure proper alignment */
+}
+
+/* Styles for selected values (after an item is chosen) */
+ng-select .ng-value-container .ng-value {
+  padding: 0.75rem 0.75rem !important; /* Align with input padding */
+  color: #555; /* Match input text color */
+  line-height: unset; /* Ensure proper alignment */
+}
+
+/* Ensure the dropdown arrow is gone for ng-select */
+ng-select .ng-arrow-wrapper {
+  color: #6b7280; /* Match the color of your custom select arrow */
+  width: 16px; /* Match the size of your custom select arrow */
+  height: 12px;
+  /* Optional: Adjust position if needed, ng-select handles it well usually */
+}
+
+/* Hide default arrow within ng-select if any is left (unlikely with ng-select themes) */
+ng-select .ng-select-container .ng-arrow-wrapper .ng-arrow {
+    display: none; /* Hide ng-select's default arrow icon */
+}
+
+/* Add your custom SVG arrow to ng-select's container (optional, if you want your custom arrow) */
+ng-select .ng-select-container {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 16px 12px;
+}
+
+
+/* Styling for the dropdown panel itself */
+ng-select .ng-dropdown-panel {
+  border-radius: 8px; /* Match input border-radius */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for the dropdown */
+  overflow: hidden; /* Ensures rounded corners are visible */
+  border: 1px solid #e0e0e0; /* Consistent border */
+  margin-top: 4px; /* Small gap between input and dropdown */
+}
+
+/* Styling for individual options in the dropdown */
+ng-select .ng-option {
+  padding: 0.75rem 0.75rem; /* Match input padding */
+  font-size: 14px; /* Match input font size */
+  color: #555;
+}
+
+/* Hover/active state for options */
+ng-select .ng-option.ng-option-marked {
+  background-color: #f0f0f0; /* Light gray on hover */
+  color: #000;
+}
+
+/* Selected option in the dropdown list */
+ng-select .ng-option.ng-option-selected {
+  background-color: rgba(183, 28, 28, 0.1); /* Light red for selected */
+  color: #b71c1c; /* Red text for selected */
+  font-weight: 600;
+}
+
+/* Disabled ng-select */
+ng-select.ng-select-disabled .ng-select-container {
+  background-color: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+}
+
+ng-select.ng-select-disabled .ng-select-container .ng-placeholder,
+ng-select.ng-select-disabled .ng-select-container .ng-value-container {
+  color: #999 !important;
+}
+
+
+/* Mobile optimized layout */
+@media (max-width: 767px) {
+  .vehicle-search-form-wrapper {
+    margin: 5px;
+  }
+
+  .vehicle-search-form {
+    padding: 10px;
+    gap: 8px !important;
+  }
+
+  .mobile-col {
+    flex: 1 1 0; /* each select will share the row evenly */
+    min-width: 0; /* let them shrink if really tight */
+    padding: 0 4px; /* slight gutter */
+  }
+
+  .search-col {
+    flex: 0 0 auto;
+    min-width: 80px;
+    padding: 0 3px;
+  }
+
+  /* Specific styles for native <select> elements on mobile */
+  select.form-select {
+    font-size: 13px;
+    padding: 0.6rem 0.5rem;
+    min-height: 44px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Specific styles for ng-select on mobile */
+  ng-select.ng-select-container {
+    min-height: 44px; /* Match mobile native select height */
+  }
+  ng-select .ng-input > input,
+  ng-select .ng-value-container .ng-value,
+  ng-select .ng-placeholder {
+    font-size: 13px; /* Match mobile native select font size */
+    padding: 0.6rem 0.5rem !important; /* Adjust padding */
+  }
+  ng-select .ng-option {
+    font-size: 13px;
+    padding: 0.6rem 0.5rem;
+  }
+
+
+  .search-button {
+    font-size: 0.8rem;
+    padding: 0.6rem 0.8rem;
+    min-height: 44px;
+    white-space: nowrap;
+  }
+
+  /* Ensure single row layout */
+  .vehicle-search-form {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+  }
+}
+
+/* Tablet styles */
+@media (min-width: 768px) and (max-width: 991px) {
+  select.form-select {
+    font-size: 15px;
+  }
+  ng-select .ng-input > input,
+  ng-select .ng-value-container .ng-value,
+  ng-select .ng-placeholder {
+    font-size: 15px !important;
+  }
+  ng-select .ng-option {
+    font-size: 15px;
+  }
+
+  .search-button {
+    font-size: 0.95rem;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 992px) {
+  select.form-select {
+    font-size: 16px;
+  }
+  ng-select .ng-input > input,
+  ng-select .ng-value-container .ng-value,
+  ng-select .ng-placeholder {
+    font-size: 16px !important;
+  }
+  ng-select .ng-option {
+    font-size: 16px;
+  }
+
+  .search-button {
+    font-size: 1rem;
+  }
+}
+
+/* ─── MOBILE PANEL ─── */
+@media (max-width: 767px) {
+  .d-md-none {
+    display: block !important;
+  }
+  .d-none.d-md-block {
+    display: none !important;
+  }
+
+  .mobile-vehicle-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 90%;
+    background: #fff;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+  }
+  .mobile-vehicle-panel.open {
+    transform: translateY(0);
+  }
+  .mobile-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .mobile-panel-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+  .mobile-panel-header .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .mobile-panel-body {
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .mobile-panel-body .form-group {
+    width: 100%;
+  }
+  /* Ensure these specific mobile panel styles target native selects only */
+  .mobile-panel-body select.form-select {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+  /* And ng-select within mobile panel */
+  .mobile-panel-body ng-select.ng-select-container {
+    width: 100%;
+  }
+  .mobile-panel-body ng-select .ng-input > input,
+  .mobile-panel-body ng-select .ng-value-container .ng-value,
+  .mobile-panel-body ng-select .ng-placeholder {
+    font-size: 1rem !important;
+    padding: 0.75rem !important;
+  }
+
+  .mobile-panel-body .btn-danger {
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+}

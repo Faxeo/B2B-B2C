@@ -1,0 +1,115 @@
+<div class="checkout-container">
+  <!-- Logo Section -->
+  <div class="text-center mb-4">
+    <img 
+      src="../../../../../assets/logo.png" 
+      alt="Website Logo" 
+      class="img-fluid" 
+      style="max-height: 80px;"
+    />
+  </div>
+  <h2>Payment Method</h2>
+  <!-- Card Payment Section -->
+  <form (ngSubmit)="onSubmit()" [formGroup]="checkoutForm" class="payment-form">
+    <div *ngIf="!selectedWallet">
+      <div id="card-container"></div>
+      
+      <!-- Submit Button -->
+      <button type="button" id="card-button" class="submit-btn" [disabled]="isLoading">
+        {{ isLoading ? 'Processing...' : 'Submit Payment' }}
+      </button>
+    </div>
+  </form>
+</div>
+ 
+<!-- <div class="checkout-container">
+  <h2>Payment Method</h2>
+
+  
+  <form (ngSubmit)="onSubmit()" [formGroup]="checkoutForm" class="payment-form">
+   
+    <div *ngIf="!selectedWallet">
+      <div class="form-group">
+        <label for="cardName">Name on Card</label>
+        <input type="text" id="cardName" formControlName="cardName" placeholder="Enter name on card" />
+      </div>
+  
+      <div class="form-group">
+        <label for="cardNumber">Card Number</label>
+        <input type="text" id="cardNumber" formControlName="cardNumber" placeholder="Enter card number" />
+      </div>
+  
+      <div class="form-row">
+        <div class="form-group">
+          <label for="expiryDate">Expiry Date</label>
+          <input type="text" id="expiryDate" formControlName="expiryDate" placeholder="MM/YY" />
+        </div>
+        <div class="form-group">
+          <label for="cvv">CVV</label>
+          <input type="text" id="cvv" formControlName="cvv" placeholder="CVV" />
+        </div>
+      </div>
+      <div class="payment-methods-card">
+        <img src="/assets/icons/visa.png" alt="Visa" />
+        <img src="/assets/icons/mastercard.png" alt="MasterCard" />
+      </div>
+    </div>
+
+    <div *ngIf="selectedWallet === 'paypal'">
+      <div class="form-group">
+        <label for="paypalEmail">PayPal Email</label>
+        <input type="email" id="paypalEmail" formControlName="paypalEmail" placeholder="Enter PayPal email" />
+      </div>
+    </div>
+
+    <div *ngIf="selectedWallet === 'applePay'">
+      <div class="form-group">
+        <label for="applePayToken">Apple Pay Token</label>
+        <input type="text" id="applePayToken" formControlName="applePayToken" placeholder="Enter Apple Pay token" />
+      </div>
+    </div>
+
+    <div *ngIf="selectedWallet === 'googlePay'">
+      <div class="form-group">
+        <label for="googlePayToken">Google Pay Token</label>
+        <input type="text" id="googlePayToken" formControlName="googlePayToken" placeholder="Enter Google Pay token" />
+      </div>
+    </div>
+
+    <div *ngIf="selectedWallet === 'samsungPay'">
+      <div class="form-group">
+        <label for="samsungPayToken">Samsung Pay Token</label>
+        <input type="text" id="samsungPayToken" formControlName="samsungPayToken" placeholder="Enter Samsung Pay token" />
+      </div>
+    </div>
+
+    <div *ngIf="selectedWallet === 'amazonPay'">
+      <div class="form-group">
+        <label for="amazonPayEmail">Amazon Pay Email</label>
+        <input type="email" id="amazonPayEmail" formControlName="amazonPayEmail" placeholder="Enter Amazon Pay email" />
+      </div>
+    </div>
+
+    <div *ngIf="selectedWallet === 'cashApp'">
+      <div class="form-group">
+        <label for="cashAppId">Cash App ID</label>
+        <input type="text" id="cashAppId" formControlName="cashAppId" placeholder="Enter Cash App ID" />
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn">Pay Now</button>
+  </form>
+
+
+  <div class="alternative-payments">
+    <h3>Or pay using E-Wallets:</h3>
+    <div class="payment-methods">
+      <img src="/assets/icons/paypal.png" alt="PayPal" (click)="selectWallet('paypal')" />
+      <img src="/assets/icons/applepay.png" alt="Apple Pay" (click)="selectWallet('applePay')" />
+      <img src="/assets/icons/google-pay.png" alt="Google Pay" (click)="selectWallet('googlePay')" />
+      <img src="/assets/icons/samsung-pay.png" alt="Samsung Pay" (click)="selectWallet('samsungPay')" />
+      <img src="/assets/icons/amazon-pay.png" alt="Amazon Pay" (click)="selectWallet('amazonPay')" />
+      <img src="/assets/icons/cash-app.png" alt="Cash App" (click)="selectWallet('cashApp')" />
+    </div>
+  </div>
+</div> -->

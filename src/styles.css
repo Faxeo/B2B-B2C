@@ -1,0 +1,46 @@
+/* You can add global styles to this file, and also import other style files */
+/* @import "~@angular/material/prebuilt-themes/indigo-pink.css"; */
+
+/* ensure toastr toasts float on top */
+
+.toast-top-right,
+.toast-bottom-right,
+.toast-top-full-width,
+.toast-bottom-full-width {
+  z-index: 999999 !important;
+}
+
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  } */
+
+.toast-light-red {
+  background-color: #f8d7da !important;
+}
+.toast-light-red .toast-title,
+.toast-light-red .toast-message {
+  color: #721c24 !important;
+}
+
