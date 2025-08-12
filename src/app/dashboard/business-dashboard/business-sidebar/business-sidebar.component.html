@@ -26,8 +26,8 @@
     <div class="profile">
       <img src="/assets/profile.png" alt="Profile">
       <div>
-        <span>Business User</span>
-        <p>user&#64;64mail.com</p>
+        <span class="profile-username">{{ username ? username : 'Business User' }}</span>
+        <p class="profile-email">{{ email ? email : 'user@64mail.com' }}</p>
       </div>
     </div>
   </nav>

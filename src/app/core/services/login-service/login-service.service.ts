@@ -11,7 +11,7 @@ export class LoginService {
   private loginTypeSubject = new BehaviorSubject<string | null>(null);
   private userIDSubject = new BehaviorSubject<string | null>(null);
   private userNameSubject = new BehaviorSubject<string | null>(null);
-  private categorySubject = new BehaviorSubject<string | null>(null);
+  private categorySubject = new BehaviorSubject<string | null>(null);  
 
 
     /** Call this immediately after you get your token back from the server */
@@ -218,6 +218,7 @@ export class LoginService {
   getCategory(): Observable<string | null> {
     return this.categorySubject.asObservable();
   }
+    
 
   clearData() {
     this.loginTypeSubject.next(null);

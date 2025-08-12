@@ -39,8 +39,10 @@ export class ProfileComponent {
           .subscribe({
             next: (response) => {
               console.log('Business Profile API Response:', response);
+              console.log('Business Profile Data:', response.data);
               if (response.success && response.data) {
                 this.businessProfile = response.data;
+                console.log('Business Profile Data:', this.businessProfile);
               } else {
                 this.errorMessage = 'Error: Profile data not found or response unsuccessful';
               }
