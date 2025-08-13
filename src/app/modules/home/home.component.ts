@@ -958,17 +958,20 @@ if (isPlatformBrowser(this.platformId)) {
   }
 
   onCategoryClick(categoryId: number): void {
-    if (!this.loginType) {
-      this.openLoginModal();
-      return;
-    }
-    console.log('Setting categoryId in service:', categoryId);
+  if (!this.loginType) {
+    this.openLoginModal();
+    return;
+  }
 
-    // Set the categoryId in the service
-    this.categoryIdService.setCategoryId(categoryId);
+  // Optional: Log for debugging
+  // console.log('Navigating to SearchComponent with mainCategory:', categoryId);
 
-    // Navigate to the category route
-    this.router.navigate(['/category']);
+  // Navigate to SearchComponent and set the mainCategory via query param
+  this.router.navigate(['/B2B/search'], {
+    queryParams: {
+      mainCategory: categoryId
+    },
+  });
   }
 
   openLoginModal() {

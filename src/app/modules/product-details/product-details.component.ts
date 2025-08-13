@@ -23,7 +23,7 @@ import { MainCategoryService } from '../../core/services/main-category/main-cate
 import { FetchChildService } from '../../core/services/fetch-child/fetch-child.service';
 import { FormsModule } from '@angular/forms';
 import { trigger, state, style, animate, transition, keyframes } from '@angular/animations';
-import { CarouselModule } from 'primeng/carousel';
+import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
 
 interface Testimonial {
   customerName: string;
@@ -32,7 +32,7 @@ interface Testimonial {
 
 @Component({
   standalone: true,
-  imports: [RouterModule, CommonModule, FooterComponent, FormsModule, CarouselModule],
+  imports: [RouterModule, CommonModule, FooterComponent, FormsModule, NgbCarouselModule],
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.css'],
   animations: [
@@ -90,7 +90,7 @@ export class ProductDetailsComponent {
   quantity: number = 1;
   isLoading: boolean = false;
   linkedProducts: any[] = []; // New property to store linked products
-  
+  groupedLinkedProducts: any[][] = [];  
 
   // New properties for company and variant selection
   selectedCompany: string | null = null;
@@ -184,12 +184,21 @@ export class ProductDetailsComponent {
 
   }
 
+  private groupIntoChunks(array: any[], chunkSize: number): any[][] {
+    const result: any[][] = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+      result.push(array.slice(i, i + chunkSize));
+    }
+    return result;
+  }
+  
   // Fetch product details when the component is initialized
   fetchLinkedProducts(productId: number): void {
     this.getLinkedProductsService.getLinkedProducts(productId).subscribe({
       next: (linkedProducts) => {
         // The service returns the response directly, which should be the array
         this.linkedProducts = linkedProducts;
+        this.groupedLinkedProducts = this.groupIntoChunks(linkedProducts, 4);
       },
       error: (err) => {
         console.error('Error fetching linked products:', err);
@@ -405,18 +414,6 @@ export class ProductDetailsComponent {
     return `translateX(-${this.currentTestimonialIndex * 100}%)`;
   }
 
-  responsiveOptions: any[] = [
-  {
-    breakpoint: '12000000px',
-    numVisible: 3,
-    numScroll: 1,
-  },
-  {
-    breakpoint: '560px',
-    numVisible: 1,
-    numScroll: 1,
-    },
-  ];
 
   fetchProductDetails(productId: number, scrollAfterLoad: boolean = false): void {
   this.productDetailsService.getProductByID(productId).subscribe({
