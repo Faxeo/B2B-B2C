@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
-import { WishlistService } from '../../core/services/wishlist/wishlist.service';
-import { RemoveFromWishlistService } from '../../core/services/remove-from-wishlist/remove-from-wishlist.service';
-import { CartService } from '../../core/services/cart/cart.service';
+import { WishlistService } from '../../../features/wishlist/services/wishlist/wishlist.service';
+import { RemoveFromWishlistService } from '../../../features/wishlist/services/remove-from-wishlist/remove-from-wishlist.service';
+import { CartService } from '../../../features/cart/services/cart/cart.service';
 
 @Component({
-  selector: 'app-wishlist',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
-  templateUrl: './wishlist.component.html',
-  styleUrls: ['./wishlist.component.css'],
+    selector: 'app-wishlist',
+    imports: [RouterModule],
+    templateUrl: './wishlist.component.html',
+    styleUrls: ['./wishlist.component.css']
 })
 export class WishlistComponent implements OnInit {
   wishlistItems: Array<{

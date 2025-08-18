@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
-import { ApiService } from '../../../core/services/api.service';
+import { ApiService } from '../../../../shared/api.service';
 import { Router } from '@angular/router';
-import { LoginService } from '../../../core/services/login-service/login-service.service';
+import { LoginService } from '../../../../features/users/services/login-service/login-service.service';
 
 @Component({
-  selector: 'app-business-login',
-  templateUrl: './business-login.component.html',
-  styleUrl: './business-login.component.css'
+    selector: 'app-business-login',
+    templateUrl: './business-login.component.html',
+    styleUrl: './business-login.component.css',
+    standalone: false
 })
 export class BusinessLoginComponent {
 

@@ -2,14 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
-  selector: 'app-billing',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './billing.component.html',
-  styleUrl: './billing.component.css'
+    selector: 'app-billing',
+    imports: [],
+    templateUrl: './billing.component.html',
+    styleUrl: './billing.component.css'
 })
 export class BillingComponent implements OnInit {
   billData: any = null;

@@ -1,30 +1,28 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectorRef, Component, Inject, Input, Output, PLATFORM_ID, SimpleChanges, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { LoginService } from '../../core/services/login-service/login-service.service';
-import { NavigationService } from '../../core/services/navigation-service/navigation-service.service';
+import { LoginService } from '../../../../features/users/services/login-service/login-service.service';
+import { NavigationService } from '../../../../shared/navigation-service/navigation-service.service';
 import { ActivatedRoute } from '@angular/router';
-import { DynamicSearchService } from '../../core/services/dynamic-search/dynamic-search.service';
-import { FetchChildService } from '../../core/services/fetch-child/fetch-child.service';
-import { MainCategoryService } from '../../core/services/main-category/main-category.service';
-import { SubCategoryService } from '../../core/services/sub-category/sub-category.service';
+import { DynamicSearchService } from '../../../../features/search/services/dynamic-search/dynamic-search.service';
+import { FetchChildService } from '../../../../features/search/services/fetch-child/fetch-child.service';
+import { MainCategoryService } from '../../../../features/search/services/main-category/main-category.service';
+import { SubCategoryService } from '../../../../features/search/services/sub-category/sub-category.service';
 import { Router } from '@angular/router';
-import { CategoryIdService } from '../../core/services/category-id/category-id.service';
-import { HierarchyProductsService } from '../../core/services/hierarchy-products/hierarchy-products.service';
-import { FilterSearchService } from '../../core/services/filter-search/filter-search.service';
-import { CategoryNavbarSearchService } from '../../core/services/category-navbar-search/category-navbar-search.service';
+import { CategoryIdService } from '../../../../features/search/services/category-id/category-id.service';
+import { HierarchyProductsService } from '../../../../features/search/services/hierarchy-products/hierarchy-products.service';
+import { FilterSearchService } from '../../../../features/search/services/filter-search/filter-search.service';
+import { CategoryNavbarSearchService } from '../../../../features/search/services/category-navbar-search/category-navbar-search.service';
 import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
-  selector: 'app-search-by-category',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'app-search-by-category',
+    imports: [
     FormsModule,
     NgSelectModule
-  ],
-  templateUrl: './search-by-category.component.html',
-  styleUrl: './search-by-category.component.css'
+],
+    templateUrl: './search-by-category.component.html',
+    styleUrl: './search-by-category.component.css'
 })
 export class SearchByCategoryComponent {
 

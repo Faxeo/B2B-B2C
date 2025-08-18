@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
-import { ProductModule } from './modules/product/product.module';
-import { HomeComponent } from './modules/home/home.component';
-import { ApiService } from './core/services/api.service';
+import { ProductModule } from './features/product/modules/product.module';
+import { HomeComponent } from './features/home/modules/home.component';
+import { ApiService } from './shared/api.service';
 import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
-import { UsersModule } from './modules/users/users.module';
+import { UsersModule } from './features/users/modules/users.module';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { SidebarComponent } from './layout/sidebar/sidebar/sidebar.component';
@@ -14,7 +14,7 @@ import { SignupComponent } from './layout/sidebar/sign-up/sign-up.component';
 import { FormsModule } from '@angular/forms';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AdminDashboardComponent } from './dashboard/admin-dashboard/admin-dashboard.component';
-import { CartComponent } from './modules/cart/cart.component';
+import { CartComponent } from './features/cart/modules/cart-component/cart.component';
 import { B2cSearchComponent } from './B2C/modules/b2c/b2c-search/b2c-search.component';
 import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { CookieService } from 'ngx-cookie-service';
@@ -23,7 +23,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { MerchantProfileComponent } from './dashboard/merchant-dashboard/merchant-profile/merchant-profile.component';
 // import { B2cSearchModule } from './B2C/modules/b2c/b2c-search/b2c-search.module';
-
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor }    from './core/interceptors/auth.interceptor';
 
 @NgModule({
   imports: [
@@ -55,6 +56,11 @@ import { MerchantProfileComponent } from './dashboard/merchant-dashboard/merchan
     // B2cSearchModule
   ],
   providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    },
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
     JwtHelperService,
     ApiService,

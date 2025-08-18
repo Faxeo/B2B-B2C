@@ -1,258 +1,255 @@
-<div *ngIf="showMessage" class="cart-message">
+@if (showMessage) {
+  <div class="cart-message">
     {{ message }}
   </div>
-  
-  <button class="back-button" (click)="onBackClick()">
-    <i class="fa fa-arrow-left back-button" aria-hidden="true"></i>
-  </button>
+}
 
-  <button class="exit-button" (click)="onExitClick()">
-    <i class="fa fa-times" aria-hidden="true"></i>
-  </button>
-  
-  <div class="product-details-container" *ngIf="product; else loadingTemplate">
-  
+<button class="back-button" (click)="onBackClick()">
+  <i class="fa fa-arrow-left back-button" aria-hidden="true"></i>
+</button>
+
+<button class="exit-button" (click)="onExitClick()">
+  <i class="fa fa-times" aria-hidden="true"></i>
+</button>
+
+@if (product) {
+  <div class="product-details-container">
     <div class="product-section">
       <!-- Product Images Section -->
-      <div class="product-images"> 
+      <div class="product-images">
         <!-- Main Product Images Section -->
         <div class="product-images">
           <!-- Main Image with zoom functionality -->
           <div class="main-image-container">
-            <img *ngIf="mainImage" [src]="mainImage" alt="Product Image" class="main-image" [class.zoomed]="zoomed"
-              [style.transform]="zoomTransform" [style.transform-origin]="zoomOriginX + '% ' + zoomOriginY + '%'"
-              [style.cursor]="zoomed ? 'zoom-out' : 'zoom-in'" (click)="toggleZoom($event)"
-              (mousemove)="onImageMouseMove($event)" (mouseleave)="resetZoom()" />
-  
+            @if (mainImage) {
+              <img [src]="mainImage" alt="Product Image" class="main-image" [class.zoomed]="zoomed"
+                [style.transform]="zoomTransform" [style.transform-origin]="zoomOriginX + '% ' + zoomOriginY + '%'"
+                [style.cursor]="zoomed ? 'zoom-out' : 'zoom-in'" (click)="toggleZoom($event)"
+                (mousemove)="onImageMouseMove($event)" (mouseleave)="resetZoom()" />
+            }
             <!-- Arrows for navigating images -->
-            <button *ngIf="product.images.length > 1" class="nav-arrow left-arrow" (click)="prevImage()">&#8249;</button>
-            <button *ngIf="product.images.length > 1" class="nav-arrow right-arrow" (click)="nextImage()">&#8250;</button>
-  
+            @if (product.images.length > 1) {
+              <button class="nav-arrow left-arrow" (click)="prevImage()">&#8249;</button>
+            }
+            @if (product.images.length > 1) {
+              <button class="nav-arrow right-arrow" (click)="nextImage()">&#8250;</button>
+            }
             <!-- Fullscreen button -->
             <button class="fullscreen-btn" (click)="openFullScreen()">
               <i class="fa fa-expand" aria-hidden="true"></i>
             </button>
           </div>
-  
           <!-- Thumbnails row -->
           <div class="thumbnail-gallery">
-            <div class="thumbnail-container" *ngFor="let img of product.images; let i = index">
-              <img [src]="'https://usaperp.com:5001/' + img.image_path"
-                (click)="setMainImage('https://usaperp.com:5001/' + img.image_path, i)" class="thumbnail"
-                [ngClass]="{'selected-thumbnail': currentImageIndex === i}" alt="Product Thumbnail" />
-            </div>
-          </div>
-        </div>
-  
-        <!-- Fullscreen Overlay (Separate from main content) -->
-        <div *ngIf="isFullScreen" class="fullscreen-overlay">
-          <!-- Close Button -->
-          <button class="close-fullscreen-btn" (click)="closeFullScreen()">&#10006;</button>
-  
-          <!-- Navigation Arrows for Fullscreen -->
-          <button *ngIf="product.images.length > 1" class="nav-arrow fullscreen-left-arrow"
-            (click)="prevImage()">&#8249;</button>
-          <button *ngIf="product.images.length > 1" class="nav-arrow fullscreen-right-arrow"
-            (click)="nextImage()">&#8250;</button>
-  
-          <!-- Fullscreen Image -->
-          <img [src]="mainImage" class="fullscreen-image" [class.zoomed]="zoomed" [style.transform]="zoomTransform"
-            [style.transform-origin]="zoomOriginX + '% ' + zoomOriginY + '%'"
-            [style.cursor]="zoomed ? 'zoom-out' : 'zoom-in'" (click)="toggleZoom($event)"
-            (mousemove)="onImageMouseMove($event)" (mouseleave)="resetZoom()" />
-        </div>
-  
-        <!-- Features Section -->
-        <div class="features-section">
-          <h4>FEATURES</h4>
-          <ul>
-            <!-- Features List -->
-            <li>Support Long Engine Life And Performance</li>
-            <li>Protect Fuel Injection System</li>
-            <li>Increase Fuel Economy</li>
-  
-            <!-- Packaging Details -->
-            <!-- <li><strong>Packaging Details:</strong></li> -->
-            <li><strong>Pcs per Box:</strong> {{ product.pcs_per_box || 'N/A' }}</li>
-            <li><strong>Pcs per Carton:</strong> {{ product.pcs_per_carton || 'N/A' }}</li>
-  
-            <!-- Dimensions & Weight -->
-            <li><strong>Dimensions & Weight:</strong></li>
-            <li><strong>Length:</strong> {{ product.product_length || 'N/A' }} cm</li>
-            <li><strong>Width:</strong> {{ product.product_width || 'N/A' }} cm</li>
-            <li><strong>Height:</strong> {{ product.product_height || 'N/A' }} cm</li>
-            <li><strong>Gross Weight:</strong> {{ product.gross_weight || 'N/A' }} kg</li>
-            <li><strong>Net Weight:</strong> {{ product.net_weight || 'N/A' }} kg</li>
-          </ul>
-        </div>
-  
-      </div>
-  
-      <!-- Product Information Section -->
-      <div class="product-info">
-        <h1 class="product-title">{{ product.product_name }}</h1>
-        <h2 class="model-year">Model 2014-2024</h2>
-  
-        <!-- Price and Availability Section -->
-        <div class="product-price-info">
-          <h3 class="product-price"
-            *ngIf="product.product_price === 0 || product.product_quantity === 0; else showPrice">
-            Out of Stock
-          </h3>
-          <ng-template #showPrice>
-            <h3 class="product-price">
-              ${{ product.product_price }} / each
-            </h3>
-          </ng-template>
-  
-          <!-- Additional Information Section -->
-          <div class="additional-info">
-            <div class="info-row">
-              <p><span class="label">UPC:</span> {{ product.product_identifier2 }}</p>
-              <p><span class="label">Origin:</span> {{ product.product_origin }}</p>
-            </div>
-          </div>
-  
-          <!-- Delivery and Shipping Information with Icons -->
-          <div class="delivery-box">
-            <p class="delivery-info">
-              <img src="assets/location-b2c.png" alt="Next-Day Delivery" class="info-icon">
-              Next-Day Delivery: <strong>Order now</strong>
-            </p>
-            <p class="shipping-info">
-              <img src="assets/Delivery-b2c.png" alt="Free Shipping" class="info-icon">
-              Free Shipping: on orders over $35
-            </p>
-          </div>
-        </div>
-  
-        <div class="selection-row">
-          <!-- Company Selection -->
-          <div class="selection-group">
-            <label><strong>Company</strong></label>
-            <div class="tag-group">
-              <span class="tag" [ngClass]="{'selected': selectedCompany === product.brand.brand_name}">
-                {{ product.brand.brand_name || 'N/A' }}
-              </span>
-            </div>
-          </div>
-  
-          <!-- Status Selection -->
-          <div class="selection-group">
-            <label><strong>Status</strong></label>
-            <div class="tag-group">
-              <span class="tag" [ngClass]="{'selected': selectedCompany === product.brand.brand_name}">
-                {{ product.brand.brand_desp || 'N/A' }}
-              </span>
-            </div>
-          </div>
-        </div>
-  
-        <!-- Quantity Selector -->
-        <div class="selection-group">
-          <label><strong>Quantity</strong></label>
-          <div class="quantity-selector">
-            <button class="quantity-btn" (click)="decreaseQuantity()">−</button>
-            <input type="text" [value]="quantity" readonly />
-            <button class="quantity-btn" (click)="increaseQuantity()">+</button>
-          </div>
-        </div>
-  
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-          <button class="buy-now-btn" (click)="addToCart(product)" >Add to Cart</button>
-          <button class="buy-now-btn btn btn-danger w-100 ms-1 buy-now-btn" (click)="buyNow(product)">Buy Now</button>
-          <button class="wishlist-btn btn btn-outline-custom w-100 ms-1 view-btn">
-            <i style="font-size:16px; margin-right: 10px;" class="fa">&#xf08a;</i>Add to Wishlist
-          </button>
-        </div>
-  
-      </div>
-    </div>
-  
-    <!-- Description Section -->
-    <div class="description-section">
-      <h4>Description</h4>
-      <p>{{ product.product_desp || 'No description available.' }}</p>
-    </div>
-  
-    <div class="testimonials-section">
-      <h4>Testimonials</h4>
-      <div class="testimonial-slider" [style.transform]="transformStyle">
-        <div class="testimonial" *ngFor="let review of testimonials; let i = index"
-          [ngClass]="{'active': i === currentTestimonialIndex}">
-          <div class="testimonial-header">
-            <span class="customer-name">{{ review.customerName }}</span>
-            <div class="rating">★★★★★</div>
-            <span class="verified-badge">Verified Customer ✓</span>
-          </div>
-          <p class="testimonial-text">"{{ review.text }}"</p>
-        </div>
-      </div>
-    </div>
-  
-  </div>
-  
-  <!-- linked products section -->
-  <div class="linked-products-container">
-    <ng-container *ngIf="linkedProducts.length > 0; else noLinkedProducts">
-      <div class="title-bar">
-        <h2 class="linked-products-title">Linked Products</h2>
-      </div>
-
-      <!-- ngb-carousel must be properly opened and closed -->
-      <ngb-carousel
-        [interval]="autoplayInterval"
-        [pauseOnHover]="true"
-        [wrap]="true"
-        [keyboard]="true"
-        [showNavigationArrows]="true"
-        [showNavigationIndicators]="true"
-      >
-        <!-- ngbSlide must be inside ngb-carousel -->
-        <ng-template ngbSlide *ngFor="let group of groupedLinkedProducts">
-          <div class="d-flex justify-content-center flex-wrap">
-            <div
-              class="product-card"
-              *ngFor="let product of group"
-              (mouseenter)="stopAutoplay()"
-              (mouseleave)="startAutoplay()"
-            >
-              <a [routerLink]="['/B2C/product-details', product.product_id]">
-                <img
-                  [src]="imageBaseUrl + 'Images/Products/' + product.product_image"
-                  (error)="product.product_image = 'fallback.jpg'"
-                  alt="{{ product.product_name }}"
-                  class="product-image"
-                  loading="lazy"
-                />
-                <div class="product-details">
-                  <h3 class="product-title">{{ product.product_name }}</h3>
-                  <p class="product-price">
-                    ${{ product.product_price | number : '1.2-2' }}
-                  </p>
+            @for (img of product.images; track img; let i = $index) {
+              <div class="thumbnail-container">
+                <img [src]="'https://usaperp.com:5001/' + img.image_path"
+                  (click)="setMainImage('https://usaperp.com:5001/' + img.image_path, i)" class="thumbnail"
+                  [ngClass]="{'selected-thumbnail': currentImageIndex === i}" alt="Product Thumbnail" />
                 </div>
-              </a>
+              }
             </div>
           </div>
-        </ng-template>
-      </ngb-carousel>
-    </ng-container>
-
-    <ng-template #noLinkedProducts>
-      <div class="no-linked-products">
-        <p>No related products found.</p>
+          <!-- Fullscreen Overlay (Separate from main content) -->
+          @if (isFullScreen) {
+            <div class="fullscreen-overlay">
+              <!-- Close Button -->
+              <button class="close-fullscreen-btn" (click)="closeFullScreen()">&#10006;</button>
+              <!-- Navigation Arrows for Fullscreen -->
+              @if (product.images.length > 1) {
+                <button class="nav-arrow fullscreen-left-arrow"
+                (click)="prevImage()">&#8249;</button>
+              }
+              @if (product.images.length > 1) {
+                <button class="nav-arrow fullscreen-right-arrow"
+                (click)="nextImage()">&#8250;</button>
+              }
+              <!-- Fullscreen Image -->
+              <img [src]="mainImage" class="fullscreen-image" [class.zoomed]="zoomed" [style.transform]="zoomTransform"
+                [style.transform-origin]="zoomOriginX + '% ' + zoomOriginY + '%'"
+                [style.cursor]="zoomed ? 'zoom-out' : 'zoom-in'" (click)="toggleZoom($event)"
+                (mousemove)="onImageMouseMove($event)" (mouseleave)="resetZoom()" />
+              </div>
+            }
+            <!-- Features Section -->
+            <div class="features-section">
+              <h4>FEATURES</h4>
+              <ul>
+                <!-- Features List -->
+                <li>Support Long Engine Life And Performance</li>
+                <li>Protect Fuel Injection System</li>
+                <li>Increase Fuel Economy</li>
+                <!-- Packaging Details -->
+                <!-- <li><strong>Packaging Details:</strong></li> -->
+                <li><strong>Pcs per Box:</strong> {{ product.pcs_per_box || 'N/A' }}</li>
+                <li><strong>Pcs per Carton:</strong> {{ product.pcs_per_carton || 'N/A' }}</li>
+                <!-- Dimensions & Weight -->
+                <li><strong>Dimensions & Weight:</strong></li>
+                <li><strong>Length:</strong> {{ product.product_length || 'N/A' }} cm</li>
+                <li><strong>Width:</strong> {{ product.product_width || 'N/A' }} cm</li>
+                <li><strong>Height:</strong> {{ product.product_height || 'N/A' }} cm</li>
+                <li><strong>Gross Weight:</strong> {{ product.gross_weight || 'N/A' }} kg</li>
+                <li><strong>Net Weight:</strong> {{ product.net_weight || 'N/A' }} kg</li>
+              </ul>
+            </div>
+          </div>
+          <!-- Product Information Section -->
+          <div class="product-info">
+            <h1 class="product-title">{{ product.product_name }}</h1>
+            <h2 class="model-year">Model 2014-2024</h2>
+            <!-- Price and Availability Section -->
+            <div class="product-price-info">
+              @if (product.product_price === 0 || product.product_quantity === 0) {
+                <h3 class="product-price"
+                  >
+                  Out of Stock
+                </h3>
+              } @else {
+                <h3 class="product-price">
+                  ${{ product.product_price }} / each
+                </h3>
+              }
+              <!-- Additional Information Section -->
+              <div class="additional-info">
+                <div class="info-row">
+                  <p><span class="label">UPC:</span> {{ product.product_identifier2 }}</p>
+                  <p><span class="label">Origin:</span> {{ product.product_origin }}</p>
+                </div>
+              </div>
+              <!-- Delivery and Shipping Information with Icons -->
+              <div class="delivery-box">
+                <p class="delivery-info">
+                  <img src="assets/location-b2c.png" alt="Next-Day Delivery" class="info-icon">
+                  Next-Day Delivery: <strong>Order now</strong>
+                </p>
+                <p class="shipping-info">
+                  <img src="assets/Delivery-b2c.png" alt="Free Shipping" class="info-icon">
+                  Free Shipping: on orders over $35
+                </p>
+              </div>
+            </div>
+            <div class="selection-row">
+              <!-- Company Selection -->
+              <div class="selection-group">
+                <label><strong>Company</strong></label>
+                <div class="tag-group">
+                  <span class="tag" [ngClass]="{'selected': selectedCompany === product.brand.brand_name}">
+                    {{ product.brand.brand_name || 'N/A' }}
+                  </span>
+                </div>
+              </div>
+              <!-- Status Selection -->
+              <div class="selection-group">
+                <label><strong>Status</strong></label>
+                <div class="tag-group">
+                  <span class="tag" [ngClass]="{'selected': selectedCompany === product.brand.brand_name}">
+                    {{ product.brand.brand_desp || 'N/A' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <!-- Quantity Selector -->
+            <div class="selection-group">
+              <label><strong>Quantity</strong></label>
+              <div class="quantity-selector">
+                <button class="quantity-btn" (click)="decreaseQuantity()">−</button>
+                <input type="text" [value]="quantity" readonly />
+                <button class="quantity-btn" (click)="increaseQuantity()">+</button>
+              </div>
+            </div>
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+              <button class="buy-now-btn" (click)="addToCart(product)" >Add to Cart</button>
+              <button class="buy-now-btn btn btn-danger w-100 ms-1 buy-now-btn" (click)="buyNow(product)">Buy Now</button>
+              <button class="wishlist-btn btn btn-outline-custom w-100 ms-1 view-btn">
+                <i style="font-size:16px; margin-right: 10px;" class="fa">&#xf08a;</i>Add to Wishlist
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Description Section -->
+        <div class="description-section">
+          <h4>Description</h4>
+          <p>{{ product.product_desp || 'No description available.' }}</p>
+        </div>
+        <div class="testimonials-section">
+          <h4>Testimonials</h4>
+          <div class="testimonial-slider" [style.transform]="transformStyle">
+            @for (review of testimonials; track review; let i = $index) {
+              <div class="testimonial"
+                [ngClass]="{'active': i === currentTestimonialIndex}">
+                <div class="testimonial-header">
+                  <span class="customer-name">{{ review.customerName }}</span>
+                  <div class="rating">★★★★★</div>
+                  <span class="verified-badge">Verified Customer ✓</span>
+                </div>
+                <p class="testimonial-text">"{{ review.text }}"</p>
+              </div>
+            }
+          </div>
+        </div>
       </div>
-    </ng-template>
-  </div>
+    } @else {
+      <div class="loading-overlay">
+        <img src="assets/Images/loader.gif" alt="Loading..." class="loading-gif" />
+      </div>
+    }
+
+    <!-- linked products section -->
+    <div class="linked-products-container">
+      @if (linkedProducts.length > 0) {
+        <div class="title-bar">
+          <h2 class="linked-products-title">Linked Products</h2>
+        </div>
+        <!-- ngb-carousel must be properly opened and closed -->
+        <ngb-carousel
+          [interval]="autoplayInterval"
+          [pauseOnHover]="true"
+          [wrap]="true"
+          [keyboard]="true"
+          [showNavigationArrows]="true"
+          [showNavigationIndicators]="true"
+          >
+          <!-- ngbSlide must be inside ngb-carousel -->
+          @for (group of groupedLinkedProducts; track group) {
+            <ng-template ngbSlide>
+              <div class="d-flex justify-content-center flex-wrap">
+                @for (product of group; track product) {
+                  <div
+                    class="product-card"
+                    (mouseenter)="stopAutoplay()"
+                    (mouseleave)="startAutoplay()"
+                    >
+                    <a [routerLink]="['/B2C/product-details', product.product_id]">
+                      <img
+                        [src]="imageBaseUrl + 'Images/Products/' + product.product_image"
+                        (error)="product.product_image = 'fallback.jpg'"
+                        alt="{{ product.product_name }}"
+                        class="product-image"
+                        loading="lazy"
+                        />
+                        <div class="product-details">
+                          <h3 class="product-title">{{ product.product_name }}</h3>
+                          <p class="product-price">
+                            ${{ product.product_price | number : '1.2-2' }}
+                          </p>
+                        </div>
+                      </a>
+                    </div>
+                  }
+                </div>
+              </ng-template>
+            }
+          </ngb-carousel>
+        } @else {
+          <div class="no-linked-products">
+            <p>No related products found.</p>
+          </div>
+        }
+
+      </div>
 
 
-  <!-- Loading Template -->
-  <ng-template #loadingTemplate>
-    <div class="loading-overlay">
-      <img src="assets/Images/loader.gif" alt="Loading..." class="loading-gif" />
-    </div>
-  </ng-template>
-  
-  <app-footer></app-footer>
-  
+      <!-- Loading Template -->
+
+      <app-footer></app-footer>

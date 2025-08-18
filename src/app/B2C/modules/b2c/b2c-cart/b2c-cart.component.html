@@ -1,242 +1,225 @@
-<div class="container py-5" *ngIf="cartItems.length > 0; else emptyCart">
-  <h2 class="mb-4 text-center">Your Cart</h2>
-  <!-- Search Bar -->
-  <div class="search-container mb-4 text-center">
-    <input type="text" class="form-control cart-search-box mx-auto" style="max-width: 400px;"
-      placeholder="🔍 Search for a product..." [(ngModel)]="searchTerm" />
-  </div>
-
-  <div>
-    <!-- Scrollable Container for Cart Items -->
-<div class="cart-scroll-area">
-  <div class="row mb-4 cart-item" *ngFor="let item of filteredCartItems()">
-    <div class="col-md-3 d-flex justify-content-center align-items-center">
-      <img *ngIf="!item.imageError" 
-           [src]="'https://usaperp.com:5001/Images/Products/' + item.image" 
-           class="img-fluid rounded cart-product-img"
-           alt="Product Image" 
-           (error)="handleImageError(item)">
-    </div>
-    <div class="col-md-6">
-      <h5 class="fw-bold mb-1">{{ item.name }}</h5>
-      <p class="text-muted mb-1">Origin: {{ item.product_origin || 'Unknown' }}</p>
-      <p class="mb-1">Quantity: <strong>{{ item.prod_qty || 0 }}</strong></p>
-      <p class="mb-0">
-        <strong>Price: ${{ item.price }}</strong>
-        <span *ngIf="item.discounts_Seller && item.discounts_Seller.length > 0">
-          (Discount Applied: ${{ item.discounts_Seller[0].amount || 0 }} Off)
-        </span>
-      </p>
-    </div>
-    <div class="col-md-3 d-flex align-items-center justify-content-center">
-      <button class="btn btn-danger btn-remove" (click)="removeFromCart(item.productId, item.cartId)">Remove</button>
-    </div>
-  </div>
-</div>
-
-
-    <div class="text-end">
-      <h3>Total: {{ calculateSubtotal() | currency:'USD':'symbol' }}</h3>
-    </div>
-  </div>
-
-  <!-- Select from Existing Addresses Section -->
-  <div class="existing-addresses">
-    <h3>Confirm order</h3>
-    <label>Select the country/region for shipping</label>
-
-    <!-- Existing Addresses Section -->
-    <div *ngIf="savedAddresses.length > 0; else noAddressTemplate">
-      <div *ngFor="let address of savedAddresses" class="address-card">
-        <input type="radio" name="selectedAddress" [value]="address" [(ngModel)]="selectedAddress">
-        <span class="location-icon"><i class="bi bi-geo-alt-fill" style="color: red;"></i></span>
-        <label class="address-label">
-          <strong>{{ address.addressType }}</strong> -
-          <strong>{{ address.fullName }}</strong>,
-          {{ address.billingAddress }}, {{ address.city }}, {{ address.state }} {{ address.zipcode }},
-          <span class="masked-contact">{{ address.contact | slice:0:3 }}****{{ address.contact | slice:-4 }}</span>
-        </label>
-
-
-        <!-- Debugging: Show message if `addressType` is missing -->
-        <ng-template #notFound>
-          <span style="color: red;">(Address Type Not Found)</span>
-        </ng-template>
-
-        <span class="delete-icon" (click)="deleteAddress(address)">
-          🗑️
-        </span>
+@if (cartItems.length > 0) {
+  <div class="container py-5">
+    <h2 class="mb-4 text-center">Your Cart</h2>
+    <!-- Search Bar -->
+    <div class="search-container mb-4 text-center">
+      <input type="text" class="form-control cart-search-box mx-auto" style="max-width: 400px;"
+        placeholder="🔍 Search for a product..." [(ngModel)]="searchTerm" />
       </div>
-    </div>
-
-    <ng-template #noAddressTemplate>
-      <p>No saved addresses found. Add a new address.</p>
-    </ng-template>
-
-    <button class="btn btn-primary add-new-btn" (click)="toggleAddressForm()">Add new</button>
-  </div>
-
-
-  <!-- Popup Overlay for Address Form -->
-  <div *ngIf="showAddressForm" class="address-form-overlay">
-    <div class="address-form-popup">
-      <form (ngSubmit)="saveNewAddress()" #addressForm="ngForm">
-
-        <!-- Paste Billing Information -->
-        <!-- Paste New Address Information Input -->
-        <div class="form-group">
-          <input type="text" id="pasteNewAddressInfo" class="form-control small-input"
-            placeholder="Paste Address Information here..." (paste)="handleNewAddressPaste($event)">
+      <div>
+        <!-- Scrollable Container for Cart Items -->
+        <div class="cart-scroll-area">
+          @for (item of filteredCartItems(); track item) {
+            <div class="row mb-4 cart-item">
+              <div class="col-md-3 d-flex justify-content-center align-items-center">
+                @if (!item.imageError) {
+                  <img
+                    [src]="'https://usaperp.com:5001/Images/Products/' + item.image"
+                    class="img-fluid rounded cart-product-img"
+                    alt="Product Image"
+                    (error)="handleImageError(item)">
+                }
+              </div>
+              <div class="col-md-6">
+                <h5 class="fw-bold mb-1">{{ item.name }}</h5>
+                <p class="text-muted mb-1">Origin: {{ item.product_origin || 'Unknown' }}</p>
+                <p class="mb-1">Quantity: <strong>{{ item.prod_qty || 0 }}</strong></p>
+                <p class="mb-0">
+                  <strong>Price: ${{ item.price }}</strong>
+                  @if (item.discounts_Seller && item.discounts_Seller.length > 0) {
+                    <span>
+                      (Discount Applied: ${{ item.discounts_Seller[0].amount || 0 }} Off)
+                    </span>
+                  }
+                </p>
+              </div>
+              <div class="col-md-3 d-flex align-items-center justify-content-center">
+                <button class="btn btn-danger btn-remove" (click)="removeFromCart(item.productId, item.cartId)">Remove</button>
+              </div>
+            </div>
+          }
         </div>
-
-
-        <!-- Full Name & Address Type -->
-        <div class="form-group">
-          <div class="form-group">
-            <input type="text" class="form-control small-input" id="fullName" name="fullName"
-              [(ngModel)]="newAddress.fullName" placeholder="Full Name*" required>
-          </div>
-          <select class="form-control small-input" id="addressType" name="addressType"
-            [(ngModel)]="newAddress.addressType" #addressType="ngModel" required>
-
-            <option value="" disabled selected hidden>Select Address Type</option>
-            <option value="Home">Home</option>
-            <option value="Work">Work</option>
-            <option value="Billing">Billing</option>
-            <option value="Shipping">Shipping</option>
-            <option value="Mailing">Mailing</option>
-            <option value="Temporary">Temporary</option>
-          </select>
-
-          <!-- Error message for validation -->
-          <div class="error-message"
-            *ngIf="addressType.invalid && (addressType.dirty || addressType.touched || formSubmitted)">
-            Please select an address type.
-          </div>
+        <div class="text-end">
+          <h3>Total: {{ calculateSubtotal() | currency:'USD':'symbol' }}</h3>
         </div>
-
-        <!-- Email & Contact -->
-        <div class="form-row">
-          <div class="form-group">
-            <input type="email" class="form-control small-input" id="email" name="email" [(ngModel)]="newAddress.email"
-              placeholder="Email*" required>
+      </div>
+      <!-- Select from Existing Addresses Section -->
+      <div class="existing-addresses">
+        <h3>Confirm order</h3>
+        <label>Select the country/region for shipping</label>
+        <!-- Existing Addresses Section -->
+        @if (savedAddresses.length > 0) {
+          <div>
+            @for (address of savedAddresses; track address) {
+              <div class="address-card">
+                <input type="radio" name="selectedAddress" [value]="address" [(ngModel)]="selectedAddress">
+                <span class="location-icon"><i class="bi bi-geo-alt-fill" style="color: red;"></i></span>
+                <label class="address-label">
+                  <strong>{{ address.addressType }}</strong> -
+                  <strong>{{ address.fullName }}</strong>,
+                  {{ address.billingAddress }}, {{ address.city }}, {{ address.state }} {{ address.zipcode }},
+                  <span class="masked-contact">{{ address.contact | slice:0:3 }}****{{ address.contact | slice:-4 }}</span>
+                </label>
+                <!-- Debugging: Show message if `addressType` is missing -->
+                <ng-template #notFound>
+                  <span style="color: red;">(Address Type Not Found)</span>
+                </ng-template>
+                <span class="delete-icon" (click)="deleteAddress(address)">
+                  🗑️
+                </span>
+              </div>
+            }
           </div>
-          <div class="form-group">
-            <input type="text" class="form-control small-input" id="contact" name="contact"
-              [(ngModel)]="newAddress.contact" placeholder="Contact Number*" required pattern="^[0-9]{10,15}$">
-          </div>
-        </div>
-
-        <!-- Billing Address -->
-        <div class="form-group">
-          <textarea class="form-control small-textarea" id="billingAddress" name="billingAddress"
-            [(ngModel)]="newAddress.billingAddress" placeholder="Billing Address*" rows="2" required></textarea>
-        </div>
-
-        <!-- City & State -->
-        <div class="form-row">
-          <div class="form-group">
-            <input type="text" class="form-control small-input" id="city" name="city" [(ngModel)]="newAddress.city"
-              placeholder="City*" required>
-          </div>
-          <div class="form-group">
-            <input type="text" class="form-control small-input" id="state" name="state" [(ngModel)]="newAddress.state"
-              placeholder="State* i.e LA, CA, etc." required [ngbTypeahead]="searchStates">
-          </div>
-        </div>
-
-        <!-- Zipcode & Country -->
-        <div class="form-row">
-          <div class="form-group">
-            <input type="text" class="form-control small-input" id="zipcode" name="zipcode"
-              [(ngModel)]="newAddress.zipcode" placeholder="Zipcode*" required pattern="^[0-9]{5,10}$">
-          </div>
-          <div class="form-group">
-            <input type="text" class="form-control small-input" id="country" name="country"
-              [(ngModel)]="newAddress.country" readonly>
-          </div>
-        </div>
-
-        <!-- Form Actions -->
-        <div class="form-actions">
-          <button type="submit" class="btn btn-success small-btn">Save</button>
-          <button type="button" class="btn btn-secondary small-btn" (click)="toggleAddressForm()">Cancel</button>
-        </div>
-
-      </form>
-    </div>
-  </div>
-
-  <!-- Billing Information Section -->
-  <div class="mt-5">
-    <h3>Billing Information</h3>
-    <!-- Paste Billing Information Input -->
-    <div class="form-group">
-      <input type="text" id="pasteBillingInfo" class="form-control" placeholder="Paste Billing Information here..."
-        (paste)="handleBillingPaste($event)">
-    </div>
-
-    <form (submit)="goToCheckout()" class="row g-3">
-
-      <!-- Personal Info -->
-      <div class="col-md-4">
-        <label for="fullName" class="form-label">Full Name</label>
-        <input type="text" id="fullName" class="form-control" [(ngModel)]="billing.fullName" name="fullName" required>
+        } @else {
+          <p>No saved addresses found. Add a new address.</p>
+        }
+        <button class="btn btn-primary add-new-btn" (click)="toggleAddressForm()">Add new</button>
       </div>
-      <div class="col-md-4">
-        <label for="email" class="form-label">Email</label>
-        <input type="email" id="email" class="form-control" [(ngModel)]="billing.email" name="email" required>
-      </div>
-      <div class="col-md-4">
-        <label for="contact" class="form-label">Contact</label>
-        <input type="tel" id="contact" class="form-control" [(ngModel)]="billing.contact" name="contact"
-          pattern="^(\+1[-.\s]?)?(\(?\d{3}\)?[-.\s]?)?\d{3}[-.\s]?\d{4}$" required>
-      </div>
+      <!-- Popup Overlay for Address Form -->
+      @if (showAddressForm) {
+        <div class="address-form-overlay">
+          <div class="address-form-popup">
+            <form (ngSubmit)="saveNewAddress()" #addressForm="ngForm">
+              <!-- Paste Billing Information -->
+              <!-- Paste New Address Information Input -->
+              <div class="form-group">
+                <input type="text" id="pasteNewAddressInfo" class="form-control small-input"
+                  placeholder="Paste Address Information here..." (paste)="handleNewAddressPaste($event)">
+                </div>
+                <!-- Full Name & Address Type -->
+                <div class="form-group">
+                  <div class="form-group">
+                    <input type="text" class="form-control small-input" id="fullName" name="fullName"
+                      [(ngModel)]="newAddress.fullName" placeholder="Full Name*" required>
+                    </div>
+                    <select class="form-control small-input" id="addressType" name="addressType"
+                      [(ngModel)]="newAddress.addressType" #addressType="ngModel" required>
+                      <option value="" disabled selected hidden>Select Address Type</option>
+                      <option value="Home">Home</option>
+                      <option value="Work">Work</option>
+                      <option value="Billing">Billing</option>
+                      <option value="Shipping">Shipping</option>
+                      <option value="Mailing">Mailing</option>
+                      <option value="Temporary">Temporary</option>
+                    </select>
+                    <!-- Error message for validation -->
+                    @if (addressType.invalid && (addressType.dirty || addressType.touched || formSubmitted)) {
+                      <div class="error-message"
+                        >
+                        Please select an address type.
+                      </div>
+                    }
+                  </div>
+                  <!-- Email & Contact -->
+                  <div class="form-row">
+                    <div class="form-group">
+                      <input type="email" class="form-control small-input" id="email" name="email" [(ngModel)]="newAddress.email"
+                        placeholder="Email*" required>
+                      </div>
+                      <div class="form-group">
+                        <input type="text" class="form-control small-input" id="contact" name="contact"
+                          [(ngModel)]="newAddress.contact" placeholder="Contact Number*" required pattern="^[0-9]{10,15}$">
+                        </div>
+                      </div>
+                      <!-- Billing Address -->
+                      <div class="form-group">
+                        <textarea class="form-control small-textarea" id="billingAddress" name="billingAddress"
+                        [(ngModel)]="newAddress.billingAddress" placeholder="Billing Address*" rows="2" required></textarea>
+                      </div>
+                      <!-- City & State -->
+                      <div class="form-row">
+                        <div class="form-group">
+                          <input type="text" class="form-control small-input" id="city" name="city" [(ngModel)]="newAddress.city"
+                            placeholder="City*" required>
+                          </div>
+                          <div class="form-group">
+                            <input type="text" class="form-control small-input" id="state" name="state" [(ngModel)]="newAddress.state"
+                              placeholder="State* i.e LA, CA, etc." required [ngbTypeahead]="searchStates">
+                            </div>
+                          </div>
+                          <!-- Zipcode & Country -->
+                          <div class="form-row">
+                            <div class="form-group">
+                              <input type="text" class="form-control small-input" id="zipcode" name="zipcode"
+                                [(ngModel)]="newAddress.zipcode" placeholder="Zipcode*" required pattern="^[0-9]{5,10}$">
+                              </div>
+                              <div class="form-group">
+                                <input type="text" class="form-control small-input" id="country" name="country"
+                                  [(ngModel)]="newAddress.country" readonly>
+                                </div>
+                              </div>
+                              <!-- Form Actions -->
+                              <div class="form-actions">
+                                <button type="submit" class="btn btn-success small-btn">Save</button>
+                                <button type="button" class="btn btn-secondary small-btn" (click)="toggleAddressForm()">Cancel</button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      }
+                      <!-- Billing Information Section -->
+                      <div class="mt-5">
+                        <h3>Billing Information</h3>
+                        <!-- Paste Billing Information Input -->
+                        <div class="form-group">
+                          <input type="text" id="pasteBillingInfo" class="form-control" placeholder="Paste Billing Information here..."
+                            (paste)="handleBillingPaste($event)">
+                          </div>
+                          <form (submit)="goToCheckout()" class="row g-3">
+                            <!-- Personal Info -->
+                            <div class="col-md-4">
+                              <label for="fullName" class="form-label">Full Name</label>
+                              <input type="text" id="fullName" class="form-control" [(ngModel)]="billing.fullName" name="fullName" required>
+                            </div>
+                            <div class="col-md-4">
+                              <label for="email" class="form-label">Email</label>
+                              <input type="email" id="email" class="form-control" [(ngModel)]="billing.email" name="email" required>
+                            </div>
+                            <div class="col-md-4">
+                              <label for="contact" class="form-label">Contact</label>
+                              <input type="tel" id="contact" class="form-control" [(ngModel)]="billing.contact" name="contact"
+                                pattern="^(\+1[-.\s]?)?(\(?\d{3}\)?[-.\s]?)?\d{3}[-.\s]?\d{4}$" required>
+                              </div>
+                              <!-- Address Info -->
+                              <div class="col-md-6">
+                                <label for="billingAddress" class="form-label">Billing Address</label>
+                                <textarea id="billingAddress" class="form-control" [(ngModel)]="billing.billingAddress" name="billingAddress"
+                                rows="2" required></textarea>
+                              </div>
+                              <div class="col-md-6">
+                                <label for="country" class="form-label">Country</label>
+                                <input type="text" id="country" class="form-control" [(ngModel)]="billing.country" name="country" required>
+                              </div>
+                              <!-- City/State/Zip -->
+                              <div class="col-md-4">
+                                <label for="city" class="form-label">City</label>
+                                <input type="text" id="city" class="form-control" [(ngModel)]="billing.city" name="city" required>
+                              </div>
+                              <div class="col-md-4">
+                                <label for="state" class="form-label">State</label>
+                                <input type="text" id="state" class="form-control" placeholder="i.e LA, CA, etc." state
+                                  [(ngModel)]="billing.state" name="state" required>
+                                </div>
+                                <div class="col-md-4">
+                                  <label for="zipcode" class="form-label">Zipcode</label>
+                                  <input type="text" id="zipcode" class="form-control" [(ngModel)]="billing.zipcode" name="zipcode"
+                                    pattern="[0-9]{5}" required>
+                                  </div>
+                                  <!-- Submit Button -->
+                                  <div class="col-12 text-center mt-4">
+                                    <button type="submit" class="btn btn-success btn-lg" [disabled]="!isBillingFormValid()">
+                                      Checkout <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          } @else {
+                            <div class="text-center py-5">
+                              <img src="assets/empty-cart.png" alt="Empty Cart" class="img-fluid" style="max-width: 300px;">
+                              <h2>Your Cart is Empty</h2>
+                              <p>Start adding items to your cart now!</p>
+                              <a class="btn btn-outline-primary" routerLink="/B2C">Go to Shop</a>
+                            </div>
+                          }
 
-      <!-- Address Info -->
-      <div class="col-md-6">
-        <label for="billingAddress" class="form-label">Billing Address</label>
-        <textarea id="billingAddress" class="form-control" [(ngModel)]="billing.billingAddress" name="billingAddress"
-          rows="2" required></textarea>
-      </div>
-      <div class="col-md-6">
-        <label for="country" class="form-label">Country</label>
-        <input type="text" id="country" class="form-control" [(ngModel)]="billing.country" name="country" required>
-      </div>
-
-      <!-- City/State/Zip -->
-      <div class="col-md-4">
-        <label for="city" class="form-label">City</label>
-        <input type="text" id="city" class="form-control" [(ngModel)]="billing.city" name="city" required>
-      </div>
-      <div class="col-md-4">
-        <label for="state" class="form-label">State</label>
-        <input type="text" id="state" class="form-control" placeholder="i.e LA, CA, etc." state
-          [(ngModel)]="billing.state" name="state" required>
-      </div>
-      <div class="col-md-4">
-        <label for="zipcode" class="form-label">Zipcode</label>
-        <input type="text" id="zipcode" class="form-control" [(ngModel)]="billing.zipcode" name="zipcode"
-          pattern="[0-9]{5}" required>
-      </div>
-
-      <!-- Submit Button -->
-      <div class="col-12 text-center mt-4">
-        <button type="submit" class="btn btn-success btn-lg" [disabled]="!isBillingFormValid()">
-          Checkout <i class="fas fa-arrow-right"></i>
-        </button>
-      </div>
-
-    </form>
-  </div>
-
-</div>
-
-<ng-template #emptyCart>
-  <div class="text-center py-5">
-    <img src="assets/empty-cart.png" alt="Empty Cart" class="img-fluid" style="max-width: 300px;">
-    <h2>Your Cart is Empty</h2>
-    <p>Start adding items to your cart now!</p>
-    <a class="btn btn-outline-primary" routerLink="/B2C">Go to Shop</a>
-  </div>
-</ng-template>

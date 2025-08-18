@@ -1,13 +1,13 @@
 import { Routes } from '@angular/router';
 import { HomeGuard } from './guards/home.guard';
-import { HomeComponent } from './modules/home/home.component';
+import { HomeComponent } from './features/home/modules/home.component';
 import { B2CHomeComponent } from './B2C/modules/b2c/b2c-home/b2c-home.component';
 import { B2cSearchComponent } from './B2C/modules/b2c/b2c-search/b2c-search.component';
-import { SearchComponent } from './modules/search/search.component';
-import { authGuard } from './auth.guard';
+import { SearchComponent } from './features/search/modules/search/search.component';
+import { authGuard } from './Guard/auth.guard';
 import { B2cCartComponent } from './B2C/modules/b2c/b2c-cart/b2c-cart.component';
 import { B2cLoginComponent } from './B2C/modules/b2c/b2c-login/b2c-login.component';
-import { BillingComponent } from './modules/billing/billing.component';
+import { BillingComponent } from './features/billing/modules/billing.component';
 import { B2cCheckoutComponent } from './B2C/modules/b2c/b2c-checkout/b2c-checkout.component';
 import { B2cBillingComponent } from './B2C/modules/b2c/b2c-billing/b2c-billing.component';
 import { B2cWishlistComponent } from './B2C/modules/b2c/b2c-wishlist/b2c-wishlist.component';
@@ -98,7 +98,7 @@ export const routes: Routes = [
   {
     path: 'users',
     loadChildren: () =>
-      import('./modules/users/users.module').then((m) => m.UsersModule),
+      import('./features/users/modules/users.module').then((m) => m.UsersModule),
   },
   {
     path: 'sidebar',
@@ -141,25 +141,25 @@ export const routes: Routes = [
   {
     path: 'sub-home',
     loadChildren: () =>
-      import('./modules/home/sub-home/sub-home.module').then(
+      import('./features/home/modules/sub-home/sub-home.module').then(
         (m) => m.SubHomeModule
       ),
   },
   {
     path: 'B2B/cart',
     loadChildren: () =>
-      import('./modules/cart/cart.module').then((m) => m.CartModule),
+      import('./features/cart/modules/cart-component/cart.module').then((m) => m.CartModule),
   },
   {
     path: 'B2B/search',
     component: SearchComponent,
     loadChildren: () =>
-      import('./modules/search/search.module').then((m) => m.SearchModule),
+      import('./features/search/modules/search/search.module').then((m) => m.SearchModule),
   },
   {
     path: 'garage',
     loadChildren: () =>
-      import('./modules/garage/garage.module').then((m) => m.GarageModule),
+      import('./features/garage/modules/garage.module').then((m) => m.GarageModule),
   },
   // {
   //   path: 'category',
@@ -178,7 +178,7 @@ export const routes: Routes = [
   {
     path: 'B2B/product-details/:id',
     loadChildren: () =>
-      import('./modules/product-details/product-details.module').then(
+      import('./features/product/modules/product-detail/product-details.module').then(
         (m) => m.ProductDetailsModule
       ),
   },
@@ -192,7 +192,7 @@ export const routes: Routes = [
   {
     path: 'B2B/wishlist',
     loadChildren: () =>
-      import('./modules/wishlist/wishlist.module').then(
+      import('./features/wishlist/modules/wishlist.module').then(
         (m) => m.WishlistModule
       ),
   },

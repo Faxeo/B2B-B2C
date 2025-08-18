@@ -2,14 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
-  selector: 'app-b2c-billing',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './b2c-billing.component.html',
-  styleUrl: './b2c-billing.component.css'
+    selector: 'app-b2c-billing',
+    imports: [],
+    templateUrl: './b2c-billing.component.html',
+    styleUrl: './b2c-billing.component.css'
 })
 export class B2cBillingComponent implements OnInit {
   billData: any = null;

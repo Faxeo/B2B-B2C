@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { BusinessRequestsService } from '../../../core/services/business-requests/business-requests.service';
+import { BusinessRequestsService } from '../../../shared/business-requests/business-requests.service';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
-  standalone: true,
-  selector: 'app-business-requests',
-  templateUrl: './business-requests.component.html',
-  styleUrls: ['./business-requests.component.css'],
-  imports: [CommonModule],
+    selector: 'app-business-requests',
+    templateUrl: './business-requests.component.html',
+    styleUrls: ['./business-requests.component.css'],
+    imports: []
 })
 export class BusinessRequestsComponent implements OnInit {
   requests: any[] = [];

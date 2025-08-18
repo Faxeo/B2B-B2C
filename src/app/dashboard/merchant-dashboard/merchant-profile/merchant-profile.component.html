@@ -1,6 +1,6 @@
 <div class="dashboard-overview">
-    <!-- <h2>Dashboard Overview</h2> -->
-    <!-- wrap your canvas in a fixed-height box: -->
+  <!-- <h2>Dashboard Overview</h2> -->
+  <!-- wrap your canvas in a fixed-height box: -->
   <div class="chart-wrapper">
     <canvas
       baseChart
@@ -9,48 +9,53 @@
       [type]="lineChartType">
     </canvas>
   </div>
-  </div>
+</div>
 
-  <div class="business-dashboard">
-    <div *ngIf="isLoading" class="loading-indicator">
+<div class="business-dashboard">
+  @if (isLoading) {
+    <div class="loading-indicator">
       <!-- Replace with your desired loading spinner -->
       <div class="spinner"></div>
       <p>Loading...</p>
     </div>
-  
-    <div *ngIf="!isLoading && businessProfile">
+  }
+
+  @if (!isLoading && businessProfile) {
+    <div>
       <div class="profile-container">
         <h2>Profile</h2>
-  
         <!-- Profile Picture Section -->
         <div class="profile-pic-section">
           <!-- <h3>Profile Picture</h3> -->
-  
           <!-- Show "Update Profile Picture" button if not updating or picture is not updated -->
-          <div *ngIf="!isUpdatingPic && !isPicUpdated">
-            <button (click)="triggerFileInput()">Update Profile Picture</button>
-            <div *ngIf="businessProfile.profilePic">
-              <img [src]="businessProfile.profilePic" alt="Profile Picture" class="profile-pic-preview" />
+          @if (!isUpdatingPic && !isPicUpdated) {
+            <div>
+              <button (click)="triggerFileInput()">Update Profile Picture</button>
+              @if (businessProfile.profilePic) {
+                <div>
+                  <img [src]="businessProfile.profilePic" alt="Profile Picture" class="profile-pic-preview" />
+                </div>
+              }
             </div>
-          </div>
-  
+          }
           <!-- Hidden file input for selecting a picture -->
           <input type="file" id="profilePicInput" (change)="onFileChange($event)" style="display: none;" />
-  
           <!-- Show preview of selected picture with "Proceed" and "Reupload" buttons -->
-          <div *ngIf="selectedPic && isUpdatingPic">
-            <img [src]="selectedPic" alt="Profile Picture Preview" class="profile-pic-preview" />
-            <button (click)="proceedPicUpdate()">Proceed</button>
-            <button (click)="reuploadPic()">Reupload</button>
-          </div>
-  
+          @if (selectedPic && isUpdatingPic) {
+            <div>
+              <img [src]="selectedPic" alt="Profile Picture Preview" class="profile-pic-preview" />
+              <button (click)="proceedPicUpdate()">Proceed</button>
+              <button (click)="reuploadPic()">Reupload</button>
+            </div>
+          }
           <!-- Show profile picture and "Save" button after proceeding -->
-          <div *ngIf="isPicUpdated && businessProfile.profilePic">
-            <img [src]="businessProfile.profilePic" alt="Profile Picture" class="profile-pic-preview" />
-            <button (click)="savePicUpdate()">Save</button>
-          </div>
+          @if (isPicUpdated && businessProfile.profilePic) {
+            <div>
+              <img [src]="businessProfile.profilePic" alt="Profile Picture" class="profile-pic-preview" />
+              <button (click)="savePicUpdate()">Save</button>
+            </div>
+          }
         </div>
-  
         <!-- Profile Details Section -->
         <table class="profile-table">
           <tbody>
@@ -83,5 +88,5 @@
         <button (click)="saveProfile()" class="save-button">Save Changes</button>
       </div>
     </div>
-  </div>
-  
+  }
+</div>

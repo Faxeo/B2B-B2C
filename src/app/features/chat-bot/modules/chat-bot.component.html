@@ -1,28 +1,29 @@
 <div class="chat-wrapper">
-    <button class="chatbot-button" id="chatbotButton" (click)="toggleChat()">
-        <img src="assets/chat-icon.png" alt="Chat" />
-    </button> 
+  <button class="chatbot-button" id="chatbotButton" (click)="toggleChat()">
+    <img src="assets/chat-icon.png" alt="Chat" />
+  </button>
 
-    <div class="chat-container" *ngIf="isChatVisible">
-        <!-- Close button --> 
-        <button class="close-button" (click)="toggleChat()">✖</button>
-        
-        <!-- Chat header -->
-        <div class="chat-header"><strong>Chat with Us</strong></div>
-        
-        <!-- Chat messages area -->
-        <div class="chat-box">
-            <div *ngFor="let message of messages" class="message" 
-                 [class.user]="message.sender === 'user'" 
-                 [class.bot]="message.sender === 'bot'">
-                <span>{{ message.text }}</span> 
-            </div>
-        </div>
-
-        <!-- Input area for user message -->
-        <div class="chat-input">
-            <input [(ngModel)]="userInput" (keyup.enter)="sendMessage()" placeholder="Type a message..." />
-            <button id="sentbtn" (click)="sendMessage()">Send</button>
-        </div>
+  @if (isChatVisible) {
+    <div class="chat-container">
+      <!-- Close button -->
+      <button class="close-button" (click)="toggleChat()">✖</button>
+      <!-- Chat header -->
+      <div class="chat-header"><strong>Chat with Us</strong></div>
+      <!-- Chat messages area -->
+      <div class="chat-box">
+        @for (message of messages; track message) {
+          <div class="message"
+            [class.user]="message.sender === 'user'"
+            [class.bot]="message.sender === 'bot'">
+            <span>{{ message.text }}</span>
+          </div>
+        }
+      </div>
+      <!-- Input area for user message -->
+      <div class="chat-input">
+        <input [(ngModel)]="userInput" (keyup.enter)="sendMessage()" placeholder="Type a message..." />
+        <button id="sentbtn" (click)="sendMessage()">Send</button>
+      </div>
     </div>
+  }
 </div>

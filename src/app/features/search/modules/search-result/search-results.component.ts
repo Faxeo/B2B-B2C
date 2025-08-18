@@ -1,4 +1,4 @@
-import {
+ import {
   Component,
   Input,
   OnChanges,
@@ -11,35 +11,35 @@ import {
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AddToCartService } from '../../core/services/add-to-cart/add-to-cart.service';
-import { CartService } from '../../core/services/cart/cart.service';
-import { LoginService } from '../../core/services/login-service/login-service.service';
-import { AddVehicleService } from '../../core/services/add-vehicle/add-vehicle.service';
-import { VehicleSearchService } from '../../core/services/search-vehicle/search-vehicle.service';
-import { FilterComponent } from '../search/filter/filter.component';
-import { NavigationService } from '../../core/services/navigation-service/navigation-service.service';
+import { AddToCartService } from '../../../cart/services/add-to-cart/add-to-cart.service';
+import { CartService } from '../../../cart/services/cart/cart.service';
+import { LoginService } from '../../../users/services/login-service/login-service.service';
+import { AddVehicleService } from '../../../users/services/add-vehicle/add-vehicle.service';
+import { VehicleSearchService } from '../../services/search-vehicle/search-vehicle.service';
+import { FilterComponent } from '../filter/filter.component';
+import { NavigationService } from '../../../../shared/navigation-service/navigation-service.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { DynamicSearchService } from '../../core/services/dynamic-search/dynamic-search.service';
-import { FetchYearService } from '../../core/services/fetch-year/fetch-year.service';
-import { FetchMakeService } from '../../core/services/fetch-make/fetch-make.service';
-import { FetchChildService } from '../../core/services/fetch-child/fetch-child.service';
-import { MainCategoryService } from '../../core/services/main-category/main-category.service';
-import { SubCategoryService } from '../../core/services/sub-category/sub-category.service';
-import { NavbarComponent } from '../../layout/navbar/navbar.component';
-import { RecentlyViewedService } from '../../core/services/recently-viewed/recently-viewed.service';
-import { RecentlyViewedComponent } from '../recently-viewed/recently-viewed.component';
-import { FilterSearchService } from '../../core/services/filter-search/filter-search.service';
-import { CategoryIdService } from '../../core/services/category-id/category-id.service';
-import { HierarchyProductsService } from '../../core/services/hierarchy-products/hierarchy-products.service';
-import { AddToWishlistService } from '../../core/services/add-to-wishlist/add-to-wishlist.service';
-import { RemoveFromWishlistService } from '../../core/services/remove-from-wishlist/remove-from-wishlist.service';
-import { WishlistService } from '../../core/services/wishlist/wishlist.service';
+import { DynamicSearchService } from '../../services/dynamic-search/dynamic-search.service';
+import { FetchYearService } from '../../services/fetch-year/fetch-year.service';
+import { FetchMakeService } from '../../services/fetch-make/fetch-make.service';
+import { FetchChildService } from '../../services/fetch-child/fetch-child.service';
+import { MainCategoryService } from '../../services/main-category/main-category.service';
+import { SubCategoryService } from '../../services/sub-category/sub-category.service';
+import { NavbarComponent } from '../../../../layout/navbar/navbar.component';
+import { RecentlyViewedService } from '../../../../shared/recently-viewed-service/recently-viewed.service';
+import { RecentlyViewedComponent } from '../../../../shared/recenltly-viewed-component/recently-viewed.component';
+import { FilterSearchService } from '../../services/filter-search/filter-search.service';
+import { CategoryIdService } from '../../services/category-id/category-id.service';
+import { HierarchyProductsService } from '../../services/hierarchy-products/hierarchy-products.service';
+import { AddToWishlistService } from '../../../wishlist/services/add-to-wishlist/add-to-wishlist.service';
+import { RemoveFromWishlistService } from '../../../wishlist/services/remove-from-wishlist/remove-from-wishlist.service';
+import { WishlistService } from '../../../wishlist/services/wishlist/wishlist.service';
 import { SearchByVehicleComponent } from '../search-by-vehicle/search-by-vehicle.component';
-import { CategoryNavbarSearchService } from '../../core/services/category-navbar-search/category-navbar-search.service';
-import { CartSidebarComponent } from '../cart-sidebar/cart-sidebar.component';
+import { CategoryNavbarSearchService } from '../../services/category-navbar-search/category-navbar-search.service';
+import { CartSidebarComponent } from '../../../cart/modules/cart-sidebar/cart-sidebar.component';
 import { SearchByCategoryComponent } from '../search-by-category/search-by-category.component';
-import { CartSidebarService } from '../../core/services/cart-sidebar/cart-sidebar.service';
-import { FooterComponent } from '../../layout/footer/footer.component';
+import { CartSidebarService } from '../../../cart/services/cart-sidebar/cart-sidebar.service';
+import { FooterComponent } from '../../../../layout/footer/footer.component';
 import { ToastrService } from 'ngx-toastr';
 import {
   trigger,
@@ -51,66 +51,65 @@ import {
 
 
 @Component({
-  selector: 'app-search-results',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    RecentlyViewedComponent,
-    RouterModule,
-    SearchByVehicleComponent,
-    SearchByCategoryComponent,
-  ],
-  templateUrl: './search-results.component.html',
-  styleUrl: './search-results.component.css',
-  animations: [
-    trigger('thumbsUpAnim', [
-      transition(':enter', [
-        animate('3s cubic-bezier(0.25, 0.46, 0.45, 0.94)', keyframes([
-          // Start: Small scale, center position
-          style({ 
-            transform: 'scale(0) translateY(0) rotate(0deg)', 
-            opacity: 0, 
-            filter: 'blur(4px)',
-            offset: 0 
-          }),
-          // Initial pop with glow
-          style({ 
-            transform: 'scale(1.4) translateY(-15px) rotate(-20deg)', 
-            opacity: 1, 
-            filter: 'blur(0px) drop-shadow(0 0 20px rgba(40, 167, 69, 0.8))',
-            offset: 0.15 
-          }),
-          // Bounce effect
-          style({ 
-            transform: 'scale(1.0) translateY(-40px) rotate(15deg)', 
-            filter: 'blur(0px) drop-shadow(0 0 15px rgba(40, 167, 69, 0.6))',
-            offset: 0.3 
-          }),
-          // Second bounce
-          style({ 
-            transform: 'scale(1.2) translateY(-70px) rotate(-10deg)', 
-            filter: 'blur(0px) drop-shadow(0 0 10px rgba(40, 167, 69, 0.4))',
-            offset: 0.5 
-          }),
-          // Float phase
-          style({ 
-            transform: 'scale(1.05) translateY(-120px) rotate(5deg)', 
-            opacity: 0.9,
-            filter: 'blur(0px) drop-shadow(0 0 5px rgba(40, 167, 69, 0.2))',
-            offset: 0.75 
-          }),
-          // Final fade out
-          style({ 
-            transform: 'scale(0.8) translateY(-180px) rotate(0deg)', 
-            opacity: 0,
-            filter: 'blur(2px)',
-            offset: 1.0 
-          })
-        ]))
-      ])
-    ])
-  ]
+    selector: 'app-search-results',
+    imports: [
+        CommonModule,
+        FormsModule,
+        RecentlyViewedComponent,
+        RouterModule,
+        SearchByVehicleComponent,
+        SearchByCategoryComponent,
+    ],
+    templateUrl: './search-results.component.html',
+    styleUrl: './search-results.component.css',
+    animations: [
+        trigger('thumbsUpAnim', [
+            transition(':enter', [
+                animate('3s cubic-bezier(0.25, 0.46, 0.45, 0.94)', keyframes([
+                    // Start: Small scale, center position
+                    style({
+                        transform: 'scale(0) translateY(0) rotate(0deg)',
+                        opacity: 0,
+                        filter: 'blur(4px)',
+                        offset: 0
+                    }),
+                    // Initial pop with glow
+                    style({
+                        transform: 'scale(1.4) translateY(-15px) rotate(-20deg)',
+                        opacity: 1,
+                        filter: 'blur(0px) drop-shadow(0 0 20px rgba(40, 167, 69, 0.8))',
+                        offset: 0.15
+                    }),
+                    // Bounce effect
+                    style({
+                        transform: 'scale(1.0) translateY(-40px) rotate(15deg)',
+                        filter: 'blur(0px) drop-shadow(0 0 15px rgba(40, 167, 69, 0.6))',
+                        offset: 0.3
+                    }),
+                    // Second bounce
+                    style({
+                        transform: 'scale(1.2) translateY(-70px) rotate(-10deg)',
+                        filter: 'blur(0px) drop-shadow(0 0 10px rgba(40, 167, 69, 0.4))',
+                        offset: 0.5
+                    }),
+                    // Float phase
+                    style({
+                        transform: 'scale(1.05) translateY(-120px) rotate(5deg)',
+                        opacity: 0.9,
+                        filter: 'blur(0px) drop-shadow(0 0 5px rgba(40, 167, 69, 0.2))',
+                        offset: 0.75
+                    }),
+                    // Final fade out
+                    style({
+                        transform: 'scale(0.8) translateY(-180px) rotate(0deg)',
+                        opacity: 0,
+                        filter: 'blur(2px)',
+                        offset: 1.0
+                    })
+                ]))
+            ])
+        ])
+    ]
 })
 
 export class SearchResultsComponent implements OnChanges {

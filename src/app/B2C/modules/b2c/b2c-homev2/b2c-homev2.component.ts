@@ -7,7 +7,7 @@ import {
   PLATFORM_ID,
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ApiService } from '../../../../core/services/api.service';
+import { ApiService } from '../../../../shared/api.service';
 import { BehaviorSubject, fromEvent, Observable, of } from 'rxjs';
 import {
   debounceTime,
@@ -16,53 +16,48 @@ import {
   switchMap,
   catchError,
 } from 'rxjs/operators';
-import { HttpClientModule } from '@angular/common/http';
+import {HttpClientModule} from '@angular/common/http';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { SidebarComponent } from '../../../../layout/sidebar/sidebar/sidebar.component';
-import { SidebarToggleService } from '../../../../core/services/sidebar-toggle/sidebar-toggle.service';
+import { SidebarToggleService } from '../../../../shared/sidebar-toggle/sidebar-toggle.service';
 import { FooterComponent } from '../../../../layout/footer/footer.component';
-import { LoginService } from '../../../../core/services/login-service/login-service.service';
-import { LogoutService } from '../../../../core/services/logout-service/logout-service.service';
-import { AddToCartService } from '../../../../core/services/add-to-cart/add-to-cart.service';
-import { CartService } from '../../../../core/services/cart/cart.service';
-import { FormsModule } from '@angular/forms';
-import { DynamicSearchService } from '../../../../core/services/dynamic-search/dynamic-search.service';
-import { SearchComponent } from '../../../../modules/search/search.component';
-import { FetchChildService } from '../../../../core/services/fetch-child/fetch-child.service';
-import { FetchMakeService } from '../../../../core/services/fetch-make/fetch-make.service';
-import { FetchYearService } from '../../../../core/services/fetch-year/fetch-year.service';
-import { VehicleSearchService } from '../../../../core/services/search-vehicle/search-vehicle.service';
-import { MainCategoryService } from '../../../../core/services/main-category/main-category.service';
-import { SubCategoryService } from '../../../../core/services/sub-category/sub-category.service';
-import { CategoryIdService } from '../../../../core/services/category-id/category-id.service';
+import { LoginService } from '../../../../features/users/services/login-service/login-service.service';
+import { LogoutService } from '../../../../features/users/services/logout-service/logout-service.service';
+import { AddToCartService } from '../../../../features/cart/services/add-to-cart/add-to-cart.service';
+import { CartService } from '../../../../features/cart/services/cart/cart.service';
+import { DynamicSearchService } from '../../../../features/search/services/dynamic-search/dynamic-search.service';
+import { FetchChildService } from '../../../../features/search/services/fetch-child/fetch-child.service';
+import { FetchMakeService } from '../../../../features/search/services/fetch-make/fetch-make.service';
+import { FetchYearService } from '../../../../features/search/services/fetch-year/fetch-year.service';
+import { VehicleSearchService } from '../../../../features/search/services/search-vehicle/search-vehicle.service';
+import { MainCategoryService } from '../../../../features/search/services/main-category/main-category.service';
+import { SubCategoryService } from '../../../../features/search/services/sub-category/sub-category.service';
+import { CategoryIdService } from '../../../../features/search/services/category-id/category-id.service';
 import { B2cSearchComponent } from '../b2c-search/b2c-search.component';
-import { Brand, GetBrandsService } from '../../../../core/services/get-brands/get-brands.service';
-import { ChatBotComponent } from '../../../../modules/chat-bot/chat-bot.component';
-import { AddToWishlistService } from '../../../../core/services/add-to-wishlist/add-to-wishlist.service';
+import { Brand, GetBrandsService } from '../../../../features/search/services/get-brands/get-brands.service';
+import { ChatBotComponent } from '../../../../features/chat-bot/modules/chat-bot.component';
+import { AddToWishlistService } from '../../../../features/wishlist/services/add-to-wishlist/add-to-wishlist.service';
 import { ToastrService } from 'ngx-toastr';
 import { CookieService } from 'ngx-cookie-service';
-import { SearchQueryService } from '../../../../core/services/search-query/search-query.service';
+import { SearchQueryService } from '../../../../features/search/services/search-query/search-query.service';
+import { FormsModule } from '@angular/forms';
 
 
 @Component({
-  selector: 'app-b2c-homev2',
-  standalone: true,
-  imports: [
-    CommonModule,
-    HttpClientModule,
-    RouterModule,
-    SidebarComponent,
-    // FooterComponent,
-    FormsModule,
-    // SearchComponent,
-    // B2cSearchComponent,
-    ChatBotComponent    
-  ],
-  providers: [ApiService, SidebarToggleService],
-  templateUrl: './b2c-homev2.component.html',
-  styleUrls:[
-    './b2c-homev2.component.css'
-  ]
+    selector: 'app-b2c-homev2',
+    imports: [
+        CommonModule,
+        HttpClientModule,
+        RouterModule,
+        // SidebarComponent,
+        FormsModule,
+        // ChatBotComponent
+    ],
+    providers: [ApiService, SidebarToggleService],
+    templateUrl: './b2c-homev2.component.html',
+    styleUrls: [
+        './b2c-homev2.component.css'
+    ]
 })
 
 export class B2CHomeV2Component implements OnInit {

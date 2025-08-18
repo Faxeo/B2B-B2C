@@ -1,12 +1,11 @@
-import { CommonModule } from '@angular/common';
+
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-purchase-history',
-  templateUrl: './purchase-history.component.html',
-  styleUrls: ['./purchase-history.component.css'],
-  standalone: true,
-  imports: [CommonModule]
+    selector: 'app-purchase-history',
+    templateUrl: './purchase-history.component.html',
+    styleUrls: ['./purchase-history.component.css'],
+    imports: []
 })
 export class PurchaseHistoryComponent {
   orders = [

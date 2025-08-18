@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter } from '@angular/core';
-import { NavigationService } from '../../../core/services/navigation-service/navigation-service.service';
+import { NavigationService } from '../../../shared/navigation-service/navigation-service.service';
 
 @Component({
   selector: 'app-business-sidebar',

@@ -1,18 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { ShippedOrdersService } from '../../../core/services/shipped-orders/shipped-orders.service';
-import { OrderDetailsService } from '../../../core/services/order-details/order-details.service';
-import { OrderShippingService } from '../../../core/services/pending-orders/order-shipping/order-shipping.service';
+import { ShippedOrdersService } from '../../../features/billing/services/shipped-orders/shipped-orders.service';
+import { OrderDetailsService } from '../../../features/billing/services/order-details/order-details.service';
+import { OrderShippingService } from '../../../features/billing/services/pending-orders/order-shipping/order-shipping.service';
 import { catchError } from 'rxjs/operators';
 import { of, forkJoin } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  selector: 'app-orders-to-receive',
-  templateUrl: './orders-to-receive.component.html',
-  styleUrls: ['./orders-to-receive.component.css'],
+    imports: [CommonModule, FormsModule],
+    selector: 'app-orders-to-receive',
+    templateUrl: './orders-to-receive.component.html',
+    styleUrls: ['./orders-to-receive.component.css']
 })
 export class OrdersToReceiveComponent implements OnInit {
   orders: any[] = [];

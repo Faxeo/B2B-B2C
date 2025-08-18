@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
-import { ApiService } from '../../../core/services/api.service';
+import { ApiService } from '../../../../shared/api.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-admin-sidebar',
-  templateUrl: './admin-sidebar.component.html',
-  styleUrls: ['./admin-sidebar.component.css'],
+    selector: 'app-admin-sidebar',
+    templateUrl: './admin-sidebar.component.html',
+    styleUrls: ['./admin-sidebar.component.css'],
+    standalone: false
 })
 
 

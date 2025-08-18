@@ -1,10 +1,12 @@
 <div class="container-fluid g-0 m-0 p-0">
   <!-- Loading spinner -->
-  <div *ngIf="isLoading" class="spinner-container">
-    <div class="spinner-border text-danger" role="status">
-      <span class="visually-hidden">Loading...</span>
+  @if (isLoading) {
+    <div class="spinner-container">
+      <div class="spinner-border text-danger" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     </div>
-  </div>
+  }
 
   <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top py-2">
     <div class="container-fluid">
@@ -38,22 +40,22 @@
                 <hr class="dropdown-divider">
               </li>
               <li><a class="dropdown-item py-2" href="#" (click)="onSearch()"><i class="bi bi-collection me-2"></i>All
-                  Products</a></li>
-            </ul>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link fw-medium px-3" href="#"><i class="bi bi-tools me-1"></i> Services</a>
-          </li>
-        </ul>
+            Products</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fw-medium px-3" href="#"><i class="bi bi-tools me-1"></i> Services</a>
+        </li>
+      </ul>
 
-        <!-- Centered Search - Optimized for performance -->
-        <form class="d-flex justify-content-center flex-grow-1 my-2 my-lg-0 position-relative mx-auto"
-          style="max-width: 600px;" role="search">
-          <div class="input-group has-search">
-            <span class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></span>
-            <input type="search" class="form-control ps-5 rounded-start-pill" id="search-input"
-              placeholder="Search parts, brands, vehicles..." aria-label="Search" autocomplete="off"
-              (keydown.enter)="onSearch()">
+      <!-- Centered Search - Optimized for performance -->
+      <form class="d-flex justify-content-center flex-grow-1 my-2 my-lg-0 position-relative mx-auto"
+        style="max-width: 600px;" role="search">
+        <div class="input-group has-search">
+          <span class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></span>
+          <input type="search" class="form-control ps-5 rounded-start-pill" id="search-input"
+            placeholder="Search parts, brands, vehicles..." aria-label="Search" autocomplete="off"
+            (keydown.enter)="onSearch()">
             <button class="btn btn-danger px-2 py-1 ms-1 rounded-end-pill" type="submit" (click)="onSearch()">
               <i class="bi bi-search"></i>
             </button>
@@ -62,7 +64,7 @@
 
         <!-- Right-side Actions - Optimized -->
         <div class="navbar-actions ms-auto d-flex align-items-center">
-          <ng-container *ngIf="!isCustomerLoggedIn; else customerSection">
+          @if (!isCustomerLoggedIn) {
             <div class="d-flex gap-2 me-3">
               <button class="btn btn-outline-danger btn-sm px-3" routerLink="/B2C/login">
                 <span class="d-none d-lg-inline">Sign In</span>
@@ -73,10 +75,7 @@
                 <i class="bi bi-person-plus d-lg-none"></i>
               </button>
             </div>
-          </ng-container>
-
-          <!-- Customer Section (Visible when logged in) -->
-          <ng-template #customerSection>
+          } @else {
             <div class="d-flex gap-2 align-items-center position-relative me-3">
               <span class="d-none d-lg-inline">Welcome</span>
               <div class="dropdown">
@@ -84,32 +83,42 @@
                   {{ customer_name || 'Customer' }}
                   <i class="bi bi-caret-down-fill ms-2"></i>
                 </button>
-                <div *ngIf="showDropdown" class="dropdown-menu dropdown-menu-end show" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(0px, 38px);">
-                  <a class="dropdown-item" href="javascript:void(0)" (click)="logout()">
-                    <i class="bi bi-box-arrow-right me-2"></i> Log Out
-                  </a>
-                </div>
+                @if (showDropdown) {
+                  <div class="dropdown-menu dropdown-menu-end show" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(0px, 38px);">
+                    <a class="dropdown-item" href="javascript:void(0)" (click)="logout()">
+                      <i class="bi bi-box-arrow-right me-2"></i> Log Out
+                    </a>
+                  </div>
+                }
               </div>
             </div>
-          </ng-template>
+          }
+
+          <!-- Customer Section (Visible when logged in) -->
 
           <div class="ms-auto nav-icons d-flex align-items-center gap-3 position-relative">
             <!-- Wishlist -->
-            <a *ngIf="userID && userID !== '0'" class="nav-link position-relative" [routerLink]="'/B2C/wishlist'">
-              <i class="bi bi-heart fs-4 text-danger"></i>
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger shadow-sm">
-                {{ wishlistCount }}
-              </span>
-            </a>
+            @if (userID && userID !== '0') {
+              <a class="nav-link position-relative" [routerLink]="'/B2C/wishlist'">
+                <i class="bi bi-heart fs-4 text-danger"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger shadow-sm">
+                  {{ wishlistCount }}
+                </span>
+              </a>
+            }
 
             <!-- Cart -->
-            <a *ngIf="loginType === 'customer'" class="nav-link position-relative" [routerLink]="'/B2C/cart'">
-              <i class="bi bi-cart3 fs-4"></i>
-              <span *ngIf="cartItemCount > 0"
+            @if (loginType === 'customer') {
+              <a class="nav-link position-relative" [routerLink]="'/B2C/cart'">
+                <i class="bi bi-cart3 fs-4"></i>
+                @if (cartItemCount > 0) {
+                  <span
                     class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary shadow-sm">
-                {{ cartItemCount }}
-              </span>
-            </a>
+                    {{ cartItemCount }}
+                  </span>
+                }
+              </a>
+            }
           </div>
         </div>
       </div>
@@ -123,764 +132,779 @@
     <img src="../../../../../assets/b2c-home.avif" alt="Auto parts background"
       class="w-100 h-100 position-absolute top-0 start-0 object-fit-cover" style="opacity: 0.5;">
 
-    <!-- Overlay Content -->
-    <div class="position-relative z-1 h-100 d-flex align-items-center justify-content-center">
-      <div class="text-center px-3 px-md-5">
-        <h1 class="display-4 fw-bold mb-3">
-          Welcome to <span class="text-danger">US AUTOPARTS EXPERTS</span>
-          <span class="text-warning"> B2C</span> Platform
-        </h1>
+      <!-- Overlay Content -->
+      <div class="position-relative z-1 h-100 d-flex align-items-center justify-content-center">
+        <div class="text-center px-3 px-md-5">
+          <h1 class="display-4 fw-bold mb-3">
+            Welcome to <span class="text-danger">US AUTOPARTS EXPERTS</span>
+            <span class="text-warning"> B2C</span> Platform
+          </h1>
 
-        <p class="lead mb-4">
-          Premium auto parts with expert advice and fast nationwide delivery
-        </p>
-        <div class="d-flex flex-wrap gap-3 justify-content-center">
-          <a href="#" class="btn btn-danger btn-lg px-4 fw-bold" (click)="onSearch()">
-            Shop Now <i class="bi bi-arrow-right ms-2"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </header>
-
-<div class="container mt-3">
-  <div class="row g-4 justify-content-center text-center">
-
-    <!-- Search by Vehicle -->
-    <div class="col-sm-6 col-md-4">
-      <button class="btn btn-outline-danger shadow-sm rounded-4 w-100 py-3 px-2 fw-semibold d-flex flex-column align-items-center"
-              (click)="onSearchOptionClick('Vehicle')"
-              data-bs-toggle="tooltip" title="Search using your vehicle's make, model, and trim">
-        <i class="fas fa-car-side fa-2x mb-2"></i>
-        Search by Vehicle
-      </button>
-    </div>
-
-    <!-- Search by Category -->
-    <div class="col-sm-6 col-md-4">
-      <button class="btn btn-outline-danger shadow-sm rounded-4 w-100 py-3 px-2 fw-semibold d-flex flex-column align-items-center"
-              (click)="onSearchOptionClick('Category')"
-              data-bs-toggle="tooltip" title="Find parts by selecting from category and sub-categories">
-        <i class="fas fa-layer-group fa-2x mb-2"></i>
-        Search by Category
-      </button>
-    </div>
-
-    <!-- Search by Attributes -->
-    <div class="col-sm-6 col-md-4">
-      <button class="btn btn-outline-danger shadow-sm rounded-4 w-100 py-3 px-2 fw-semibold d-flex flex-column align-items-center"
-              (click)="onSearchOptionClick('Attributes')"
-              data-bs-toggle="tooltip" title="Filter products using technical or feature-based attributes">
-        <i class="fas fa-sliders-h fa-2x mb-2"></i>
-        Search by Attributes
-      </button>
-    </div>
-
-  </div>
-</div>
-
- <div class="slider-container" style="height: inherit;" id="sliderContainer" [ngClass]="{'active': isSliderVisible}">
-    <div class="inner-container" *ngIf="isSliderVisible">
-      <div class="content-wrapper">
-        <h2 class="slider-title">Unlock Exclusive B2B Benefits</h2>
-        <p class="slider-subtitle">Join Us Auto Parts as a B2B Partner</p>
-        <button class="action-button">Become a B2B User</button>
-      </div>
-    </div>
-    <button *ngIf="loginType !== 'customer'" class="slider-button" id="sliderButton" (click)="becomeB2BUser()">
-      <span><strong>B2B</strong></span>
-    </button>
-  </div>
-
-  <!-- Vehicle Search Modal -->
-   <!--
- <div class="modal fade" id="vehicleSearchModal" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);" tabindex="-1" aria-labelledby="vehicleSearchLabel" aria-hidden="true" [ngClass]="{'show d-block': showVehicleForm}" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="vehicleSearchLabel">Vehicle Search</h5>
-        <button type="button" class="btn-close" (click)="closeForm()" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row g-3">
-          <div class="col-md-4">
-            <label for="year" class="form-label">Year:</label>
-            <select id="year" class="form-select" [(ngModel)]="selectedYear" (change)="onYearChange()">
-              <option value="" disabled selected>Select Year</option>
-              <option *ngFor="let year of years" [value]="year.year">{{ year.year }}</option>
-            </select>
-          </div>
-
-          <div class="col-md-4">
-            <label for="make" class="form-label">Make:</label>
-            <select id="make" class="form-select" [(ngModel)]="selectedMake" (change)="onMakeChange()" [disabled]="!selectedYear">
-              <option value="" disabled selected>Select Make</option>
-              <option *ngFor="let make of makes" [value]="make.name">{{ make.name }}</option>
-            </select>
-          </div>
-
-          <div class="col-md-4">
-            <label for="model" class="form-label">Model:</label>
-            <select id="model" class="form-select" [(ngModel)]="selectedModel" (change)="onModelChange()" [disabled]="!selectedMake">
-              <option value="" disabled selected>Select Model</option>
-              <option *ngFor="let model of models" [value]="model.name">{{ model.name }}</option>
-            </select>
-          </div>
-
-          <div class="col-md-6">
-            <label for="trim" class="form-label">Trim:</label>
-            <select id="trim" class="form-select" [(ngModel)]="selectedTrim" (change)="onTrimChange()" [disabled]="!selectedModel">
-              <option value="" disabled selected>Select Trim</option>
-              <option *ngFor="let trim of trims" [value]="trim.name">{{ trim.name }}</option>
-            </select>
-          </div>
-
-          <div class="col-md-6">
-            <label for="engine" class="form-label">Engine:</label>
-            <select id="engine" class="form-select" [(ngModel)]="selectedEngine" (change)="onEngineChange()">
-              <option *ngFor="let engine of engines" [value]="engine.name">{{ engine.name }}</option>
-            </select>
+          <p class="lead mb-4">
+            Premium auto parts with expert advice and fast nationwide delivery
+          </p>
+          <div class="d-flex flex-wrap gap-3 justify-content-center">
+            <a href="#" class="btn btn-danger btn-lg px-4 fw-bold" (click)="onSearch()">
+              Shop Now <i class="bi bi-arrow-right ms-2"></i>
+            </a>
           </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button"
-                class="btn btn-primary"
-                (click)="searchByVehicle()"
-                [disabled]="!selectedYear || !selectedMake || !selectedModel || !selectedTrim || !selectedEngine">
-          Search
-        </button>
+    </header>
+
+    <div class="container mt-3">
+      <div class="row g-4 justify-content-center text-center">
+
+        <!-- Search by Vehicle -->
+        <div class="col-sm-6 col-md-4">
+          <button class="btn btn-outline-danger shadow-sm rounded-4 w-100 py-3 px-2 fw-semibold d-flex flex-column align-items-center"
+            (click)="onSearchOptionClick('Vehicle')"
+            data-bs-toggle="tooltip" title="Search using your vehicle's make, model, and trim">
+            <i class="fas fa-car-side fa-2x mb-2"></i>
+            Search by Vehicle
+          </button>
+        </div>
+
+        <!-- Search by Category -->
+        <div class="col-sm-6 col-md-4">
+          <button class="btn btn-outline-danger shadow-sm rounded-4 w-100 py-3 px-2 fw-semibold d-flex flex-column align-items-center"
+            (click)="onSearchOptionClick('Category')"
+            data-bs-toggle="tooltip" title="Find parts by selecting from category and sub-categories">
+            <i class="fas fa-layer-group fa-2x mb-2"></i>
+            Search by Category
+          </button>
+        </div>
+
+        <!-- Search by Attributes -->
+        <div class="col-sm-6 col-md-4">
+          <button class="btn btn-outline-danger shadow-sm rounded-4 w-100 py-3 px-2 fw-semibold d-flex flex-column align-items-center"
+            (click)="onSearchOptionClick('Attributes')"
+            data-bs-toggle="tooltip" title="Filter products using technical or feature-based attributes">
+            <i class="fas fa-sliders-h fa-2x mb-2"></i>
+            Search by Attributes
+          </button>
+        </div>
+
       </div>
     </div>
-  </div>
-</div>
--->
-<div class="modal fade" id="vehicleSearchModal" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);" tabindex="-1" aria-labelledby="vehicleSearchLabel" aria-hidden="true" [ngClass]="{'show d-block': showVehicleForm}" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="vehicleSearchLabel">Vehicle Search</h5>
-        <button type="button" class="btn-close" (click)="closeForm()" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row g-3">
-          <!-- YEAR DROPDOWN -->
-          <div class="col-md-4">
-            <label for="year" class="form-label">Year:</label>
-            <select id="year" class="form-select" [(ngModel)]="selectedYear" (change)="onYearChange()">
-              <option value="" disabled selected>Select Year</option>
-              <option *ngFor="let year of years" [value]="year.year">{{ year.year }}</option>
-            </select>
-          </div>
 
-          <!-- MAKE AUTOCOMPLETE -->
-          <div class="col-md-4 position-relative">
-            <label for="make" class="form-label">Make:</label>
-            <input
-              id="make"
-              type="text"
-              class="form-control"
-              [(ngModel)]="makeInput"
-              (input)="filterMakes(makeInput)"
-              (focus)="filterMakes(makeInput)"
-              (blur)="hideMakeDropdown()"
-              [disabled]="!selectedYear"
-              autocomplete="off"
-            />
-            <ul class="list-group position-absolute z-3 w-100"
-                *ngIf="showMakeDropdown && filteredMakes.length"
-                style="max-height: 200px; overflow-y: auto;">
-              <li class="list-group-item list-group-item-action"
-                  *ngFor="let make of filteredMakes"
-                  (mousedown)="selectMake(make)">
-                {{ make.name }}
-              </li>
-            </ul>
+    <div class="slider-container" style="height: inherit;" id="sliderContainer" [ngClass]="{'active': isSliderVisible}">
+      @if (isSliderVisible) {
+        <div class="inner-container">
+          <div class="content-wrapper">
+            <h2 class="slider-title">Unlock Exclusive B2B Benefits</h2>
+            <p class="slider-subtitle">Join Us Auto Parts as a B2B Partner</p>
+            <button class="action-button">Become a B2B User</button>
           </div>
+        </div>
+      }
+      @if (loginType !== 'customer') {
+        <button class="slider-button" id="sliderButton" (click)="becomeB2BUser()">
+          <span><strong>B2B</strong></span>
+        </button>
+      }
+    </div>
 
-          <!-- MODEL AUTOCOMPLETE -->
-          <div class="col-md-4 position-relative">
-            <label for="model" class="form-label">Model:</label>
-            <input
-              id="model"
-              type="text"
-              class="form-control"
-              [(ngModel)]="modelInput"
-              (input)="filterModels(modelInput)"
-              (focus)="filterModels(modelInput)"
-              (blur)="hideModelDropdown()"
-              [disabled]="!selectedMake"
-              autocomplete="off"
-            />
-            <ul class="list-group position-absolute z-3 w-100"
-                *ngIf="showModelDropdown && filteredModels.length"
-                style="max-height: 200px; overflow-y: auto;">
-              <li class="list-group-item list-group-item-action"
-                  *ngFor="let model of filteredModels"
-                  (mousedown)="selectModel(model)">
-                {{ model.name }}
-              </li>
-            </ul>
+    <!-- Vehicle Search Modal -->
+    <!--
+    <div class="modal fade" id="vehicleSearchModal" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);" tabindex="-1" aria-labelledby="vehicleSearchLabel" aria-hidden="true" [ngClass]="{'show d-block': showVehicleForm}" data-bs-backdrop="static" data-bs-keyboard="false">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="vehicleSearchLabel">Vehicle Search</h5>
+            <button type="button" class="btn-close" (click)="closeForm()" aria-label="Close"></button>
           </div>
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label for="year" class="form-label">Year:</label>
+                <select id="year" class="form-select" [(ngModel)]="selectedYear" (change)="onYearChange()">
+                  <option value="" disabled selected>Select Year</option>
+                  <option *ngFor="let year of years" [value]="year.year">{{ year.year }}</option>
+                </select>
+              </div>
 
-          <!-- TRIM AUTOCOMPLETE -->
-          <div class="col-md-6 position-relative">
-            <label for="trim" class="form-label">Trim:</label>
-            <input
-              id="trim"
-              type="text"
-              class="form-control"
-              [(ngModel)]="trimInput"
-              (input)="filterTrims(trimInput)"
-              (focus)="filterTrims(trimInput)"
-              (blur)="hideTrimDropdown()"
-              [disabled]="!selectedModel"
-              autocomplete="off"
-            />
-            <ul class="list-group position-absolute z-3 w-100"
-                *ngIf="showTrimDropdown && filteredTrims.length"
-                style="max-height: 200px; overflow-y: auto;">
-              <li class="list-group-item list-group-item-action"
-                  *ngFor="let trim of filteredTrims"
-                  (mousedown)="selectTrim(trim)">
-                {{ trim.name }}
-              </li>
-            </ul>
+              <div class="col-md-4">
+                <label for="make" class="form-label">Make:</label>
+                <select id="make" class="form-select" [(ngModel)]="selectedMake" (change)="onMakeChange()" [disabled]="!selectedYear">
+                  <option value="" disabled selected>Select Make</option>
+                  <option *ngFor="let make of makes" [value]="make.name">{{ make.name }}</option>
+                </select>
+              </div>
+
+              <div class="col-md-4">
+                <label for="model" class="form-label">Model:</label>
+                <select id="model" class="form-select" [(ngModel)]="selectedModel" (change)="onModelChange()" [disabled]="!selectedMake">
+                  <option value="" disabled selected>Select Model</option>
+                  <option *ngFor="let model of models" [value]="model.name">{{ model.name }}</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label for="trim" class="form-label">Trim:</label>
+                <select id="trim" class="form-select" [(ngModel)]="selectedTrim" (change)="onTrimChange()" [disabled]="!selectedModel">
+                  <option value="" disabled selected>Select Trim</option>
+                  <option *ngFor="let trim of trims" [value]="trim.name">{{ trim.name }}</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label for="engine" class="form-label">Engine:</label>
+                <select id="engine" class="form-select" [(ngModel)]="selectedEngine" (change)="onEngineChange()">
+                  <option *ngFor="let engine of engines" [value]="engine.name">{{ engine.name }}</option>
+                </select>
+              </div>
+            </div>
           </div>
-
-          <!-- ENGINE DROPDOWN -->
-          <div class="col-md-6">
-            <label for="engine" class="form-label">Engine:</label>
-            <select id="engine" class="form-select" [(ngModel)]="selectedEngine" (change)="onEngineChange()">
-              <option *ngFor="let engine of engines" [value]="engine.name">{{ engine.name }}</option>
-            </select>
+          <div class="modal-footer">
+            <button type="button"
+              class="btn btn-primary"
+              (click)="searchByVehicle()"
+              [disabled]="!selectedYear || !selectedMake || !selectedModel || !selectedTrim || !selectedEngine">
+              Search
+            </button>
           </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button"
-                class="btn btn-primary"
-                (click)="searchByVehicle()"
-                [disabled]="!selectedYear || !selectedMake || !selectedModel || !selectedTrim || !selectedEngine">
-          Search
-        </button>
-      </div>
     </div>
-  </div>
-</div>
+    -->
+    <div class="modal fade" id="vehicleSearchModal" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);" tabindex="-1" aria-labelledby="vehicleSearchLabel" aria-hidden="true" [ngClass]="{'show d-block': showVehicleForm}" data-bs-backdrop="static" data-bs-keyboard="false">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="vehicleSearchLabel">Vehicle Search</h5>
+            <button type="button" class="btn-close" (click)="closeForm()" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3">
+              <!-- YEAR DROPDOWN -->
+              <div class="col-md-4">
+                <label for="year" class="form-label">Year:</label>
+                <select id="year" class="form-select" [(ngModel)]="selectedYear" (change)="onYearChange()">
+                  <option value="" disabled selected>Select Year</option>
+                  @for (year of years; track year) {
+                    <option [value]="year.year">{{ year.year }}</option>
+                  }
+                </select>
+              </div>
 
-<!-- Category Search Modal -->
-<!-- <div class="modal fade" id="categorySearchModal" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);" aria-labelledby="categorySearchLabel" aria-hidden="true" [ngClass]="{'show d-block': showCategoryForm}" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="categorySearchLabel">Category Search</h5>
-        <button type="button" class="btn-close" (click)="closeForm()" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <ng-container *ngIf="mainCategories.length > 0; else noCategories">
-          <div class="row g-3">
-            <div class="col-md-4">
-              <label for="mainCategory" class="form-label">Main Category:</label>
-              <select id="mainCategory" class="form-select" [(ngModel)]="selectedMainCategory" (change)="onMainCategoryChange()">
-                <option value="" disabled selected>Main Category</option>
-                <option *ngFor="let mainCategory of mainCategories" [value]="mainCategory.id">{{ mainCategory.name }}</option>
-              </select>
-            </div>
+              <!-- MAKE AUTOCOMPLETE -->
+              <div class="col-md-4 position-relative">
+                <label for="make" class="form-label">Make:</label>
+                <input
+                  id="make"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="makeInput"
+                  (input)="filterMakes(makeInput)"
+                  (focus)="filterMakes(makeInput)"
+                  (blur)="hideMakeDropdown()"
+                  [disabled]="!selectedYear"
+                  autocomplete="off"
+                  />
+                  @if (showMakeDropdown && filteredMakes.length) {
+                    <ul class="list-group position-absolute z-3 w-100"
+                      style="max-height: 200px; overflow-y: auto;">
+                      @for (make of filteredMakes; track make) {
+                        <li class="list-group-item list-group-item-action"
+                          (mousedown)="selectMake(make)">
+                          {{ make.name }}
+                        </li>
+                      }
+                    </ul>
+                  }
+                </div>
 
-            <div class="col-md-4">
-              <label for="firstSubCategory" class="form-label">First Sub-Category:</label>
-              <select id="firstSubCategory" class="form-select" [(ngModel)]="selectedFirstSubCategory"
-                      (change)="onFirstSubCategoryChange()" [disabled]="!selectedMainCategory">
-                <option value="" disabled selected>First Sub-Category</option>
-                <option *ngFor="let firstSubCategory of firstSubCategories" [value]="firstSubCategory.id">{{ firstSubCategory.name }}</option>
-              </select>
-            </div>
+                <!-- MODEL AUTOCOMPLETE -->
+                <div class="col-md-4 position-relative">
+                  <label for="model" class="form-label">Model:</label>
+                  <input
+                    id="model"
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="modelInput"
+                    (input)="filterModels(modelInput)"
+                    (focus)="filterModels(modelInput)"
+                    (blur)="hideModelDropdown()"
+                    [disabled]="!selectedMake"
+                    autocomplete="off"
+                    />
+                    @if (showModelDropdown && filteredModels.length) {
+                      <ul class="list-group position-absolute z-3 w-100"
+                        style="max-height: 200px; overflow-y: auto;">
+                        @for (model of filteredModels; track model) {
+                          <li class="list-group-item list-group-item-action"
+                            (mousedown)="selectModel(model)">
+                            {{ model.name }}
+                          </li>
+                        }
+                      </ul>
+                    }
+                  </div>
 
-            <div class="col-md-4">
-              <label for="secondSubCategory" class="form-label">Second Sub-Category:</label>
-              <select id="secondSubCategory" class="form-select" [(ngModel)]="selectedSecondSubCategory"
-                      [disabled]="!selectedFirstSubCategory">
-                <option value="" disabled selected>Second Sub-Category</option>
-                <option *ngFor="let secondSubCategory of secondSubCategories" [value]="secondSubCategory.id">{{ secondSubCategory.name }}</option>
-              </select>
+                  <!-- TRIM AUTOCOMPLETE -->
+                  <div class="col-md-6 position-relative">
+                    <label for="trim" class="form-label">Trim:</label>
+                    <input
+                      id="trim"
+                      type="text"
+                      class="form-control"
+                      [(ngModel)]="trimInput"
+                      (input)="filterTrims(trimInput)"
+                      (focus)="filterTrims(trimInput)"
+                      (blur)="hideTrimDropdown()"
+                      [disabled]="!selectedModel"
+                      autocomplete="off"
+                      />
+                      @if (showTrimDropdown && filteredTrims.length) {
+                        <ul class="list-group position-absolute z-3 w-100"
+                          style="max-height: 200px; overflow-y: auto;">
+                          @for (trim of filteredTrims; track trim) {
+                            <li class="list-group-item list-group-item-action"
+                              (mousedown)="selectTrim(trim)">
+                              {{ trim.name }}
+                            </li>
+                          }
+                        </ul>
+                      }
+                    </div>
+
+                    <!-- ENGINE DROPDOWN -->
+                    <div class="col-md-6">
+                      <label for="engine" class="form-label">Engine:</label>
+                      <select id="engine" class="form-select" [(ngModel)]="selectedEngine" (change)="onEngineChange()">
+                        @for (engine of engines; track engine) {
+                          <option [value]="engine.name">{{ engine.name }}</option>
+                        }
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button"
+                    class="btn btn-primary"
+                    (click)="searchByVehicle()"
+                    [disabled]="!selectedYear || !selectedMake || !selectedModel || !selectedTrim || !selectedEngine">
+                    Search
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </ng-container>
 
-        <ng-template #noCategories>
-          <p class="text-danger text-center">No categories available. Please try again later.</p>
-        </ng-template>
-      </div>
-      <div class="modal-footer">
-        <button type="button"
-                class="btn btn-primary"
-                (click)="searchByCategory()"
-                [disabled]="!selectedMainCategory || !selectedFirstSubCategory || !selectedSecondSubCategory">
-          Search
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
+          <!-- Category Search Modal -->
+          <!-- <div class="modal fade" id="categorySearchModal" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);" aria-labelledby="categorySearchLabel" aria-hidden="true" [ngClass]="{'show d-block': showCategoryForm}" data-bs-backdrop="static" data-bs-keyboard="false">
+          <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="categorySearchLabel">Category Search</h5>
+                <button type="button" class="btn-close" (click)="closeForm()" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <ng-container *ngIf="mainCategories.length > 0; else noCategories">
+                  <div class="row g-3">
+                    <div class="col-md-4">
+                      <label for="mainCategory" class="form-label">Main Category:</label>
+                      <select id="mainCategory" class="form-select" [(ngModel)]="selectedMainCategory" (change)="onMainCategoryChange()">
+                        <option value="" disabled selected>Main Category</option>
+                        <option *ngFor="let mainCategory of mainCategories" [value]="mainCategory.id">{{ mainCategory.name }}</option>
+                      </select>
+                    </div>
 
-  <div class="container-fluid py-5 mt-2 text-center text-white"
-    style="background: url('../../../../../assets/banner2-1.jpg') no-repeat center center/cover;">
-    <div class="container">
-      <h2 class="fw-bold mb-3">Find the Perfect Auto Part</h2>
-      <p class="lead mb-4">Explore our wide range of high-quality auto parts — just a click away.</p>
-      <button class="btn btn-light fw-bold px-4 py-2 mt-3" (click)="onSearch()">
-        View More
-      </button>
-    </div>
-  </div>
+                    <div class="col-md-4">
+                      <label for="firstSubCategory" class="form-label">First Sub-Category:</label>
+                      <select id="firstSubCategory" class="form-select" [(ngModel)]="selectedFirstSubCategory"
+                        (change)="onFirstSubCategoryChange()" [disabled]="!selectedMainCategory">
+                        <option value="" disabled selected>First Sub-Category</option>
+                        <option *ngFor="let firstSubCategory of firstSubCategories" [value]="firstSubCategory.id">{{ firstSubCategory.name }}</option>
+                      </select>
+                    </div>
 
-  <hr class="my-4">  -->
-  <div class="modal fade" id="categorySearchModal" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);" aria-labelledby="categorySearchLabel" aria-hidden="true" [ngClass]="{'show d-block': showCategoryForm}" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="categorySearchLabel">Category Search</h5>
-        <button type="button" class="btn-close" (click)="closeForm()" aria-label="Close"></button>
-      </div>
+                    <div class="col-md-4">
+                      <label for="secondSubCategory" class="form-label">Second Sub-Category:</label>
+                      <select id="secondSubCategory" class="form-select" [(ngModel)]="selectedSecondSubCategory"
+                        [disabled]="!selectedFirstSubCategory">
+                        <option value="" disabled selected>Second Sub-Category</option>
+                        <option *ngFor="let secondSubCategory of secondSubCategories" [value]="secondSubCategory.id">{{ secondSubCategory.name }}</option>
+                      </select>
+                    </div>
+                  </div>
+                </ng-container>
 
-      <div class="modal-body">
-        <ng-container *ngIf="mainCategories.length > 0; else noCategories">
-          <div class="row g-3">
-            <!-- Main Category -->
-            <div class="col-md-4">
-              <label for="mainCategory" class="form-label">Main Category:</label>
-              <ng-select
-                [items]="mainCategories"
-                bindLabel="name"
-                bindValue="id"
-                placeholder="Main Category"
-                [(ngModel)]="selectedMainCategory"
-                (change)="onMainCategoryChange()"
-                [clearable]="false"
-                id="mainCategory">
-              </ng-select>
-            </div>
-
-            <!-- First Sub-Category -->
-            <div class="col-md-4">
-              <label for="firstSubCategory" class="form-label">First Sub-Category:</label>
-              <ng-select
-                [items]="firstSubCategories"
-                bindLabel="name"
-                bindValue="id"
-                placeholder="First Sub-Category"
-                [(ngModel)]="selectedFirstSubCategory"
-                (change)="onFirstSubCategoryChange()"
-                [disabled]="!selectedMainCategory"
-                [clearable]="false"
-                id="firstSubCategory">
-              </ng-select>
-            </div>
-
-            <!-- Second Sub-Category -->
-            <div class="col-md-4">
-              <label for="secondSubCategory" class="form-label">Second Sub-Category:</label>
-              <ng-select
-                [items]="secondSubCategories"
-                bindLabel="name"
-                bindValue="id"
-                placeholder="Second Sub-Category"
-                [(ngModel)]="selectedSecondSubCategory"
-                [disabled]="!selectedFirstSubCategory"
-                [clearable]="false"
-                id="secondSubCategory">
-              </ng-select>
+              </div>
+              <div class="modal-footer">
+                <button type="button"
+                  class="btn btn-primary"
+                  (click)="searchByCategory()"
+                  [disabled]="!selectedMainCategory || !selectedFirstSubCategory || !selectedSecondSubCategory">
+                  Search
+                </button>
+              </div>
             </div>
           </div>
-        </ng-container>
-
-        <ng-template #noCategories>
-          <p class="text-danger text-center">No categories available. Please try again later.</p>
-        </ng-template>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button"
-                class="btn btn-primary"
-                (click)="searchByCategory()"
-                [disabled]="!selectedMainCategory || !selectedFirstSubCategory || !selectedSecondSubCategory">
-          Search
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="container-fluid py-5 mt-2 text-center text-white"
-  style="background: url('../../../../../assets/banner2-1.jpg') no-repeat center center/cover;">
-  <div class="container">
-    <h2 class="fw-bold mb-3">Find the Perfect Auto Part</h2>
-    <p class="lead mb-4">Explore our wide range of high-quality auto parts — just a click away.</p>
-    <button class="btn btn-light fw-bold px-4 py-2 mt-3" (click)="onSearch()">
-      View More
-    </button>
-  </div>
-</div>
-
-<hr class="my-4">
-
-  <!------------ Product categories -------------------->
-
-  <div class="container my-5">
-    <h3 class="text-center fw-bold mb-4">Shop by Category</h3>
-    <div class="row g-4 justify-content-center">
-      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6" *ngFor="let category of categories$ | async">
-        <div class="category-card p-3 text-center" (click)="onCategoryClick(category.id)">
-          <div class="icon-circle mb-3 mx-auto">
-            <i [ngClass]="getCategoryIcon(category.name)" class="fs-4 text-danger"></i>
-          </div>
-          <h6 class="fw-semibold mb-1">{{ category.name | titlecase }}</h6>
-          <p class="text-muted small mb-0">{{ category.productCount }} products</p>
         </div>
-      </div>
-    </div>
-  </div>
-  <hr class="my-4">
 
-  <div class="mx-5 my-5" id="top-products">
-    <h3 class="text-center fw-bold mb-4">Our Top Products</h3>
-    <div class="row g-3 justify-content-center align-items-center"
-      *ngIf="products$ | async as products; else loadingProducts">
-      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 d-flex" *ngFor="let product of products">
-        <div class="card flex-fill d-flex flex-column shadow-sm border-0">
-          <!-- Fixed height image container -->
-          <div class="d-flex justify-content-center align-items-center" style="height: 150px;">
-            <img [src]="'https://usaperp.com:5001/Images/Products/' + product.image" class="img-fluid"
-              [alt]="product.product_name" style="max-height: 100%; object-fit: contain;">
+        <div class="container-fluid py-5 mt-2 text-center text-white"
+          style="background: url('../../../../../assets/banner2-1.jpg') no-repeat center center/cover;">
+          <div class="container">
+            <h2 class="fw-bold mb-3">Find the Perfect Auto Part</h2>
+            <p class="lead mb-4">Explore our wide range of high-quality auto parts — just a click away.</p>
+            <button class="btn btn-light fw-bold px-4 py-2 mt-3" (click)="onSearch()">
+              View More
+            </button>
           </div>
+        </div>
 
-          <div class="card-body d-flex flex-column px-3 py-2">
-            <!-- Product Name and Price in uppercase -->
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <h5 class="card-title text-truncate mb-0" style="max-width: 65%;">
-                {{ product.product_name.charAt(0).toUpperCase() + product.product_name.slice(1).toLowerCase() }}
-              </h5>
-              <h5 class="mb-0 text-center flex-shrink-0 text-uppercase" style="min-width: 60px;">
-                <span *ngIf="product.product_price === 0 || product.availableQuantity === 0; else showPrice"
-                  class="text-info">
-                  SOLD OUT
-                </span>
-                <ng-template #showPrice>
-                  <span class="text-secondary"><i class="fa-solid fa-dollar-sign"></i> {{ product.product_price
-                    }}</span>
+        <hr class="my-4">  -->
+        <div class="modal fade" id="categorySearchModal" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);" aria-labelledby="categorySearchLabel" aria-hidden="true" [ngClass]="{'show d-block': showCategoryForm}" data-bs-backdrop="static" data-bs-keyboard="false">
+          <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="categorySearchLabel">Category Search</h5>
+                <button type="button" class="btn-close" (click)="closeForm()" aria-label="Close"></button>
+              </div>
+
+              <div class="modal-body">
+                @if (mainCategories.length > 0) {
+                  <div class="row g-3">
+                    <!-- Main Category -->
+                    <div class="col-md-4">
+                      <label for="mainCategory" class="form-label">Main Category:</label>
+                      <ng-select
+                        [items]="mainCategories"
+                        bindLabel="name"
+                        bindValue="id"
+                        placeholder="Main Category"
+                        [(ngModel)]="selectedMainCategory"
+                        (change)="onMainCategoryChange()"
+                        [clearable]="false"
+                        id="mainCategory">
+                      </ng-select>
+                    </div>
+                    <!-- First Sub-Category -->
+                    <div class="col-md-4">
+                      <label for="firstSubCategory" class="form-label">First Sub-Category:</label>
+                      <ng-select
+                        [items]="firstSubCategories"
+                        bindLabel="name"
+                        bindValue="id"
+                        placeholder="First Sub-Category"
+                        [(ngModel)]="selectedFirstSubCategory"
+                        (change)="onFirstSubCategoryChange()"
+                        [disabled]="!selectedMainCategory"
+                        [clearable]="false"
+                        id="firstSubCategory">
+                      </ng-select>
+                    </div>
+                    <!-- Second Sub-Category -->
+                    <div class="col-md-4">
+                      <label for="secondSubCategory" class="form-label">Second Sub-Category:</label>
+                      <ng-select
+                        [items]="secondSubCategories"
+                        bindLabel="name"
+                        bindValue="id"
+                        placeholder="Second Sub-Category"
+                        [(ngModel)]="selectedSecondSubCategory"
+                        [disabled]="!selectedFirstSubCategory"
+                        [clearable]="false"
+                        id="secondSubCategory">
+                      </ng-select>
+                    </div>
+                  </div>
+                } @else {
+                  <p class="text-danger text-center">No categories available. Please try again later.</p>
+                }
+
+                <ng-template #noCategories>
+                  <p class="text-danger text-center">No categories available. Please try again later.</p>
                 </ng-template>
-              </h5>
-            </div>
+              </div>
 
-            <!-- Quantity Controls -->
-            <div class="d-flex justify-content-center align-items-center mb-3">
-              <button class="btn btn-danger btn-sm me-2" (click)="decreaseQuantity(product)"
-                [disabled]="product.product_quantity === 0" title="Decrease quantity">
-                <i class="fa fa-minus"></i>
-              </button>
-              <input type="number" class="form-control text-center form-control-sm"
-                [(ngModel)]="product.product_quantity" style="max-width: 70px;" min="1" />
-              <button class="btn btn-success btn-sm ms-2" (click)="increaseQuantity(product)" title="Increase quantity">
-                <i class="fa fa-plus"></i>
-              </button>
+              <div class="modal-footer">
+                <button type="button"
+                  class="btn btn-primary"
+                  (click)="searchByCategory()"
+                  [disabled]="!selectedMainCategory || !selectedFirstSubCategory || !selectedSecondSubCategory">
+                  Search
+                </button>
+              </div>
             </div>
+          </div>
+        </div>
 
-            <!-- Push buttons to bottom -->
-            <div class="mt-auto">
-              <div class="row g-2">
-                <div class="col-6">
-                  <button class="btn btn-secondary btn-sm w-100 text-uppercase"
-                    (click)="viewProductDetails(product.product_id)">
-                    <i class="fa-regular fa-eye"></i> <span class="ms-1">View Detail</span>
-                  </button>
+        <div class="container-fluid py-5 mt-2 text-center text-white"
+          style="background: url('../../../../../assets/banner2-1.jpg') no-repeat center center/cover;">
+          <div class="container">
+            <h2 class="fw-bold mb-3">Find the Perfect Auto Part</h2>
+            <p class="lead mb-4">Explore our wide range of high-quality auto parts — just a click away.</p>
+            <button class="btn btn-light fw-bold px-4 py-2 mt-3" (click)="onSearch()">
+              View More
+            </button>
+          </div>
+        </div>
+
+        <hr class="my-4">
+
+        <!------------ Product categories -------------------->
+
+        <div class="container my-5">
+          <h3 class="text-center fw-bold mb-4">Shop by Category</h3>
+          <div class="row g-4 justify-content-center">
+            @for (category of categories$ | async; track category) {
+              <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                <div class="category-card p-3 text-center" (click)="onCategoryClick(category.id)">
+                  <div class="icon-circle mb-3 mx-auto">
+                    <i [ngClass]="getCategoryIcon(category.name)" class="fs-4 text-danger"></i>
+                  </div>
+                  <h6 class="fw-semibold mb-1">{{ category.name | titlecase }}</h6>
+                  <p class="text-muted small mb-0">{{ category.productCount }} products</p>
                 </div>
-                <div class="col-6">
-                  <button *ngIf="product.product_price > 0 || product.availableQuantity > 0; else wishlistButton"
-                    class="btn btn-outline-success btn-sm w-100 text-uppercase" (click)="addToCart(product)">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    <span class="ms-1">Add to Cart</span>
-                  </button>
+              </div>
+            }
+          </div>
+        </div>
+        <hr class="my-4">
 
-                  <ng-template #wishlistButton>
-                    <button class="btn btn-outline-warning btn-sm w-100 text-uppercase"
-                      (click)="addToWishlist(product)">
-                      <i class="fa-solid fa-heart"></i>
-                      <span class="ms-1">Add to Wishlist</span>
+        <div class="mx-5 my-5" id="top-products">
+          <h3 class="text-center fw-bold mb-4">Our Top Products</h3>
+          @if (products$ | async; as products) {
+            <div class="row g-3 justify-content-center align-items-center"
+              >
+              @for (product of products; track product) {
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 d-flex">
+                  <div class="card flex-fill d-flex flex-column shadow-sm border-0">
+                    <!-- Fixed height image container -->
+                    <div class="d-flex justify-content-center align-items-center" style="height: 150px;">
+                      <img [src]="'https://usaperp.com:5001/Images/Products/' + product.image" class="img-fluid"
+                        [alt]="product.product_name" style="max-height: 100%; object-fit: contain;">
+                      </div>
+                      <div class="card-body d-flex flex-column px-3 py-2">
+                        <!-- Product Name and Price in uppercase -->
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                          <h5 class="card-title text-truncate mb-0" style="max-width: 65%;">
+                            {{ product.product_name.charAt(0).toUpperCase() + product.product_name.slice(1).toLowerCase() }}
+                          </h5>
+                          <h5 class="mb-0 text-center flex-shrink-0 text-uppercase" style="min-width: 60px;">
+                            @if (product.product_price === 0 || product.availableQuantity === 0) {
+                              <span
+                                class="text-info">
+                                SOLD OUT
+                              </span>
+                            } @else {
+                              <span class="text-secondary"><i class="fa-solid fa-dollar-sign"></i> {{ product.product_price
+                            }}</span>
+                          }
+                        </h5>
+                      </div>
+                      <!-- Quantity Controls -->
+                      <div class="d-flex justify-content-center align-items-center mb-3">
+                        <button class="btn btn-danger btn-sm me-2" (click)="decreaseQuantity(product)"
+                          [disabled]="product.product_quantity === 0" title="Decrease quantity">
+                          <i class="fa fa-minus"></i>
+                        </button>
+                        <input type="number" class="form-control text-center form-control-sm"
+                          [(ngModel)]="product.product_quantity" style="max-width: 70px;" min="1" />
+                          <button class="btn btn-success btn-sm ms-2" (click)="increaseQuantity(product)" title="Increase quantity">
+                            <i class="fa fa-plus"></i>
+                          </button>
+                        </div>
+                        <!-- Push buttons to bottom -->
+                        <div class="mt-auto">
+                          <div class="row g-2">
+                            <div class="col-6">
+                              <button class="btn btn-secondary btn-sm w-100 text-uppercase"
+                                (click)="viewProductDetails(product.product_id)">
+                                <i class="fa-regular fa-eye"></i> <span class="ms-1">View Detail</span>
+                              </button>
+                            </div>
+                            <div class="col-6">
+                              @if (product.product_price > 0 || product.availableQuantity > 0) {
+                                <button
+                                  class="btn btn-outline-success btn-sm w-100 text-uppercase" (click)="addToCart(product)">
+                                  <i class="fa-solid fa-cart-shopping"></i>
+                                  <span class="ms-1">Add to Cart</span>
+                                </button>
+                              } @else {
+                                <button class="btn btn-outline-warning btn-sm w-100 text-uppercase"
+                                  (click)="addToWishlist(product)">
+                                  <i class="fa-solid fa-heart"></i>
+                                  <span class="ms-1">Add to Wishlist</span>
+                                </button>
+                              }
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="d-flex justify-content-center">
+                <div class="spinner-border" role="status">
+                  <span class="visually-hidden">Loading Products...</span>
+                </div>
+              </div>
+            }
+          </div>
+
+
+
+          <hr class="mt-2">
+
+          <section class="py-5 bg-light">
+            <div class="container">
+              <h2 class="text-center fw-bold mb-5">🔥 Flash Sale</h2>
+              <div class="row g-4">
+
+                <!-- Product Card -->
+                <div class="col-md-6 col-lg-4">
+                  <div class="card shadow-sm h-100 border-0">
+                    <div class="position-relative">
+                      <span class="badge bg-danger position-absolute top-0 start-0 m-2">NEW</span>
+                      <img src="../../../assets/last-tire.jpg" class="card-img-top" alt="Product">
+                    </div>
+                    <div class="card-body">
+                      <div class="mb-2">
+                        <span class="text-warning">★★★★★</span>
+                        <small class="text-muted ms-1">(2 reviews)</small>
+                      </div>
+                      <p class="card-text">Curabitur ultrices enim ut nunc commodo semper suscipit.</p>
+                      <div class="d-flex align-items-center mb-2">
+                        <span class="fs-5 fw-bold text-primary me-2">$100.00</span>
+                        <del class="text-muted me-2">$140.00</del>
+                        <span class="badge bg-success">-29%</span>
+                      </div>
+                      <div class="d-flex justify-content-between text-center mb-2 small">
+                        <div><strong>01</strong><br><span class="text-muted">Days</span></div>
+                        <div><strong>13</strong><br><span class="text-muted">Hours</span></div>
+                        <div><strong>47</strong><br><span class="text-muted">Minutes</span></div>
+                        <div><strong>41</strong><br><span class="text-muted">Seconds</span></div>
+                      </div>
+                      <div class="progress mb-1" style="height: 8px;">
+                        <div class="progress-bar bg-warning" style="width: 87%"></div>
+                      </div>
+                      <small class="text-muted">87% Sold - Available: 13</small>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Product Card -->
+                <div class="col-md-6 col-lg-4">
+                  <div class="card shadow-sm h-100 border-0">
+                    <div class="position-relative">
+                      <span class="badge bg-danger position-absolute top-0 start-0 m-2">NEW</span>
+                      <img src="../../../assets/red-rim.jpg" class="card-img-top" alt="Product">
+                    </div>
+                    <div class="card-body">
+                      <div class="mb-2">
+                        <span class="text-warning">★★★★★</span>
+                        <small class="text-muted ms-1">(7 reviews)</small>
+                      </div>
+                      <p class="card-text">Curabitur id est vel nisi dictum rutrum consectetur vel.</p>
+                      <div class="d-flex align-items-center mb-2">
+                        <span class="fs-5 fw-bold text-primary me-2">$130.00</span>
+                        <del class="text-muted me-2">$190.00</del>
+                        <span class="badge bg-success">-32%</span>
+                      </div>
+                      <div class="d-flex justify-content-between text-center mb-2 small">
+                        <div><strong>31</strong><br><span class="text-muted">Days</span></div>
+                        <div><strong>13</strong><br><span class="text-muted">Hours</span></div>
+                        <div><strong>47</strong><br><span class="text-muted">Minutes</span></div>
+                        <div><strong>41</strong><br><span class="text-muted">Seconds</span></div>
+                      </div>
+                      <div class="progress mb-1" style="height: 8px;">
+                        <div class="progress-bar bg-warning" style="width: 45%"></div>
+                      </div>
+                      <small class="text-muted">45% Sold - Available: 78</small>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Product Card -->
+                <div class="col-md-6 col-lg-4">
+                  <div class="card shadow-sm h-100 border-0">
+                    <div class="position-relative">
+                      <span class="badge bg-danger position-absolute top-0 start-0 m-2">NEW</span>
+                      <img src="../../../assets/red-weel.jpg" class="card-img-top" alt="Product">
+                    </div>
+                    <div class="card-body">
+                      <div class="mb-2">
+                        <span class="text-warning">★★★★★</span>
+                        <small class="text-muted ms-1">(7 reviews)</small>
+                      </div>
+                      <p class="card-text">Curabitur id est vel nisi dictum rutrum consectetur vel.</p>
+                      <div class="d-flex align-items-center mb-2">
+                        <span class="fs-5 fw-bold text-primary me-2">$130.00</span>
+                        <del class="text-muted me-2">$190.00</del>
+                        <span class="badge bg-success">-32%</span>
+                      </div>
+                      <div class="d-flex justify-content-between text-center mb-2 small">
+                        <div><strong>31</strong><br><span class="text-muted">Days</span></div>
+                        <div><strong>13</strong><br><span class="text-muted">Hours</span></div>
+                        <div><strong>47</strong><br><span class="text-muted">Minutes</span></div>
+                        <div><strong>41</strong><br><span class="text-muted">Seconds</span></div>
+                      </div>
+                      <div class="progress mb-1" style="height: 8px;">
+                        <div class="progress-bar bg-warning" style="width: 45%"></div>
+                      </div>
+                      <small class="text-muted">45% Sold - Available: 78</small>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+          <br>
+
+            <!-- Bootstrap Carousel -->
+            <!-- <div class="container-fluid mt-4">
+            <div id="brandCarousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <div *ngFor="let chunk of paginatedBrands; let i = index" class="carousel-item"
+                  [ngClass]="{'active': i === currentPage}">
+
+                  <div class="d-flex justify-content-evenly align-items-center">
+                    <div *ngFor="let brand of chunk" class="text-center brand-clickable" (click)="onBrandClick(brand.brand_id)">
+                      <img [src]="'https://usaperp.com:5001/Images/Brands/' + brand.brand_image" class="img-fluid"
+                        alt="{{ brand.brand_name }}" style="max-width: 150px; display: block; margin: 0 auto;">
+                        <p>{{ brand.brand_name }}</p>
+                      </div>
+                    </div>
+                  </div> -->
+                  <div class="container-fluid mt-4">
+                    <div id="brandCarousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
+                      <div class="carousel-inner">
+
+                        @for (chunk of paginatedBrands; track chunk; let i = $index) {
+                          <div class="carousel-item"
+                            [ngClass]="{ 'active': i === currentPage }">
+                            <div class="d-flex justify-content-evenly align-items-center">
+                              @for (brand of chunk; track brand) {
+                                <div
+                                  class="text-center brand-clickable"
+                                  role="button"
+                                  tabindex="0"
+                                  (click)="onBrandClick(brand.brand_id)"
+                                  (keydown.enter)="onBrandClick(brand.brand_id)"
+                                  style="cursor: pointer;"
+                                  >
+                                  <img [src]="'https://usaperp.com:5001/Images/Brands/' + brand.brand_image"
+                                    class="img-fluid"
+                                    alt="{{ brand.brand_name }}"
+                                    style="max-width: 150px; display: block; margin: 0 auto;" />
+                                    <p>{{ brand.brand_name }}</p>
+                                  </div>
+                                }
+                              </div>
+                            </div>
+                          }
+
+                          <!-- carousel controls -->
+                          <!-- <button class="carousel-control-prev" type="button" data-bs-target="#brandCarousel" data-bs-slide="prev">
+                          <span class="carousel-control-prev-icon" aria-hidden="true" style="filter: invert(1);"></span>
+                          <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#brandCarousel" data-bs-slide="next">
+                          <span class="carousel-control-next-icon" aria-hidden="true" style="filter: invert(1);"></span>
+                          <span class="visually-hidden">Next</span>
+                        </button>
+                      </div>
+                    </div> -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#brandCarousel" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true" style="filter: invert(1);"></span>
+                      <span class="visually-hidden">Previous</span>
                     </button>
-                  </ng-template>
+                    <button class="carousel-control-next" type="button" data-bs-target="#brandCarousel" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true" style="filter: invert(1);"></span>
+                      <span class="visually-hidden">Next</span>
+                    </button>
+
+                  </div>
                 </div>
               </div>
+
+              <!--Footer-->
+              <footer class="bg-light pt-5 pb-4 border-top shadow-sm">
+                <div class="container">
+                  <div class="row g-4">
+
+                    <!-- Company Info -->
+                    <div class="col-lg-3 col-md-6">
+                      <a class="navbar-brand mb-3 d-inline-block" href="#">
+                        <img src="assets/logo.png" alt="US Auto Parts" height="40">
+                      </a>
+                      <p class="text-muted">Your trusted source for quality auto parts since 1995.</p>
+                      <div class="d-flex gap-2">
+                        <a href="#" class="text-dark"><i class="bi bi-facebook fs-5"></i></a>
+                        <a href="#" class="text-dark"><i class="bi bi-twitter-x fs-5"></i></a>
+                        <a href="#" class="text-dark"><i class="bi bi-instagram fs-5"></i></a>
+                        <a href="#" class="text-dark"><i class="bi bi-youtube fs-5"></i></a>
+                      </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="col-lg-3 col-md-6">
+                      <h5 class="text-dark mb-3">Quick Links</h5>
+                      <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">About Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">How to Order</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">How to Track</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Shipping Info</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Return Policy</a></li>
+                      </ul>
+                    </div>
+
+                    <!-- Customer Service -->
+                    <div class="col-lg-3 col-md-6">
+                      <h5 class="text-dark mb-3">Customer Service</h5>
+                      <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Contact Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">FAQs</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Shipping Info</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Terms of Service</a></li>
+                        <li class="mb-2"><a href="/privacy-policy" class="text-muted text-decoration-none">Privacy Policy</a></li>
+                      </ul>
+                    </div>
+
+                    <!-- Newsletter -->
+                    <div class="col-lg-3 col-md-6">
+                      <h5 class="text-dark mb-3">Stay Updated</h5>
+                      <p class="text-muted">Get exclusive deals and auto tips</p>
+                      <form>
+                        <div class="input-group">
+                          <input type="email" class="form-control border-end-0" placeholder="Your email">
+                          <button class="btn btn-primary" type="submit">Subscribe</button>
+                        </div>
+                      </form>
+                      <div class="mt-3">
+                        <img src="assets/icons/visa-logo.svg" alt="Visa" class="me-2" style="max-height: 30px;">
+                        <!-- Add more icons if needed -->
+                      </div>
+                    </div>
+                  </div>
+
+                  <hr class="my-4">
+
+                  <!-- Bottom Footer -->
+                  <div class="row text-center text-md-start align-items-center">
+                    <div class="col-md-6 mb-2 mb-md-0">
+                      <p class="mb-0 text-muted">&copy; 2025 US Auto Parts. All rights reserved.</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                      <ul class="list-inline mb-0">
+                        <li class="list-inline-item"><a href="#" class="text-muted text-decoration-none">Privacy Policy</a></li>
+                        <li class="list-inline-item px-2">•</li>
+                        <li class="list-inline-item"><a href="#" class="text-muted text-decoration-none">Terms of Service</a></li>
+                        <li class="list-inline-item px-2">•</li>
+                        <li class="list-inline-item"><a href="#" class="text-muted text-decoration-none">Sitemap</a></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </footer>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <ng-template #loadingProducts>
-    <div class="d-flex justify-content-center">
-      <div class="spinner-border" role="status">
-        <span class="visually-hidden">Loading Products...</span>
-      </div>
-    </div>
-  </ng-template>
-
-
-  <hr class="mt-2">
-
-  <section class="py-5 bg-light">
-    <div class="container">
-      <h2 class="text-center fw-bold mb-5">🔥 Flash Sale</h2>
-      <div class="row g-4">
-
-        <!-- Product Card -->
-        <div class="col-md-6 col-lg-4">
-          <div class="card shadow-sm h-100 border-0">
-            <div class="position-relative">
-              <span class="badge bg-danger position-absolute top-0 start-0 m-2">NEW</span>
-              <img src="../../../assets/last-tire.jpg" class="card-img-top" alt="Product">
-            </div>
-            <div class="card-body">
-              <div class="mb-2">
-                <span class="text-warning">★★★★★</span>
-                <small class="text-muted ms-1">(2 reviews)</small>
-              </div>
-              <p class="card-text">Curabitur ultrices enim ut nunc commodo semper suscipit.</p>
-              <div class="d-flex align-items-center mb-2">
-                <span class="fs-5 fw-bold text-primary me-2">$100.00</span>
-                <del class="text-muted me-2">$140.00</del>
-                <span class="badge bg-success">-29%</span>
-              </div>
-              <div class="d-flex justify-content-between text-center mb-2 small">
-                <div><strong>01</strong><br><span class="text-muted">Days</span></div>
-                <div><strong>13</strong><br><span class="text-muted">Hours</span></div>
-                <div><strong>47</strong><br><span class="text-muted">Minutes</span></div>
-                <div><strong>41</strong><br><span class="text-muted">Seconds</span></div>
-              </div>
-              <div class="progress mb-1" style="height: 8px;">
-                <div class="progress-bar bg-warning" style="width: 87%"></div>
-              </div>
-              <small class="text-muted">87% Sold - Available: 13</small>
-            </div>
-          </div>
-        </div>
-
-        <!-- Product Card -->
-        <div class="col-md-6 col-lg-4">
-          <div class="card shadow-sm h-100 border-0">
-            <div class="position-relative">
-              <span class="badge bg-danger position-absolute top-0 start-0 m-2">NEW</span>
-              <img src="../../../assets/red-rim.jpg" class="card-img-top" alt="Product">
-            </div>
-            <div class="card-body">
-              <div class="mb-2">
-                <span class="text-warning">★★★★★</span>
-                <small class="text-muted ms-1">(7 reviews)</small>
-              </div>
-              <p class="card-text">Curabitur id est vel nisi dictum rutrum consectetur vel.</p>
-              <div class="d-flex align-items-center mb-2">
-                <span class="fs-5 fw-bold text-primary me-2">$130.00</span>
-                <del class="text-muted me-2">$190.00</del>
-                <span class="badge bg-success">-32%</span>
-              </div>
-              <div class="d-flex justify-content-between text-center mb-2 small">
-                <div><strong>31</strong><br><span class="text-muted">Days</span></div>
-                <div><strong>13</strong><br><span class="text-muted">Hours</span></div>
-                <div><strong>47</strong><br><span class="text-muted">Minutes</span></div>
-                <div><strong>41</strong><br><span class="text-muted">Seconds</span></div>
-              </div>
-              <div class="progress mb-1" style="height: 8px;">
-                <div class="progress-bar bg-warning" style="width: 45%"></div>
-              </div>
-              <small class="text-muted">45% Sold - Available: 78</small>
-            </div>
-          </div>
-        </div>
-
-        <!-- Product Card -->
-        <div class="col-md-6 col-lg-4">
-          <div class="card shadow-sm h-100 border-0">
-            <div class="position-relative">
-              <span class="badge bg-danger position-absolute top-0 start-0 m-2">NEW</span>
-              <img src="../../../assets/red-weel.jpg" class="card-img-top" alt="Product">
-            </div>
-            <div class="card-body">
-              <div class="mb-2">
-                <span class="text-warning">★★★★★</span>
-                <small class="text-muted ms-1">(7 reviews)</small>
-              </div>
-              <p class="card-text">Curabitur id est vel nisi dictum rutrum consectetur vel.</p>
-              <div class="d-flex align-items-center mb-2">
-                <span class="fs-5 fw-bold text-primary me-2">$130.00</span>
-                <del class="text-muted me-2">$190.00</del>
-                <span class="badge bg-success">-32%</span>
-              </div>
-              <div class="d-flex justify-content-between text-center mb-2 small">
-                <div><strong>31</strong><br><span class="text-muted">Days</span></div>
-                <div><strong>13</strong><br><span class="text-muted">Hours</span></div>
-                <div><strong>47</strong><br><span class="text-muted">Minutes</span></div>
-                <div><strong>41</strong><br><span class="text-muted">Seconds</span></div>
-              </div>
-              <div class="progress mb-1" style="height: 8px;">
-                <div class="progress-bar bg-warning" style="width: 45%"></div>
-              </div>
-              <small class="text-muted">45% Sold - Available: 78</small>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <br>
-
-  <!-- Bootstrap Carousel -->
-<!-- <div class="container-fluid mt-4">
-  <div id="brandCarousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
-    <div class="carousel-inner">
-      <div *ngFor="let chunk of paginatedBrands; let i = index" class="carousel-item"
-        [ngClass]="{'active': i === currentPage}">
-
-        <div class="d-flex justify-content-evenly align-items-center">
-          <div *ngFor="let brand of chunk" class="text-center brand-clickable" (click)="onBrandClick(brand.brand_id)">
-            <img [src]="'https://usaperp.com:5001/Images/Brands/' + brand.brand_image" class="img-fluid"
-              alt="{{ brand.brand_name }}" style="max-width: 150px; display: block; margin: 0 auto;">
-            <p>{{ brand.brand_name }}</p>
-          </div>
-        </div>
-      </div> -->
-      <div class="container-fluid mt-4">
-  <div id="brandCarousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
-    <div class="carousel-inner">
-
-      <div *ngFor="let chunk of paginatedBrands; let i = index" class="carousel-item"
-        [ngClass]="{ 'active': i === currentPage }">
-
-        <div class="d-flex justify-content-evenly align-items-center">
-          <div
-            *ngFor="let brand of chunk"
-            class="text-center brand-clickable"
-            role="button"
-            tabindex="0"
-            (click)="onBrandClick(brand.brand_id)"
-            (keydown.enter)="onBrandClick(brand.brand_id)"
-            style="cursor: pointer;"
-          >
-            <img [src]="'https://usaperp.com:5001/Images/Brands/' + brand.brand_image"
-              class="img-fluid"
-              alt="{{ brand.brand_name }}"
-              style="max-width: 150px; display: block; margin: 0 auto;" />
-            <p>{{ brand.brand_name }}</p>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- carousel controls -->
-      <!-- <button class="carousel-control-prev" type="button" data-bs-target="#brandCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true" style="filter: invert(1);"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#brandCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true" style="filter: invert(1);"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
-    </div>
-</div> -->
-      <button class="carousel-control-prev" type="button" data-bs-target="#brandCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true" style="filter: invert(1);"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#brandCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true" style="filter: invert(1);"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
-
-      </div>
-    </div>
-  </div>
-
-  <!--Footer-->
-  <footer class="bg-light pt-5 pb-4 border-top shadow-sm">
-    <div class="container">
-      <div class="row g-4">
-
-        <!-- Company Info -->
-        <div class="col-lg-3 col-md-6">
-          <a class="navbar-brand mb-3 d-inline-block" href="#">
-            <img src="assets/logo.png" alt="US Auto Parts" height="40">
-          </a>
-          <p class="text-muted">Your trusted source for quality auto parts since 1995.</p>
-          <div class="d-flex gap-2">
-            <a href="#" class="text-dark"><i class="bi bi-facebook fs-5"></i></a>
-            <a href="#" class="text-dark"><i class="bi bi-twitter-x fs-5"></i></a>
-            <a href="#" class="text-dark"><i class="bi bi-instagram fs-5"></i></a>
-            <a href="#" class="text-dark"><i class="bi bi-youtube fs-5"></i></a>
-          </div>
-        </div>
-
-        <!-- Quick Links -->
-        <div class="col-lg-3 col-md-6">
-          <h5 class="text-dark mb-3">Quick Links</h5>
-          <ul class="list-unstyled">
-            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">About Us</a></li>
-            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">How to Order</a></li>
-            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">How to Track</a></li>
-            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Shipping Info</a></li>
-            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Return Policy</a></li>
-          </ul>
-        </div>
-
-        <!-- Customer Service -->
-        <div class="col-lg-3 col-md-6">
-          <h5 class="text-dark mb-3">Customer Service</h5>
-          <ul class="list-unstyled">
-            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Contact Us</a></li>
-            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">FAQs</a></li>
-            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Shipping Info</a></li>
-            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Terms of Service</a></li>
-            <li class="mb-2"><a href="/privacy-policy" class="text-muted text-decoration-none">Privacy Policy</a></li>
-          </ul>
-        </div>
-
-        <!-- Newsletter -->
-        <div class="col-lg-3 col-md-6">
-          <h5 class="text-dark mb-3">Stay Updated</h5>
-          <p class="text-muted">Get exclusive deals and auto tips</p>
-          <form>
-            <div class="input-group">
-              <input type="email" class="form-control border-end-0" placeholder="Your email">
-              <button class="btn btn-primary" type="submit">Subscribe</button>
-            </div>
-          </form>
-          <div class="mt-3">
-            <img src="assets/icons/visa-logo.svg" alt="Visa" class="me-2" style="max-height: 30px;">
-            <!-- Add more icons if needed -->
-          </div>
-        </div>
-      </div>
-
-      <hr class="my-4">
-
-      <!-- Bottom Footer -->
-      <div class="row text-center text-md-start align-items-center">
-        <div class="col-md-6 mb-2 mb-md-0">
-          <p class="mb-0 text-muted">&copy; 2025 US Auto Parts. All rights reserved.</p>
-        </div>
-        <div class="col-md-6 text-md-end">
-          <ul class="list-inline mb-0">
-            <li class="list-inline-item"><a href="#" class="text-muted text-decoration-none">Privacy Policy</a></li>
-            <li class="list-inline-item px-2">•</li>
-            <li class="list-inline-item"><a href="#" class="text-muted text-decoration-none">Terms of Service</a></li>
-            <li class="list-inline-item px-2">•</li>
-            <li class="list-inline-item"><a href="#" class="text-muted text-decoration-none">Sitemap</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </footer>
-</div>
-
-<router-outlet />
+            <router-outlet />

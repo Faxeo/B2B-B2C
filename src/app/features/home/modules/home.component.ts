@@ -7,7 +7,8 @@ import {
   PLATFORM_ID,
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ApiService } from '../../core/services/api.service';
+import { HttpClientModule } from '@angular/common/http';
+import { ApiService } from '../../../shared/api.service';
 import { BehaviorSubject, fromEvent, Observable, of } from 'rxjs';
 import {
   debounceTime,
@@ -16,49 +17,51 @@ import {
   switchMap,
   catchError,
 } from 'rxjs/operators';
-import { HttpClientModule } from '@angular/common/http';
+import {} from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
-import { SidebarComponent } from '../../layout/sidebar/sidebar/sidebar.component';
-import { SidebarToggleService } from '../../core/services/sidebar-toggle/sidebar-toggle.service';
-import { FooterComponent } from '../../layout/footer/footer.component';
-import { LoginService } from '../../core/services/login-service/login-service.service';
-import { LogoutService } from '../../core/services/logout-service/logout-service.service';
-import { AddToCartService } from '../../core/services/add-to-cart/add-to-cart.service';
-import { CartService } from '../../core/services/cart/cart.service';
+import { SidebarComponent } from '../../../layout/sidebar/sidebar/sidebar.component';
+import { SidebarToggleService } from '../../../shared/sidebar-toggle/sidebar-toggle.service';
+import { FooterComponent } from '../../../layout/footer/footer.component';
+import { LoginService } from '../../users/services/login-service/login-service.service';
+import { LogoutService } from '../../users/services/logout-service/logout-service.service';
+import { AddToCartService } from '../../cart/services/add-to-cart/add-to-cart.service';
+import { CartService } from '../../cart/services/cart/cart.service';
 import { FormsModule } from '@angular/forms';
-import { DynamicSearchService } from '../../core/services/dynamic-search/dynamic-search.service';
-import { SearchComponent } from '../search/search.component';
-import { FetchChildService } from '../../core/services/fetch-child/fetch-child.service';
-import { FetchMakeService } from '../../core/services/fetch-make/fetch-make.service';
-import { FetchYearService } from '../../core/services/fetch-year/fetch-year.service';
-import { VehicleSearchService } from '../../core/services/search-vehicle/search-vehicle.service';
-import { MainCategoryService } from '../../core/services/main-category/main-category.service';
-import { SubCategoryService } from '../../core/services/sub-category/sub-category.service';
+import { DynamicSearchService } from '../../search/services/dynamic-search/dynamic-search.service';
+// import { SearchComponent } from '../../search/modules/search.component';
+import { FetchChildService } from '../../search/services/fetch-child/fetch-child.service';
+import { FetchMakeService } from '../../search/services/fetch-make/fetch-make.service';
+import { FetchYearService } from '../../search/services/fetch-year/fetch-year.service';
+import { VehicleSearchService } from '../../search/services/search-vehicle/search-vehicle.service';
+import { MainCategoryService } from '../../search/services/main-category/main-category.service';
+import { SubCategoryService } from '../../search/services/sub-category/sub-category.service';
 // import { CategoryIdService } from '../../core/services/category-id/category-id.service';
 // import { response } from 'express';
-import { ChatBotComponent } from '../chat-bot/chat-bot.component';
-import { SearchQueryService } from '../../core/services/search-query/search-query.service';
+import { ChatBotComponent } from '../../chat-bot/modules/chat-bot.component';
+import { SearchQueryService } from '../../search/services/search-query/search-query.service';
 import { ToastrService } from 'ngx-toastr';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { UserService } from '../../core/services/User/user.service';
+import { UserService } from '../../../../app/features/users/services/User/user.service';
 
 @Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [
-    CommonModule,
-    HttpClientModule,
-    RouterModule,
-    SidebarComponent,
-    FooterComponent,
-    FormsModule,
-    // SearchComponent,
-    ChatBotComponent,
-    NgSelectModule,
-  ],
-  providers: [ApiService, SidebarToggleService],
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css','home-mobile.component.css'],
+    selector: 'app-home',
+    imports: [
+        CommonModule,
+        // TODO: `HttpClientModule` should not be imported into a component directly.
+        // Please refactor the code to add `provideHttpClient()` call to the provider list in the
+        // application bootstrap logic and remove the `HttpClientModule` import from this component.
+        HttpClientModule,
+        RouterModule,
+        SidebarComponent,
+        FooterComponent,
+        FormsModule,
+        // SearchComponent,
+        ChatBotComponent,
+        NgSelectModule,
+    ],
+    providers: [ApiService, SidebarToggleService],
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.css', 'home-mobile.component.css']
 })
 export class HomeComponent implements OnInit {
   categories$: Observable<any[]> | undefined;

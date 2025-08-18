@@ -1,22 +1,21 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { CartService } from '../../core/services/cart/cart.service';
+import { CartService } from '../../services/cart/cart.service';
 import { Router } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
-import { BusinessCartService } from '../../core/services/business-cart/business-cart.service';
-import { DeleteCartService } from '../../core/services/delete-cart/delete-cart.service';
+import { BusinessCartService } from '../../services/business-cart/business-cart.service';
+import { DeleteCartService } from '../../services/delete-cart/delete-cart.service';
 import { Subscription } from 'rxjs';
 import { OnDestroy } from '@angular/core';
 import Swal from 'sweetalert2';
 
 
 @Component({
-  standalone: true, 
-  imports: [CommonModule, FormsModule],
-  selector: 'app-cart-sidebar',
-  templateUrl: './cart-sidebar.component.html',
-  styleUrls: ['./cart-sidebar.component.css']
+    imports: [FormsModule],
+    selector: 'app-cart-sidebar',
+    templateUrl: './cart-sidebar.component.html',
+    styleUrls: ['./cart-sidebar.component.css']
 })
  
 export class CartSidebarComponent implements OnInit, OnDestroy  {

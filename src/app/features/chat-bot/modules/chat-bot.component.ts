@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { ChatbotService } from '../../core/services/chat-bot/chat-bot.service';
+
+import { ChatbotService } from '../services/chat-bot.service';
 
 interface Message {
   text: string;
@@ -9,11 +9,10 @@ interface Message {
 }
 
 @Component({
-  selector: 'app-chat-bot',
-  standalone: true,
-  imports: [FormsModule, CommonModule],
-  templateUrl: './chat-bot.component.html',
-  styleUrl: './chat-bot.component.css'
+    selector: 'app-chat-bot',
+    imports: [FormsModule],
+    templateUrl: './chat-bot.component.html',
+    styleUrl: './chat-bot.component.css'
 })
 export class ChatBotComponent {
   messages: Message[] = [];

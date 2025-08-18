@@ -1,17 +1,16 @@
 import { Component, Inject, PLATFORM_ID } from '@angular/core';
-import { BusinessProfileService } from '../../../core/services/business-profile/business-profile.service';
-import { isPlatformBrowser, NgIf } from '@angular/common';
-import { CommonModule } from '@angular/common';
+import { BusinessProfileService } from '../../../shared/business-profile/business-profile.service';
+import { isPlatformBrowser } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { ChartConfiguration, ChartOptions, ChartType } from 'chart.js';
 import { NgChartsModule } from 'ng2-charts';
 
 @Component({
-  selector: 'app-merchant-profile',
-  standalone: true,
-  imports: [CommonModule, NgIf, FormsModule, NgChartsModule],
-  templateUrl: './merchant-profile.component.html',
-  styleUrl: './merchant-profile.component.css'
+    selector: 'app-merchant-profile',
+    imports: [FormsModule, NgChartsModule],
+    templateUrl: './merchant-profile.component.html',
+    styleUrl: './merchant-profile.component.css'
 })
 export class MerchantProfileComponent {
   businessProfile: any;

@@ -1,6 +1,6 @@
-import { CommonModule, NgFor } from '@angular/common';
+
 import { Component, OnInit } from '@angular/core';
-import { ShippedOrdersService } from '../../../core/services/shipped-orders/shipped-orders.service';
+import { ShippedOrdersService } from '../../../features/billing/services/shipped-orders/shipped-orders.service';
 
 interface ShippedOrder {
   orderDate: string;
@@ -13,11 +13,10 @@ interface ShippedOrder {
 }
 
 @Component({
-  selector: 'app-shipped-orders',
-  standalone: true,
-  imports: [CommonModule, NgFor],
-  templateUrl: './shipped-orders.component.html',
-  styleUrls: ['./shipped-orders.component.css']
+    selector: 'app-shipped-orders',
+    imports: [],
+    templateUrl: './shipped-orders.component.html',
+    styleUrls: ['./shipped-orders.component.css']
 })
 export class ShippedOrdersComponent implements OnInit {
   shippedOrders: ShippedOrder[] = [];

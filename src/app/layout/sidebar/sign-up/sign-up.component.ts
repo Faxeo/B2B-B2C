@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CreateUserServiceService } from '../../../core/services/createUser-service/create-user-service.service';
+import { CreateUserServiceService } from '../../../features/users/services/createUser-service/create-user-service.service';
 
 @Component({
-  selector: 'app-signup',
-  templateUrl: './sign-up.component.html',
-  styleUrls: ['./sign-up.component.scss']
+    selector: 'app-signup',
+    templateUrl: './sign-up.component.html',
+    styleUrls: ['./sign-up.component.scss'],
+    standalone: false
 })
 export class SignupComponent {
   name: string = ''; 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { LoginService } from '../login-service/login-service.service';
-import { ApiService } from '../api.service';
+import { ApiService } from '../../../../shared/api.service';
 import { Router } from '@angular/router';
 import { take } from 'rxjs/operators';
 

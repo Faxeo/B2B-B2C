@@ -1,11 +1,16 @@
 <div class="container">
-    <h2>Merchants List</h2>
-    <div *ngIf="isLoading" class="loading-indicator">
+  <h2>Merchants List</h2>
+  @if (isLoading) {
+    <div class="loading-indicator">
       <div class="spinner"></div>
       <div>Loading...</div>
     </div>
-    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-    <table class="styled-table" *ngIf="!isLoading && !errorMessage && merchants.length > 0">
+  }
+  @if (errorMessage) {
+    <div class="error-message">{{ errorMessage }}</div>
+  }
+  @if (!isLoading && !errorMessage && merchants.length > 0) {
+    <table class="styled-table">
       <thead>
         <tr>
           <th>Created Date</th>
@@ -19,18 +24,22 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let merchant of merchants">
-          <td>{{ merchant.merchantCreatedDate }}</td>
-          <td>{{ merchant.merchantName }}</td>
-          <td>{{ merchant.merchantEmail }}</td>
-          <td>{{ merchant.merchantContact }}</td>
-          <td>{{ merchant.merchantAddress }}</td>
-          <td>{{ merchant.merchantStatus ? 'Active' : 'Inactive' }}</td>
-          <td>{{ merchant.merchantVerification ? 'Verified' : 'Not Verified' }}</td>
-          <td><button (click)="performAction(merchant)">Action</button></td>
-        </tr>
+        @for (merchant of merchants; track merchant) {
+          <tr>
+            <td>{{ merchant.merchantCreatedDate }}</td>
+            <td>{{ merchant.merchantName }}</td>
+            <td>{{ merchant.merchantEmail }}</td>
+            <td>{{ merchant.merchantContact }}</td>
+            <td>{{ merchant.merchantAddress }}</td>
+            <td>{{ merchant.merchantStatus ? 'Active' : 'Inactive' }}</td>
+            <td>{{ merchant.merchantVerification ? 'Verified' : 'Not Verified' }}</td>
+            <td><button (click)="performAction(merchant)">Action</button></td>
+          </tr>
+        }
       </tbody>
     </table>
-    <div *ngIf="!isLoading && !errorMessage && merchants.length === 0" class="error-message">No merchants found.</div>
-  </div>
-  
+  }
+  @if (!isLoading && !errorMessage && merchants.length === 0) {
+    <div class="error-message">No merchants found.</div>
+  }
+</div>

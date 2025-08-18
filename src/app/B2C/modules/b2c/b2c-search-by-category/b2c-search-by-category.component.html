@@ -10,9 +10,11 @@
         <option value="" disabled [selected]="!selectedMainCategory">
           Main Category
         </option>
-        <option *ngFor="let mc of mainCategories" [value]="mc.id">
-          {{ mc.name }}
-        </option>
+        @for (mc of mainCategories; track mc) {
+          <option [value]="mc.id">
+            {{ mc.name }}
+          </option>
+        }
       </select>
     </div>
 
@@ -23,9 +25,11 @@
         <option value="" disabled [selected]="!selectedFirstSubCategory">
           First Sub-Category
         </option>
-        <option *ngFor="let sc1 of firstSubCategories" [value]="sc1.id">
-          {{ sc1.name }}
-        </option>
+        @for (sc1 of firstSubCategories; track sc1) {
+          <option [value]="sc1.id">
+            {{ sc1.name }}
+          </option>
+        }
       </select>
     </div>
 
@@ -36,9 +40,11 @@
         <option value="" disabled [selected]="!selectedSecondSubCategory">
           Second Sub-Category
         </option>
-        <option *ngFor="let sc2 of secondSubCategories" [value]="sc2.id">
-          {{ sc2.name }}
-        </option>
+        @for (sc2 of secondSubCategories; track sc2) {
+          <option [value]="sc2.id">
+            {{ sc2.name }}
+          </option>
+        }
       </select>
     </div>
 
@@ -79,9 +85,11 @@
         <option value="" disabled [selected]="!selectedMainCategory">
           Main Category
         </option>
-        <option *ngFor="let mc of mainCategories" [value]="mc.id">
-          {{ mc.name }}
-        </option>
+        @for (mc of mainCategories; track mc) {
+          <option [value]="mc.id">
+            {{ mc.name }}
+          </option>
+        }
       </select>
     </div>
     <!-- First Sub-Category -->
@@ -91,9 +99,11 @@
         <option value="" disabled [selected]="!selectedFirstSubCategory">
           First Sub-Category
         </option>
-        <option *ngFor="let sc1 of firstSubCategories" [value]="sc1.id">
-          {{ sc1.name }}
-        </option>
+        @for (sc1 of firstSubCategories; track sc1) {
+          <option [value]="sc1.id">
+            {{ sc1.name }}
+          </option>
+        }
       </select>
     </div>
     <!-- Second Sub-Category -->
@@ -103,9 +113,11 @@
         <option value="" disabled [selected]="!selectedSecondSubCategory">
           Second Sub-Category
         </option>
-        <option *ngFor="let sc2 of secondSubCategories" [value]="sc2.id">
-          {{ sc2.name }}
-        </option>
+        @for (sc2 of secondSubCategories; track sc2) {
+          <option [value]="sc2.id">
+            {{ sc2.name }}
+          </option>
+        }
       </select>
     </div>
 

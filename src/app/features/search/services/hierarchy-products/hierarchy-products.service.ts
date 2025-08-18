@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ApiService } from '../api.service'; // Assuming you have an ApiService for HTTP requests
+import { ApiService } from '../../../../shared/api.service'; // Assuming you have an ApiService for HTTP requests
 import { Observable } from 'rxjs';
 
 @Injectable({

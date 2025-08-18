@@ -1,14 +1,13 @@
 import { Component, Inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser, CommonModule, NgIf } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BusinessProfileService } from '../../../core/services/business-profile/business-profile.service';
+import { BusinessProfileService } from '../../../shared/business-profile/business-profile.service';
 
 @Component({
-  selector: 'app-Business-profile',
-  standalone: true,
-  imports: [CommonModule, NgIf, FormsModule],
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+    selector: 'app-Business-profile',
+    imports: [FormsModule],
+    templateUrl: './profile.component.html',
+    styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent {
   businessProfile: any;

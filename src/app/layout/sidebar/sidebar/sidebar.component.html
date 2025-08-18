@@ -1,50 +1,54 @@
 <div class="sidebar-container">
   <div class="sidebar" [class.expanded]="isExpanded">
     <button class="close-btn" (click)="closeSidebar()">×</button>
-    <div class="container" *ngIf="isExpanded">
-      <div class="screen">
-        <header class="logo">
-          <img src="assets/logo.png" alt="US Auto Parts Logo" class="logo">
-        </header>
-        <div class="screen__content">
-          <form class="login">
-            <div class="login__field">
-              <i class="login__icon fas fa-user"></i>
-              <select class="login__input login__dropdown" [(ngModel)]="selectedLoginType" name="loginType" required>
-                <option value="" disabled selected>Select login type</option>
-                <option value="admin">Admin Login</option>
-                <option value="merchant">Merchant Login</option>  
-                <option value="customer">Customer Login</option>
-                <option value="business">Business Login</option>
-              </select> 
-            </div> 
-            <div class="login__field">
-              <i class="login__icon fas fa-user"></i>
-              <input type="text" class="login__input" placeholder="Email" [(ngModel)]="email" name="email">
-            </div>
-            <div class="login__field">
-              <i class="login__icon fas fa-lock"></i> 
-              <div class="password-input toggle-password">
-                <input [type]="showPassword ? 'text' : 'password'" class="login__input" placeholder="Password" [(ngModel)]="password" name="password" >
-                <button type="button" (click)="togglePasswordVisibility()" class="eye">
-                  <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+    @if (isExpanded) {
+      <div class="container">
+        <div class="screen">
+          <header class="logo">
+            <img src="assets/logo.png" alt="US Auto Parts Logo" class="logo">
+          </header>
+          <div class="screen__content">
+            <form class="login">
+              <div class="login__field">
+                <i class="login__icon fas fa-user"></i>
+                <select class="login__input login__dropdown" [(ngModel)]="selectedLoginType" name="loginType" required>
+                  <option value="" disabled selected>Select login type</option>
+                  <option value="admin">Admin Login</option>
+                  <option value="merchant">Merchant Login</option>
+                  <option value="customer">Customer Login</option>
+                  <option value="business">Business Login</option>
+                </select>
+              </div>
+              <div class="login__field">
+                <i class="login__icon fas fa-user"></i>
+                <input type="text" class="login__input" placeholder="Email" [(ngModel)]="email" name="email">
+              </div>
+              <div class="login__field">
+                <i class="login__icon fas fa-lock"></i>
+                <div class="password-input toggle-password">
+                  <input [type]="showPassword ? 'text' : 'password'" class="login__input" placeholder="Password" [(ngModel)]="password" name="password" >
+                  <button type="button" (click)="togglePasswordVisibility()" class="eye">
+                    <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                  </button>
+                </div>
+              </div>
+              @if (errorMessage) {
+                <div class="error-message">
+                  {{ errorMessage }}
+                </div>
+              }
+              <div class="buttons">
+                <button class="button login__submit" (click)="onLogin()">
+                  <span class="button__text">Log In</span>
+                </button>
+                <button class="button login__submit" (click)="onSignUpClick()">
+                  <span class="button__text">Sign Up</span>
                 </button>
               </div>
-            </div>
-            <div *ngIf="errorMessage" class="error-message">
-              {{ errorMessage }}
-            </div>
-            <div class="buttons">
-              <button class="button login__submit" (click)="onLogin()">
-                <span class="button__text">Log In</span>
-              </button>
-              <button class="button login__submit" (click)="onSignUpClick()">
-                <span class="button__text">Sign Up</span>
-              </button>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+    }
   </div>
 </div>

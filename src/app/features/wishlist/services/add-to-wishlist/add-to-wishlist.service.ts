@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ApiService } from '../api.service';
+import { ApiService } from '../../../../shared/api.service';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { CartService } from '../cart/cart.service';
+import { CartService } from '../../../../features/cart/services/cart/cart.service';
 
 @Injectable({
   providedIn: 'root'

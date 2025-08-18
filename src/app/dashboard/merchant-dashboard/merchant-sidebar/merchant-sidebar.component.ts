@@ -1,12 +1,11 @@
 import { Component, Output, EventEmitter } from '@angular/core';
-import { NavigationService } from '../../../core/services/navigation-service/navigation-service.service';
+import { NavigationService } from '../../../shared/navigation-service/navigation-service.service';
 
 @Component({
-  selector: 'app-merchant-sidebar',
-  standalone: true,
-  imports: [],
-  templateUrl: './merchant-sidebar.component.html',
-  styleUrl: './merchant-sidebar.component.css'
+    selector: 'app-merchant-sidebar',
+    imports: [],
+    templateUrl: './merchant-sidebar.component.html',
+    styleUrl: './merchant-sidebar.component.css'
 })
 export class MerchantSidebarComponent {
   @Output() componentSelected = new EventEmitter<string>();

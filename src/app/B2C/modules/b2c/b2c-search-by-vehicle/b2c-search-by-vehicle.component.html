@@ -6,9 +6,11 @@
       <div class="form-group">
         <select id="year" class="form-select" [(ngModel)]="selectedYear" (change)="onYearChange()">
           <option value="" disabled [selected]="!selectedYear">Year</option>
-          <option *ngFor="let year of years" [value]="year.year">
-            {{ year.year }}
-          </option>
+          @for (year of years; track year) {
+            <option [value]="year.year">
+              {{ year.year }}
+            </option>
+          }
         </select>
       </div>
     </div>
@@ -18,9 +20,11 @@
         <select id="make" class="form-select" [(ngModel)]="selectedMake" (change)="onMakeChange()"
           [disabled]="!selectedYear">
           <option value="" disabled [selected]="!selectedMake">Make</option>
-          <option *ngFor="let make of makes" [value]="make.name">
-            {{ make.name }}
-          </option>
+          @for (make of makes; track make) {
+            <option [value]="make.name">
+              {{ make.name }}
+            </option>
+          }
         </select>
       </div>
     </div>
@@ -30,9 +34,11 @@
         <select id="model" class="form-select" [(ngModel)]="selectedModel" (change)="onModelChange()"
           [disabled]="!selectedMake">
           <option value="" disabled [selected]="!selectedModel">Model</option>
-          <option *ngFor="let model of models" [value]="model.name">
-            {{ model.name }}
-          </option>
+          @for (model of models; track model) {
+            <option [value]="model.name">
+              {{ model.name }}
+            </option>
+          }
         </select>
       </div>
     </div>
@@ -42,9 +48,11 @@
         <select id="trim" class="form-select" [(ngModel)]="selectedTrim" (change)="onTrimChange()"
           [disabled]="!selectedModel">
           <option value="" disabled [selected]="!selectedTrim">Trim</option>
-          <option *ngFor="let trim of trims" [value]="trim.name">
-            {{ trim.name }}
-          </option>
+          @for (trim of trims; track trim) {
+            <option [value]="trim.name">
+              {{ trim.name }}
+            </option>
+          }
         </select>
       </div>
     </div>
@@ -54,9 +62,11 @@
         <select id="engine" class="form-select" [(ngModel)]="selectedEngine" (change)="onEngineChange()"
           [disabled]="!selectedTrim">
           <option value="" disabled [selected]="!selectedEngine">Engine</option>
-          <option *ngFor="let engine of engines" [value]="engine.name">
-            {{ engine.name }}
-          </option>
+          @for (engine of engines; track engine) {
+            <option [value]="engine.name">
+              {{ engine.name }}
+            </option>
+          }
         </select>
       </div>
     </div>
@@ -95,9 +105,11 @@
     <div class="form-group">
       <select id="year-mobile" class="form-select" [(ngModel)]="selectedYear" (change)="onYearChange()">
         <option value="" disabled [selected]="!selectedYear">Year</option>
-        <option *ngFor="let year of years" [value]="year.year">
-          {{ year.year }}
-        </option>
+        @for (year of years; track year) {
+          <option [value]="year.year">
+            {{ year.year }}
+          </option>
+        }
       </select>
     </div>
     <!-- Make -->
@@ -105,9 +117,11 @@
       <select id="make-mobile" class="form-select" [(ngModel)]="selectedMake" (change)="onMakeChange()"
         [disabled]="!selectedYear">
         <option value="" disabled [selected]="!selectedMake">Make</option>
-        <option *ngFor="let make of makes" [value]="make.name">
-          {{ make.name }}
-        </option>
+        @for (make of makes; track make) {
+          <option [value]="make.name">
+            {{ make.name }}
+          </option>
+        }
       </select>
     </div>
     <!-- Model -->
@@ -115,9 +129,11 @@
       <select id="model-mobile" class="form-select" [(ngModel)]="selectedModel" (change)="onModelChange()"
         [disabled]="!selectedMake">
         <option value="" disabled [selected]="!selectedModel">Model</option>
-        <option *ngFor="let model of models" [value]="model.name">
-          {{ model.name }}
-        </option>
+        @for (model of models; track model) {
+          <option [value]="model.name">
+            {{ model.name }}
+          </option>
+        }
       </select>
     </div>
     <!-- Trim -->
@@ -125,9 +141,11 @@
       <select id="trim-mobile" class="form-select" [(ngModel)]="selectedTrim" (change)="onTrimChange()"
         [disabled]="!selectedModel">
         <option value="" disabled [selected]="!selectedTrim">Trim</option>
-        <option *ngFor="let trim of trims" [value]="trim.name">
-          {{ trim.name }}
-        </option>
+        @for (trim of trims; track trim) {
+          <option [value]="trim.name">
+            {{ trim.name }}
+          </option>
+        }
       </select>
     </div>
     <!-- Engine -->
@@ -135,9 +153,11 @@
       <select id="engine-mobile" class="form-select" [(ngModel)]="selectedEngine" (change)="onEngineChange()"
         [disabled]="!selectedTrim">
         <option value="" disabled [selected]="!selectedEngine">Engine</option>
-        <option *ngFor="let engine of engines" [value]="engine.name">
-          {{ engine.name }}
-        </option>
+        @for (engine of engines; track engine) {
+          <option [value]="engine.name">
+            {{ engine.name }}
+          </option>
+        }
       </select>
     </div>
     <!-- Mobile Search -->

@@ -10,16 +10,15 @@ import {
 } from '@angular/core';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
-import { ApiService } from '../../../core/services/api.service';
+import { ApiService } from '../../../../shared/api.service';
 import { CommonModule } from '@angular/common';
-import { FooterComponent } from '../../../layout/footer/footer.component';
+import { FooterComponent } from '../../../../layout/footer/footer.component';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, FooterComponent],
-  selector: 'app-sub-home',
-  templateUrl: './sub-home.component.html',
-  styleUrls: ['./sub-home.component.css'],
+    imports: [CommonModule, FooterComponent],
+    selector: 'app-sub-home',
+    templateUrl: './sub-home.component.html',
+    styleUrls: ['./sub-home.component.css']
 })
 export class SubHomeComponent implements OnInit, AfterViewInit {
   @ViewChildren('subcatList') subcatLists!: QueryList<ElementRef>;

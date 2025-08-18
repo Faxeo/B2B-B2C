@@ -1,60 +1,75 @@
 <!-- Notification Banner -->
-<div *ngIf="showNotification" class="alert alert-warning text-center">
+@if (showNotification) {
+  <div class="alert alert-warning text-center">
     {{ notificationMessage }}
   </div>
-  
-  <!-- Back Button -->
-  <button class="btn btn-light mb-3" (click)="goBack()">
-    <i class="bi bi-arrow-left"></i> Back
-  </button>
-  
-  <!-- Wishlist Title -->
-  <div class="text-center">
-    <h1 class="fw-bold">Wishlist</h1>
-    <h4 class="text-secondary">{{ wishlistItems.length }} items</h4>
-  </div>
-  
-  <!-- Wishlist Table -->
-  <div class="table-responsive container-fluid mt-4">
-    <table class="table table-bordered table-hover align-middle">
-      <thead class="table-dark text-center">
+}
+
+<!-- Back Button -->
+<button class="btn btn-light mb-3" (click)="goBack()">
+  <i class="bi bi-arrow-left"></i> Back
+</button>
+
+<!-- Wishlist Title -->
+<div class="text-center">
+  <h1 class="fw-bold">Wishlist</h1>
+  <h4 class="text-secondary">{{ wishlistItems.length }} items</h4>
+</div>
+
+<!-- Wishlist Table -->
+<div class="table-responsive container-fluid mt-4">
+  <table class="table table-bordered table-hover align-middle">
+    <thead class="table-dark text-center">
+      <tr>
+        <th>Product Image</th>
+        <th>Product Name</th>
+        <th>Price</th>
+        <th>Stock Status</th>
+        <th>Move to Cart</th>
+        <th>Remove</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (product of wishlistItems; track product) {
         <tr>
-          <th>Product Image</th>
-          <th>Product Name</th>
-          <th>Price</th>
-          <th>Stock Status</th>
-          <th>Move to Cart</th>
-          <th>Remove</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let product of wishlistItems">
           <td class="text-center">
-            <img *ngIf="!product.imageError"
-                 [src]="'https://usautoparts-beta.azurewebsites.net/Images/Products/' + product.product_image"
-                 [alt]="product.product_name"
-                 (error)="handleImageError(product)"
-                 class="img-thumbnail" 
-                 style="max-width: 80px;">
-            <div *ngIf="product.imageError" class="text-muted small">{{ product.product_name }}</div>
+            @if (!product.imageError) {
+              <img
+                [src]="'https://usautoparts-beta.azurewebsites.net/Images/Products/' + product.product_image"
+                [alt]="product.product_name"
+                (error)="handleImageError(product)"
+                class="img-thumbnail"
+                style="max-width: 80px;">
+            }
+            @if (product.imageError) {
+              <div class="text-muted small">{{ product.product_name }}</div>
+            }
           </td>
           <td>{{ product.product_name }}</td>
           <td>${{ product.product_price }}</td>
           <td class="text-center">
-            <span *ngIf="product.product_quantity > 0 && product.product_price > 0" class="badge bg-success">In Stock</span>
-            <span *ngIf="product.product_quantity == 0 || product.product_price == 0" class="badge bg-danger">Out of Stock</span>
+            @if (product.product_quantity > 0 && product.product_price > 0) {
+              <span class="badge bg-success">In Stock</span>
+            }
+            @if (product.product_quantity == 0 || product.product_price == 0) {
+              <span class="badge bg-danger">Out of Stock</span>
+            }
           </td>
           <td class="text-center">
-            <button *ngIf="product.product_quantity > 0 && product.product_price > 0"
-                    class="btn btn-primary btn-sm"
-                    (click)="moveToCart(product)">
-              Move To Cart
-            </button>
-            <button *ngIf="product.product_quantity == 0 || product.product_price == 0"
-                    class="btn btn-warning btn-sm"
-                    (click)="askForQuery(product)">
-              Ask for Query
-            </button>
+            @if (product.product_quantity > 0 && product.product_price > 0) {
+              <button
+                class="btn btn-primary btn-sm"
+                (click)="moveToCart(product)">
+                Move To Cart
+              </button>
+            }
+            @if (product.product_quantity == 0 || product.product_price == 0) {
+              <button
+                class="btn btn-warning btn-sm"
+                (click)="askForQuery(product)">
+                Ask for Query
+              </button>
+            }
           </td>
           <td class="text-center">
             <button class="btn btn-outline-danger btn-sm" (click)="onRemove(product.product_id)">
@@ -62,7 +77,7 @@
             </button>
           </td>
         </tr>
-      </tbody>
-    </table>
-  </div>
-  
+      }
+    </tbody>
+  </table>
+</div>

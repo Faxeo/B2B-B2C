@@ -2,37 +2,45 @@
   <h2>Customers</h2>
 
   <!-- Loading indicator -->
-  <div *ngIf="isLoading" class="loading-indicator">
-    <div class="spinner"></div>
-    <p>Loading...</p>
-  </div>
+  @if (isLoading) {
+    <div class="loading-indicator">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+  }
 
   <!-- Error message -->
-  <div *ngIf="errorMessage">{{ errorMessage }}</div>
+  @if (errorMessage) {
+    <div>{{ errorMessage }}</div>
+  }
 
   <!-- Customers table -->
-  <table *ngIf="!isLoading && !errorMessage && customers.length > 0" class="styled-table">
-    <thead>
-      <tr>
-        <th>Created Date</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Contact</th>
-        <th>Address</th>
-        <th>Status</th>
-      </tr> 
-    </thead>
-    <tbody>
-      <tr *ngFor="let customer of customers">
-        <td>{{ customer.customer_dateCreated }}</td>
-        <td>{{ customer.customer_name }}</td>
-        <td>{{ customer.customer_email }}</td>
-        <td>{{ customer.customer_contact2 }}</td>
-        <td>{{ customer.customer_address || 'N/A' }}</td>
-        <td>{{ customer.customer_status ? 'Active' : 'Inactive' }}</td>
-      </tr>
-    </tbody>
-  </table>
+  @if (!isLoading && !errorMessage && customers.length > 0) {
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Created Date</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Contact</th>
+          <th>Address</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (customer of customers; track customer) {
+          <tr>
+            <td>{{ customer.customer_dateCreated }}</td>
+            <td>{{ customer.customer_name }}</td>
+            <td>{{ customer.customer_email }}</td>
+            <td>{{ customer.customer_contact2 }}</td>
+            <td>{{ customer.customer_address || 'N/A' }}</td>
+            <td>{{ customer.customer_status ? 'Active' : 'Inactive' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
 
   <!-- No customers template -->
   <ng-template #noCustomersTemplate>

@@ -5,8 +5,8 @@ import { CustomerLoginComponent } from './customer-login/customer-login.componen
 import { BusinessLoginComponent } from './business-login/business-login.component';
 import { MerchantLoginComponent } from './merchant-login/merchant-login.component';
 import { AdminSidebarComponent } from './admin-sidebar/admin-sidebar.component';
-import { AdminDashboardComponent } from '../../dashboard/admin-dashboard/admin-dashboard.component';
-import { DashboardComponent } from '../../dashboard/dashboard.component';
+import { AdminDashboardComponent } from '../../../dashboard/admin-dashboard/admin-dashboard.component';
+import { DashboardComponent } from '../../../dashboard/dashboard.component';
 
 const routes: Routes = [
   {  

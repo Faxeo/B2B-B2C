@@ -4,7 +4,9 @@
   <!-- Desktop Left Sidebar -->
   <div class="sidebar" [class.collapsed]="isCollapsed">
     <!-- Keep DOM structure, just toggle visibility -->
-    <app-filter *ngIf="!isCollapsed"></app-filter>
+    @if (!isCollapsed) {
+      <app-filter></app-filter>
+    }
   </div>
 
   <!-- 🆕 Desktop Toggle for Left Sidebar -->
@@ -13,7 +15,7 @@
     [class.is-collapsed]="isCollapsed"
     (click)="toggleSidebar()"
     aria-label="Toggle Filter Sidebar"
-  >
+    >
     <span class="toggle-icon-2">{{ isCollapsed ? '→' : '←' }}</span>
   </button>
 
@@ -22,7 +24,7 @@
     class="mobile-cart-button d-md-none"
     (click)="toggleMobileCart()"
     aria-label="Open Cart"
-  >
+    >
     <i class="fa fa-shopping-cart"></i>
   </button>
 
@@ -31,7 +33,7 @@
     class="mobile-filter-button d-md-none"
     (click)="toggleMobileFilter()"
     aria-label="Open Filters"
-  >
+    >
     <i class="fa fa-filter"></i>
   </button>
 
@@ -46,13 +48,13 @@
   <div
     class="mobile-cart-panel d-md-none"
     [class.active]="mobileCartOpen"
-  >
+    >
     <div class="mobile-cart-header">
       <button
         class="back-button"
         (click)="toggleMobileCart()"
         aria-label="Go Back"
-      >
+        >
         <i class="fa fa-arrow-left"></i>
       </button>
       <h2>Shopping Cart</h2>
@@ -60,7 +62,7 @@
         class="close-button"
         (click)="toggleMobileCart()"
         aria-label="Close Cart"
-      >
+        >
         <i class="fa fa-times"></i>
       </button>
     </div>
@@ -78,14 +80,14 @@
   <div
     class="mobile-filter-panel d-md-none"
     [class.active]="mobileFilterOpen"
-  >
+    >
     <div class="mobile-filter-header">
       <h2>Filters</h2>
       <button
         class="close-button"
         (click)="toggleMobileFilter()"
         aria-label="Close Filters"
-      >
+        >
         <i class="fa fa-times"></i>
       </button>
     </div>
@@ -97,7 +99,7 @@
     class="general-search"
     [class.expanded-left]="isCollapsed"
     [class.expanded-right]="isCartCollapsed"
-  >
+    >
     <app-search-results></app-search-results>
   </div>
 
@@ -111,7 +113,7 @@
     class="toggle-btn cart-toggle"
     (click)="toggleCartSidebar()"
     [attr.aria-label]="isCartCollapsed ? 'Open Cart' : 'Close Cart'"
-  >
+    >
     <span class="toggle-icon">
       <i class="fa" [ngClass]="isCartCollapsed ? 'fa-shopping-cart' : 'fa-times'"></i>
     </span>

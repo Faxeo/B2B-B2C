@@ -2,23 +2,22 @@ import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Outp
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { FilterComponent } from './filter/filter.component';
-import { CartSidebarComponent } from '../cart-sidebar/cart-sidebar.component';
-import { NavbarComponent } from "../../layout/navbar/navbar.component";
-import { SearchResultsComponent } from "../search-results/search-results.component";
-import { CartSidebarService } from '../../core/services/cart-sidebar/cart-sidebar.service';
-import { FooterComponent } from '../../layout/footer/footer.component';
+import { FilterComponent } from '../filter/filter.component';
+import { CartSidebarComponent } from '../../../cart/modules/cart-sidebar/cart-sidebar.component';
+import { NavbarComponent } from '../../../../layout/navbar/navbar.component';
+import { SearchResultsComponent } from '../search-result/search-results.component';
+import { CartSidebarService } from '../../../../features/cart/services/cart-sidebar/cart-sidebar.service';
+import { FooterComponent } from '../../../../layout/footer/footer.component';
 import { fromEvent, Subject, Subscription } from 'rxjs';
 
 @Component({
-  standalone: true,
-  imports: [RouterModule, CommonModule, FormsModule, FilterComponent, CartSidebarComponent, NavbarComponent, 
-    SearchResultsComponent,
-    //  FooterComponent
+    imports: [RouterModule, CommonModule, FormsModule, FilterComponent, CartSidebarComponent, NavbarComponent,
+        SearchResultsComponent,
+        //  FooterComponent
     ],
-  selector: 'app-search',
-  templateUrl: './search.component.html',
-  styleUrls: ['./search.component.css'],
+    selector: 'app-search',
+    templateUrl: './search.component.html',
+    styleUrls: ['./search.component.css']
 })
 
 export class SearchComponent implements OnInit {

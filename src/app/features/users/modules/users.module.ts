@@ -8,8 +8,8 @@ import { BusinessLoginComponent } from './business-login/business-login.componen
 import { MerchantLoginComponent } from './merchant-login/merchant-login.component';
 import { AdminSidebarComponent } from './admin-sidebar/admin-sidebar.component';
 import { FormsModule } from '@angular/forms';
-import { AdminDashboardComponent } from '../../dashboard/admin-dashboard/admin-dashboard.component';
-import { SidebarComponent } from '../../layout/sidebar/sidebar/sidebar.component';
+import { AdminDashboardComponent } from '../../../dashboard/admin-dashboard/admin-dashboard.component';
+import { SidebarComponent } from '../../../layout/sidebar/sidebar/sidebar.component';
 
 
 @NgModule({

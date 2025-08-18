@@ -1,0 +1,566 @@
+<div class="d-none d-md-block container px-3 my-5 clearfix">
+  <!-- Shopping cart table -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Shopping Cart ({{ cartItems.length }} ITEMS)</h2>
+    </div>
+    <div class="card-body">
+      <!-- Search Input -->
+      <div class="search-container">
+        <input type="text" class="form-control search-box" placeholder="🔍 Search by product name..."
+          [(ngModel)]="searchTerm" />
+        </div>
+        <!-- Cart Table -->
+        <div class="table-responsive">
+          <table class="table table-bordered m-0">
+            <thead>
+              <tr class="table-header">
+                <th class="text-center py-3 px-4" style="width: 320px; height: 100px;">Product Name &amp; Details</th>
+                <th class="text-center py-3 px-4" style="width: 120px;">Price</th>
+                <th class="text-center py-3 px-4" style="width: 100px;">Quantity</th>
+                <th class="text-center py-3 px-4" style="width: 120px;">Subtotal</th>
+                <th class="text-center py-3 px-4" style="width: 140px;">Discounted Subtotal</th>
+                <th class="text-center align-middle py-3 px-0" style="width: 40px;">Remove</th>
+              </tr>
+            </thead>
+          </table>
+
+          <!-- Scrollable tbody in separate table to preserve alignment -->
+          <div class="scroll-container">
+            <table class="table table-bordered m-0">
+              <tbody>
+                @for (item of filteredCartItems(); track item) {
+                  <tr>
+                    <td class="p-4" style="width: 300px; height: 100px;">
+                      <div class="media align-items-center">
+                        @if (!item.imageError) {
+                          <img [src]="'https://usaperp.com:5001/Images/Products/' + item.image"
+                            class="d-block ui-w-40 ui-bordered mr-4" alt="Product Image" (error)="handleImageError(item)">
+                        }
+                        <div class="media-body">
+                          <a href="#" class="d-block text-dark">{{ item.name }}</a>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="text-center font-weight-semibold align-middle p-4" style="width: 120px;">
+                      ${{ item.price.toFixed(2) }}
+                    </td>
+                    <td class="text-center align-middle p-4" style="width: 100px;">
+                      <input type="number" class="form-control text-center" [(ngModel)]="item.quantity"
+                        (change)="onQuantityInput(item.productId, $event)" min="1" />
+                      </td>
+                      <td class="text-center font-weight-semibold align-middle p-4" style="width: 120px;">
+                        ${{ (item.price * item.quantity).toFixed(2) }}
+                      </td>
+                      <td class="text-center font-weight-semibold align-middle p-4" style="width: 140px;">
+                        @if (item.discountedPrice && item.discountedPrice < item.price * item.quantity) {
+                          <span>
+                            ${{ item.discountedPrice.toFixed(2) }}
+                          </span>
+                        }
+                      </td>
+                      <td class="text-center align-middle px-0" style="width: 40px;">
+                        <button class="remove-btn text-danger" (click)="removeFromCart(item.cartId)">×</button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+
+          <div class="d-flex justify-content-between align-items-center pb-4 subtotal-container">
+            <label class="text-muted font-weight-normal m-0">Subtotal</label>
+            <div class="text-large"><strong>${{ calculateSubtotal().toFixed(2) }}</strong></div>
+          </div>
+
+
+          <!-- Select from Existing Addresses Section -->
+          <div class="existing-addresses">
+            <h3>Confirm order</h3>
+            <label>Select the country/region for shipping</label>
+
+            <!-- Existing Addresses Section -->
+            @if (savedAddresses.length > 0) {
+              <div>
+                @for (address of savedAddresses; track address) {
+                  <div class="address-card">
+                    <input type="radio" name="selectedAddress" [value]="address" [(ngModel)]="selectedAddress">
+                    <span class="location-icon"><i class="bi bi-geo-alt-fill" style="color: red;"></i></span>
+                    <label class="address-label">
+                      <strong>{{ address.addressType }}</strong> -
+                      <strong>{{ address.fullName }}</strong>,
+                      {{ address.billingAddress }}, {{ address.city }}, {{ address.state }} {{ address.zipcode }},
+                      <span class="masked-contact">{{ address.contact | slice:0:3 }}****{{ address.contact | slice:-4 }}</span>
+                    </label>
+                    <!-- Debugging: Show message if `addressType` is missing -->
+                    <ng-template #notFound>
+                      <span style="color: red;">(Address Type Not Found)</span>
+                    </ng-template>
+                    <span class="delete-icon" (click)="deleteAddress(address)">
+                      🗑️
+                    </span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p>No saved addresses found. Add a new address.</p>
+            }
+
+
+            <button class="btn btn-primary add-new-btn" (click)="toggleAddressForm()">Add new</button>
+          </div>
+
+
+          <!-- Popup Overlay for Address Form -->
+          @if (showAddressForm) {
+            <div class="address-form-overlay">
+              <div class="address-form-popup">
+                <form (ngSubmit)="saveNewAddress()" #addressForm="ngForm">
+                  <!-- Paste Billing Information -->
+                  <!-- Paste New Address Information Input -->
+                  <div class="form-group">
+                    <input type="text" id="pasteNewAddressInfo" class="form-control small-input"
+                      placeholder="Paste Address Information here..." (paste)="handleNewAddressPaste($event)">
+                    </div>
+                    <!-- Full Name & Address Type -->
+                    <div class="form-group">
+                      <div class="form-group">
+                        <input type="text" class="form-control small-input" id="fullName" name="fullName"
+                          [(ngModel)]="newAddress.fullName" placeholder="Full Name*" required>
+                        </div>
+                        <select class="form-control small-input" id="addressType" name="addressType"
+                          [(ngModel)]="newAddress.addressType" #addressType="ngModel" required>
+                          <option value="" disabled selected hidden>Select Address Type</option>
+                          <option value="Home">Home</option>
+                          <option value="Work">Work</option>
+                          <option value="Billing">Billing</option>
+                          <option value="Shipping">Shipping</option>
+                          <option value="Mailing">Mailing</option>
+                          <option value="Temporary">Temporary</option>
+                        </select>
+                        <!-- Error message for validation -->
+                        @if (addressType.invalid && (addressType.dirty || addressType.touched || formSubmitted)) {
+                          <div class="error-message"
+                            >
+                            Please select an address type.
+                          </div>
+                        }
+                      </div>
+                      <!-- Email & Contact -->
+                      <div class="form-row">
+                        <div class="form-group">
+                          <input type="email" class="form-control small-input" id="email" name="email"
+                            [(ngModel)]="newAddress.email" placeholder="Email*" required>
+                          </div>
+                          <div class="form-group">
+                            <input type="text" class="form-control small-input" id="contact" name="contact"
+                              [(ngModel)]="newAddress.contact" placeholder="Contact Number*" required pattern="^[0-9]{10,15}$">
+                            </div>
+                          </div>
+                          <!-- Billing Address -->
+                          <div class="form-group">
+                            <textarea class="form-control small-textarea" id="billingAddress" name="billingAddress"
+                            [(ngModel)]="newAddress.billingAddress" placeholder="Billing Address*" rows="2" required></textarea>
+                          </div>
+                          <!-- City & State -->
+                          <div class="form-row">
+                            <div class="form-group">
+                              <input type="text" class="form-control small-input" id="city" name="city" [(ngModel)]="newAddress.city"
+                                placeholder="City*" required>
+                              </div>
+                              <div class="form-group">
+                                <input type="text" class="form-control small-input" id="state" name="state"
+                                  [(ngModel)]="newAddress.state" placeholder="State* i.e LA, CA, etc." required
+                                  [ngbTypeahead]="searchStates">
+                                </div>
+                              </div>
+                              <!-- Zipcode & Country -->
+                              <div class="form-row">
+                                <div class="form-group">
+                                  <input type="text" class="form-control small-input" id="zipcode" name="zipcode"
+                                    [(ngModel)]="newAddress.zipcode" placeholder="Zipcode*" required pattern="^[0-9]{5,10}$">
+                                  </div>
+                                  <div class="form-group">
+                                    <input type="text" class="form-control small-input" id="country" name="country"
+                                      [(ngModel)]="newAddress.country" readonly>
+                                    </div>
+                                  </div>
+                                  <!-- Form Actions -->
+                                  <div class="form-actions">
+                                    <button type="submit" class="btn btn-success small-btn">Save</button>
+                                    <button type="button" class="btn btn-secondary small-btn" (click)="toggleAddressForm()">Cancel</button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          }
+
+
+
+                          <!-- Billing Information Section -->
+                          <div class="billing-information">
+                            <h3>Billing Information</h3>
+                            <!-- Paste Billing Information Input -->
+                            <div class="form-group">
+                              <input type="text" id="pasteBillingInfo" class="form-control" placeholder="Paste Billing Information here..."
+                                (paste)="handleBillingPaste($event)">
+                              </div>
+
+
+                              <form (submit)="goToCheckout()">
+                                <div class="form-group">
+                                  <label for="fullName">Full Name:</label>
+                                  <input type="text" id="fullName" [(ngModel)]="billing.fullName" name="fullName" required>
+                                </div>
+                                <!-- Email & Contact in one row -->
+                                <div class="form-group-row">
+                                  <div class="form-group">
+                                    <label for="email">Email:</label>
+                                    <input type="email" id="email" [(ngModel)]="billing.email" name="email" required>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="contact">Contact:</label>
+                                    <input type="text" id="contact" [(ngModel)]="billing.contact" name="contact" required>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <label for="billingAddress">Billing Address:</label>
+                                  <textarea id="billingAddress" [(ngModel)]="billing.billingAddress" name="billingAddress" required
+                                  (paste)="handleAddressPaste($event)"></textarea>
+                                </div>
+
+                                <!-- Country & State in one row -->
+                                <div class="form-group-row">
+                                  <div class="form-group">
+                                    <label for="city">City:</label>
+                                    <input type="text" id="city" [(ngModel)]="billing.city" name="city" required>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="state">State:</label>
+                                    <input type="text" id="state" placeholder="State* i.e LA, CA, etc." [(ngModel)]="billing.state"
+                                      name="state" required>
+                                    </div>
+                                  </div>
+
+                                  <!-- City & Zipcode in one row -->
+                                  <div class="form-group-row">
+                                    <div class="form-group">
+                                      <label for="zipcode">Zipcode:</label>
+                                      <input type="text" id="zipcode" [(ngModel)]="billing.zipcode" name="zipcode" required>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="country">Country:</label>
+                                      <input type="text" id="country" [(ngModel)]="billing.country" name="country" readonly>
+                                    </div>
+                                  </div>
+
+                                  <button type="submit" class="checkout" [disabled]="!isBillingFormValid()">CHECKOUT</button>
+                                </form>
+                              </div>
+
+                            </div>
+                          </div>
+                        </div>
+
+
+                        <!-- Mobile Cart -->
+                        @if (isMobile) {
+                          <div class="cart-mobile container">
+                            <!-- Header & Search -->
+                            <div class="mobile-header mb-4">
+                              <h2 class="mb-2">Shopping Cart ({{ cartItems.length }} ITEMS)</h2>
+                              <div class="search-container">
+                                <input
+                                  type="text"
+                                  class="search-box"
+                                  placeholder="🔍 Search by product name..."
+                                  [(ngModel)]="searchTerm"
+                                  aria-label="Search cart items"
+                                  />
+                                </div>
+                              </div>
+                              <!-- Items List -->
+                              <div class="mobile-items">
+                                @for (item of filteredCartItems(); track item) {
+                                  <div
+                                    class="mobile-item-card mb-3 p-3"
+                                    role="listitem"
+                                    >
+                                    <button
+                                      class="remove-btn text-danger"
+                                      aria-label="Remove item"
+                                      (click)="removeFromCart(item.cartId)"
+                                      >
+                                      &times;
+                                    </button>
+                                    <div class="item-top d-flex align-items-center justify-content-between">
+                                      <div class="d-flex align-items-center">
+                                        @if (!item.imageError) {
+                                          <img
+                                            [src]="'https://usaperp.com:5001/Images/Products/' + item.image"
+                                            alt="{{ item.name }}"
+                                            class="mobile-img mr-3"
+                                            (error)="handleImageError(item)"
+                                            />
+                                        }
+                                        <div class="item-details">
+                                          <a href="#" class="item-name d-block mb-1">{{ item.name }}</a>
+                                          <div class="item-price font-weight-semibold">
+                                            ${{ item.price.toFixed(2) }}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div
+                                      class="quantity-controls d-flex align-items-center justify-content-between mt-3"
+                                      role="group"
+                                      aria-label="Quantity controls"
+                                      >
+                                      <span class="quantity-label">Quantity</span>
+                                      <div class="quantity-wrapper d-flex align-items-center">
+                                        <button
+                                          class="quantity-btn"
+                                          aria-label="Decrease quantity"
+                                          (click)="updateQuantity(item.productId, item.quantity - 1)"
+                                          [disabled]="item.quantity <= 1"
+                                          >
+                                          −
+                                        </button>
+                                        <input
+                                          type="number"
+                                          class="quantity-input text-center"
+                                          [value]="item.quantity"
+                                          min="1"
+                                          (change)="onQuantityInput(item.productId, $event)"
+                                          />
+                                          <button
+                                            class="quantity-btn"
+                                            aria-label="Increase quantity"
+                                            (click)="updateQuantity(item.productId, item.quantity + 1)"
+                                            >
+                                            +
+                                          </button>
+                                        </div>
+                                      </div>
+                                      <div class="item-bottom d-flex justify-content-between mt-3">
+                                        <span class="subtotal">
+                                          Subtotal: ${{ (item.discountedPrice ?? item.price * item.quantity).toFixed(2) }}
+                                        </span>
+                                        @if (item.discountedPrice !== undefined && item.discountedPrice < item.price * item.quantity) {
+                                          <span
+                                            class="discount text-success"
+                                            >
+                                            Discount: ${{ ((item.price * item.quantity) - item.discountedPrice).toFixed(2) }}
+                                          </span>
+                                        }
+                                      </div>
+                                    </div>
+                                  }
+                                </div>
+                                <!-- Summary -->
+                                <div class="mobile-summary p-3 mb-4 rounded-shadow bg-white">
+                                  <div class="summary-row d-flex justify-content-between">
+                                    <span class="summary-label">Subtotal:</span>
+                                    <span class="summary-value">${{ calculateSubtotal().toFixed(2) }}</span>
+                                  </div>
+                                  <div class="summary-row d-flex justify-content-between">
+                                    <span class="summary-label">Discount:</span>
+                                    <span class="summary-value">-${{ totalDiscount().toFixed(2) }}</span>
+                                  </div>
+                                  <div class="summary-row d-flex justify-content-between">
+                                    <span class="summary-label">Shipping:</span>
+                                    <span class="summary-value">${{ shippingCost.toFixed(2) }}</span>
+                                  </div>
+                                  <div class="summary-row d-flex justify-content-between">
+                                    <span class="summary-label">Total:</span>
+                                    <span class="summary-value total-value">
+                                      ${{ (calculateSubtotal() - totalDiscount() + shippingCost).toFixed(2) }}
+                                    </span>
+                                  </div>
+                                </div>
+                                <!-- Address Section -->
+                                <div class="mobile-addresses mb-4">
+                                  <h3 class="mb-2">Delivery Address</h3>
+                                  <label class="d-block mb-3">Select the country/region for shipping</label>
+                                  @for (addr of savedAddresses; track addr) {
+                                    <div class="mobile-address-card d-flex align-items-center mb-2 p-2 rounded bg-light"
+                                      [class.selected]="addr === selectedAddress">
+                                      <input
+                                        type="radio"
+                                        name="selectedAddress"
+                                        class="address-radio mr-2"
+                                        [value]="addr"
+                                        [(ngModel)]="selectedAddress"
+                                        />
+                                        <div class="address-info flex-grow-1">
+                                          <strong>{{ addr.addressType }}</strong> –
+                                          {{ addr.fullName }}, {{ addr.billingAddress }},
+                                          {{ addr.city }}, {{ addr.state }} {{ addr.zipcode }},
+                                          <span class="masked-contact">{{ addr.contact | slice:0:3 }}****{{ addr.contact | slice:-4 }}</span>
+                                        </div>
+                                        <span class="delete-icon ml-2" (click)="deleteAddress(addr)">🗑️</span>
+                                      </div>
+                                    }
+                                    <button class="btn btn-primary add-new-btn mt-2" (click)="toggleAddressForm()">+ Add New Address</button>
+                                  </div>
+                                  <!-- New Address Form Overlay -->
+                                  @if (showAddressForm) {
+                                    <div class="address-form-overlay">
+                                      <div class="address-form-popup">
+                                        <!-- reuse your existing address form here -->
+                                        <ng-container *ngTemplateOutlet="addressForm"></ng-container>
+                                      </div>
+                                    </div>
+                                  }
+                                  <!-- Billing Information -->
+                                  <div class="billing-information">
+                                    <h3 class="mb-3">Billing Information</h3>
+                                    <div class="form-group mb-3">
+                                      <input
+                                        type="text"
+                                        class="form-control"
+                                        placeholder="Paste billing information here..."
+                                        (paste)="handleBillingPaste($event)"
+                                        />
+                                      </div>
+                                      <form (ngSubmit)="goToCheckout()">
+                                        <div class="form-group mb-3">
+                                          <label for="fullName">Full Name</label>
+                                          <input
+                                            type="text"
+                                            id="fullName"
+                                            class="form-control"
+                                            [(ngModel)]="billing.fullName"
+                                            name="fullName"
+                                            required
+                                            />
+                                          </div>
+                                          <div class="form-group-row mb-3">
+                                            <div class="form-group">
+                                              <label for="email">Email</label>
+                                              <input
+                                                type="email"
+                                                id="email"
+                                                class="form-control"
+                                                [(ngModel)]="billing.email"
+                                                name="email"
+                                                required
+                                                />
+                                              </div>
+                                              <div class="form-group">
+                                                <label for="contact">Contact</label>
+                                                <input
+                                                  type="tel"
+                                                  id="contact"
+                                                  class="form-control"
+                                                  [(ngModel)]="billing.contact"
+                                                  name="contact"
+                                                  required
+                                                  />
+                                                </div>
+                                              </div>
+                                              <div class="form-group mb-3">
+                                                <label for="billingAddress">Billing Address</label>
+                                                <textarea
+                                                  id="billingAddress"
+                                                  class="form-control"
+                                                  [(ngModel)]="billing.billingAddress"
+                                                  name="billingAddress"
+                                                  (paste)="handleAddressPaste($event)"
+                                                  required
+                                                ></textarea>
+                                              </div>
+                                              <div class="form-group-row mb-4">
+                                                <div class="form-group">
+                                                  <label for="city">City</label>
+                                                  <input
+                                                    type="text"
+                                                    id="city"
+                                                    class="form-control"
+                                                    [(ngModel)]="billing.city"
+                                                    name="city"
+                                                    required
+                                                    />
+                                                  </div>
+                                                  <div class="form-group">
+                                                    <label for="state">State</label>
+                                                    <input
+                                                      type="text"
+                                                      id="state"
+                                                      placeholder="e.g., CA, NY"
+                                                      class="form-control"
+                                                      [(ngModel)]="billing.state"
+                                                      name="state"
+                                                      required
+                                                      />
+                                                    </div>
+                                                  </div>
+                                                  <div class="form-group-row mb-4">
+                                                    <div class="form-group">
+                                                      <label for="zipcode">ZIP Code</label>
+                                                      <input
+                                                        type="text"
+                                                        id="zipcode"
+                                                        class="form-control"
+                                                        [(ngModel)]="billing.zipcode"
+                                                        name="zipcode"
+                                                        required
+                                                        />
+                                                      </div>
+                                                      <div class="form-group">
+                                                        <label for="country">Country</label>
+                                                        <input
+                                                          type="text"
+                                                          id="country"
+                                                          class="form-control"
+                                                          [(ngModel)]="billing.country"
+                                                          name="country"
+                                                          readonly
+                                                          />
+                                                        </div>
+                                                      </div>
+                                                      <!-- Sticky Checkout Button on Mobile -->
+                                                      <div class="sticky-checkout d-block d-md-none">
+                                                        <button
+                                                          type="submit"
+                                                          class="checkout-btn btn btn-success btn-block"
+                                                          [disabled]="!isBillingFormValid()"
+                                                          >
+                                                          Checkout •
+                                                          {{
+                                                          (calculateSubtotal() - totalDiscount() + shippingCost)
+                                                          .toFixed(2)
+                                                          }}
+                                                        </button>
+                                                      </div>
+                                                    </form>
+                                                  </div>
+                                                  <!-- Toast Notification -->
+                                                  @if (toastMessage) {
+                                                    <div
+                                                      class="toast"
+                                                      role="alert"
+                                                      aria-live="polite"
+                                                      (animationend)="toastMessage = ''"
+                                                      >
+                                                      {{ toastMessage }}
+                                                    </div>
+                                                  }
+                                                </div>
+                                              }
+
+                                              <!-- Desktop Table Template -->
+                                              <ng-template #desktopTable>
+                                                <table class="table table-bordered">
+                                                  <!-- ... your existing desktop markup ... -->
+                                                </table>
+                                              </ng-template>
+
+                                              <!-- Address Form Template -->
+                                              <ng-template #addressForm>
+                                                <form (ngSubmit)="saveNewAddress()" #addressFormRef="ngForm">
+                                                  <!-- ... your existing address fields ... -->
+                                                </form>
+                                              </ng-template>

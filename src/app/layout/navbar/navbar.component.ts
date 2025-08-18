@@ -10,25 +10,24 @@ import {
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { BehaviorSubject, catchError, map, Observable, of } from 'rxjs';
-import { ApiService } from '../../core/services/api.service';
-import { SidebarToggleService } from '../../core/services/sidebar-toggle/sidebar-toggle.service';
-import { LoginService } from '../../core/services/login-service/login-service.service';
-import { AddToCartService } from '../../core/services/add-to-cart/add-to-cart.service';
-import { CartService } from '../../core/services/cart/cart.service';
-import { LogoutService } from '../../core/services/logout-service/logout-service.service';
-import { DynamicSearchService } from '../../core/services/dynamic-search/dynamic-search.service';
+import { ApiService } from '../../shared/api.service';
+import { SidebarToggleService } from '../../shared/sidebar-toggle/sidebar-toggle.service';
+import { LoginService } from '../../features/users/services/login-service/login-service.service';
+import { AddToCartService } from '../../features/cart/services/add-to-cart/add-to-cart.service';
+import { CartService } from '../../features/cart/services/cart/cart.service';
+import { LogoutService } from '../../features/users/services/logout-service/logout-service.service';
+import { DynamicSearchService } from '../../features/search/services/dynamic-search/dynamic-search.service';
+import { CategoryNavbarSearchService } from '../../features/search/services/category-navbar-search/category-navbar-search.service';
+import { FilterSearchService } from '../../features/search/services/filter-search/filter-search.service';
+import { SearchQueryService } from '../../features/search/services/search-query/search-query.service';
+import { UserService } from '../../features/users/services/User/user.service';
 import { SidebarComponent } from '../sidebar/sidebar/sidebar.component';
-import { CategoryNavbarSearchService } from '../../core/services/category-navbar-search/category-navbar-search.service';
-import { FilterSearchService } from '../../core/services/filter-search/filter-search.service';
-import { SearchQueryService } from '../../core/services/search-query/search-query.service';
-import { UserService } from '../../core/services/User/user.service';
 
 @Component({
-  selector: 'app-navbar',
-  standalone: true,
-  imports: [CommonModule, FormsModule, SidebarComponent, RouterModule],
-  templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css',
+    selector: 'app-navbar',
+    imports: [CommonModule, FormsModule, SidebarComponent, RouterModule],
+    templateUrl: './navbar.component.html',
+    styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {
   @Input() loginType: string | null = null;

@@ -1,21 +1,21 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { CartService } from '../../../../core/services/cart/cart.service';
+import { CartService } from '../../../../features/cart/services/cart/cart.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { CustomerCartService } from '../../../../core/services/customer-cart/customer-cart.service';
-import { DeleteCartService } from '../../../../core/services/delete-cart/delete-cart.service';
+import { CustomerCartService } from '../../../../features/cart/services/customer-cart/customer-cart.service';
+import { DeleteCartService } from '../../../../features/cart/services/delete-cart/delete-cart.service';
 import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { GetAddressService } from '../../../../core/services/get-address/get-address.service';
-import { AddAddressService } from '../../../../core/services/add-address/add-address.service';
-import { DeleteAddressService } from '../../../../core/services/delete-address/delete-address.service';
+import { GetAddressService } from '../../../../features/users/services/get-address/get-address.service';
+import { AddAddressService } from '../../../../features/users/services/add-address/add-address.service';
+import { DeleteAddressService } from '../../../../features/users/services/delete-address/delete-address.service';
 import Swal from 'sweetalert2';
 
 export interface Address {
-  add_id: number; // ✅ Add this property to match API response
+  add_id: number; 
   fullName: string;
   email: string;
   contact: string;
@@ -28,11 +28,10 @@ export interface Address {
 }
 
 @Component({
-  selector: 'app-b2c-cart',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NgbTypeahead],
-  templateUrl: './b2c-cart.component.html',
-  styleUrl: './b2c-cart.component.css',
+    selector: 'app-b2c-cart',
+    imports: [CommonModule, FormsModule, RouterModule, NgbTypeahead],
+    templateUrl: './b2c-cart.component.html',
+    styleUrl: './b2c-cart.component.css'
 })
 export class B2cCartComponent {
   cartItems: Array<{

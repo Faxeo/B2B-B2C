@@ -4,21 +4,21 @@ import {
   Inject,
   PLATFORM_ID,
 } from '@angular/core';
-import { NavigationService } from '../../../core/services/navigation-service/navigation-service.service';
-import { SubCategoryService } from '../../../core/services/sub-category/sub-category.service';
-import { MainCategoryService } from '../../../core/services/main-category/main-category.service';
-import { FetchChildService } from '../../../core/services/fetch-child/fetch-child.service';
-import { DynamicSearchService } from '../../../core/services/dynamic-search/dynamic-search.service';
+import { NavigationService } from '../../../../shared/navigation-service/navigation-service.service';
+import { SubCategoryService } from '../../../../features/search/services/sub-category/sub-category.service';
+import { MainCategoryService } from '../../../../features/search/services//main-category/main-category.service';
+import { FetchChildService } from '../../../../features/search/services//fetch-child/fetch-child.service';
+import { DynamicSearchService } from '../../../../features/search/services//dynamic-search/dynamic-search.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { FilterSearchService } from '../../../core/services/filter-search/filter-search.service';
-import { CategoryNavbarSearchService } from '../../../core/services/category-navbar-search/category-navbar-search.service';
-import { GetBrandsService } from '../../../core/services/get-brands/get-brands.service';
-import { FetchMakeService } from '../../../core/services/fetch-make/fetch-make.service';
+import { FilterSearchService } from '../../../../features/search/services//filter-search/filter-search.service';
+import { CategoryNavbarSearchService } from '../../../../features/search/services//category-navbar-search/category-navbar-search.service';
+import { GetBrandsService } from '../../../../features/search/services//get-brands/get-brands.service';
+import { FetchMakeService } from '../../../../features/search/services//fetch-make/fetch-make.service';
 import {
   YearMakeModelService,
   YearMakeModelResponse,
-} from '../../../core/services/Year-Make-Model/year-make-model.service';
+} from '../../../../features/garage/services/Year-Make-Model/year-make-model.service';
 
 interface Vehicle {
   value_name: string; // the make
@@ -30,11 +30,10 @@ interface Vehicle {
 type MakeItem = YearMakeModelResponse['data']['makes'][number];
 
 @Component({
-  selector: 'app-filter',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './filter.component.html',
-  styleUrl: './filter.component.css',
+    selector: 'app-filter',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './filter.component.html',
+    styleUrl: './filter.component.css'
 })
 export class FilterComponent {
   mainCategories: any[] = [];

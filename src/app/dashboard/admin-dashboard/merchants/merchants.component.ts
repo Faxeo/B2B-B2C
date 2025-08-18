@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { AdminMerchantsService } from '../../../core/services/admin-merchants/admin-merchants.service';
+import { AdminMerchantsService } from '../../../shared/admin-merchants/admin-merchants.service';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
-  selector: 'app-merchants',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './merchants.component.html',
-  styleUrls: ['./merchants.component.css']
+    selector: 'app-merchants',
+    imports: [],
+    templateUrl: './merchants.component.html',
+    styleUrls: ['./merchants.component.css']
 })
 export class MerchantsComponent implements OnInit {
   merchants: any[] = [];

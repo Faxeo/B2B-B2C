@@ -10,9 +10,6 @@ export class VehicleSearchService {
     console.log('Updated Vehicle Data:', this.vehicleData); // Debug log to confirm update
   }
   
-  
-
-
   getVehicleData(): any {
     return this.vehicleData;
   }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { ApiService } from '../api.service';
+import { ApiService } from '../../../../shared/api.service';
 
 export interface ProductDetails {
   product_id: number;

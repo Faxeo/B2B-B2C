@@ -1,19 +1,17 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CheckoutService } from '../../../../core/services/checkout/checkout.service';
-import { CartService } from '../../../../core/services/cart/cart.service';
+import { CheckoutService } from '../../../../features/cart/services/checkout/checkout.service';
+import { CartService } from '../../../../features/cart/services/cart/cart.service';
 import { Router } from '@angular/router';
-import { DeleteCartService } from '../../../../core/services/delete-cart/delete-cart.service';
+import { DeleteCartService } from '../../../../features/cart/services/delete-cart/delete-cart.service';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 
 @Component({
-  selector: 'app-b2c-checkout',
-  standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, 
-    ToastrModule],
-  templateUrl: './b2c-checkout.component.html',
-  styleUrl: './b2c-checkout.component.css'
+    selector: 'app-b2c-checkout',
+    imports: [ReactiveFormsModule, ToastrModule],
+    templateUrl: './b2c-checkout.component.html',
+    styleUrl: './b2c-checkout.component.css'
 })
 export class B2cCheckoutComponent {
 checkoutForm: FormGroup = this.fb.group({});

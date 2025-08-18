@@ -1,25 +1,24 @@
 import { ChangeDetectorRef, Component, Inject, Output, PLATFORM_ID, SimpleChanges } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { EventEmitter } from '@angular/core';
-import { FetchYearService } from '../../core/services/fetch-year/fetch-year.service';
-import { FetchMakeService } from '../../core/services/fetch-make/fetch-make.service';
-import { FetchChildService } from '../../core/services/fetch-child/fetch-child.service';
-import { CompatibleProductsService } from '../../core/services/compatible-products/compatible-products.service';
-import { VehicleSearchService } from '../../core/services/search-vehicle/search-vehicle.service';
-import { AddVehicleService } from '../../core/services/add-vehicle/add-vehicle.service';
-import { LoginService } from '../../core/services/login-service/login-service.service';
-import { GetVehicleService } from '../../core/services/get-vehicle/get-vehicle.service';
-import { DeleteVehicleService } from '../../core/services/delete-vehicle/delete-vehicle.service';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { FetchYearService } from '../../../features/search/services/fetch-year/fetch-year.service';
+import { FetchMakeService } from '../../../features/search/services/fetch-make/fetch-make.service';
+import { FetchChildService } from '../../../features/search/services/fetch-child/fetch-child.service';
+import { CompatibleProductsService } from '../../../features/product/services/compatible-products/compatible-products.service';
+import { VehicleSearchService } from '../../../features/search/services/search-vehicle/search-vehicle.service';
+import { AddVehicleService } from '../../../features/users/services/add-vehicle/add-vehicle.service';
+import { LoginService } from '../../../features/users/services/login-service/login-service.service';
+import { GetVehicleService } from '../../../features/users/services/get-vehicle/get-vehicle.service';
+import { DeleteVehicleService } from '../../../features/users/services/delete-vehicle/delete-vehicle.service';
+import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NavigationService } from '../../core/services/navigation-service/navigation-service.service';
+import { NavigationService } from '../../../shared/navigation-service/navigation-service.service';
 
 @Component({
-  selector: 'app-garage',
-  standalone: true,
-  imports: [RouterModule,CommonModule,FormsModule],
-  templateUrl: './garage.component.html',
-  styleUrl: './garage.component.css'
+    selector: 'app-garage',
+    imports: [RouterModule, FormsModule],
+    templateUrl: './garage.component.html',
+    styleUrl: './garage.component.css'
 })
 export class GarageComponent {
   years: { year: string }[] = [];

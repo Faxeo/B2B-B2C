@@ -1,17 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { PendingOrdersService, PendingOrder } from '../../../core/services/pending-orders/pending-orders.service';
-import { OrderDetailsService, OrderDetail } from '../../../core/services/order-details/order-details.service';
-import { OrderShippingService, OrderShipping } from '../../../core/services/pending-orders/order-shipping/order-shipping.service';
+import { PendingOrdersService, PendingOrder } from '../../../features/billing/services/pending-orders/pending-orders.service';
+import { OrderDetailsService, OrderDetail } from '../../../features/billing/services/order-details/order-details.service';
+import { OrderShippingService, OrderShipping } from '../../../features/billing/services/pending-orders/order-shipping/order-shipping.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
 @Component({
-  selector: 'app-pending-orders',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './pending-orders.component.html',
-  styleUrls: ['./pending-orders.component.css']
+    selector: 'app-pending-orders',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './pending-orders.component.html',
+    styleUrls: ['./pending-orders.component.css']
 })
 export class PendingOrdersComponent implements OnInit {
   pendingOrders: PendingOrder[] = []; 

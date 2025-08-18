@@ -1,16 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { RecentlyViewedService } from '../../core/services/recently-viewed/recently-viewed.service';
-import { CommonModule } from '@angular/common';
+import { RecentlyViewedService } from '../recently-viewed-service/recently-viewed.service';
+
 import { Subscription } from 'rxjs';
 
 @Component({
-  standalone: true,
-  imports: [
-    CommonModule
-  ],
-  selector: 'app-recently-viewed',
-  templateUrl: './recently-viewed.component.html',
-  styleUrls: ['./recently-viewed.component.css'],
+    imports: [],
+    selector: 'app-recently-viewed',
+    templateUrl: './recently-viewed.component.html',
+    styleUrls: ['./recently-viewed.component.css']
 })
 
 

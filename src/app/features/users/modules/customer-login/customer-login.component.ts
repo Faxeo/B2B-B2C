@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
-import { ApiService } from '../../../core/services/api.service';
+import { ApiService } from '../../../../shared/api.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-customer-login',
-  templateUrl: './customer-login.component.html',
-  styleUrl: './customer-login.component.css'
+    selector: 'app-customer-login',
+    templateUrl: './customer-login.component.html',
+    styleUrl: './customer-login.component.css',
+    standalone: false
 })
 export class CustomerLoginComponent {
 

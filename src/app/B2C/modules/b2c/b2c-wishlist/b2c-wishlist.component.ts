@@ -1,16 +1,15 @@
-import { CommonModule, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { WishlistService } from '../../../../core/services/wishlist/wishlist.service';
-import { RemoveFromWishlistService } from '../../../../core/services/remove-from-wishlist/remove-from-wishlist.service';
-import { CartService } from '../../../../core/services/cart/cart.service';
+import { WishlistService } from '../../../../features/wishlist/services/wishlist/wishlist.service';
+import { RemoveFromWishlistService } from '../../../../features/wishlist/services/remove-from-wishlist/remove-from-wishlist.service';
+import { CartService } from '../../../../features/cart/services/cart/cart.service';
 
 @Component({
-  selector: 'app-b2c-wishlist',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
-  templateUrl: './b2c-wishlist.component.html',
-  styleUrl: './b2c-wishlist.component.css'
+    selector: 'app-b2c-wishlist',
+    imports: [RouterModule],
+    templateUrl: './b2c-wishlist.component.html',
+    styleUrl: './b2c-wishlist.component.css'
 })
 export class B2cWishlistComponent {
 wishlistItems: Array<{

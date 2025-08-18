@@ -1,19 +1,18 @@
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CheckoutService } from '../../../core/services/checkout/checkout.service';
+import { CheckoutService } from '../../services/checkout/checkout.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { NgZone } from '@angular/core';
-import { CartService } from '../../../core/services/cart/cart.service';
+import { CartService } from '../../services/cart/cart.service';
 import { Router } from '@angular/router';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 
 @Component({
-  standalone: true,
-  imports: [ReactiveFormsModule, CommonModule ],
-  selector: 'app-checkout',
-  templateUrl: './checkout.component.html',
-  styleUrls: ['./checkout.component.css'],
+    imports: [ReactiveFormsModule],
+    selector: 'app-checkout',
+    templateUrl: './checkout.component.html',
+    styleUrls: ['./checkout.component.css']
 })
 
 export class CheckoutComponent implements OnInit {

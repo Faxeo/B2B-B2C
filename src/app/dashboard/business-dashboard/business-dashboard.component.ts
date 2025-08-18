@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule, NgSwitch, NgSwitchCase, NgSwitchDefault, NgIf } from '@angular/common';
+
 import { BusinessSidebarComponent } from './business-sidebar/business-sidebar.component';
 import { OrdersToShipComponent } from './orders-to-ship/orders-to-ship.component';
 import { OrdersToReceiveComponent } from './orders-to-receive/orders-to-receive.component';
@@ -9,25 +9,19 @@ import { PurchaseHistoryComponent } from './purchase-history/purchase-history.co
 import { TrackOrderComponent } from './track-order/track-order.component';
 
 @Component({
-  selector: 'app-business-dashboard',
-  standalone: true,
-  imports: [
+    selector: 'app-business-dashboard',
+    imports: [
     BusinessSidebarComponent,
     OrdersToShipComponent,
     OrdersToReceiveComponent,
     ProfileComponent,
-    CommonModule,
-    NgIf,
     MyGarageComponent,
     PurchaseHistoryComponent,
     TrackOrderComponent,
-    PurchaseHistoryComponent,
-    NgSwitch, 
-    NgSwitchCase, 
-    NgSwitchDefault
-  ],
-  templateUrl: './business-dashboard.component.html',
-  styleUrls: ['./business-dashboard.component.scss']
+    PurchaseHistoryComponent
+],
+    templateUrl: './business-dashboard.component.html',
+    styleUrls: ['./business-dashboard.component.scss']
 })
 export class BusinessDashboardComponent {
   selectedComponent: string | null = null;

@@ -7,15 +7,14 @@ import { PendingOrdersComponent } from './pending-orders/pending-orders.componen
 import { ProfileComponent } from './profile/profile.component';
 import { ShippedOrdersComponent } from './shipped-orders/shipped-orders.component';
 import { BusinessRequestsComponent } from './business-requests/business-requests.component';
-import { CommonModule, NgIf } from '@angular/common';
+
 import { LostSalesComponent } from './lost-sales/lost-sales.component';
 
 @Component({
-  standalone: true,
-  selector: 'app-admin-dashboard',
-  templateUrl: './admin-dashboard.component.html',
-  styleUrls: ['./admin-dashboard.component.scss'],
-  imports: [
+    selector: 'app-admin-dashboard',
+    templateUrl: './admin-dashboard.component.html',
+    styleUrls: ['./admin-dashboard.component.scss'],
+    imports: [
     AdminSidebarComponent,
     CustomersComponent,
     MerchantsComponent,
@@ -24,10 +23,8 @@ import { LostSalesComponent } from './lost-sales/lost-sales.component';
     ProfileComponent,
     ShippedOrdersComponent,
     BusinessRequestsComponent,
-    LostSalesComponent,
-    CommonModule,
-    NgIf,
-  ],
+    LostSalesComponent
+]
 })
 export class AdminDashboardComponent {
   selectedComponent: string | null = null;

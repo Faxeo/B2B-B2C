@@ -16,12 +16,14 @@
       </select>
 
 
-      <div *ngIf="selectedDateRange === 'custom'" class="custom-date">
-        <input type="date" [(ngModel)]="startDate">
-        <span>to</span>
-        <input type="date" [(ngModel)]="endDate">
-        <button (click)="applyCustomDateFilter()">Apply</button>
-      </div>
+      @if (selectedDateRange === 'custom') {
+        <div class="custom-date">
+          <input type="date" [(ngModel)]="startDate">
+          <span>to</span>
+          <input type="date" [(ngModel)]="endDate">
+          <button (click)="applyCustomDateFilter()">Apply</button>
+        </div>
+      }
     </div>
 
     <div class="search-box">
@@ -94,34 +96,42 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of pagedLostSales">
-          <td>{{item.timestamp | date:'medium'}}</td>
-          <td>{{item.partNumber}}</td>
-          <td>{{item.partDescription}}</td>
-          <td>{{item.category}}</td>
-          <td>{{item.searchCount}}</td>
-          <td>{{item.estimatedPrice | currency}}</td>
-          <td>{{item.potentialRevenue | currency}}</td>
-          <td>
-            <button class="action-btn" (click)="addToInventory(item)">Add to Inventory</button>
-            <button class="action-btn" (click)="findAlternatives(item)">Find Alternatives</button>
-          </td>
-        </tr>
+        @for (item of pagedLostSales; track item) {
+          <tr>
+            <td>{{item.timestamp | date:'medium'}}</td>
+            <td>{{item.partNumber}}</td>
+            <td>{{item.partDescription}}</td>
+            <td>{{item.category}}</td>
+            <td>{{item.searchCount}}</td>
+            <td>{{item.estimatedPrice | currency}}</td>
+            <td>{{item.potentialRevenue | currency}}</td>
+            <td>
+              <button class="action-btn" (click)="addToInventory(item)">Add to Inventory</button>
+              <button class="action-btn" (click)="findAlternatives(item)">Find Alternatives</button>
+            </td>
+          </tr>
+        }
       </tbody>
     </table>
 
-    <div class="pagination" *ngIf="totalPages > 1">
-      <button [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">Previous</button>
-      <div class="page-numbers">
-        <button *ngFor="let page of getPageArray()" [class.active]="page === currentPage" (click)="goToPage(page)">
-          {{page}}
-        </button>
+    @if (totalPages > 1) {
+      <div class="pagination">
+        <button [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">Previous</button>
+        <div class="page-numbers">
+          @for (page of getPageArray(); track page) {
+            <button [class.active]="page === currentPage" (click)="goToPage(page)">
+              {{page}}
+            </button>
+          }
+        </div>
+        <button [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">Next</button>
       </div>
-      <button [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">Next</button>
-    </div>
+    }
 
-    <div class="no-results" *ngIf="pagedLostSales.length === 0">
-      <p>No lost sales data found for the selected criteria.</p>
-    </div>
+    @if (pagedLostSales.length === 0) {
+      <div class="no-results">
+        <p>No lost sales data found for the selected criteria.</p>
+      </div>
+    }
   </div>
 </div>

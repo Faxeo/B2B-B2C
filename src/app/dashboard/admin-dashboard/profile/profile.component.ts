@@ -1,15 +1,14 @@
 import { Component, Inject, PLATFORM_ID } from '@angular/core';
-import { AdminProfileService } from '../../../core/services/admin-profile/admin-profile.service';
-import { isPlatformBrowser, NgIf } from '@angular/common';
-import { CommonModule } from '@angular/common';
+import { AdminProfileService } from '../../../shared/admin-profile/admin-profile.service';
+import { isPlatformBrowser } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-merchant-profile',
-  standalone: true,
-  imports: [CommonModule, NgIf, FormsModule],
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+    selector: 'app-merchant-profile',
+    imports: [FormsModule],
+    templateUrl: './profile.component.html',
+    styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent {
 

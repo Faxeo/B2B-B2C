@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { OrdersToShipService } from '../../../core/services/orders-to-ship/orders-to-ship.service';
+import { OrdersToShipService } from '../../../features/billing/services/orders-to-ship/orders-to-ship.service';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
-  standalone: true,
-  selector: 'app-orders-to-ship',
-  templateUrl: './orders-to-ship.component.html',
-  styleUrls: ['./orders-to-ship.component.css'],   
-  imports: [CommonModule],
+    selector: 'app-orders-to-ship',
+    templateUrl: './orders-to-ship.component.html',
+    styleUrls: ['./orders-to-ship.component.css'],
+    imports: []
 })
 export class OrdersToShipComponent implements OnInit {  
   orders: any[] = [];

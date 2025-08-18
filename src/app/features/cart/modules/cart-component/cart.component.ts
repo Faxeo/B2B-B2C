@@ -1,17 +1,17 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { CartService } from '../../core/services/cart/cart.service';
-import { BusinessCartService } from '../../core/services/business-cart/business-cart.service';
+import { CartService } from '../../services/cart/cart.service';
+import { BusinessCartService } from '../../services/business-cart/business-cart.service';
+import { DeleteCartService } from '../../services/delete-cart/delete-cart.service';
+import { GetAddressService } from '../../../users/services/get-address/get-address.service';
+import { AddAddressService } from '../../../users/services/add-address/add-address.service';
+import { DeleteAddressService } from '../../../users/services/delete-address/delete-address.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CheckoutComponent } from './checkout/checkout.component';
-import { DeleteCartService } from '../../core/services/delete-cart/delete-cart.service';
-import { GetAddressService } from '../../core/services/get-address/get-address.service';
-import { AddAddressService } from '../../core/services/add-address/add-address.service';
+// import { CheckoutComponent } from '../checkout/checkout.component';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
-import { DeleteAddressService } from '../../core/services/delete-address/delete-address.service';
 import Swal from 'sweetalert2';
 
 export interface Address {
@@ -28,11 +28,10 @@ export interface Address {
 }
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, FormsModule, CheckoutComponent, NgbTypeahead],
-  selector: 'app-cart',
-  templateUrl: './cart.component.html',
-  styleUrls: ['./cart.component.css'],
+    imports: [CommonModule, FormsModule, NgbTypeahead], //,CheckoutComponent],
+    selector: 'app-cart',
+    templateUrl: './cart.component.html',
+    styleUrls: ['./cart.component.css']
 })
 export class CartComponent implements OnInit {
   // Define the type for cartItems, adding cartId and discountedPrice as optional fields

@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { CustomersService } from '../../../core/services/admin-customers/admin-customers.service';
+import { CustomersService } from '../../../shared/admin-customers/admin-customers.service';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
-  selector: 'app-customers',
-  imports: [CommonModule],
-  standalone: true,
-  templateUrl: './customers.component.html',
-  styleUrls: ['./customers.component.css']
+    selector: 'app-customers',
+    imports: [],
+    templateUrl: './customers.component.html',
+    styleUrls: ['./customers.component.css']
 })
 export class CustomersComponent implements OnInit {
   customers: any[] = [];

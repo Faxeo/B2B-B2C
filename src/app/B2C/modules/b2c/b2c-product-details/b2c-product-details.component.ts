@@ -10,16 +10,15 @@ import {
 } from '@angular/core';
 
 import { ActivatedRoute, ParamMap, Router, RouterModule } from '@angular/router';
-import { ProductDetails } from '../../../../core/services/product-details/product-details.service';
-import { ProductDetailsService } from '../../../../core/services/product-details/product-details.service';
+import { ProductDetailsService, ProductDetails } from '../../../../features/product/services/product-details/product-details.service';
 import { FooterComponent } from '../../../../layout/footer/footer.component';
-import { LoginService } from '../../../../core/services/login-service/login-service.service';
-import { CartService } from '../../../../core/services/cart/cart.service';
-import { AddToCartService } from '../../../../core/services/add-to-cart/add-to-cart.service';
-import { NavigationService } from '../../../../core/services/navigation-service/navigation-service.service';
-import { SubCategoryService } from '../../../../core/services/sub-category/sub-category.service';
-import { MainCategoryService } from '../../../../core/services/main-category/main-category.service';
-import { GetLinkedProductsService } from '../../../../core/services/get-linked-products/get-linked-products.service'; 
+import { LoginService } from '../../../../features/users/services/login-service/login-service.service';
+import { CartService } from '../../../../features/cart/services/cart/cart.service';
+import { AddToCartService } from '../../../../features/cart/services/add-to-cart/add-to-cart.service';
+import { NavigationService } from '../../../../shared/navigation-service/navigation-service.service';
+import { SubCategoryService } from '../../../../features/search/services/sub-category/sub-category.service';
+import { MainCategoryService } from '../../../../features/search/services/main-category/main-category.service';
+import { GetLinkedProductsService } from '../../../../features/product/services/get-linked-products/get-linked-products.service'; 
 import { FormsModule } from '@angular/forms';
 import {
   trigger,
@@ -40,11 +39,10 @@ interface Testimonial {
 }
 
 @Component({
-  selector: 'app-b2c-product-details',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, FooterComponent, NgbCarouselModule],
-  templateUrl: './b2c-product-details.component.html',
-  styleUrls: ['./b2c-product-details.component.css'],
+    selector: 'app-b2c-product-details',
+    imports: [CommonModule, FormsModule, RouterModule, FooterComponent, NgbCarouselModule],
+    templateUrl: './b2c-product-details.component.html',
+    styleUrls: ['./b2c-product-details.component.css']
 })
 export class B2cProductDetailsComponent implements OnInit, OnDestroy, AfterViewInit {
   testimonials: Testimonial[] = [

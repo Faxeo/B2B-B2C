@@ -1,21 +1,20 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { SidebarToggleService } from '../../../core/services/sidebar-toggle/sidebar-toggle.service';
+import { SidebarToggleService } from '../../../shared/sidebar-toggle/sidebar-toggle.service';
 import { Router } from '@angular/router';
-import { LoginService } from '../../../core/services/login-service/login-service.service';
-import { FormsModule } from '@angular/forms';
-import { ApiService } from '../../../core/services/api.service';
-import { SignUpService } from '../../../core/services/signup-service/signup-service.service';
-import { AuthService } from '../../../core/services/Session/auth.service';
+import { LoginService } from '../../../features/users/services/login-service/login-service.service';
 import { CookieService } from 'ngx-cookie-service';
+import { FormsModule } from '@angular/forms';
+import { ApiService } from '../../../shared/api.service';
+import { SignUpService } from '../../../features/users/services/signup-service/signup-service.service';
+import { AuthService } from '../../../shared/Session/auth.service';
 
-@Component({ 
-  selector: 'app-sidebar',
-  standalone: true,
-  templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.scss'],
-  imports: [RouterModule, CommonModule, FormsModule],
+@Component({
+    selector: 'app-sidebar',
+    templateUrl: './sidebar.component.html',
+    styleUrls: ['./sidebar.component.scss'],
+    imports: [RouterModule, CommonModule, FormsModule]
 })
 
 export class SidebarComponent implements OnInit {

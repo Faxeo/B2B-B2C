@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -11,23 +11,22 @@ import {
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 // import { EventEmitter } from 'stream';
-import { LoginService } from '../../core/services/login-service/login-service.service';
-import { VehicleSearchService } from '../../core/services/search-vehicle/search-vehicle.service';
-import { DynamicSearchService } from '../../core/services/dynamic-search/dynamic-search.service';
-import { FetchYearService } from '../../core/services/fetch-year/fetch-year.service';
-import { FetchMakeService } from '../../core/services/fetch-make/fetch-make.service';
-import { FetchChildService } from '../../core/services/fetch-child/fetch-child.service';
+import { LoginService } from '../../../users/services/login-service/login-service.service';
+import { VehicleSearchService } from '../../../../features/search/services/search-vehicle/search-vehicle.service';
+import { DynamicSearchService } from '../../../../features/search/services/dynamic-search/dynamic-search.service';
+import { FetchYearService } from '../../../../features/search/services/fetch-year/fetch-year.service';
+import { FetchMakeService } from '../../../../features/search/services/fetch-make/fetch-make.service';
+import { FetchChildService } from '../../../../features/search/services/fetch-child/fetch-child.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FilterSearchService } from '../../core/services/filter-search/filter-search.service';
-import { CategoryNavbarSearchService } from '../../core/services/category-navbar-search/category-navbar-search.service';
+import { FilterSearchService } from '../../../../features/search/services/filter-search/filter-search.service';
+import { CategoryNavbarSearchService } from '../../../../features/search/services/category-navbar-search/category-navbar-search.service';
 import { NgSelectModule } from '@ng-select/ng-select'; //added
 
 @Component({
-  selector: 'app-search-by-vehicle',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NgSelectModule],
-  templateUrl: './search-by-vehicle.component.html',
-  styleUrl: './search-by-vehicle.component.css',
+    selector: 'app-search-by-vehicle',
+    imports: [FormsModule, RouterModule, NgSelectModule],
+    templateUrl: './search-by-vehicle.component.html',
+    styleUrl: './search-by-vehicle.component.css'
 })
 export class SearchByVehicleComponent {
   @Input() searchResults: any[] = [];

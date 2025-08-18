@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ChartConfiguration, ChartTypeRegistry } from 'chart.js/auto';
 import Chart from 'chart.js/auto';
 
@@ -21,11 +21,14 @@ interface LostSale {
 }
 
 @Component({
-  selector: 'app-lost-sales',
-  standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
-  templateUrl: './lost-sales.component.html',
-  styleUrl: './lost-sales.component.css'
+    selector: 'app-lost-sales',
+    imports: [CommonModule, FormsModule,
+        // TODO: `HttpClientModule` should not be imported into a component directly.
+        // Please refactor the code to add `provideHttpClient()` call to the provider list in the
+        // application bootstrap logic and remove the `HttpClientModule` import from this component.
+        HttpClientModule],
+    templateUrl: './lost-sales.component.html',
+    styleUrl: './lost-sales.component.css'
 })
 export class LostSalesComponent implements OnInit {
   // Chart instances

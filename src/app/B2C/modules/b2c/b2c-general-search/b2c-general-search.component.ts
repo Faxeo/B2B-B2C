@@ -10,41 +10,40 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { AddToCartService } from '../../../../core/services/add-to-cart/add-to-cart.service';
-import { CartService } from '../../../../core/services/cart/cart.service';
-import { LoginService } from '../../../../core/services/login-service/login-service.service';
-import { AddVehicleService } from '../../../../core/services/add-vehicle/add-vehicle.service';
-import { VehicleSearchService } from '../../../../core/services/search-vehicle/search-vehicle.service';
-import { NavigationService } from '../../../../core/services/navigation-service/navigation-service.service';
-import { DynamicSearchService } from '../../../../core/services/dynamic-search/dynamic-search.service';
-import { FetchYearService } from '../../../../core/services/fetch-year/fetch-year.service';
-import { FetchMakeService } from '../../../../core/services/fetch-make/fetch-make.service';
-import { FetchChildService } from '../../../../core/services/fetch-child/fetch-child.service';
-import { MainCategoryService } from '../../../../core/services/main-category/main-category.service';
-import { SubCategoryService } from '../../../../core/services/sub-category/sub-category.service';
-import { RecentlyViewedService } from '../../../../core/services/recently-viewed/recently-viewed.service';
-import { FilterSearchService } from '../../../../core/services/filter-search/filter-search.service';
-import { CategoryIdService } from '../../../../core/services/category-id/category-id.service';
-import { HierarchyProductsService } from '../../../../core/services/hierarchy-products/hierarchy-products.service';
-import { AddToWishlistService } from '../../../../core/services/add-to-wishlist/add-to-wishlist.service';
-import { RemoveFromWishlistService } from '../../../../core/services/remove-from-wishlist/remove-from-wishlist.service';
-import { WishlistService } from '../../../../core/services/wishlist/wishlist.service';
-import { CategoryNavbarSearchService } from '../../../../core/services/category-navbar-search/category-navbar-search.service';
+import { AddToCartService } from '../../../../features/cart/services/add-to-cart/add-to-cart.service';
+import { CartService } from '../../../../features/cart//services/cart/cart.service';
+import { LoginService } from '../../../../features/users/services/login-service/login-service.service';
+import { AddVehicleService } from '../../../../features/users/services/add-vehicle/add-vehicle.service';
+import { VehicleSearchService } from '../../../../features/search/services/search-vehicle/search-vehicle.service';
+import { NavigationService } from '../../../../shared/navigation-service/navigation-service.service';
+import { DynamicSearchService } from '../../../../features/search/services/dynamic-search/dynamic-search.service';
+import { FetchYearService } from '../../../../features/search/services/fetch-year/fetch-year.service';
+import { FetchMakeService } from '../../../../features/search/services/fetch-make/fetch-make.service';
+import { FetchChildService } from '../../../../features/search/services/fetch-child/fetch-child.service';
+import { MainCategoryService } from '../../../../features/search/services/main-category/main-category.service';
+import { SubCategoryService } from '../../../../features/search/services/sub-category/sub-category.service';
+import { RecentlyViewedService } from '../../../../shared/recently-viewed-service/recently-viewed.service';
+import { FilterSearchService } from '../../../../features/search/services/filter-search/filter-search.service';
+import { CategoryIdService } from '../../../../features/search/services/category-id/category-id.service';
+import { HierarchyProductsService } from '../../../../features/search/services/hierarchy-products/hierarchy-products.service';
+import { AddToWishlistService } from '../../../../features/wishlist/services/add-to-wishlist/add-to-wishlist.service';
+import { RemoveFromWishlistService } from '../../../../features/wishlist/services/remove-from-wishlist/remove-from-wishlist.service';
+import { WishlistService } from '../../../../features/wishlist/services/wishlist/wishlist.service';
+import { CategoryNavbarSearchService } from '../../../../features/search/services/category-navbar-search/category-navbar-search.service';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { RecentlyViewedComponent } from '../../../../modules/recently-viewed/recently-viewed.component';
+import { RecentlyViewedComponent } from '../../../../shared/recenltly-viewed-component/recently-viewed.component';
 import { FormsModule } from '@angular/forms';
-import { FilterComponent } from '../../../../modules/search/filter/filter.component';
-import { CartSidebarComponent } from '../../../../modules/cart-sidebar/cart-sidebar.component';
+import { FilterComponent } from '../../../../features/search/modules/filter/filter.component';
+import { CartSidebarComponent } from '../../../../features/cart/modules/cart-sidebar/cart-sidebar.component';
 import { ToastrService } from 'ngx-toastr';
 import { B2cSearchByCategoryComponent } from '../b2c-search-by-category/b2c-search-by-category.component';
 import { B2cSearchByVehicleComponent } from '../b2c-search-by-vehicle/b2c-search-by-vehicle.component';
 
 @Component({
-  selector: 'app-b2c-general-search',
-  standalone: true,
-  imports: [RouterModule, RecentlyViewedComponent, CommonModule, FormsModule, B2cSearchByCategoryComponent, B2cSearchByVehicleComponent],
-  templateUrl: './b2c-general-search.component.html',
-  styleUrl: './b2c-general-search.component.css',
+    selector: 'app-b2c-general-search',
+    imports: [RouterModule, RecentlyViewedComponent, CommonModule, FormsModule, B2cSearchByCategoryComponent, B2cSearchByVehicleComponent],
+    templateUrl: './b2c-general-search.component.html',
+    styleUrl: './b2c-general-search.component.css'
 })
 export class B2cGeneralSearchComponent {
   @Input() searchResults: any[] = [];

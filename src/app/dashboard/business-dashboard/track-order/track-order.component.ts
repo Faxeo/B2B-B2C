@@ -1,14 +1,13 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
-import { UpsDetailsService } from '../../../core/services/ups-details/ups-details.service';
+import { UpsDetailsService } from '../../../shared/ups-details/ups-details.service';
 
 @Component({
-  selector: 'app-track-order',
-  templateUrl: './track-order.component.html',
-  styleUrls: ['./track-order.component.css'],
-  standalone: true,
-  imports: [CommonModule, FormsModule],
+    selector: 'app-track-order',
+    templateUrl: './track-order.component.html',
+    styleUrls: ['./track-order.component.css'],
+    imports: [FormsModule]
 })
 export class TrackOrderComponent {
   trackingNumber: string = '';

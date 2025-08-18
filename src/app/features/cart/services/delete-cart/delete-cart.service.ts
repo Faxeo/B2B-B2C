@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiService } from '../api.service'; // Adjust the path as necessary
+import { ApiService } from '../../../../shared/api.service'; 
 
 interface DeleteResponse {
   success: boolean;

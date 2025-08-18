@@ -7,33 +7,39 @@
   </div>
 
   <!-- Loading Indicator -->
-  <div *ngIf="isLoading" class="loading">Loading...</div>
+  @if (isLoading) {
+    <div class="loading">Loading...</div>
+  }
 
   <!-- Error Message -->
-  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+  @if (errorMessage) {
+    <div class="error-message">{{ errorMessage }}</div>
+  }
 
   <!-- Shipment Information -->
-  <div *ngIf="shipmentDetails.trackingNumber" class="shipment-info">
-    <div class="shipment-details">
-      <h3>Shipment Booking Details</h3>
-      <p><strong>Tracking Number:</strong> {{ shipmentDetails.trackingNumber }}</p>
-      <p><strong>Agent Reference Number:</strong> {{ shipmentDetails.agentReferenceNumber }}</p>
-      <p><strong>Origin:</strong> {{ shipmentDetails.origin }}</p>
-      <p><strong>Destination:</strong> {{ shipmentDetails.destination }}</p>
-      <p><strong>Booking Date:</strong> {{ shipmentDetails.bookingDate }}</p>
+  @if (shipmentDetails.trackingNumber) {
+    <div class="shipment-info">
+      <div class="shipment-details">
+        <h3>Shipment Booking Details</h3>
+        <p><strong>Tracking Number:</strong> {{ shipmentDetails.trackingNumber }}</p>
+        <p><strong>Agent Reference Number:</strong> {{ shipmentDetails.agentReferenceNumber }}</p>
+        <p><strong>Origin:</strong> {{ shipmentDetails.origin }}</p>
+        <p><strong>Destination:</strong> {{ shipmentDetails.destination }}</p>
+        <p><strong>Booking Date:</strong> {{ shipmentDetails.bookingDate }}</p>
+      </div>
+      <div class="shipment-status">
+        <h3>Shipment Status</h3>
+        <p><strong>Current Status:</strong> {{ shipmentDetails.currentStatus }}</p>
+        <p><strong>Last Update:</strong> {{ shipmentDetails.lastActivity.description }} on {{ shipmentDetails.lastActivity.date }} at {{ shipmentDetails.lastActivity.time }}</p>
+      </div>
+      <div class="additional-details">
+        <h3>Additional Details</h3>
+        <p><strong>Weight:</strong> {{ shipmentDetails.weight }} lbs</p>
+        <p><strong>Dimensions:</strong> {{ shipmentDetails.dimensions }}</p>
+        <p><strong>Service Type:</strong> {{ shipmentDetails.service }}</p>
+      </div>
     </div>
-    <div class="shipment-status">
-      <h3>Shipment Status</h3>
-      <p><strong>Current Status:</strong> {{ shipmentDetails.currentStatus }}</p>
-      <p><strong>Last Update:</strong> {{ shipmentDetails.lastActivity.description }} on {{ shipmentDetails.lastActivity.date }} at {{ shipmentDetails.lastActivity.time }}</p>
-    </div>
-    <div class="additional-details">
-      <h3>Additional Details</h3>
-      <p><strong>Weight:</strong> {{ shipmentDetails.weight }} lbs</p>
-      <p><strong>Dimensions:</strong> {{ shipmentDetails.dimensions }}</p>
-      <p><strong>Service Type:</strong> {{ shipmentDetails.service }}</p>
-    </div>
-  </div>
+  }
 </div>
 
-<!-- 1Z906A60YW87618469 --> 
+<!-- 1Z906A60YW87618469 -->

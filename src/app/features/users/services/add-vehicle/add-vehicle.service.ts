@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiService } from '../api.service'; // Adjust the path if necessary
-import { VehicleSearchService } from '../search-vehicle/search-vehicle.service';
+import { ApiService } from '../../../../shared/api.service';
+import { VehicleSearchService } from '../../../../features/search/services/search-vehicle/search-vehicle.service';
 
 @Injectable({
   providedIn: 'root'

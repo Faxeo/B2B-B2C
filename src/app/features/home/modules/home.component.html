@@ -24,108 +24,126 @@
           <div class="input-group shadow-sm">
             <input #searchInput id="search-input" class="form-control search-input ps-4 pe-5" type="search"
               placeholder="Search parts, brands, vehicles..." aria-label="Search" (keydown.enter)="onSearch(1)">
-            <button class="btn btn-danger search-btn px-4" (click)="onSearch(1)" type="button" aria-label="Search">
-              <i class="bi bi-search"></i>
-            </button>
+              <button class="btn btn-danger search-btn px-4" (click)="onSearch(1)" type="button" aria-label="Search">
+                <i class="bi bi-search"></i>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <button class="view-products btn btn-outline-danger fw-bold ms-3 d-none d-flex d-lg-flex align-items-center gap-2"
-        (click)="onSearch()">
-        <i class="bi bi-box-seam fs-5"></i>
-        View Products
-      </button>
-
-
-
-      <div *ngIf="isAdminSidebarVisible && loginType === 'business'" class="dropdown-menu show shadow-lg border-0"
-        style="position: absolute; top: 100%; right: 0; min-width: 220px; z-index: 1050;">
-        <div class="dropdown-header bg-danger text-white fw-bold">
-          <i class="bi bi-briefcase me-2"></i>Business Account
-        </div>
-        <a class="dropdown-item py-2 d-flex align-items-center" routerLink="/business-dashboard">
-          <i class="bi bi-person-circle me-3 text-primary"></i>Profile
-        </a>
-        <a class="dropdown-item py-2 d-flex align-items-center" routerLink="/B2B/wishlist">
-          <i class="bi bi-heart me-3 text-danger"></i>Wishlist
-        </a>
-        <a class="dropdown-item py-2 d-flex align-items-center" routerLink="/admin-settings">
-          <i class="bi bi-box-seam me-3 text-success"></i>Your Orders
-        </a>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item py-2 d-flex align-items-center text-danger" routerLink="/B2B" (click)="logout()">
-          <i class="bi bi-box-arrow-right me-3"></i>Logout
-        </a>
-      </div>
-
-      <div *ngIf="isAdminSidebarVisible && loginType === 'admin'" class="dropdown-menu show shadow-lg border-0"
-        style="position: absolute; top: 100%; right: 0; min-width: 200px; z-index: 1050;">
-        <div class="dropdown-header bg-danger text-white fw-bold">
-          <i class="bi bi-person-gear me-2"></i>Admin Panel
-        </div>
-        <a class="dropdown-item py-2 d-flex align-items-center" routerLink="/admin-dashboard">
-          <i class="bi bi-person-circle me-3 text-primary"></i>Profile
-        </a>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item py-2 d-flex align-items-center text-danger" routerLink="/B2B" (click)="logout()">
-          <i class="bi bi-box-arrow-right me-3"></i>Logout
-        </a>
-      </div>
-
-      <!-- Action Buttons - Clean Layout -->
-      <div class="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2 gap-lg-3">
-
-        <!-- Business Actions -->
-        <div class="d-flex gap-2 justify-content-center" *ngIf="loginType == 'business'">
-          <button class="btn btn-outline-danger btn-action position-relative" routerLink="/garage" aria-label="Garage">
-            <i class="bi bi-car-front fs-5"></i>
-            <span *ngIf="cartItemCount > 0" class="badge-count bg-danger">{{ cartItemCount }}</span>
-          </button>
-
-          <button class="btn btn-outline-danger btn-action" routerLink="/B2B/wishlist" aria-label="Wishlist">
-            <i class="bi bi-heart fs-5"></i>
-          </button>
-        </div>
-
-        <!-- Auth Buttons -->
-        <div class="d-flex flex-column flex-lg-row gap-2">
-          <button
-            *ngIf="loginType === 'business'"
-            class="btn btn-danger btn-auth"
-            (click)="toggleAdminSidebar($event)"
-          >
-            {{ userName || 'Business User' }}
-          </button>        
-
-          <button *ngIf="!loginType" class="btn btn-outline-danger btn-auth" (click)="openSidebar()">
-            Login
-          </button>
-
-          <button *ngIf="loginType === 'admin'" class="btn btn-danger btn-auth" (click)="toggleAdminSidebar($event)">
-            Admin
-          </button>
-        </div>
-
-        <!-- Cart Icon -->
-        <button *ngIf="loginType !== 'admin'" class="btn btn-danger btn-action position-relative ms-lg-2 me-3"
-          routerLink="/B2B/cart" aria-label="Shopping Cart">
-          <i class="bi bi-cart3 fs-5"></i>
-          <span *ngIf="cartItemCount > 0" class="badge-count bg-white text-danger">{{ cartItemCount }}</span>
+        <button class="view-products btn btn-outline-danger fw-bold ms-3 d-none d-flex d-lg-flex align-items-center gap-2"
+          (click)="onSearch()">
+          <i class="bi bi-box-seam fs-5"></i>
+          View Products
         </button>
+
+
+
+        @if (isAdminSidebarVisible && loginType === 'business') {
+          <div class="dropdown-menu show shadow-lg border-0"
+            style="position: absolute; top: 100%; right: 0; min-width: 220px; z-index: 1050;">
+            <div class="dropdown-header bg-danger text-white fw-bold">
+              <i class="bi bi-briefcase me-2"></i>Business Account
+            </div>
+            <a class="dropdown-item py-2 d-flex align-items-center" routerLink="/business-dashboard">
+              <i class="bi bi-person-circle me-3 text-primary"></i>Profile
+            </a>
+            <a class="dropdown-item py-2 d-flex align-items-center" routerLink="/B2B/wishlist">
+              <i class="bi bi-heart me-3 text-danger"></i>Wishlist
+            </a>
+            <a class="dropdown-item py-2 d-flex align-items-center" routerLink="/admin-settings">
+              <i class="bi bi-box-seam me-3 text-success"></i>Your Orders
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item py-2 d-flex align-items-center text-danger" routerLink="/B2B" (click)="logout()">
+              <i class="bi bi-box-arrow-right me-3"></i>Logout
+            </a>
+          </div>
+        }
+
+        @if (isAdminSidebarVisible && loginType === 'admin') {
+          <div class="dropdown-menu show shadow-lg border-0"
+            style="position: absolute; top: 100%; right: 0; min-width: 200px; z-index: 1050;">
+            <div class="dropdown-header bg-danger text-white fw-bold">
+              <i class="bi bi-person-gear me-2"></i>Admin Panel
+            </div>
+            <a class="dropdown-item py-2 d-flex align-items-center" routerLink="/admin-dashboard">
+              <i class="bi bi-person-circle me-3 text-primary"></i>Profile
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item py-2 d-flex align-items-center text-danger" routerLink="/B2B" (click)="logout()">
+              <i class="bi bi-box-arrow-right me-3"></i>Logout
+            </a>
+          </div>
+        }
+
+        <!-- Action Buttons - Clean Layout -->
+        <div class="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2 gap-lg-3">
+
+          <!-- Business Actions -->
+          @if (loginType == 'business') {
+            <div class="d-flex gap-2 justify-content-center">
+              <button class="btn btn-outline-danger btn-action position-relative" routerLink="/garage" aria-label="Garage">
+                <i class="bi bi-car-front fs-5"></i>
+                @if (cartItemCount > 0) {
+                  <span class="badge-count bg-danger">{{ cartItemCount }}</span>
+                }
+              </button>
+              <button class="btn btn-outline-danger btn-action" routerLink="/B2B/wishlist" aria-label="Wishlist">
+                <i class="bi bi-heart fs-5"></i>
+              </button>
+            </div>
+          }
+
+          <!-- Auth Buttons -->
+          <div class="d-flex flex-column flex-lg-row gap-2">
+            @if (loginType === 'business') {
+              <button
+                class="btn btn-danger btn-auth"
+                (click)="toggleAdminSidebar($event)"
+                >
+                {{ userName || 'Business User' }}
+              </button>
+            }
+
+            @if (!loginType) {
+              <button class="btn btn-outline-danger btn-auth" (click)="openSidebar()">
+                Login
+              </button>
+            }
+
+            @if (loginType === 'admin') {
+              <button class="btn btn-danger btn-auth" (click)="toggleAdminSidebar($event)">
+                Admin
+              </button>
+            }
+          </div>
+
+          <!-- Cart Icon -->
+          @if (loginType !== 'admin') {
+            <button class="btn btn-danger btn-action position-relative ms-lg-2 me-3"
+              routerLink="/B2B/cart" aria-label="Shopping Cart">
+              <i class="bi bi-cart3 fs-5"></i>
+              @if (cartItemCount > 0) {
+                <span class="badge-count bg-white text-danger">{{ cartItemCount }}</span>
+              }
+            </button>
+          }
+        </div>
       </div>
     </div>
-  </div>
-</nav>
+  </nav>
 
-<!-- Loading spinner -->
-<div *ngIf="isLoading" class="spinner-container">
-  <div class="spinner-border text-danger" role="status">
-    <span class="visually-hidden">Loading...</span>
-  </div>
-</div>
+  <!-- Loading spinner -->
+  @if (isLoading) {
+    <div class="spinner-container">
+      <div class="spinner-border text-danger" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  }
 
-<!-- <app-search *ngIf="showSearchComponent && (searchProducts$ | async)?.length"
+  <!-- <app-search *ngIf="showSearchComponent && (searchProducts$ | async)?.length"
   [searchResults]="(searchProducts$ | async) || []" [currentPage]="currentPage" [totalPages]="totalPages"
   [isPaginationLoading]="isPaginationLoading" (pageChange)="onSearch($event)" [searchType]="currentSearchType"
   (vehicleSearchPageChange)="currentSearchType === 'vehicleSearch' ? searchByVehicle($event) : null"
@@ -139,58 +157,58 @@
 <!-- Sidebar -->
 <app-sidebar></app-sidebar>
 
-<section *ngIf="!showSearchComponent" class="hero-section position-relative overflow-hidden"
-  [class.modal-open]="showVehicleForm || showCategoryForm"
-  style="background: url('assets/background-4.png') no-repeat center center/cover;">
-  <!-- Semi‐transparent overlay for better text contrast -->
-  <div class="hero-overlay position-absolute w-100 h-100"></div>
-
-  <div class="container-fluid h-100 position-relative">
-    <div class="row h-100 align-items-center justify-content-center text-center">
-      <div class="col-12">
-        <!-- Welcome Message -->
-        <div class="welcome-container mb-4 mb-md-5">
-          <h1 class="hero-title fw-bold mb-3">
-            Welcome to
-            <span class="text-danger">US AutoParts</span>
-            <span class="text-warning">B2B</span>
-            Platform
-          </h1>
-          <p class="hero-subtitle text-light fs-5 mb-0">
-            Premium auto parts with expert advice and fast nationwide delivery
-          </p>
-        </div>
-
-        <!-- Search Action Buttons -->
-        <div class="search-actions">
-          <div class="row g-3 justify-content-center">
-            <div class="col-12 col-md-4 col-lg-3">
-              <button class="btn btn-warning btn-lg w-100 fw-semibold search-action-btn"
-                (click)="onSearchOptionClick('Vehicle')">
-                <i class="bi bi-car-front me-2"></i>
-                <span class="d-none d-sm-inline">Search By </span>Vehicle
-              </button>
-            </div>
-            <div class="col-12 col-md-4 col-lg-3">
-              <button class="btn btn-warning btn-lg w-100 fw-semibold search-action-btn"
-                (click)="onSearchOptionClick('Category')">
-                <i class="bi bi-grid-3x3-gap me-2"></i>
-                <span class="d-none d-sm-inline">Search By </span>Category
-              </button>
-            </div>
-            <div class="col-12 col-md-4 col-lg-3">
-              <button class="btn btn-warning btn-lg w-100 fw-semibold search-action-btn"
-                (click)="onSearchOptionClick('Attributes')">
-                <i class="bi bi-funnel me-2"></i>
-                <span class="d-none d-sm-inline">Search By </span>Attributes
-              </button>
+@if (!showSearchComponent) {
+  <section class="hero-section position-relative overflow-hidden"
+    [class.modal-open]="showVehicleForm || showCategoryForm"
+    style="background: url('assets/background-4.png') no-repeat center center/cover;">
+    <!-- Semi‐transparent overlay for better text contrast -->
+    <div class="hero-overlay position-absolute w-100 h-100"></div>
+    <div class="container-fluid h-100 position-relative">
+      <div class="row h-100 align-items-center justify-content-center text-center">
+        <div class="col-12">
+          <!-- Welcome Message -->
+          <div class="welcome-container mb-4 mb-md-5">
+            <h1 class="hero-title fw-bold mb-3">
+              Welcome to
+              <span class="text-danger">US AutoParts</span>
+              <span class="text-warning">B2B</span>
+              Platform
+            </h1>
+            <p class="hero-subtitle text-light fs-5 mb-0">
+              Premium auto parts with expert advice and fast nationwide delivery
+            </p>
+          </div>
+          <!-- Search Action Buttons -->
+          <div class="search-actions">
+            <div class="row g-3 justify-content-center">
+              <div class="col-12 col-md-4 col-lg-3">
+                <button class="btn btn-warning btn-lg w-100 fw-semibold search-action-btn"
+                  (click)="onSearchOptionClick('Vehicle')">
+                  <i class="bi bi-car-front me-2"></i>
+                  <span class="d-none d-sm-inline">Search By </span>Vehicle
+                </button>
+              </div>
+              <div class="col-12 col-md-4 col-lg-3">
+                <button class="btn btn-warning btn-lg w-100 fw-semibold search-action-btn"
+                  (click)="onSearchOptionClick('Category')">
+                  <i class="bi bi-grid-3x3-gap me-2"></i>
+                  <span class="d-none d-sm-inline">Search By </span>Category
+                </button>
+              </div>
+              <div class="col-12 col-md-4 col-lg-3">
+                <button class="btn btn-warning btn-lg w-100 fw-semibold search-action-btn"
+                  (click)="onSearchOptionClick('Attributes')">
+                  <i class="bi bi-funnel me-2"></i>
+                  <span class="d-none d-sm-inline">Search By </span>Attributes
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+}
 
 <div class="main-search-container py-4">
   <div class="container">
@@ -202,19 +220,21 @@
             <input id="main-search-input" class="form-control main-search-input ps-4" type="search"
               [placeholder]="searchPlaceholder" [disabled]="!searchEnabled" (click)="onSearchClick()"
               aria-label="Main Search">
-            <button class="btn btn-danger main-search-btn px-4" [disabled]="!searchEnabled"
-              [class.disabled-btn]="!searchEnabled">
-              <i class="bi bi-search fs-5"></i>
-            </button>
-          </div>
+              <button class="btn btn-danger main-search-btn px-4" [disabled]="!searchEnabled"
+                [class.disabled-btn]="!searchEnabled">
+                <i class="bi bi-search fs-5"></i>
+              </button>
+            </div>
 
-          <!-- Show this hint only while searchEnabled is false -->
-          <div *ngIf="!searchEnabled" class="search-status mt-2 text-center">
-            <!-- <small class="text-muted">
-                      <i class="bi bi-info-circle me-1"></i>
-                      Please select a search option above
-                    </small> -->
-          </div>
+            <!-- Show this hint only while searchEnabled is false -->
+            @if (!searchEnabled) {
+              <div class="search-status mt-2 text-center">
+                <!-- <small class="text-muted">
+                <i class="bi bi-info-circle me-1"></i>
+                Please select a search option above
+              </small> -->
+            </div>
+          }
         </div>
       </div>
     </div>
@@ -222,100 +242,95 @@
 </div>
 
 
-<div *ngIf="!showSearchComponent">
-  <!-- Vehicle Search Modal -->
-  <div *ngIf="showVehicleForm" class="vehicle-search-modal">
-    <!-- Background blur overlay -->
-    <div class="modal-overlay"></div>
-
-    <!-- Centered, responsive form container -->
-    <div class="vehicle-search-form-wrapper d-flex justify-content-center align-items-center p-3">
-      <div class="position-relative vehicle-search-form bg-white rounded shadow p-4 w-100" style="max-width: 500px;">
-        <!-- Close Button in Top-Right Corner -->
-        <button type="button" class="btn-close position-absolute" aria-label="Close" (click)="closeForm()"
-          style="top: 0.5rem; right: 0.5rem;"></button>
-
-        <div class="row g-3">
-          <!-- Year -->
-          <div class="col-12 col-md-6">
-            <label for="year" class="form-label">Year:</label>
-              <ng-select
-                [items]="years"
-                bindLabel="year"
-                bindValue="year"
-                placeholder="Select Year"
-                [(ngModel)]="selectedYear"
-                (change)="onYearChange()"
-                [clearable]="false"
-                id="year">
-              </ng-select>
-          </div>
-
-          <!-- Make -->
-          <div class="col-12 col-md-6">
-            <label for="make" class="form-label">Make:</label>
-              <ng-select
-                [items]="makes"
-                bindLabel="name"
-                bindValue="name"
-                placeholder="Select Make"
-                [(ngModel)]="selectedMake"
-                (change)="onMakeChange()"
-                [disabled]="!selectedYear"
-                [clearable]="false"
-                id="make">
-              </ng-select>
-          </div>
-
-          <!-- Model -->
-          <div class="col-12 col-md-6">
-            <label for="model" class="form-label">Model:</label>
-              <ng-select
-                [items]="models"
-                bindLabel="name"
-                bindValue="name"
-                placeholder="Select Model"
-                [(ngModel)]="selectedModel"
-                (change)="onModelChange()"
-                [disabled]="!selectedMake"
-                [clearable]="false"
-                id="model">
-              </ng-select>
-          </div>
-
-          <!-- Trim -->
-          <div class="col-12 col-md-6">
-            <label for="trim" class="form-label">Trim:</label>
-              <ng-select
-                [items]="trims"
-                bindLabel="name"
-                bindValue="name"
-                placeholder="Select Trim"
-                [(ngModel)]="selectedTrim"
-                (change)="onTrimChange()"
-                [disabled]="!selectedModel"
-                [clearable]="false"
-                id="trim">
-              </ng-select>
-          </div>
-
-          <!-- Engine -->
-          <div class="col-12">
-            <label for="engine" class="form-label">Engine:</label>
-              <ng-select
-                [items]="engines"
-                bindLabel="name"
-                bindValue="name"
-                placeholder="Select Engine"
-                [(ngModel)]="selectedEngine"
-                (change)="onEngineChange()"
-                [clearable]="false"
-                id="engine">
-              </ng-select>
-          </div>
-
-          <!-- Search Button -->
-          <div class="col-12 text-center mt-3">
+@if (!showSearchComponent) {
+  <div>
+    <!-- Vehicle Search Modal -->
+    @if (showVehicleForm) {
+      <div class="vehicle-search-modal">
+        <!-- Background blur overlay -->
+        <div class="modal-overlay"></div>
+        <!-- Centered, responsive form container -->
+        <div class="vehicle-search-form-wrapper d-flex justify-content-center align-items-center p-3">
+          <div class="position-relative vehicle-search-form bg-white rounded shadow p-4 w-100" style="max-width: 500px;">
+            <!-- Close Button in Top-Right Corner -->
+            <button type="button" class="btn-close position-absolute" aria-label="Close" (click)="closeForm()"
+            style="top: 0.5rem; right: 0.5rem;"></button>
+            <div class="row g-3">
+              <!-- Year -->
+              <div class="col-12 col-md-6">
+                <label for="year" class="form-label">Year:</label>
+                <ng-select
+                  [items]="years"
+                  bindLabel="year"
+                  bindValue="year"
+                  placeholder="Select Year"
+                  [(ngModel)]="selectedYear"
+                  (change)="onYearChange()"
+                  [clearable]="false"
+                  id="year">
+                </ng-select>
+              </div>
+              <!-- Make -->
+              <div class="col-12 col-md-6">
+                <label for="make" class="form-label">Make:</label>
+                <ng-select
+                  [items]="makes"
+                  bindLabel="name"
+                  bindValue="name"
+                  placeholder="Select Make"
+                  [(ngModel)]="selectedMake"
+                  (change)="onMakeChange()"
+                  [disabled]="!selectedYear"
+                  [clearable]="false"
+                  id="make">
+                </ng-select>
+              </div>
+              <!-- Model -->
+              <div class="col-12 col-md-6">
+                <label for="model" class="form-label">Model:</label>
+                <ng-select
+                  [items]="models"
+                  bindLabel="name"
+                  bindValue="name"
+                  placeholder="Select Model"
+                  [(ngModel)]="selectedModel"
+                  (change)="onModelChange()"
+                  [disabled]="!selectedMake"
+                  [clearable]="false"
+                  id="model">
+                </ng-select>
+              </div>
+              <!-- Trim -->
+              <div class="col-12 col-md-6">
+                <label for="trim" class="form-label">Trim:</label>
+                <ng-select
+                  [items]="trims"
+                  bindLabel="name"
+                  bindValue="name"
+                  placeholder="Select Trim"
+                  [(ngModel)]="selectedTrim"
+                  (change)="onTrimChange()"
+                  [disabled]="!selectedModel"
+                  [clearable]="false"
+                  id="trim">
+                </ng-select>
+              </div>
+              <!-- Engine -->
+              <div class="col-12">
+                <label for="engine" class="form-label">Engine:</label>
+                <ng-select
+                  [items]="engines"
+                  bindLabel="name"
+                  bindValue="name"
+                  placeholder="Select Engine"
+                  [(ngModel)]="selectedEngine"
+                  (change)="onEngineChange()"
+                  [clearable]="false"
+                  id="engine">
+                </ng-select>
+              </div>
+              <!-- Search Button -->
+              <div class="col-12 text-center mt-3">
             <button class="btn btn-danger w-100" (click)="searchByVehicle()" [disabled]="
                 !selectedYear ||
                 !selectedMake ||
@@ -323,247 +338,250 @@
                 !selectedTrim ||
                 !selectedEngine
               ">
-              Search
-            </button>
+                  Search
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    }
   </div>
-</div>
+}
 
 <!-- Category Search Modal -->
-<div *ngIf="showCategoryForm" class="category-search-modal">
-  <!-- Background blur overlay -->
-  <div class="modal-overlay"></div>
-
-  <!-- Centered, responsive form container -->
-  <div class="category-search-form-wrapper d-flex justify-content-center align-items-center p-3">
-    <div class="position-relative category-search-form bg-white rounded shadow p-4 w-100" style="max-width: 500px;">
-      <!-- Close Button in Top-Right Corner -->
-      <button type="button" class="btn-close position-absolute" aria-label="Close" (click)="closeForm()"
+@if (showCategoryForm) {
+  <div class="category-search-modal">
+    <!-- Background blur overlay -->
+    <div class="modal-overlay"></div>
+    <!-- Centered, responsive form container -->
+    <div class="category-search-form-wrapper d-flex justify-content-center align-items-center p-3">
+      <div class="position-relative category-search-form bg-white rounded shadow p-4 w-100" style="max-width: 500px;">
+        <!-- Close Button in Top-Right Corner -->
+        <button type="button" class="btn-close position-absolute" aria-label="Close" (click)="closeForm()"
         style="top: 0.5rem; right: 0.5rem;"></button>
-
-      <!-- No Categories Available Message -->
-      <h4 *ngIf="mainCategories.length === 0" class="text-center mb-3">
-        No categories available. Please try again later.
-      </h4>
-
-      <!-- Category Form Fields -->
-      <div class="row g-3" *ngIf="mainCategories.length > 0">
-        <!-- Main Category -->
-        <div class="col-12">
-          <label for="mainCategory" class="form-label">Main Category:</label>
-            <ng-select
-              [items]="mainCategories"
-              bindLabel="name"
-              bindValue="id"
-              placeholder="Select Main Category"
-              [(ngModel)]="selectedMainCategory"
-              (change)="onMainCategoryChange()"
-              [clearable]="false"
-              id="mainCategory">
-            </ng-select>
-        </div>
-
-        <!-- First Sub-Category -->
-        <div class="col-12">
-          <label for="firstSubCategory" class="form-label">First Sub-Category:</label>
-          <ng-select
-            id="firstSubCategory"
-            [items]="firstSubCategories"
-            bindLabel="name"
-            bindValue="id"
-            placeholder="Select First Sub-Category"
-            [(ngModel)]="selectedFirstSubCategory"
-            (change)="onFirstSubCategoryChange()"
-            [disabled]="!selectedMainCategory"
-            [clearable]="false">
-          </ng-select>
-        </div>
-
-        <!-- Second Sub-Category -->
-        <div class="col-12">
-          <label for="secondSubCategory" class="form-label">Second Sub-Category:</label>
-          <ng-select
-            id="secondSubCategory"
-            [items]="secondSubCategories"
-            bindLabel="name"
-            bindValue="id"
-            placeholder="Select Second Sub-Category"
-            [(ngModel)]="selectedSecondSubCategory"
-            [disabled]="!selectedFirstSubCategory"
-            [clearable]="false">
-          </ng-select>
-        </div>
-
-        <!-- Search Button -->
-        <div class="col-12 text-center mt-3">
+        <!-- No Categories Available Message -->
+        @if (mainCategories.length === 0) {
+          <h4 class="text-center mb-3">
+            No categories available. Please try again later.
+          </h4>
+        }
+        <!-- Category Form Fields -->
+        @if (mainCategories.length > 0) {
+          <div class="row g-3">
+            <!-- Main Category -->
+            <div class="col-12">
+              <label for="mainCategory" class="form-label">Main Category:</label>
+              <ng-select
+                [items]="mainCategories"
+                bindLabel="name"
+                bindValue="id"
+                placeholder="Select Main Category"
+                [(ngModel)]="selectedMainCategory"
+                (change)="onMainCategoryChange()"
+                [clearable]="false"
+                id="mainCategory">
+              </ng-select>
+            </div>
+            <!-- First Sub-Category -->
+            <div class="col-12">
+              <label for="firstSubCategory" class="form-label">First Sub-Category:</label>
+              <ng-select
+                id="firstSubCategory"
+                [items]="firstSubCategories"
+                bindLabel="name"
+                bindValue="id"
+                placeholder="Select First Sub-Category"
+                [(ngModel)]="selectedFirstSubCategory"
+                (change)="onFirstSubCategoryChange()"
+                [disabled]="!selectedMainCategory"
+                [clearable]="false">
+              </ng-select>
+            </div>
+            <!-- Second Sub-Category -->
+            <div class="col-12">
+              <label for="secondSubCategory" class="form-label">Second Sub-Category:</label>
+              <ng-select
+                id="secondSubCategory"
+                [items]="secondSubCategories"
+                bindLabel="name"
+                bindValue="id"
+                placeholder="Select Second Sub-Category"
+                [(ngModel)]="selectedSecondSubCategory"
+                [disabled]="!selectedFirstSubCategory"
+                [clearable]="false">
+              </ng-select>
+            </div>
+            <!-- Search Button -->
+            <div class="col-12 text-center mt-3">
           <button class="btn btn-danger w-100" (click)="searchByCategory()" [disabled]="
               !selectedMainCategory ||
               !selectedFirstSubCategory ||
               !selectedSecondSubCategory
             ">
-            Search
+                Search
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+
+<!-- Horizontal Scrollable Product Row Section -->
+@if (!showSearchComponent) {
+  <div>
+    <h2 class="horizontal-text text-center">Explore Our Top Sellers</h2>
+    <div class="scrolling-product-row container-fluid my-3">
+      <div class="scroll-container">
+        @for (product of products$ | async; track product) {
+          <div class="product-card" [class.out-of-stock]="product.product_price === 0 || product.availableQuantity === 0"
+            >
+            <!-- Product Image -->
+            <div class="product-image">
+              <img [src]="'https://usaperp.com:5001/Images/Products/' + product.product_image" [alt]="product.product_name"
+                class="product-img">
+              </div>
+              <!-- Product Info -->
+              <div class="product-info">
+                <h3 class="product-name">{{ product.product_name }}</h3>
+                <!-- Price Section -->
+                <div class="price-section">
+                  @if (loginType === null) {
+                    <div class="login-overlay">
+                      Log in for prices
+                    </div>
+                  } @else {
+                    @if (product.product_price === 0 || product.availableQuantity === 0) {
+                      <span
+                        class="out-of-stock">
+                        Out of Stock
+                      </span>
+                    } @else {
+                      <span class="price">${{ product.product_price }}</span>
+                    }
+                  }
+                </div>
+                <!-- Mobile Quantity Control -->
+                <div class="mobile-quantity">
+                  <span class="qty-label">Qty</span>
+                  <div class="qty-controls">
+                    <button class="qty-btn minus" (click)="decreaseQuantity(product)">−</button>
+                    <input type="number" class="qty-input" [(ngModel)]="product.product_quantity" min="0">
+                    <button class="qty-btn plus" (click)="increaseQuantity(product)">+</button>
+                  </div>
+                </div>
+                <!-- Action Buttons -->
+                <div class="product-actions">
+                  <button class="btn-primary add-cart" (click)="addToCart(product)"
+                    [disabled]="loginType === 'admin' || product.product_quantity === 0 || loginType == null || product.product_price === 0">
+                    Add to Cart
+                  </button>
+                  <button class="btn-secondary view-btn" (click)="viewProductDetails(product.product_id)">
+                    View
+                  </button>
+                </div>
+                <!-- Cart Message -->
+                @if (showMessage) {
+                  <div class="cart-message">
+                    {{ message }}
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!------------ Product categories -------------------->
+
+  @if (!showSearchComponent) {
+    <div class="product-categories container-fluid my-5 px-2 px-sm-5">
+      <h2 class="horizontal-text text-center">Shop By Category</h2>
+      <div class="row">
+        @for (category of categories$ | async; track category) {
+          <div class="col-12 col-sm-6 col-md-3 mb-4">
+            <div class="category-item d-flex flex-column justify-content-center align-items-center p-3 border rounded h-100"
+              (click)="onCategoryClick(category.id)">
+              <div class="icon-circle mb-3">
+                <!-- Show Material Symbol when getMaterialIcon() returns "car_fan_recirculate" -->
+                @if (getMaterialIcon(category.name); as matName) {
+                  <span class="material-symbols-outlined" style="font-size:32px; color:#dc3545;">
+                    {{ matName }}
+                  </span>
+                } @else {
+                  <i [ngClass]="getIconClass(category.name)" class="fa-2x text-danger"></i>
+                }
+              </div>
+              <div class="text-center">
+                <h5 class="mb-1">{{ category.name }}</h5>
+                <small class="text-muted">{{ category.productCount }} products</small>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+
+  <div class="container-fluid py-5 text-center text-white"
+    style="background: url('../../../assets/banner2-2.jpg') no-repeat center center/cover;">
+    <div class="container">
+      <h2 class="fw-bold mb-3">Your Auto Parts, Smarter and Faster</h2>
+      <p class="lead mb-4">
+        Discover the right parts for your vehicle with ease. Quality, precision, and speed — all in one place.
+      </p>
+
+      <button class="btn btn-light fw-bold px-4 py-2 mt-3" (click)="onSearch()">
+        View More
+      </button>
+    </div>
+  </div>
+
+
+
+  <!--Login Modal-->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel"
+    aria-describedby="loginModalDesc" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title fw-bold" id="loginModalLabel">
+            Log In to Keep Going
+          </h5>
+          <button type="button" class="btn-close btn-close-white fw-bolder" data-bs-dismiss="modal"
+          aria-label="Close"></button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body text-center">
+          <p class="mb-3">
+            To proceed with this action, you need to log in to your account.
+          </p>
+          <p class="fw-semibold text-muted">
+            Click the button below to go to the login page.
+          </p>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="btn btn-danger px-4 py-2" (click)="openLoginSidebar()"
+            style="transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#c82333';"
+            onmouseout="this.style.backgroundColor='';">
+            Go to Login
           </button>
         </div>
       </div>
     </div>
   </div>
-</div>
 
 
-<!-- Horizontal Scrollable Product Row Section -->
-<div *ngIf="!showSearchComponent">
-  <h2 class="horizontal-text text-center">Explore Our Top Sellers</h2>
-  <div class="scrolling-product-row container-fluid my-3">
-    <div class="scroll-container">
-      <div class="product-card" [class.out-of-stock]="product.product_price === 0 || product.availableQuantity === 0"
-        *ngFor="let product of products$ | async">
-        <!-- Product Image -->
-        <div class="product-image">
-          <img [src]="'https://usaperp.com:5001/Images/Products/' + product.product_image" [alt]="product.product_name"
-            class="product-img">
-        </div>
+  <app-chat-bot></app-chat-bot>
 
-        <!-- Product Info -->
-        <div class="product-info">
-          <h3 class="product-name">{{ product.product_name }}</h3>
-
-          <!-- Price Section -->
-          <div class="price-section">
-            <ng-container *ngIf="loginType === null; else loggedInPrice">
-              <div class="login-overlay">
-                Log in for prices
-              </div>
-            </ng-container>
-
-            <ng-template #loggedInPrice>
-              <span *ngIf="product.product_price === 0 || product.availableQuantity === 0; else showPrice"
-                class="out-of-stock">
-                Out of Stock
-              </span>
-              <ng-template #showPrice>
-                <span class="price">${{ product.product_price }}</span>
-              </ng-template>
-            </ng-template>
-          </div>
-
-          <!-- Mobile Quantity Control -->
-          <div class="mobile-quantity">
-            <span class="qty-label">Qty</span>
-            <div class="qty-controls">
-              <button class="qty-btn minus" (click)="decreaseQuantity(product)">−</button>
-              <input type="number" class="qty-input" [(ngModel)]="product.product_quantity" min="0">
-              <button class="qty-btn plus" (click)="increaseQuantity(product)">+</button>
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="product-actions">
-            <button class="btn-primary add-cart" (click)="addToCart(product)"
-              [disabled]="loginType === 'admin' || product.product_quantity === 0 || loginType == null || product.product_price === 0">
-              Add to Cart
-            </button>
-            <button class="btn-secondary view-btn" (click)="viewProductDetails(product.product_id)">
-              View
-            </button>
-          </div>
-
-          <!-- Cart Message -->
-          <div *ngIf="showMessage" class="cart-message">
-            {{ message }}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!------------ Product categories -------------------->
-
-<div *ngIf="!showSearchComponent" class="product-categories container-fluid my-5 px-2 px-sm-5">
-  <h2 class="horizontal-text text-center">Shop By Category</h2>
-  <div class="row">
-    <div class="col-12 col-sm-6 col-md-3 mb-4" *ngFor="let category of categories$ | async">
-      <div class="category-item d-flex flex-column justify-content-center align-items-center p-3 border rounded h-100"
-        (click)="onCategoryClick(category.id)">
-
-        <div class="icon-circle mb-3">
-          <!-- Show Material Symbol when getMaterialIcon() returns "car_fan_recirculate" -->
-          <ng-container *ngIf="getMaterialIcon(category.name) as matName; else faIcon">
-            <span class="material-symbols-outlined" style="font-size:32px; color:#dc3545;">
-              {{ matName }}
-            </span>
-          </ng-container>
-          <ng-template #faIcon>
-            <i [ngClass]="getIconClass(category.name)" class="fa-2x text-danger"></i>
-          </ng-template>
-        </div>
-
-        <div class="text-center">
-          <h5 class="mb-1">{{ category.name }}</h5>
-          <small class="text-muted">{{ category.productCount }} products</small>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="container-fluid py-5 text-center text-white"
-  style="background: url('../../../assets/banner2-2.jpg') no-repeat center center/cover;">
-  <div class="container">
-    <h2 class="fw-bold mb-3">Your Auto Parts, Smarter and Faster</h2>
-    <p class="lead mb-4">
-      Discover the right parts for your vehicle with ease. Quality, precision, and speed — all in one place.
-    </p>
-
-    <button class="btn btn-light fw-bold px-4 py-2 mt-3" (click)="onSearch()">
-      View More
-    </button>
-  </div>
-</div>
-
-
-
-<!--Login Modal-->
-<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel"
-  aria-describedby="loginModalDesc" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <!-- Modal Header -->
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title fw-bold" id="loginModalLabel">
-          Log In to Keep Going
-        </h5>
-        <button type="button" class="btn-close btn-close-white fw-bolder" data-bs-dismiss="modal"
-          aria-label="Close"></button>
-      </div>
-
-      <!-- Modal Body -->
-      <div class="modal-body text-center">
-        <p class="mb-3">
-          To proceed with this action, you need to log in to your account.
-        </p>
-        <p class="fw-semibold text-muted">
-          Click the button below to go to the login page.
-        </p>
-      </div>
-
-      <!-- Modal Footer -->
-      <div class="modal-footer justify-content-center">
-        <button type="button" class="btn btn-danger px-4 py-2" (click)="openLoginSidebar()"
-          style="transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#c82333';"
-          onmouseout="this.style.backgroundColor='';">
-          Go to Login
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<app-chat-bot></app-chat-bot>
-
-<app-footer></app-footer>
+  <app-footer></app-footer>

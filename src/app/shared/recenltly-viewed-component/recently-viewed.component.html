@@ -1,0 +1,19 @@
+<div class="recently-viewed-container">
+  @if (recentlyViewedProducts.length > 0) {
+    <div class="product-list">
+      @for (product of recentlyViewedProducts; track product) {
+        <div class="product-item">
+          <button class="close-btn" (click)="removeProduct(product.product_id)">×</button>
+          <img [src]="'https://usaperp.com:5001/Images/Products/' + product.product_image" [alt]="product.product_name" />
+          <div class="product-info">
+            <h5>{{ product.product_name }}</h5>
+            <p><span>Brand:</span> {{ product.brand_name }}</p>
+            <p><span>Price:</span> ${{ product.price }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <p>No recently viewed products</p>
+  }
+</div>

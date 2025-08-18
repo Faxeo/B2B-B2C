@@ -1,17 +1,16 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { CustomerLoginService } from '../../../../core/services/customer-login/customer-login.service';
-import { LoginService } from '../../../../core/services/login-service/login-service.service';
+import { CustomerLoginService } from '../../../../features/users/services/customer-login/customer-login.service';
+import { LoginService } from '../../../../features/users/services/login-service/login-service.service';
 import { CookieService } from 'ngx-cookie-service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-b2c-login',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './b2c-login.component.html',
-  styleUrl: './b2c-login.component.css'
+    selector: 'app-b2c-login',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './b2c-login.component.html',
+    styleUrl: './b2c-login.component.css'
 })
 export class B2cLoginComponent {
   email: string = '';

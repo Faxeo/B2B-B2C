@@ -1,28 +1,42 @@
 <div class="dashboard-container">
   <app-admin-sidebar (componentSelected)="selectComponent($event)"></app-admin-sidebar>
   <div class="main-content">
-    <div *ngIf="showDefaultView()" class="content-area">
-      <app-merchant-profile></app-merchant-profile>
-      <app-order-summary></app-order-summary>
-    </div>
-    <div *ngIf="showDefaultView()" class="below-content">
-      <app-business-requests></app-business-requests>
-    </div>
+    @if (showDefaultView()) {
+      <div class="content-area">
+        <app-merchant-profile></app-merchant-profile>
+        <app-order-summary></app-order-summary>
+      </div>
+    }
+    @if (showDefaultView()) {
+      <div class="below-content">
+        <app-business-requests></app-business-requests>
+      </div>
+    }
 
-    <div *ngIf="selectedComponent === 'customers'" class="click">
-      <app-customers></app-customers>
-    </div>
-    <div *ngIf="selectedComponent === 'merchants'" class="click">
-      <app-merchants></app-merchants>
-    </div>
-    <div *ngIf="selectedComponent === 'pending-orders'" class="click">
-      <app-pending-orders></app-pending-orders>
-    </div>
-    <div *ngIf="selectedComponent === 'shipped-orders'" class="click">
-      <app-shipped-orders></app-shipped-orders>
-    </div>
-    <div *ngIf="selectedComponent === 'lost-sales'" class="click">
-      <app-lost-sales></app-lost-sales>
-    </div>
+    @if (selectedComponent === 'customers') {
+      <div class="click">
+        <app-customers></app-customers>
+      </div>
+    }
+    @if (selectedComponent === 'merchants') {
+      <div class="click">
+        <app-merchants></app-merchants>
+      </div>
+    }
+    @if (selectedComponent === 'pending-orders') {
+      <div class="click">
+        <app-pending-orders></app-pending-orders>
+      </div>
+    }
+    @if (selectedComponent === 'shipped-orders') {
+      <div class="click">
+        <app-shipped-orders></app-shipped-orders>
+      </div>
+    }
+    @if (selectedComponent === 'lost-sales') {
+      <div class="click">
+        <app-lost-sales></app-lost-sales>
+      </div>
+    }
   </div>
 </div>

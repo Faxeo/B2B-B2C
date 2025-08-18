@@ -11,16 +11,16 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
   ProductDetailsService,
   ProductDetails,
-} from '../../core/services/product-details/product-details.service';
-import { GetLinkedProductsService } from '../../core/services/get-linked-products/get-linked-products.service'; 
-import { FooterComponent } from '../../layout/footer/footer.component';
-import { LoginService } from '../../core/services/login-service/login-service.service';
-import { CartService } from '../../core/services/cart/cart.service';
-import { AddToCartService } from '../../core/services/add-to-cart/add-to-cart.service';
-import { NavigationService } from '../../core/services/navigation-service/navigation-service.service';
-import { SubCategoryService } from '../../core/services/sub-category/sub-category.service';
-import { MainCategoryService } from '../../core/services/main-category/main-category.service';
-import { FetchChildService } from '../../core/services/fetch-child/fetch-child.service';
+} from '../../../../../../../B2B-B2C-2/src/app/features/product/services/product-details/product-details.service';
+import { GetLinkedProductsService } from '../../../../../../../B2B-B2C-2/src/app/features/product/services/get-linked-products/get-linked-products.service'; 
+import { FooterComponent } from '../../../../../../../B2B-B2C-2/src/app/layout/footer/footer.component';
+import { LoginService } from '../../../../../app/features/users/services/login-service/login-service.service';
+import { CartService } from '../../../../../app/features/cart/services/cart/cart.service';
+import { AddToCartService } from '../../../../../app/features/cart/services/add-to-cart/add-to-cart.service';
+import { NavigationService } from '../../../../shared/navigation-service/navigation-service.service';
+import { SubCategoryService } from '../../../../../app/features/search/services/sub-category/sub-category.service';
+import { MainCategoryService } from '../../../../../app/features/search/services/main-category/main-category.service';
+import { FetchChildService } from '../../../../../app/features/search/services/fetch-child/fetch-child.service';
 import { FormsModule } from '@angular/forms';
 import { trigger, state, style, animate, transition, keyframes } from '@angular/animations';
 import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';

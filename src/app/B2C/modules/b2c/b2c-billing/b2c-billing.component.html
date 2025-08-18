@@ -1,68 +1,70 @@
 <div class="home-icon" (click)="navigateToHome()">
-    <i class="fas fa-home"></i>
+  <i class="fas fa-home"></i>
 </div>
 
 <div class="bill-container" id="bill-container">
-    <!-- Invoice Title - Centered -->
-    <h2 class="bill-title">Invoice</h2>
+  <!-- Invoice Title - Centered -->
+  <h2 class="bill-title">Invoice</h2>
 
-    <!-- Header Section: Logo on Left, Date & Invoice No on Right -->
-    <div class="bill-header">
-        <img class="logo" src="assets/logo.png" alt="Company Logo">
-        <div class="bill-info">
-            <p><strong>Date:</strong> {{ billData?.date || 'N/A' }}</p>
-            <p><strong>Invoice No:</strong> {{ billData?.transactionID || 'N/A' }}</p>
-        </div>
+  <!-- Header Section: Logo on Left, Date & Invoice No on Right -->
+  <div class="bill-header">
+    <img class="logo" src="assets/logo.png" alt="Company Logo">
+    <div class="bill-info">
+      <p><strong>Date:</strong> {{ billData?.date || 'N/A' }}</p>
+      <p><strong>Invoice No:</strong> {{ billData?.transactionID || 'N/A' }}</p>
     </div>
+  </div>
 
-    <!-- Customer Details -->
-    <div class="customer-details">
-        <p><strong>Shipping Name:</strong> {{ billData?.billingAddress?.shippingName || 'N/A' }}</p>
-        <p><strong>Email:</strong> {{ billData?.billingAddress?.shippingEmail || 'N/A' }}</p>
-        <p><strong>Address:</strong> 
-            {{ billData?.billingAddress?.address || '' }}, 
-            {{ billData?.billingAddress?.city || '' }}, 
-            {{ billData?.billingAddress?.state || '' }}, 
-            {{ billData?.billingAddress?.zipCode || '' }}
-        </p>
-    </div>
+  <!-- Customer Details -->
+  <div class="customer-details">
+    <p><strong>Shipping Name:</strong> {{ billData?.billingAddress?.shippingName || 'N/A' }}</p>
+    <p><strong>Email:</strong> {{ billData?.billingAddress?.shippingEmail || 'N/A' }}</p>
+    <p><strong>Address:</strong>
+    {{ billData?.billingAddress?.address || '' }},
+    {{ billData?.billingAddress?.city || '' }},
+    {{ billData?.billingAddress?.state || '' }},
+    {{ billData?.billingAddress?.zipCode || '' }}
+  </p>
+</div>
 
-    <!-- Order Details Table -->
-    <table>
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>UPC</th>
-                <th>Quantity</th>
-                <th>Price ($)</th>
-                <th>Total ($)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let item of billData?.orderItems">
-                <td>{{ item?.name || 'N/A' }}</td>
-                <td>{{ item?.upc || 'N/A' }}</td>
-                <td>{{ item?.quantity || 0 }}</td>
-                <td>${{ (item?.price || 0).toFixed(2) }}</td>
-                <td>${{ ((item?.price || 0) * (item?.quantity || 0)).toFixed(2) }}</td>
-            </tr>
-        </tbody>
-    </table>
+<!-- Order Details Table -->
+<table>
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>UPC</th>
+      <th>Quantity</th>
+      <th>Price ($)</th>
+      <th>Total ($)</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (item of billData?.orderItems; track item) {
+      <tr>
+        <td>{{ item?.name || 'N/A' }}</td>
+        <td>{{ item?.upc || 'N/A' }}</td>
+        <td>{{ item?.quantity || 0 }}</td>
+        <td>${{ (item?.price || 0).toFixed(2) }}</td>
+        <td>${{ ((item?.price || 0) * (item?.quantity || 0)).toFixed(2) }}</td>
+      </tr>
+    }
+  </tbody>
+</table>
 
-    <!-- Bill Summary -->
-    <div class="bill-summary">
-        <p class="quantity"><strong>Total Quantity:</strong> {{ billData?.totalQuantity || 0 }}</p>
-        <p><strong>Total Amount:</strong> ${{ (billData?.totalAmount || 0).toFixed(2) }}</p>
-    </div>
+<!-- Bill Summary -->
+<div class="bill-summary">
+  <p class="quantity"><strong>Total Quantity:</strong> {{ billData?.totalQuantity || 0 }}</p>
+  <p><strong>Total Amount:</strong> ${{ (billData?.totalAmount || 0).toFixed(2) }}</p>
+</div>
 
-    <!-- Action Buttons -->
-    <div class="bill-actions">
-        <button (click)="downloadPDF()">Download PDF</button>
-        <button (click)="downloadImage()">Download Image</button>
-    </div>
+<!-- Action Buttons -->
+<div class="bill-actions">
+  <button (click)="downloadPDF()">Download PDF</button>
+  <button (click)="downloadImage()">Download Image</button>
+</div>
 </div>
 
 <!-- Shop More Button -->
 <div class="shop-more">
-    <button (click)="navigateToHome()">Shop More</button>
+  <button (click)="navigateToHome()">Shop More</button>
 </div>

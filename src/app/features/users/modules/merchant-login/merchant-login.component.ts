@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
-import { ApiService } from '../../../core/services/api.service';
+import { ApiService } from '../../../../shared/api.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-merchant-login',
-  templateUrl: './merchant-login.component.html',
-  styleUrl: './merchant-login.component.css'
+    selector: 'app-merchant-login',
+    templateUrl: './merchant-login.component.html',
+    styleUrl: './merchant-login.component.css',
+    standalone: false
 })
 export class MerchantLoginComponent {
   constructor(private apiService: ApiService, private router: Router) {}

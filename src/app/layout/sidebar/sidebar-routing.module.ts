@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SidebarComponent } from './sidebar/sidebar.component';
-import { CustomerLoginComponent } from '../../modules/users/customer-login/customer-login.component';
-import { BusinessLoginComponent } from '../../modules/users/business-login/business-login.component';
-import { MerchantLoginComponent } from '../../modules/users/merchant-login/merchant-login.component';
-import { AdminSidebarComponent } from '../../modules/users/admin-sidebar/admin-sidebar.component';
+import { CustomerLoginComponent } from '../../features/users/modules/customer-login/customer-login.component';
+import { BusinessLoginComponent } from '../../features/users/modules/business-login/business-login.component';
+import { MerchantLoginComponent } from '../../features/users/modules/merchant-login/merchant-login.component';
+import { AdminSidebarComponent } from '../../features/users/modules/admin-sidebar/admin-sidebar.component';
 import { DashboardComponent } from '../../dashboard/dashboard.component';
 import { AdminDashboardComponent } from '../../dashboard/admin-dashboard/admin-dashboard.component';
 import { SignupComponent } from './sign-up/sign-up.component';

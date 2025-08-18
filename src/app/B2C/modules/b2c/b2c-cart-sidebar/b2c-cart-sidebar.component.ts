@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { CartService } from '../../../../core/services/cart/cart.service';
-import { BusinessCartService } from '../../../../core/services/business-cart/business-cart.service';
+import { CartService } from '../../../../features/cart/services/cart/cart.service';
+import { BusinessCartService } from '../../../../features/cart/services/business-cart/business-cart.service';
 import { Router } from '@angular/router';
-import { DeleteCartService } from '../../../../core/services/delete-cart/delete-cart.service';
-import { CommonModule } from '@angular/common';
+import { DeleteCartService } from '../../../../features/cart/services/delete-cart/delete-cart.service';
+
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -11,11 +11,11 @@ import { OnDestroy } from '@angular/core';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-b2c-cart-sidebar',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './b2c-cart-sidebar.component.html',
-  styleUrl: './b2c-cart-sidebar.component.css'
+    selector: 'app-b2c-cart-sidebar',
+    standalone: true,
+    imports: [FormsModule, RouterModule],
+    templateUrl: './b2c-cart-sidebar.component.html',
+    styleUrl: './b2c-cart-sidebar.component.css'
 })
 export class B2cCartSidebarComponent implements OnInit, OnDestroy  {
   // Add Output EventEmitter to communicate with parent component
